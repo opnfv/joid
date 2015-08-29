@@ -2,7 +2,7 @@
 #placeholder for deployment script.
 set -ex
 
-cp intel/pod5/kilo/odl/ovs-odl.yaml ./
+cp odl/juju-deployer/ovs-odl.yaml ./
 
 echo "... Deployment Started ...."
 

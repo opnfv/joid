@@ -1,0 +1,80 @@
+openstack:
+  services:
+    mysql:
+      constraints: mem=1G
+      options:
+        dataset-size: 50%
+        max-connections: 1000
+    rabbitmq-server:
+      constraints: mem=1G
+    keystone:
+      branch: lp:~openstack-charmers/charms/trusty/keystone/next
+      constraints: mem=1G
+    openstack-dashboard:
+      branch: lp:~openstack-charmers/charms/trusty/openstack-dashboard/next
+      constraints: mem=1G
+    nova-compute:
+      branch: lp:~sdn-charmers/charms/trusty/nova-compute/odl
+      constraints: mem=4G root-disk=20G
+    nova-cloud-controller:
+      branch: lp:~openstack-charmers/charms/trusty/nova-cloud-controller/next
+      constraints: mem=1G
+      options:
+        network-manager: Neutron
+    neutron-api:
+      branch: lp:~sdn-charmers/charms/trusty/neutron-api/odl
+      constraints: mem=1G
+    neutron-gateway:
+      branch: lp:~sdn-charmers/charms/trusty/quantum-gateway/odl
+      constraints: mem=1G
+    glance:
+      branch: lp:~openstack-charmers/charms/trusty/glance/next
+      constraints: mem=1G
+  relations:
+    - [ keystone, mysql ]
+    - [ nova-cloud-controller, mysql ]
+    - [ nova-cloud-controller, rabbitmq-server ]
+    - [ nova-cloud-controller, glance ]
+    - [ nova-cloud-controller, keystone ]
+    - [ neutron-api, mysql ]
+    - [ neutron-api, rabbitmq-server ]
+    - [ neutron-api, keystone ]
+    - [ neutron-api, nova-cloud-controller ]
+    - [ neutron-gateway, mysql ]
+    - [ "neutron-gateway:amqp", "rabbitmq-server:amqp" ]
+    - [ neutron-gateway, nova-cloud-controller ]
+    - [ neutron-gateway, neutron-api ]
+    - [ "nova-compute:shared-db", "mysql:shared-db" ]
+    - [ "nova-compute:amqp", "rabbitmq-server:amqp" ]
+    - [ nova-compute, glance ]
+    - [ nova-compute, nova-cloud-controller ]
+    - [ glance, mysql ]
+    - [ glance, keystone ]
+    - [ openstack-dashboard, keystone ]
+odl:
+  inherits: openstack
+  services:
+    odl-controller:
+      branch: lp:~sdn-charmers/charms/trusty/odl-controller/trunk
+      constraints: mem=4G
+    neutron-odl:
+      branch: lp:~sdn-charmers/charms/trusty/neutron-odl/trunk
+  relations:
+    - [ neutron-api, odl-controller ]
+    - [ neutron-gateway, odl-controller ]
+    - [ nova-compute, neutron-odl ]
+    - [ neutron-odl, odl-controller ]
+trusty-icehouse-odl:
+  inherits: odl
+  series: trusty
+  services:
+    mysql:
+      charm: cs:trusty/mysql
+    rabbitmq-server:
+      charm: cs:trusty/rabbitmq-server
+  overrides:
+    instance-mtu: 1400
+    neutron-plugin: odl
+    neutron-security-groups: True
+    plugin: odl
+    quantum-security-groups: "yes"
