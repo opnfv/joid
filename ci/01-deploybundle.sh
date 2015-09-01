@@ -1,14 +1,26 @@
 #!/bin/bash
+#!/bin/bash
 #placeholder for deployment script.
 set -ex
 
-cp odl/juju-deployer/ovs-odl.yaml ./
+case "$1" in
+    'nonha' )
+        cp opencontrail/juju-deployer/contrail.yaml ./bundles.yaml
+        ;;
+    'ha' )
+        cp opencontrail/juju-deployer/contrail-ha.yaml ./bundles.yaml
+        ;;
+    'tip' )
+        cp opencontrail/juju-deployer/contrail-tip.yaml ./bundles.yaml
+        ;;
+    * )
+        cp opencontrail/juju-deployer/contrail.yaml ./bundles.yaml
+        ;;
+esac
 
 echo "... Deployment Started ...."
 
-JUJU_REPOSITORY=
-juju set-constraints tags=
-
-juju-deployer -d -r 13 -c ovs-odl.yaml trusty-kilo
+echo juju-deployer -d -r 13 -c bundles.yaml trusty-"$2"-contrail
 
 echo "... Deployment finished ...."
+

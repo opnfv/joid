@@ -1,38 +1,46 @@
 #!/bin/bash
-<<<<<<< HEAD
-#placeholder for deployment script.
-set -ex
-
-cp intel/pod5/kilo/odl/nonha/deploy.sh ./deployopnfv.sh
-
-echo "bootstrap started"
-juju bootstrap --debug --to bootstrap.maas
-sleep 15
-juju deploy juju-gui --to 0
-
-echo "bootstrap finished"
-
-./deployopnfv.sh
-
-=======
 
 set -ex
 ./01-bootstrap.sh
 
 #need to put mutiple cases here where decide this bundle to deploy by default use the odl bundle.
+# Below parameters are the default and we can according the release
 
-#case deploy opencontrail 
-#cp ./opencontrail/01-deploybundle.sh ./01-deploybundle.sh
+opnfvsdn=odl
+opnfvtype=nonha
+openstack=kilo
+opnfvlab=intelpod5
 
-#case deploy ODL bundle
-cp ./odl/01-deploybundle.sh ./01-deploybundle.sh
+usage() { echo "Usage: $0 [-s <odl|opencontrail>]
+                         [-t <nonha|ha|tip>] 
+                         [-o <juno|kilo|liberty>]
+                         [-l <intelpod5>]" 1>&2 exit 1;}
+
+while getopts ":s:t:o:l:h:" opt; do
+    case "${opt}" in
+        s)
+            opnfvsdn=${OPTARG}
+            ;;
+        t)
+            opnfvtype=${OPTARG}
+            ;;
+        o)
+            openstack=${OPTARG}
+            ;;
+        l)
+            opnfvlab=${OPTARG}
+            ;;
+        h)
+            usage
+            ;;
+        *)
+            ;;
+    esac
+done
+
+#copy the script which needs to get deployed as part of ofnfv release
+cp ./$opnfvsdn/01-deploybundle.sh ./01-deploybundle.sh
 
 #case default:
-./01-deploybundle.sh
+./01-deploybundle.sh $opnfvtype $openstack $opnfvlab
 
-#case ha:
-#./01-deploybundle.sh ha
-
-#case tip
-#./01-deploybundle.sh tip
->>>>>>> 3b30953... Added a script to have a openstack with odl bundle.
