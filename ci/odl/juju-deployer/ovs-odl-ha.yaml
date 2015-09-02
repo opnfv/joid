@@ -35,7 +35,7 @@ openstack-services:
         install-url: "http://10.4.1.1/odl/distribution-karaf-0.2.4-Helium-SR4.tar.gz"
       to: lxc:ubuntu=0
     openvswitch-odl:
-      charm: local:trusty/openvswitch-odl
+      branch: lp:~alai/charms/trusty/openvswitch-odl/trunk
     mysql:
       charm: cs:trusty/mysql
       options:

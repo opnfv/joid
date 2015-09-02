@@ -34,7 +34,7 @@ openstack-services:
         install-url: "http://10.4.1.1/odl/distribution-karaf-0.2.4-Helium-SR4.tar.gz"
       to: lxc:ubuntu=0
     openvswitch-odl:
-      charm: local:trusty/openvswitch-odl
+      branch: lp:~alai/charms/trusty/openvswitch-odl/trunk
     mysql:
       charm: cs:trusty/mysql
       options:
@@ -88,7 +88,7 @@ openstack-services:
     - ['neutron-gateway:quantum-network-service', 'nova-cloud-controller:quantum-network-service']
     - ['openstack-dashboard:identity-service','keystone:identity-service']
 # master
-openstack-master-git:
+trusty-master:
   inherits: openstack-services
   services:
     keystone:
@@ -118,8 +118,8 @@ openstack-master-git:
     nova-cloud-controller:
       options:
         openstack-origin-git: include-file://nova-master.yaml
-trusty-master-kilo:
-  inherits: openstack-master-git
+trusty-kilo:
+  inherits: trusty-master
   series: trusty
   overrides:
     openstack-origin: cloud:trusty-kilo
