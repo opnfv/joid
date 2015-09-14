@@ -3,7 +3,7 @@
 set -ex
 
 #juju-deployer -T -d
-juju destroy-environment maas  -y
+juju destroy-environment demo-maas  -y
 rm -rf ~/.juju/j*
 rm -rf ~/.juju/environments
 rm -rf ~/.juju/ssh

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -ex
-./01-bootstrap.sh
+./00-bootstrap.sh
 
 #need to put mutiple cases here where decide this bundle to deploy by default use the odl bundle.
 # Below parameters are the default and we can according the release

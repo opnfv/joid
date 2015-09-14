@@ -7,10 +7,11 @@ openstack-services:
       constraints: tags=physical
     neutron-gateway:
       branch: lp:~sdn-charmers/charms/trusty/neutron-gateway/ovs-odl
-      constraints: tags=neutron
+      #constraints: tags=neutron
       options:
         plugin: ovs-odl
         instance-mtu: 1400
+      to: ubuntu=0
     nova-compute:
       branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
       num_units: 2
@@ -32,7 +33,7 @@ openstack-services:
     odl-controller:
       branch: lp:~sdn-charmers/charms/trusty/odl-controller/trunk
       options:
-        install-url: "http://10.4.1.1/odl/distribution-karaf-0.2.4-Helium-SR4.tar.gz"
+        install-url: "https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.4-Helium-SR4/distribution-karaf-0.2.4-Helium-SR4.tar.gz"
       to: lxc:ubuntu=0
     openvswitch-odl:
       branch: lp:~alai/charms/trusty/openvswitch-odl/trunk
