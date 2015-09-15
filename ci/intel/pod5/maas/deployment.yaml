@@ -27,8 +27,8 @@ demo-maas:
         # --remote is used. If no power settings are desired, then do not
         # supply the virsh block.
         virsh:
-            rsa_priv_key: /home/ubuntu/id_rsa
-            rsa_pub_key: /home/ubuntu/id_rsa.pub
+            rsa_priv_key: /home/ubuntu/.ssh/id_rsa
+            rsa_pub_key: /home/ubuntu/.ssh/id_rsa.pub
             uri: qemu+ssh://ubuntu@10.4.1.1/system
 
         # Defines the IP Address that the configuration script will use to
