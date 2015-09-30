@@ -18,16 +18,15 @@ case "$1" in
 esac
 
 echo "... Deployment of maas Started ...."
-sudo apt-add-repository ppa:maas-deployers/stable -y
-sudo apt-get update -y
-sudo apt-get install maas-deployer -y
 
-if [ ! -e /home/ubuntu/.ssh/id_rsa ]; then
-    ssh-keygen -N '' -f /home/ubuntu/.ssh/id_rsa
+if [ ! -e $HOME/.ssh/id_rsa ]; then
+    ssh-keygen -N '' -f $HOME/.ssh/id_rsa
 fi
-sudo adduser ubuntu libvirtd
 
-if [ ! 'virsh pool-list | grep default' ]; then
+if [ ! -e /var/lib/libvirt/images ]; then
+
+    sudo apt-get install libvirt-bin -y
+    sudo adduser ubuntu libvirtd
 
     virsh pool-define /dev/stdin <<EOF
 <pool type='dir'>
@@ -43,7 +42,11 @@ EOF
 
 fi
 
-cat /home/ubuntu/.ssh/id_rsa.pub >> /home/ubuntu/.ssh/authorized_keys
+sudo apt-add-repository ppa:maas-deployers/stable -y
+sudo apt-get update -y
+sudo apt-get install maas-deployer -y
+
+cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 maas-deployer -c deployment.yaml -d --force
 echo "... Deployment of maas finish ...."
 
