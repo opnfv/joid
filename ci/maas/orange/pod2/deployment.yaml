@@ -12,11 +12,11 @@ demo-maas:
         # parameters for how the network is attached.
         name: maas-boot-vm-dc1
         interfaces: ['bridge=brAdm,model=virtio']
-        memory: 4096
-        vcpus: 2
+        memory: 3072
+        vcpus: 1
         arch: amd64
         pool: default
-        disk_size: 160G
+        disk_size: 120G
 
         # Apt http proxy setting(s)
         apt_http_proxy:
@@ -97,7 +97,7 @@ demo-maas:
               ip: 192.168.2.5
               subnet_mask: 255.255.255.0
               broadcast_ip: 192.168.2.255
-              router_ip: 192.168.2.1
+              router_ip: 192.168.2.4
               static_range:
                   low: 192.168.2.30
                   high: 192.168.2.150
@@ -194,8 +194,8 @@ demo-maas:
     juju-bootstrap:
         name: bootstrap
         interfaces: ['bridge=brAdm,model=virtio']
-        memory: 4096
-        vcpus: 2
+        memory: 3072
+        vcpus: 1
         arch: amd64
         pool: default
-        disk_size: 120G
+        disk_size: 60G

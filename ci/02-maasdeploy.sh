@@ -27,8 +27,8 @@ if [ ! -e /var/lib/libvirt/images ]; then
 
     sudo apt-get install libvirt-bin -y
     sudo adduser ubuntu libvirtd
-
-    virsh pool-define /dev/stdin <<EOF
+   
+    sudo virsh pool-define /dev/stdin <<EOF
 <pool type='dir'>
   <name>default</name>
   <target>
@@ -37,8 +37,8 @@ if [ ! -e /var/lib/libvirt/images ]; then
 </pool>
 EOF
 
-    virsh pool-start default
-    virsh pool-autostart default
+    sudo virsh pool-start default
+    sudo virsh pool-autostart default
 
 fi
 
