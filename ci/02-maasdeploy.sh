@@ -27,7 +27,6 @@ if [ ! -e /var/lib/libvirt/images ]; then
 
     sudo apt-get install libvirt-bin -y
     sudo adduser ubuntu libvirtd
-   
     sudo virsh pool-define /dev/stdin <<EOF
 <pool type='dir'>
   <name>default</name>
@@ -43,16 +42,17 @@ EOF
 fi
 
 sudo apt-add-repository ppa:maas-deployers/stable -y
+sudo apt-add-repository ppa:juju/stable -y
 sudo apt-get update -y
-sudo apt-get install maas-deployer -y
+sudo apt-get install maas-deployer juju juju-deployer -y
 
 cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 maas-deployer -c deployment.yaml -d --force
 echo "... Deployment of maas finish ...."
 
-maas_ip=`grep " ip_address" deployment.yaml | cut -d ":"  -f 2`
+#maas_ip=`grep " ip_address" deployment.yaml | cut -d ":"  -f 2`
 
 #echo "... Deployment of opnfv release Started ...."
-python deploy.py $maas_ip
+#python deploy.py $maas_ip
 #echo "... Deployment of opnfv release finished ...."
 

@@ -50,6 +50,15 @@ while getopts ":s:t:o:l:h:r:" opt; do
     esac
 done
 
+deploy_dep() {
+    sudo apt-get install git -y 
+    sudo apt-add-repository ppa:juju/stable -y
+    sudo apt-get update
+    sudo apt-get install juju juju-deployer -y
+    juju init -y
+    cp environments.yaml ~/.juju/
+}
+
 deploy() {
     #copy the script which needs to get deployed as part of ofnfv release
     echo "deploying now"
@@ -66,5 +75,6 @@ if [ "$#" -eq 0 ]; then
 fi
 
 echo "deploying started"
+deploy_dep
 deploy
 echo "deploying finished"

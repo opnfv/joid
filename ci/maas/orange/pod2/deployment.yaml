@@ -107,78 +107,122 @@ demo-maas:
 
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
-#        nodes:
-#            - name: node1
-#              tags: physical
-#              architecture: amd64/generic
-#              mac_addresses:
-#                  - "00:1e:67:e0:0a:4a"
-#                  - "00:1e:67:e0:0a:4b"
-#                  - "00:1e:67:d0:9a:10"
-#                  - "00:1e:67:d0:9a:11"
-#              power:
-#                  type: ipmi
-#                  address: 10.4.2.8
-#                  user: root
-#                  pass: root
-#                  driver: LAN_2_0
+        nodes:
+            - name: node1-compute
+              tags: physical
+              architecture: amd64/generic
+              mac_addresses:
+                  - "38:63:bb:3f:bc:c8" 
+                  - "38:63:bb:3f:bc:c9"
+                  - "38:63:bb:3f:bc:ca"
+                  - "38:63:bb:3f:bc:cb"
+                  - "a0:36:9f:4e:88:5c"
+                  - "a0:36:9f:4e:88:5e"
+              power:
+                  type: ipmi
+                  address: 192.168.2.11
+                  user: maas
+                  pass: 8B3DuzZCrC
+                  driver: LAN_2_0
 #              sticky_ip_address:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
 #                
-#            - name: node2
-#              tags: physical
+            - name: node2-compute
+              tags: physical
+              architecture: amd64/generic
+              mac_addresses:
+                  - "38:63:bb:44:34:84"
+                  - "38:63:bb:44:34:85"
+                  - "38:63:bb:44:34:86"
+                  - "38:63:bb:44:34:87"
+                  - "a0:36:9f:4e:8b:0c"
+                  - "a0:36:9f:4e:8b:0e"
+              power:
+                  type: ipmi
+                  address: 192.168.2.12
+                  user: maas
+                  pass: O0W3DtlHVuFX7
+                  driver: LAN_2_0
+
+            - name: node3-compute
+              tags: physical
+              architecture: amd64/generic
+              mac_addresses:
+                  - "38:63:bb:3f:1d:8c"
+                  - "38:63:bb:3f:1d:8d"
+                  - "38:63:bb:3f:1d:8e"
+                  - "38:63:bb:3f:1d:8f"
+                  - "a0:36:9f:4e:8a:3c"
+                  - "a0:36:9f:4e:8a:3e"
+              power:
+                  type: ipmi
+                  address: 192.168.2.13
+                  user: maas
+                  pass: 6vCiYnhZuBt
+                  driver: LAN_2_0
+
+            - name: node4-compute
+              tags: physical
+              architecture: amd64/generic
+              mac_addresses:
+                  - "38:63:bb:3f:2d:a8"
+                  - "38:63:bb:3f:2d:a9"
+                  - "38:63:bb:3f:2d:aa"
+                  - "38:63:bb:3f:2d:ab"
+                  - "a0:36:9f:4e:8b:18"
+                  - "a0:36:9f:4e:8b:1a"
+              power:
+                  type: ipmi
+                  address: 192.168.2.14
+                  user: maas
+                  pass: 3dSyBHsb1P
+                  driver: LAN_2_0
+
+#            - name: node5-control
+#              tags: control
 #              architecture: amd64/generic
 #              mac_addresses:
-#                  - "00:1e:67:e0:08:b0"
-#                  - "00:1e:67:e0:08:b1"
-#                  - "00:1e:67:d0:99:ee"
-#                  - "00:1e:67:d0:99:ef"
+#                  - "00:1a:64:c8:a8:48"
+#                  - "00:1a:64:c8:a8:4a"
+#                  - "a0:36:9f:4e:88:14"
+#                  - "a0:36:9f:4e:88:16"
 #              power:
 #                  type: ipmi
-#                  address: 10.4.2.9
-#                  user: root
-#                  pass: root
+#                  address: 192.168.2.15
+#                  user: maas
+#                  pass: vrFXUa20C
 #                  driver: LAN_2_0
-#              sticky_ip_address:
-#                  mac_address: "38:63:bb:43:b8:9c"
-#                  requested_address: 192.168.122.5
-#
-#            - name: node3
-#              tags: physical
+
+            - name: node6-control
+              tags: control
+              architecture: amd64/generic
+              mac_addresses:
+                  - "00:1a:64:c8:a8:14"
+                  - "00:1a:64:c8:a8:16"
+                  - "a0:36:9f:4e:87:5c"
+                  - "a0:36:9f:4e:87:5e"
+              power:
+                  type: ipmi
+                  address: 192.168.2.16
+                  user: maas
+                  pass: jYkXYMhI1
+                  driver: LAN_2_0
+
+#            - name: node7-control
+#              tags: control
 #              architecture: amd64/generic
 #              mac_addresses:
-#                  - "00:1e:67:e0:08:7e"
-#                  - "00:1e:67:e0:08:7f"
-#                  - "00:1e:67:c2:23:d8"
-#                  - "00:1e:67:c2:23:d9"
+#                  - "00:1a:64:c8:a8:34"
+#                  - "00:1a:64:c8:a8:36"
+#                  - "a0:36:9f:4e:88:38"
+#                  - "a0:36:9f:4e:88:3a"
 #              power:
 #                  type: ipmi
-#                  address: 10.4.2.7
-#                  user: root
-#                  pass: root
+#                  address: 192.168.2.17
+#                  user: maas
+#                  pass: GPejUGZx6IkVxz
 #                  driver: LAN_2_0
-#              sticky_ip_address:
-#                  mac_address: "38:63:bb:43:b8:9c"
-#                  requested_address: 192.168.122.5
-#
-#            - name: node4
-#              tags: physical
-#              architecture: amd64/generic
-#              mac_addresses:
-#                  - "00:1e:67:cf:b8:92"
-#                  - "00:1e:67:cf:b8:93"
-#                  - "00:1e:67:d0:9b:0c"
-#                  - "00:1e:67:d0:9b:0d"
-#              power:
-#                  type: ipmi
-#                  address: 10.4.2.10
-#                  user: root
-#                  pass: root
-#                  driver: LAN_2_0
-#              sticky_ip_address:
-#                  mac_address: "38:63:bb:43:b8:9c"
-#                  requested_address: 192.168.122.5
 
 #            - name: jenkins-slave
 #              tags: jenkins-slave
@@ -195,7 +239,7 @@ demo-maas:
         name: bootstrap
         interfaces: ['bridge=brAdm,model=virtio']
         memory: 3072
-        vcpus: 1
+        vcpus: 2
         arch: amd64
         pool: default
         disk_size: 60G
