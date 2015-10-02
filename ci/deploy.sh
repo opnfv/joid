@@ -55,13 +55,15 @@ deploy_dep() {
     sudo apt-add-repository ppa:juju/stable -y
     sudo apt-get update
     sudo apt-get install juju juju-deployer -y
-    juju init -y
+    juju init -f
     cp environments.yaml ~/.juju/
 }
 
 deploy() {
     #copy the script which needs to get deployed as part of ofnfv release
     echo "deploying now"
+    cp environments.yaml ~/.juju/
+
     cp ./$opnfvsdn/01-deploybundle.sh ./01-deploybundle.sh
     ./00-bootstrap.sh
 
@@ -75,6 +77,6 @@ if [ "$#" -eq 0 ]; then
 fi
 
 echo "deploying started"
-deploy_dep
+#deploy_dep
 deploy
 echo "deploying finished"

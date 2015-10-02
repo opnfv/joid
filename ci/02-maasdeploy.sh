@@ -43,14 +43,21 @@ fi
 
 sudo apt-add-repository ppa:maas-deployers/stable -y
 sudo apt-add-repository ppa:juju/stable -y
+sudo apt-add-repository ppa:maas/stable -y
 sudo apt-get update -y
-sudo apt-get install maas-deployer juju juju-deployer -y
+sudo apt-get install git maas-deployer juju juju-deployer maas-cli -y
+juju init -f
 
 cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 maas-deployer -c deployment.yaml -d --force
+
 echo "... Deployment of maas finish ...."
 
-#maas_ip=`grep " ip_address" deployment.yaml | cut -d ":"  -f 2`
+maas_ip=`grep " ip_address" deployment.yaml | cut -d " "  -f 10`
+apikey=`grep maas-oauth: environments.yaml | cut -d "'" -f 2`
+maas login maas http://${maas_ip}/MAAS/api/1.0 ${apikey}
+maas maas boot-source-selections create 1 os="ubuntu" release="trusty" arches="amd64" subarches="*" labels="*"
+maas maas boot-resources import
 
 #echo "... Deployment of opnfv release Started ...."
 #python deploy.py $maas_ip
