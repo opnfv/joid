@@ -78,7 +78,7 @@ openstack-services:
     - ['neutron-api:neutron-plugin-api-subordinate', 'neutron-api-odl:neutron-plugin-api-subordinate']
     - ['neutron-api-odl:odl-controller', 'odl-controller:controller-api']
     - ['nova-compute:neutron-plugin', 'openvswitch-odl:neutron-plugin']
-    - ['neutron-gateway', 'mysql '],
+    - ['neutron-gateway', 'mysql']
     - ['neutron-gateway:amqp', 'rabbitmq-server:amqp']
     - ['neutron-gateway:quantum-network-service', 'nova-cloud-controller:quantum-network-service']
     - ['neutron-gateway:neutron-plugin-api', 'neutron-api:neutron-plugin-api']
