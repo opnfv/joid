@@ -56,7 +56,7 @@ echo "... Deployment of maas finish ...."
 maas_ip=`grep " ip_address" deployment.yaml | cut -d " "  -f 10`
 apikey=`grep maas-oauth: environments.yaml | cut -d "'" -f 2`
 maas login maas http://${maas_ip}/MAAS/api/1.0 ${apikey}
-maas maas boot-source-selections create 1 os="ubuntu" release="trusty" arches="amd64" subarches="*" labels="*"
+maas maas boot-source-selections create 1 os="ubuntu" release="precise" arches="amd64" subarches="*" labels="*"
 maas maas boot-resources import
 
 #echo "... Deployment of opnfv release Started ...."

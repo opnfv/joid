@@ -108,17 +108,17 @@ demo-maas:
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
         nodes:
-            - name: node1
+            - name: node2
               tags: physical
               architecture: amd64/generic
               mac_addresses:
-                  - "00:1e:67:e0:0a:4a"
-                  - "00:1e:67:e0:0a:4b"
-                  - "00:1e:67:d0:9a:10"
-                  - "00:1e:67:d0:9a:11"
+                  - "00:1e:67:e0:0b:71"
+                  - "00:1e:67:e0:0b:72"
+                  - "00:1e:67:d0:9a:8c"
+                  - "00:1e:67:d0:9a:8d"
               power:
                   type: ipmi
-                  address: 10.4.2.8
+                  address: 10.4.7.2
                   user: root
                   pass: root
                   driver: LAN_2_0
@@ -126,20 +126,20 @@ demo-maas:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
                 
-            - name: node2
-              tags: physical
-              architecture: amd64/generic
-              mac_addresses:
-                  - "00:1e:67:e0:08:b0"
-                  - "00:1e:67:e0:08:b1"
-                  - "00:1e:67:d0:99:ee"
-                  - "00:1e:67:d0:99:ef"
-              power:
-                  type: ipmi
-                  address: 10.4.2.9
-                  user: root
-                  pass: root
-                  driver: LAN_2_0
+#            - name: node1
+#              tags: physical
+#              architecture: amd64/generic
+#              mac_addresses:
+#                  - "00:1e:67:e0:08:b0"
+#                  - "00:1e:67:e0:08:b1"
+#                  - "00:1e:67:d0:99:ee"
+#                  - "00:1e:67:d0:99:ef"
+#              power:
+#                  type: ipmi
+#                  address: 10.4.2.9
+#                  user: root
+#                  pass: root
+#                  driver: LAN_2_0
 #              sticky_ip_address:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
@@ -148,13 +148,13 @@ demo-maas:
               tags: physical
               architecture: amd64/generic
               mac_addresses:
-                  - "00:1e:67:e0:08:7e"
-                  - "00:1e:67:e0:08:7f"
-                  - "00:1e:67:c2:23:d8"
-                  - "00:1e:67:c2:23:d9"
+                  - "00:1e:67:e0:09:32"
+                  - "00:1e:67:e0:09:33"
+                  - "00:1e:67:d0:9b:92"
+                  - "00:1e:67:d0:9b:93"
               power:
                   type: ipmi
-                  address: 10.4.2.7
+                  address: 10.4.7.3
                   user: root
                   pass: root
                   driver: LAN_2_0
@@ -166,13 +166,31 @@ demo-maas:
               tags: physical
               architecture: amd64/generic
               mac_addresses:
-                  - "00:1e:67:cf:b8:92"
-                  - "00:1e:67:cf:b8:93"
-                  - "00:1e:67:d0:9b:0c"
-                  - "00:1e:67:d0:9b:0d"
+                  - "00:1e:67:e0:09:fa"
+                  - "00:1e:67:e0:09:fb"
+                  - "00:1e:67:d0:9c:9c"
+                  - "00:1e:67:d0:9c:9d"
               power:
                   type: ipmi
-                  address: 10.4.2.10
+                  address: 10.4.7.4
+                  user: root
+                  pass: root
+                  driver: LAN_2_0
+#              sticky_ip_address:
+#                  mac_address: "38:63:bb:43:b8:9c"
+#                  requested_address: 192.168.122.5
+
+            - name: node5
+              tags: physical
+              architecture: amd64/generic
+              mac_addresses:
+                  - "00:1e:67:cf:bc:f7"
+                  - "00:1e:67:cf:bc:f8"
+                  - "00:1e:67:d0:9c:26"
+                  - "00:1e:67:d0:9c:27"
+              power:
+                  type: ipmi
+                  address: 10.4.7.5
                   user: root
                   pass: root
                   driver: LAN_2_0

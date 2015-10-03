@@ -6,11 +6,12 @@ openstack-services:
       num_utils: 1
       constraints: tags=physical
     neutron-gateway:
-      branch: lp:~sdn-charmers/charms/trusty/neutron-gateway/ovs-odl
+      branch: lp:~openstack-charmers/charms/trusty/neutron-gateway/next
       #constraints: tags=neutron
       options:
         plugin: ovs-odl
         instance-mtu: 1400
+       # ext-port: eth2
       to: ubuntu=0
     nova-compute:
       branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
@@ -65,29 +66,31 @@ openstack-services:
       charm: cs:trusty/glance
       to: lxc:ubuntu=0
   relations:
-    - ['neutron-api:neutron-plugin-api-subordinate', 'neutron-api-odl:neutron-plugin-api-subordinate']
-    - ['nova-compute:neutron-plugin', 'openvswitch-odl:neutron-plugin']
-    - ['neutron-gateway', 'openvswitch-odl']
-    - ['openvswitch-odl:ovsdb-manager', 'odl-controller:ovsdb-manager']
-    - ['neutron-api-odl:odl-controller', 'odl-controller:controller-api']
     - ['keystone:shared-db', 'mysql:shared-db']
     - ['nova-cloud-controller:shared-db', 'mysql:shared-db']
     - ['nova-cloud-controller:amqp', 'rabbitmq-server:amqp']
     - ['nova-cloud-controller:image-service', 'glance:image-service']
     - ['nova-cloud-controller:identity-service', 'keystone:identity-service']
+    - ['neutron-api:shared-db', 'mysql:shared-db']
+    - ['neutron-api:amqp', 'rabbitmq-server:amqp']
+    - ['neutron-api:neutron-api', 'nova-cloud-controller:neutron-api']
+    - ['neutron-api:identity-service', 'keystone:identity-service']
+    - ['neutron-api:neutron-plugin-api-subordinate', 'neutron-api-odl:neutron-plugin-api-subordinate']
+    - ['neutron-api-odl:odl-controller', 'odl-controller:controller-api']
+    - ['nova-compute:neutron-plugin', 'openvswitch-odl:neutron-plugin']
+    - ['neutron-gateway', 'mysql '],
+    - ['neutron-gateway:amqp', 'rabbitmq-server:amqp']
+    - ['neutron-gateway:quantum-network-service', 'nova-cloud-controller:quantum-network-service']
+    - ['neutron-gateway:neutron-plugin-api', 'neutron-api:neutron-plugin-api']
+    - ['neutron-gateway', 'openvswitch-odl']
+    - ['openvswitch-odl:ovsdb-manager', 'odl-controller:ovsdb-manager']
+    - ['nova-compute:shared-db', 'mysql:shared-db']
     - ['nova-compute:cloud-compute', 'nova-cloud-controller:cloud-compute']
     - ['nova-compute:amqp', 'rabbitmq-server:amqp']
     - ['nova-compute:image-service', 'glance:image-service']
     - ['glance:shared-db', 'mysql:shared-db']
     - ['glance:identity-service', 'keystone:identity-service']
     - ['glance:amqp', 'rabbitmq-server:amqp']
-    - ['neutron-api:shared-db', 'mysql:shared-db']
-    - ['neutron-api:amqp', 'rabbitmq-server:amqp']
-    - ['neutron-api:neutron-api', 'nova-cloud-controller:neutron-api']
-    - ['neutron-api:identity-service', 'keystone:identity-service']
-    - ['neutron-gateway:amqp', 'rabbitmq-server:amqp']
-    - ['neutron-gateway:neutron-plugin-api', 'neutron-api:neutron-plugin-api']
-    - ['neutron-gateway:quantum-network-service', 'nova-cloud-controller:quantum-network-service']
     - ['openstack-dashboard:identity-service','keystone:identity-service']
 trusty-kilo:
   inherits: openstack-services
