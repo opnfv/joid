@@ -62,6 +62,8 @@ deploy_dep() {
 deploy() {
     #copy the script which needs to get deployed as part of ofnfv release
     echo "deploying now"
+    echo "   " >> environments.yaml
+    echo "        admin-secret: admin" >> environments.yaml
     cp environments.yaml ~/.juju/
 
     cp ./$opnfvsdn/01-deploybundle.sh ./01-deploybundle.sh
