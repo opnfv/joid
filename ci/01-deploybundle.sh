@@ -8,6 +8,7 @@ case "$1" in
         ;;
     'ha' )
         cp odl/juju-deployer/ovs-odl-ha.yaml ./bundles.yaml
+        juju-deployer -d -r 13 -c bundles.yaml openstack-phase1
         ;;
     'tip' )
         cp odl/juju-deployer/ovs-odl-tip.yaml ./bundles.yaml

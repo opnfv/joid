@@ -9,6 +9,7 @@ case "$1" in
         ;;
     'ha' )
         cp opencontrail/juju-deployer/contrail-ha.yaml ./bundles.yaml
+        juju-deployer -d -r 13 -c bundles.yaml openstack-phase1
         ;;
     'tip' )
         cp opencontrail/juju-deployer/contrail-tip.yaml ./bundles.yaml

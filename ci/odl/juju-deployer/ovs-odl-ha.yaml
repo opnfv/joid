@@ -1,29 +1,100 @@
-openstack-services:
+# vim: set ts=2 et:
+openstack-phase1:
   series: trusty
   services:
-    ubuntu:
+    nodes-api:
       branch: "lp:charms/trusty/ubuntu"
-      num_utils: 1
-      constraints: tags=physical
+      num_units: 3
+      constraints: tags=api
+    nodes-compute:
+      branch: "lp:charms/trusty/ubuntu"
+      num_units: 1
+      constraints: tags=compute
     neutron-gateway:
       branch: lp:~sdn-charmers/charms/trusty/neutron-gateway/ovs-odl
+#      constraints: tags=gateway
       options:
+#        "ext-port": eth1
         plugin: ovs-odl
-        instance-mtu: 1400
-      to: ubuntu=0
-    nova-compute:
-      branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
-      num_units: 2
-      constraints: tags=physical
+#        instance-mtu: 1400
+      to: nodes-api=0
+    "ntp": 
+      charm: "cs:trusty/ntp"
+    openvswitch-odl:
+      branch: lp:~alai/charms/trusty/openvswitch-odl/trunk
+    "hacluster-keystone": 
+      charm: "cs:trusty/hacluster"
       options:
-        enable-live-migration: False
-        manage-neutron-plugin-legacy-mode: False
-    neutron-api:
+        corosync_key: |
+          'QisjNpoKHLkvyc3PEdDHP5VZjgD0kOk9t0ABPWmCELlu5AgWgnW6bJd34BVXO7VhW+3ZwNQM3W+bZ3pl28ftY4ki4N/S0KLFNia5egFgiA3AH2QXLnokS7OYXuu6GMJJ1S5mDe6P5zU+tfJe/Mebq24u7CgR0gAvohSPRdDTwdY='
+    "hacluster-horizon": 
+      charm: "cs:trusty/hacluster"
+      options:
+        corosync_key: |
+          'aCVPHw6XYne+Hxv0WPiM3+yEfeIxs0Ly0EMKB494Rdzjf5rE52GcXqqxuvIa/nXJ4GCR+UdKk9FEwcASfYkeu3HDWUld9uTE6pOc+ibWYnybNH7VBfEHW8h9YmQKs3HD2T3wlTcS2irU4CUW7/IKNok4etYdM3iFn1K2ReSGXEI='
+    "hacluster-nova": 
+      charm: "cs:trusty/hacluster"
+      options:
+        corosync_key: |
+          'gel86qmEze8dYKYbfqIgRpqapJpKtdYL2hxC1y5nWYBPq7EMf6V8mF01IjeUkSRs14CUDrsPpT4PWeom7EOY2fleuLx/aIuqQUfEDkhf/gvaz7BaU4hrmTCoDBK7/HvEwY+/wu4qkEeckzSRPsm9MYzqnLRshh8yjZJ70xU/mmk='
+    "hacluster-neutron": 
+      charm: "cs:trusty/hacluster"
+      options:
+        corosync_key: |
+          'KNhb4++3jlllbnscS5D3qdzOJDsQPEeZ7zOLZJHbkKrRjX9gRCijVVOiv2JCvq03HqQ7LIufQzWGl9Za8qh0f6QmQ3XhFh/Cb/3WaYFj+tEf0zArWv+8miswmM1z4eyTSrTWBq0dTgx1z96wjBxP5HV0+1LWW+3Ei4oZWyRGeR0='
+    "hacluster-glance": 
+      charm: "cs:trusty/hacluster"
+      options:
+        corosync_key: |
+          'el1dd8107J5mwQDPS7tEJPZrr0XFfL95+Tku/QG90W5Q5f5SP4W8TRfKvddGmZWZl2lVd1neG5WqaHa1mq/aScJpoflzVAJCvshN7Gd2AjHhLNNugeI8S90j/7wrKUhqiCAlkKaeri2xs5bB5PZ7Z9AHuNZL7SW1al8lxrKhUFI='
+  relations:
+    - - "ntp:juju-info"
+      - "nodes-api:juju-info"
+    - - "ntp:juju-info"
+      - "nodes-compute:juju-info"
+openstack-phase2: 
+  inherits: openstack-phase1
+  services: 
+    "nova-compute": 
+      charm: "cs:trusty/nova-compute"
+      num_units: 1
+      options: 
+        "enable-live-migration": true
+        "enable-resize": true
+        "migration-auth-type": ssh
+      to:
+        - "nodes-compute=0"
+#        - "nodes-compute=1"
+    "keystone": 
+      charm: "cs:trusty/keystone"
+      num_units: 3
+      options: 
+        "admin-password": openstack
+        "admin-token": admin
+        vip: 10.4.2.53
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
+    "glance": 
+      charm: "cs:trusty/glance"
+      num_units: 3
+      options: 
+        vip: 10.4.2.52
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
+    "neutron-api": 
       branch: lp:~openstack-charmers/charms/trusty/neutron-api/next
       options:
         neutron-security-groups: False
         manage-neutron-plugin-legacy-mode: False
-      to: lxc:ubuntu=0
+        vip: 10.4.2.57
+      to: 
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
     neutron-api-odl:
       branch: lp:~openstack-charmers/charms/trusty/neutron-api-odl/vpp
       options:
@@ -33,69 +104,127 @@ openstack-services:
       branch: lp:~sdn-charmers/charms/trusty/odl-controller/trunk
       options:
         install-url: "https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.4-Helium-SR4/distribution-karaf-0.2.4-Helium-SR4.tar.gz"
-      to: lxc:ubuntu=0
-    openvswitch-odl:
-      branch: lp:~alai/charms/trusty/openvswitch-odl/trunk
-    mysql:
-      charm: cs:trusty/mysql
-      options:
-        dataset-size: 50%
-        max-connections: 20000
-      to: lxc:ubuntu=0
-    rabbitmq-server:
-      charm: cs:trusty/rabbitmq-server
-      to: lxc:ubuntu=0
-    keystone:
-      charm: cs:trusty/keystone
-      options:
-        admin-password: openstack
-        admin-token: admin
-      to: lxc:ubuntu=0
-    openstack-dashboard:
-      charm: cs:trusty/openstack-dashboard
-      to: lxc:ubuntu=0
-    nova-cloud-controller:
-      charm: cs:trusty/nova-cloud-controller
-      options:
-        network-manager: Neutron
-        quantum-security-groups: "yes"
-      to: lxc:ubuntu=0
-    glance:
-      charm: cs:trusty/glance
-      to: lxc:ubuntu=0
+      to: lxc:nodes-api=1
+    "nova-cloud-controller": 
+      charm: "cs:trusty/nova-cloud-controller"
+      num_units: 3
+      options: 
+        "console-access-protocol": novnc
+        "network-manager": Neutron
+        "quantum-security-groups": "yes"
+        "service-guard": true
+        vip: 10.4.2.56
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
+    "openstack-dashboard": 
+      charm: "cs:trusty/openstack-dashboard"
+      num_units: 3
+      options: 
+        secret: admin
+        vip: 10.4.2.51
+        webroot: /
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
+    "rabbitmq-server": 
+      charm: "cs:trusty/rabbitmq-server"
+      num_units: 3
+      options: 
+        management_plugin: true
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
+    "percona-cluster": 
+      charm: "cs:trusty/percona-cluster"
+      num_units: 3
+      options: 
+        "dataset-size": 2G
+        "lp1366997-workaround": true
+        "max-connections": 10000
+        "root-password": 293rhc395m
+        "sst-password": 127rc14t51
+        vip: 10.4.2.55
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
   relations:
-    - ['neutron-api:neutron-plugin-api-subordinate', 'neutron-api-odl:neutron-plugin-api-subordinate']
-    - ['nova-compute:neutron-plugin', 'openvswitch-odl:neutron-plugin']
-    - ['neutron-gateway', 'openvswitch-odl']
-    - ['openvswitch-odl:ovsdb-manager', 'odl-controller:ovsdb-manager']
-    - ['neutron-api-odl:odl-controller', 'odl-controller:controller-api']
-    - ['keystone:shared-db', 'mysql:shared-db']
-    - ['nova-cloud-controller:shared-db', 'mysql:shared-db']
-    - ['nova-cloud-controller:amqp', 'rabbitmq-server:amqp']
-    - ['nova-cloud-controller:image-service', 'glance:image-service']
-    - ['nova-cloud-controller:identity-service', 'keystone:identity-service']
-    - ['nova-compute:cloud-compute', 'nova-cloud-controller:cloud-compute']
-    - ['nova-compute:amqp', 'rabbitmq-server:amqp']
-    - ['nova-compute:image-service', 'glance:image-service']
-    - ['glance:shared-db', 'mysql:shared-db']
-    - ['glance:identity-service', 'keystone:identity-service']
-    - ['glance:amqp', 'rabbitmq-server:amqp']
-    - ['neutron-api:shared-db', 'mysql:shared-db']
-    - ['neutron-api:amqp', 'rabbitmq-server:amqp']
-    - ['neutron-api:neutron-api', 'nova-cloud-controller:neutron-api']
-    - ['neutron-api:identity-service', 'keystone:identity-service']
-    - ['neutron-gateway:amqp', 'rabbitmq-server:amqp']
-    - ['neutron-gateway:neutron-plugin-api', 'neutron-api:neutron-plugin-api']
-    - ['neutron-gateway:quantum-network-service', 'nova-cloud-controller:quantum-network-service']
-    - ['openstack-dashboard:identity-service','keystone:identity-service']
+    - - "glance:ha"
+      - "hacluster-glance:ha"
+    - - "keystone:ha"
+      - "hacluster-keystone:ha"
+    - - "neutron-api:ha"
+      - "hacluster-neutron:ha"
+    - - "nova-cloud-controller:ha"
+      - "hacluster-nova:ha"
+    - - "openstack-dashboard:ha"
+      - "hacluster-horizon:ha"
+    - - "nova-compute:amqp"
+      - "rabbitmq-server:amqp"
+    - - "neutron-gateway:amqp"
+      - "rabbitmq-server:amqp"
+    - - "nova-cloud-controller:identity-service"
+      - "keystone:identity-service"
+    - - "glance:identity-service"
+      - "keystone:identity-service"
+    - - "neutron-api:identity-service"
+      - "keystone:identity-service"
+    - - "neutron-api:amqp"
+      - "rabbitmq-server:amqp"
+    - - "neutron-gateway:neutron-plugin-api"
+      - "neutron-api:neutron-plugin-api"
+    - - "glance:amqp"
+      - "rabbitmq-server:amqp"
+    - - "nova-cloud-controller:image-service"
+      - "glance:image-service"
+    - - "nova-compute:image-service"
+      - "glance:image-service"
+    - - "nova-cloud-controller:cloud-compute"
+      - "nova-compute:cloud-compute"
+    - - "nova-cloud-controller:amqp"
+      - "rabbitmq-server:amqp"
+    - - "nova-cloud-controller:quantum-network-service"
+      - "neutron-gateway:quantum-network-service"
+    - - "openstack-dashboard:identity-service"
+      - "keystone:identity-service"
+    - - "nova-cloud-controller:neutron-api"
+      - "neutron-api:neutron-api"
+    - - "neutron-gateway:shared-db"
+      - "percona-cluster:shared-db"
+    - - "glance:shared-db"
+      - "percona-cluster:shared-db"
+    - - "keystone:shared-db"
+      - "percona-cluster:shared-db"
+    - - "nova-cloud-controller:shared-db"
+      - "percona-cluster:shared-db"
+    - - "neutron-api:shared-db"
+      - "percona-cluster:shared-db"
+    - - "neutron-api:neutron-plugin-api-subordinate"
+      - "neutron-api-odl:neutron-plugin-api-subordinate"
+    - - "nova-compute:neutron-plugin"
+      - "openvswitch-odl:neutron-plugin"
+    - - "neutron-gateway"
+      - "openvswitch-odl"
+    - - "openvswitch-odl:ovsdb-manager"
+      - "odl-controller:ovsdb-manager"
+    - - "neutron-api-odl:odl-controller"
+      - "odl-controller:controller-api"
 trusty-kilo:
-  inherits: openstack-services
+  inherits: openstack-phase2
   overrides:
-    openstack-origin: cloud:trusty-kilo
+    region: Canonical
+    source: "cloud:trusty-kilo"
+    "openstack-origin": "cloud:trusty-kilo"
+    series: trusty
 trusty-juno:
-  inherits: openstack-services
+  inherits: openstack-phase2
   overrides:
-    openstack-origin: cloud:trusty-juno
-trusty-icehouse:
-  inherits: openstack-services
+    region: Canonical
+    source: "cloud:trusty-juno"
+    "openstack-origin": "cloud:trusty-juno"
+    series: trusty
 
