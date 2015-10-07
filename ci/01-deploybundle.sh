@@ -18,6 +18,12 @@ case "$1" in
         ;;
 esac
 
+case "$3" in
+    'orangepod2' )
+        sed -i -- 's/10.4.1.1/192.168.2.2/g' ./bundles.yaml
+        ;;
+esac
+
 echo "... Deployment Started ...."
 
 #case openstack kilo with odl

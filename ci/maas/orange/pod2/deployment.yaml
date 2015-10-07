@@ -99,11 +99,11 @@ demo-maas:
               broadcast_ip: 192.168.2.255
               router_ip: 192.168.2.4
               static_range:
-                  low: 192.168.2.30
+                  low: 192.168.2.50
                   high: 192.168.2.150
               dynamic_range:
                   low: 192.168.2.151
-                  high: 192.168.2.254
+                  high: 192.168.2.200
 
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
