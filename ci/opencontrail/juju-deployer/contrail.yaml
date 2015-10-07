@@ -2,9 +2,12 @@ openstack:
   services:
     ubuntu:
       branch: "lp:charms/trusty/ubuntu"
-      constraints: tags=physical
-      num_units: 2
-
+      constraints: tags=control
+      num_units: 1
+    ubuntu-compute:
+      branch: "lp:charms/trusty/ubuntu"
+      constraints: tags=compute
+      num_units: 1
     mysql:
       constraints: mem=1G
       options:
@@ -35,11 +38,10 @@ openstack:
 
     nova-compute:
       branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
-      constraints: tags=physical
-      num_units: 2
+      constraints: tags=compute
+      num_units: 1
       to:
-        - "ubuntu=0"
-        - "ubuntu=1"
+        - "ubuntu-compute=0"
       options:
         manage-neutron-plugin-legacy-mode: false
     nova-cloud-controller:
@@ -94,7 +96,7 @@ contrail:
     cassandra:
       branch: lp:~sdn-charmers/charms/precise/cassandra/forced-install
       series: precise
-      constraints: tags=physical
+      constraints: tags=control
       options:
         allow-single-node: true
 

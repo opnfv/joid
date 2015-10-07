@@ -5,7 +5,7 @@ openstack-phase1:
     nodes-api:
       branch: "lp:charms/trusty/ubuntu"
       num_units: 3
-      constraints: tags=api
+      constraints: tags=control
     nodes-compute:
       branch: "lp:charms/trusty/ubuntu"
       num_units: 1

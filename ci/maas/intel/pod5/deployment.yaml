@@ -108,8 +108,8 @@ demo-maas:
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
         nodes:
-            - name: node1
-              tags: physical
+            - name: node5
+              tags: compute
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:e0:0a:4a"
@@ -118,7 +118,7 @@ demo-maas:
                   - "00:1e:67:d0:9a:11"
               power:
                   type: ipmi
-                  address: 10.4.2.8
+                  address: 10.4.7.5
                   user: root
                   pass: root
                   driver: LAN_2_0
@@ -126,8 +126,8 @@ demo-maas:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
                 
-            - name: node2
-              tags: physical
+            - name: node4
+              tags: control
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:e0:08:b0"
@@ -136,7 +136,7 @@ demo-maas:
                   - "00:1e:67:d0:99:ef"
               power:
                   type: ipmi
-                  address: 10.4.2.9
+                  address: 10.4.7.4
                   user: root
                   pass: root
                   driver: LAN_2_0
@@ -145,7 +145,7 @@ demo-maas:
 #                  requested_address: 192.168.122.5
 
             - name: node3
-              tags: physical
+              tags: control
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:e0:08:7e"
@@ -154,7 +154,7 @@ demo-maas:
                   - "00:1e:67:c2:23:d9"
               power:
                   type: ipmi
-                  address: 10.4.2.7
+                  address: 10.4.7.3
                   user: root
                   pass: root
                   driver: LAN_2_0
@@ -162,8 +162,8 @@ demo-maas:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
 
-            - name: node4
-              tags: physical
+            - name: node2
+              tags: control
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:cf:b8:92"
@@ -172,7 +172,7 @@ demo-maas:
                   - "00:1e:67:d0:9b:0d"
               power:
                   type: ipmi
-                  address: 10.4.2.10
+                  address: 10.4.7.2
                   user: root
                   pass: root
                   driver: LAN_2_0

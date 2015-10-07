@@ -109,7 +109,7 @@ demo-maas:
         # controller upon startup of the node.
         nodes:
             - name: node2
-              tags: physical
+              tags: control
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:e0:0b:71"
@@ -145,7 +145,7 @@ demo-maas:
 #                  requested_address: 192.168.122.5
 
             - name: node3
-              tags: physical
+              tags: control
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:e0:09:32"
@@ -163,7 +163,7 @@ demo-maas:
 #                  requested_address: 192.168.122.5
 
             - name: node4
-              tags: physical
+              tags: control
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:e0:09:fa"
@@ -181,7 +181,7 @@ demo-maas:
 #                  requested_address: 192.168.122.5
 
             - name: node5
-              tags: physical
+              tags: compute
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:cf:bc:f7"
