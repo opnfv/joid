@@ -10,8 +10,8 @@ demo-maas:
         # Contains the virtual machine parameters for creating the MAAS virtual
         # server. Here you can configure the name of the virsh domain, the
         # parameters for how the network is attached.
-        name: maas-boot-vm-dc1
-        interfaces: ['bridge=brAdm,model=virtio']
+        name: maas2
+        interfaces: ['bridge=brAdm,model=virtio', 'bridge=brData,model=virtio', 'bridge=brStorage,model=virtio']
         memory: 3072
         vcpus: 1
         arch: amd64
@@ -26,7 +26,7 @@ demo-maas:
           - ppa:juju/stable
 
         # Virsh power settings
-        # Specifies the uri and keys to use for virsh power control of the 
+        # Specifies the uri and keys to use for virsh power control of the
         # juju virtual machine. If the uri is omitted, the value for the
         # --remote is used. If no power settings are desired, then do not
         # supply the virsh block.
@@ -45,8 +45,8 @@ demo-maas:
         #  - http://maas.ubuntu.com/docs/api.html#maas-server
         settings:
             main_archive: http://fr.archive.ubuntu.com/ubuntu
-            upstream_dns: 192.168.0.4
-            maas_name: automaas
+            upstream_dns: 8.8.8.8
+            maas_name: maas2
             # kernel_opts: "console=tty0 console=ttyS1,115200n8"
             # ntp_server: ntp.ubuntu.com
 
@@ -71,8 +71,22 @@ demo-maas:
             netmask 255.255.255.0
             network 192.168.2.0
             broadcast 192.168.2.255
-            gateway 192.168.2.4
-            dns-nameservers 192.168.0.4 127.0.0.1
+            gateway 192.168.2.1
+            dns-nameservers 8.8.8.8 127.0.0.1
+
+            auto eth1
+            iface eth1 inet static
+            address 192.168.12.5
+            netmask 255.255.255.0
+            network 192.168.12.0
+            broadcast 192.168.12.255
+
+            auto eth2
+            iface eth2 inet static
+            address 192.168.22.5
+            netmask 255.255.255.0
+            network 192.168.22.0
+            broadcast 192.168.22.255
 
             #auto lo
             #iface lo inet loopback
@@ -91,19 +105,39 @@ demo-maas:
         # device should be bound, the range of IP addresses, etc.
         # Note: this may contain the special identifiers:
         #   ${maas_net} - the first 3 octets of the ipv4 address
-        #   ${maas_ip} - the ip address of the MAAS controller 
+        #   ${maas_ip} - the ip address of the MAAS controller
         node_group_ifaces:
             - device: eth0
               ip: 192.168.2.5
               subnet_mask: 255.255.255.0
               broadcast_ip: 192.168.2.255
-              router_ip: 192.168.2.4
+              router_ip: 192.168.2.1
               static_range:
                   low: 192.168.2.50
                   high: 192.168.2.150
               dynamic_range:
                   low: 192.168.2.151
                   high: 192.168.2.200
+            - device: eth1
+              ip: 192.168.12.5
+              subnet_mask: 255.255.255.0
+              broadcast_ip: 192.168.12.255
+              static_range:
+                  low: 192.168.12.50
+                  high: 192.168.12.150
+              dynamic_range:
+                  low: 192.168.12.151
+                  high: 192.168.12.200
+            - device: eth2
+              ip: 192.168.22.5
+              subnet_mask: 255.255.255.0
+              broadcast_ip: 192.168.22.255
+              static_range:
+                  low: 192.168.22.50
+                  high: 192.168.22.150
+              dynamic_range:
+                  low: 192.168.22.151
+                  high: 192.168.22.200
 
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
@@ -112,7 +146,7 @@ demo-maas:
               tags: compute
               architecture: amd64/generic
               mac_addresses:
-                  - "38:63:bb:3f:bc:c8" 
+                  - "38:63:bb:3f:bc:c8"
                   - "38:63:bb:3f:bc:c9"
                   - "38:63:bb:3f:bc:ca"
                   - "38:63:bb:3f:bc:cb"
@@ -121,15 +155,15 @@ demo-maas:
               power:
                   type: ipmi
                   address: 192.168.2.11
-                  user: maas
-                  pass: 8B3DuzZCrC
+                  user: Administrator
+                  pass: pod2Admin
                   driver: LAN_2_0
 #              sticky_ip_address:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
-#                
+#
             - name: node2-compute
-              tags: control
+              tags: compute
               architecture: amd64/generic
               mac_addresses:
                   - "38:63:bb:44:34:84"
@@ -141,12 +175,12 @@ demo-maas:
               power:
                   type: ipmi
                   address: 192.168.2.12
-                  user: maas
-                  pass: O0W3DtlHVuFX7
+                  user: Administrator
+                  pass: pod2Admin
                   driver: LAN_2_0
 
             - name: node3-compute
-              tags: control
+              tags: compute
               architecture: amd64/generic
               mac_addresses:
                   - "38:63:bb:3f:1d:8c"
@@ -158,12 +192,12 @@ demo-maas:
               power:
                   type: ipmi
                   address: 192.168.2.13
-                  user: maas
-                  pass: 6vCiYnhZuBt
+                  user: Administrator
+                  pass: pod2Admin
                   driver: LAN_2_0
 
             - name: node4-compute
-              tags: control
+              tags: compute
               architecture: amd64/generic
               mac_addresses:
                   - "38:63:bb:3f:2d:a8"
@@ -175,54 +209,61 @@ demo-maas:
               power:
                   type: ipmi
                   address: 192.168.2.14
-                  user: maas
-                  pass: 3dSyBHsb1P
+                  user: Administrator
+                  pass: pod2Admin
                   driver: LAN_2_0
 
-#            - name: node5-control
-#              tags: control
-#              architecture: amd64/generic
-#              mac_addresses:
-#                  - "00:1a:64:c8:a8:48"
-#                  - "00:1a:64:c8:a8:4a"
-#                  - "a0:36:9f:4e:88:14"
-#                  - "a0:36:9f:4e:88:16"
-#              power:
-#                  type: ipmi
-#                  address: 192.168.2.15
-#                  user: maas
-#                  pass: vrFXUa20C
-#                  driver: LAN_2_0
-
-            - name: node6-control
-              tags: physical
+            - name: node5-control
+              tags: control
               architecture: amd64/generic
               mac_addresses:
-                  - "00:1a:64:c8:a8:14"
-                  - "00:1a:64:c8:a8:16"
-                  - "a0:36:9f:4e:87:5c"
-                  - "a0:36:9f:4e:87:5e"
+                  - "40:f2:e9:29:de:8a"
+                  - "40:f2:e9:29:de:8b"
+                  - "40:f2:e9:29:de:8c"
+                  - "40:f2:e9:29:de:8d"
+                  - "a0:36:9f:1f:66:f0"
+                  - "a0:36:9f:1f:66:f2"
+                  - "42:f2:e9:29:de:89"
+              power:
+                  type: ipmi
+                  address: 192.168.2.15
+                  user: Administrator
+                  pass: pod2Admin
+                  driver: LAN_2_0
+
+            - name: node6-control
+              tags: control
+              architecture: amd64/generic
+              mac_addresses:
+                  - "40:f2:e9:2a:30:3a"
+                  - "40:f2:e9:2a:30:3b"
+                  - "40:f2:e9:2a:30:3c"
+                  - "40:f2:e9:2a:30:3d"
+                  - "a0:36:9f:1f:67:1c"
+                  - "a0:36:9f:1f:67:1e"
+                  - "42:f2:e9:2a:30:39"
               power:
                   type: ipmi
                   address: 192.168.2.16
-                  user: maas
-                  pass: jYkXYMhI1
+                  user: Administrator
+                  pass: pod2Admin
                   driver: LAN_2_0
 
-#            - name: node7-control
-#              tags: control
-#              architecture: amd64/generic
-#              mac_addresses:
-#                  - "00:1a:64:c8:a8:34"
-#                  - "00:1a:64:c8:a8:36"
-#                  - "a0:36:9f:4e:88:38"
-#                  - "a0:36:9f:4e:88:3a"
-#              power:
-#                  type: ipmi
-#                  address: 192.168.2.17
-#                  user: maas
-#                  pass: GPejUGZx6IkVxz
-#                  driver: LAN_2_0
+            - name: node7-control
+              tags: control
+              architecture: amd64/generic
+              mac_addresses:
+                  - "40:f2:e9:2a:4d:e2"
+                  - "40:f2:e9:2a:4d:e3"
+                  - "40:f2:e9:2a:4d:e4"
+                  - "40:f2:e9:2a:4d:e5"
+                  - "42:f2:e9:2a:4d:e1"
+              power:
+                  type: ipmi
+                  address: 192.168.2.17
+                  user: Administrator
+                  pass: pod2Admin
+                  driver: LAN_2_0
 
 #            - name: jenkins-slave
 #              tags: jenkins-slave
