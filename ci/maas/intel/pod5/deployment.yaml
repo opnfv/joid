@@ -10,7 +10,7 @@ demo-maas:
         # Contains the virtual machine parameters for creating the MAAS virtual
         # server. Here you can configure the name of the virsh domain, the
         # parameters for how the network is attached.
-        name: maas-boot-vm-dc1
+        name: opnfv-maas-intel
         interfaces: ['bridge=br0,model=virtio']
         memory: 4096
         vcpus: 2
@@ -46,7 +46,7 @@ demo-maas:
         settings:
             main_archive: http://us.archive.ubuntu.com/ubuntu
             upstream_dns: 10.4.0.2
-            maas_name: automaas
+            maas_name: intelpod5
             # kernel_opts: "console=tty0 console=ttyS1,115200n8"
             # ntp_server: ntp.ubuntu.com
 
@@ -108,7 +108,7 @@ demo-maas:
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
         nodes:
-            - name: node5
+            - name: node5-compute
               tags: compute
               architecture: amd64/generic
               mac_addresses:
@@ -126,7 +126,7 @@ demo-maas:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
                 
-            - name: node4
+            - name: node4-control
               tags: control
               architecture: amd64/generic
               mac_addresses:
@@ -144,7 +144,7 @@ demo-maas:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
 
-            - name: node3
+            - name: node3-control
               tags: control
               architecture: amd64/generic
               mac_addresses:
@@ -162,7 +162,7 @@ demo-maas:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
 
-            - name: node2
+            - name: node2-control
               tags: control
               architecture: amd64/generic
               mac_addresses:
