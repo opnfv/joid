@@ -45,7 +45,7 @@ demo-maas:
         #  - http://maas.ubuntu.com/docs/api.html#maas-server
         settings:
             main_archive: http://fr.archive.ubuntu.com/ubuntu
-            upstream_dns: 8.8.8.8
+            upstream_dns: 192.168.2.1
             maas_name: orangepod2
             # kernel_opts: "console=tty0 console=ttyS1,115200n8"
             # ntp_server: ntp.ubuntu.com
@@ -72,7 +72,7 @@ demo-maas:
             network 192.168.2.0
             broadcast 192.168.2.255
             gateway 192.168.2.1
-            dns-nameservers 8.8.8.8 127.0.0.1
+            dns-nameservers 192.168.2.1 127.0.0.1
 
             auto eth1
             iface eth1 inet static

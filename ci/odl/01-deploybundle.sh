@@ -22,6 +22,12 @@ case "$3" in
     'orangepod2' )
         sed -i -- 's/10.4.1.1/192.168.2.2/g' ./bundles.yaml
         ;;
+    'intelpod6' )
+        sed -i -- 's/10.4.1.1/10.4.1.2/g' ./bundles.yaml
+        ;;
+    'intelpod6' )
+        sed -i -- 's/10.4.1.1/10.4.1.2/g' ./bundles.yaml
+        ;;
 esac
 
 echo "... Deployment Started ...."
