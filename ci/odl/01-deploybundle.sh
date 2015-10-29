@@ -8,7 +8,6 @@ case "$1" in
         ;;
     'ha' )
         cp odl/juju-deployer/ovs-odl-ha.yaml ./bundles.yaml
-        juju-deployer -d -r 13 -c bundles.yaml openstack-phase1
         ;;
     'tip' )
         cp odl/juju-deployer/ovs-odl-tip.yaml ./bundles.yaml
@@ -31,8 +30,21 @@ case "$3" in
 esac
 
 echo "... Deployment Started ...."
-
-#case openstack kilo with odl
-juju-deployer -d -r 13 -c bundles.yaml trusty-"$2"
-
+case "$1" in
+    'nonha' )
+        juju-deployer -vW -d -c bundles.yaml trusty-"$2"
+        ;;
+    'ha' )
+        juju-deployer -vW -d -c bundles.yaml openstack-phase1
+        juju-deployer -vW -d -c bundles.yaml trusty-"$2"-nodes
+        juju-deployer -vW -d -c bundles.yaml openstack-phase3
+        juju-deployer -vW -d -c bundles.yaml trusty-"$2"
+        ;;
+    'tip' )
+        juju-deployer -vW -d -c bundles.yaml trusty-"$2"
+        ;;
+    * )
+        juju-deployer -vW -d -c bundles.yaml trusty-"$2"
+        ;;
+esac
 echo "... Deployment finished ...."

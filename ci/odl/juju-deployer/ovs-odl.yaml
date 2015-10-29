@@ -92,13 +92,20 @@ openstack-services:
     - ['glance:identity-service', 'keystone:identity-service']
     - ['glance:amqp', 'rabbitmq-server:amqp']
     - ['openstack-dashboard:identity-service','keystone:identity-service']
+trusty-liberty:
+  inherits: openstack-services
+  overrides:
+#    os-data-network: 10.6.1.0/24
+    openstack-origin: cloud:trusty-liberty
 trusty-kilo:
   inherits: openstack-services
   overrides:
+#    os-data-network: 10.6.1.0/24
     openstack-origin: cloud:trusty-kilo
 trusty-juno:
   inherits: openstack-services
   overrides:
+#    os-data-network: 10.6.1.0/24
     openstack-origin: cloud:trusty-juno
 trusty-icehouse:
   inherits: openstack-services
