@@ -23,7 +23,7 @@ unitMachine()
 
 mkdir -m 0700 -p cloud
 controller_address=$(unitAddress keystone 0)
-configOpenrc admin openstack admin http://$controller_address:5000/v2.0 RegionOne > cloud/admin-openrc
+configOpenrc admin openstck admin http://$controller_address:5000/v2.0 RegionOne > cloud/admin-openrc
 chmod 0600 cloud/admin-openrc
 
 machine=$(unitMachine nova-cloud-controller 0)

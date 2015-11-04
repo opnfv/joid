@@ -2,7 +2,7 @@ export JUJU_REPOSITORY=../charms
 
 DEFAULT_SERIES=trusty
 
-CHARM_CASSANDRA=local:precise/cassandra
+CHARM_CASSANDRA=local:trusty/cassandra
 CHARM_CASSANDRA_DEPLOY_OPTS="--config config-trusty.yaml"
 
 CHARM_CONTRAIL_ANALYTICS=local:trusty/contrail-analytics
@@ -27,8 +27,6 @@ CHARM_NEUTRON_API_DEPLOY_OPTS="--config config-trusty.yaml"
 CHARM_NEUTRON_API_CONTRAIL=local:trusty/neutron-api-contrail
 
 CHARM_NEUTRON_CONTRAIL=local:trusty/neutron-contrail
-
-CHARM_NEUTRON_GATEWAY=local:trusty/quantum-gateway
 
 CHARM_NOVA_CLOUD_CONTROLLER=local:trusty/nova-cloud-controller
 CHARM_NOVA_CLOUD_CONTROLLER_DEPLOY_OPTS="--config config-trusty.yaml"

@@ -52,9 +52,9 @@ openstack:
       to:
         - "lxc:ubuntu=0"
 
-    neutron-gateway:
-      branch: lp:~sdn-charmers/charms/trusty/quantum-gateway/contrail
-      constraints: tags=virtual
+#    neutron-gateway:
+#      branch: lp:~sdn-charmers/charms/trusty/quantum-gateway/contrail
+#      constraints: tags=virtual
 
     glance:
       branch: lp:~openstack-charmers/charms/trusty/glance/next
@@ -64,7 +64,7 @@ openstack:
 
     neutron-api:
       branch: lp:~openstack-charmers/charms/trusty/neutron-api/vpp
-      constraints: tags=virtual
+#      constraints: tags=virtual
       to:
         - "lxc:ubuntu=0"
       options:
@@ -81,35 +81,30 @@ openstack:
     - [ nova-compute, glance ]
     - [ glance, mysql ]
     - [ glance, keystone ]
-    - [ neutron-gateway, mysql ]
-    - [ "neutron-gateway:amqp", "rabbitmq-server:amqp" ]
-    - [ neutron-gateway, nova-cloud-controller ]
     - [ openstack-dashboard, keystone ]
     - [ neutron-api, mysql ]
     - [ neutron-api, rabbitmq-server ]
     - [ neutron-api, nova-cloud-controller ]
     - [ neutron-api, keystone ]
     - [ neutron-api, neutron-api-contrail ]
+
 contrail:
   inherits: openstack
   services:
     cassandra:
-      branch: lp:~sdn-charmers/charms/precise/cassandra/forced-install
-      series: precise
-      constraints: tags=control
+      branch: lp:~stub/charms/trusty/cassandra/noauthentication
       options:
-        allow-single-node: true
+        authenticator: AllowAllAuthenticator
+        - "lxc:ubuntu=0"
 
     zookeeper:
-      branch: lp:~sdn-charmers/charms/precise/zookeeper/fix-symlink
+      branch: lp:~charmers/charms/precise/zookeeper/trunk
       series: precise
-      constraints: mem=1G
       to:
-        - "lxc:cassandra=0"
+        - "lxc:ubuntu=0"
 
     contrail-configuration:
-      branch:  lp:~sdn-charmers/charms/trusty/contrail-configuration/ssl
-      constraints: mem=4G
+      branch:  lp:~sdn-charmers/charms/trusty/contrail-configuration/trunk
       to:
         - "lxc:ubuntu=0"
 #      options:
@@ -117,13 +112,11 @@ contrail:
 
     contrail-control:
       branch: lp:~sdn-charmers/charms/trusty/contrail-control/trunk
-      constraints: mem=2G
       to:
         - "lxc:ubuntu=0"
 
     contrail-analytics:
       branch: lp:~sdn-charmers/charms/trusty/contrail-analytics/trunk
-      constraints: mem=4G
       to:
         - "lxc:ubuntu=0"
 
@@ -134,20 +127,22 @@ contrail:
 
     neutron-api-contrail:
       branch: lp:~sdn-charmers/charms/trusty/neutron-api-contrail/trunk
-#      options:
-#        overlay-network-type: 'vxlan gre'
-#        security-groups: true
-
     neutron-contrail:
       branch: lp:~sdn-charmers/charms/trusty/neutron-contrail/trunk
+
   overrides:
     admin-role: admin
   relations:
     - [ "contrail-configuration:cassandra", "cassandra:database" ]
+    - [ contrail-configuration, zookeeper ]
+    - [ contrail-configuration, rabbitmq-server ]
+    - [ contrail-configuration, keystone ]
     - [ neutron-api-contrail, contrail-configuration ]
     - [ neutron-api-contrail, keystone ]
+    - [ "contrail-control:contrail-api", "contrail-configuration:contrail-api" ]
     - [ "contrail-control:contrail-discovery", "contrail-configuration:contrail-discovery" ]
     - [ "contrail-control:contrail-ifmap", "contrail-configuration:contrail-ifmap" ]
+    - [ contrail-control, keystone ]
     - [ "contrail-analytics:cassandra", "cassandra:database" ]
     - [ contrail-analytics, contrail-configuration ]
     - [ contrail-webui, keystone ]
@@ -156,13 +151,9 @@ contrail:
     - [ "contrail-webui:cassandra", "cassandra:database" ]
     - [ nova-compute, neutron-contrail ]
     - [ "neutron-contrail:contrail-discovery", "contrail-configuration:contrail-discovery" ]
-    - [ neutron-contrail, neutron-gateway ]
     - [ "neutron-contrail:contrail-api", "contrail-configuration:contrail-api" ]
     - [ neutron-contrail, keystone ]
-    - [ contrail-configuration, zookeeper ]
-    - [ contrail-configuration, rabbitmq-server ]
-    - [ contrail-configuration, keystone ]
-    - [ contrail-configuration, neutron-gateway ]
+
 precise-icehouse-contrail:
   inherits: contrail
   series: precise
@@ -191,3 +182,24 @@ trusty-juno-contrail:
       charm: cs:trusty/rabbitmq-server
   overrides:
     openstack-origin: cloud:trusty-juno
+trusty-kilo-contrail:
+  inherits: contrail
+  series: trusty
+  services:
+    mysql:
+      charm: cs:trusty/mysql
+    rabbitmq-server:
+      charm: cs:trusty/rabbitmq-server
+  overrides:
+    openstack-origin: cloud:trusty-kilo
+trusty-liberty-contrail:
+  inherits: contrail
+  series: trusty
+  services:
+    mysql:
+      charm: cs:trusty/mysql
+    rabbitmq-server:
+      charm: cs:trusty/rabbitmq-server
+  overrides:
+    openstack-origin: cloud:trusty-liberty
+

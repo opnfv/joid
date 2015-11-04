@@ -28,17 +28,15 @@ Deploy with cloud-sh-contrail
 
 cloud-sh-contrail is a collection of development shell scripts to deploy
 and setup OpenStack with OpenContrail using Juju's local provider. This will
-create 4 KVMs as follows:
+create 3 KVMs as follows:
 
 *KVM #1 - Keystone, Glance, Neutron Server, Nova Cloud Controller, Horizon,
           MySQL, RabbitMQ, Contrail Configuration, Contrail Control,
-          Contrail Analytics, Zookeeper
+          Contrail Analytics, Contrail Web UI, Zookeeper
 
-*KVM #2 - Neutron agents
+*KVM #2 - Nova Compute with Contrail vRouter
 
-*KVM #3 - Nova Compute with Contrail vRouter
-
-*KVM #4 - Cassandra
+*KVM #3 - Cassandra
 
 You'll require approx. 25Gb RAM with 60Gb+ disk space.
 Deployment can take anywhere between 20 mins to 1 hour.
@@ -68,6 +66,10 @@ This will deploy OpenStack and import Trusty's daily image into Glance.
 
 Horizon will be located on the machine 'juju status openstack-dashboard' -
 http://<ip>/horizon.
+
+Contrail Web UI will be located on the machine 'juju status contrail-webui' -
+http://<ip>:8080.
+
 Admin credentials will be written to cloud/admin-openrc.
 
 Upon deployment, the host's route and iptables config will be updated to send

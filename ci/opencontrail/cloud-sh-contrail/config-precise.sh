@@ -32,9 +32,6 @@ CHARM_NEUTRON_API_CONTRAIL=local:precise/neutron-api-contrail
 
 CHARM_NEUTRON_CONTRAIL=local:precise/neutron-contrail
 
-CHARM_NEUTRON_GATEWAY=local:precise/quantum-gateway
-CHARM_NEUTRON_GATEWAY_DEPLOY_OPTS="--config config-precise.yaml"
-
 CHARM_NOVA_CLOUD_CONTROLLER=local:precise/nova-cloud-controller
 CHARM_NOVA_CLOUD_CONTROLLER_DEPLOY_OPTS="--config config-precise.yaml"
 

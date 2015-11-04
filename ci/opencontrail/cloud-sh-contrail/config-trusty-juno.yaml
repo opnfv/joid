@@ -1,5 +1,5 @@
 cassandra:
-  allow-single-node: true
+  authenticator: AllowAllAuthenticator
 
 contrail-analytics:
   openstack-origin: cloud:trusty-juno
@@ -23,9 +23,6 @@ mysql:
 
 neutron-api:
   manage-neutron-plugin-legacy-mode: false
-  openstack-origin: cloud:trusty-juno
-
-neutron-gateway:
   openstack-origin: cloud:trusty-juno
 
 nova-cloud-controller:

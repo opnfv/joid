@@ -24,7 +24,7 @@ case "$3" in
     'intelpod6' )
         sed -i -- 's/10.4.1.1/10.4.1.2/g' ./bundles.yaml
         ;;
-    'intelpod6' )
+    'intelpod5' )
         sed -i -- 's/10.4.1.1/10.4.1.2/g' ./bundles.yaml
         ;;
 esac

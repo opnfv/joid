@@ -1,5 +1,5 @@
 cassandra:
-  allow-single-node: true
+  authenticator: AllowAllAuthenticator
 
 contrail-analytics:
   openstack-origin: cloud:precise-icehouse
@@ -23,9 +23,6 @@ mysql:
 
 neutron-api:
   manage-neutron-plugin-legacy-mode: false
-  openstack-origin: cloud:precise-icehouse
-
-neutron-gateway:
   openstack-origin: cloud:precise-icehouse
 
 nova-cloud-controller:

@@ -56,7 +56,7 @@ fi
 juju bootstrap
 waitForMachine 0
 
-spare_cpus=$(($(grep processor /proc/cpuinfo | wc -l) - 5))
+spare_cpus=$(($(grep processor /proc/cpuinfo | wc -l) - 4))
 if [ $spare_cpus -gt 0 ]; then
 	spare_cpus=$(((spare_cpus * 3) / 4))
 else
@@ -66,8 +66,6 @@ fi
 extra_cpus=0
 [ $spare_cpus -ne 0 ] && extra_cpus=$((1 + (((spare_cpus - 1) * 3) / 4))) && spare_cpus=$((spare_cpus - extra_cpus))
 juju add-machine --constraints "cpu-cores=$((1 + extra_cpus)) mem=12G root-disk=20G" --series $DEFAULT_SERIES
-
-juju deploy --constraints mem=1G $CHARM_NEUTRON_GATEWAY_DEPLOY_OPTS "${CHARM_NEUTRON_GATEWAY:-quantum-gateway}" neutron-gateway
 
 extra_cpus=0
 [ $spare_cpus -ne 0 ] && extra_cpus=$((1 + (((spare_cpus - 1) * 3) / 4))) && spare_cpus=$((spare_cpus - extra_cpus))
@@ -79,9 +77,9 @@ waitForMachine 1
 juju scp lxc-network.sh 1:
 juju run --machine 1 "sudo ./lxc-network.sh"
 
-waitForMachine 4
-juju scp lxc-network.sh 4:
-juju run --machine 4 "sudo ./lxc-network.sh"
+waitForMachine 3
+juju scp lxc-network.sh 3:
+juju run --machine 3 "sudo ./lxc-network.sh"
 
 juju deploy --to lxc:1 $CHARM_MYSQL_DEPLOY_OPTS "${CHARM_MYSQL:-mysql}"
 juju deploy --to lxc:1 $CHARM_RABBITMQ_SERVER_DEPLOY_OPTS "${CHARM_RABBITMQ_SERVER:-rabbitmq-server}"
@@ -96,7 +94,7 @@ juju deploy --to lxc:1 $CHARM_CONTRAIL_CONFIGURATION_DEPLOY_OPTS "${CHARM_CONTRA
 juju deploy --to lxc:1 $CHARM_CONTRAIL_CONTROL_DEPLOY_OPTS "${CHARM_CONTRAIL_CONTROL:-contrail-control}"
 juju deploy --to lxc:1 $CHARM_CONTRAIL_ANALYTICS_DEPLOY_OPTS "${CHARM_CONTRAIL_ANALYTICS:-contrail-analytics}"
 juju deploy --to lxc:1 $CHARM_CONTRAIL_WEBUI_DEPLOY_OPTS "${CHARM_CONTRAIL_WEBUI:-contrail-webui}"
-juju deploy --to lxc:4 $CHARM_CASSANDRA_DEPLOY_OPTS "${CHARM_CASSANDRA:-cassandra}"
+juju deploy --to lxc:3 $CHARM_CASSANDRA_DEPLOY_OPTS "${CHARM_CASSANDRA:-cassandra}"
 juju deploy $CHARM_NEUTRON_API_CONTRAIL_DEPLOY_OPTS "${CHARM_NEUTRON_API_CONTRAIL:-neutron-api-contrail}"
 juju deploy $CHARM_NEUTRON_CONTRAIL_DEPLOY_OPTS "${CHARM_NEUTRON_CONTRAIL:-neutron-contrail}"
 
@@ -106,14 +104,11 @@ waitForService mysql keystone
 juju add-relation keystone mysql
 sleep 60
 
-waitForService rabbitmq-server nova-cloud-controller glance openstack-dashboard neutron-gateway nova-compute
+waitForService rabbitmq-server nova-cloud-controller glance openstack-dashboard nova-compute
 juju add-relation nova-cloud-controller mysql
 juju add-relation nova-cloud-controller rabbitmq-server
 juju add-relation nova-cloud-controller glance
 juju add-relation nova-cloud-controller keystone
-juju add-relation neutron-gateway mysql
-juju add-relation neutron-gateway:amqp rabbitmq-server:amqp
-juju add-relation neutron-gateway nova-cloud-controller
 juju add-relation nova-compute:shared-db mysql:shared-db
 juju add-relation nova-compute:amqp rabbitmq-server:amqp
 juju add-relation nova-compute glance
@@ -137,19 +132,19 @@ juju add-relation contrail-configuration:cassandra cassandra:database
 juju add-relation contrail-configuration zookeeper
 juju add-relation contrail-configuration rabbitmq-server
 juju add-relation contrail-configuration keystone
-juju add-relation contrail-configuration neutron-gateway
 sleep 60
 
 waitForService contrail-control contrail-analytics
 juju add-relation neutron-api-contrail contrail-configuration
 juju add-relation neutron-api-contrail keystone
+juju add-relation contrail-control:contrail-api contrail-configuration:contrail-api
 juju add-relation contrail-control:contrail-discovery contrail-configuration:contrail-discovery
 juju add-relation contrail-control:contrail-ifmap contrail-configuration:contrail-ifmap
+juju add-relation contrail-control keystone
 juju add-relation contrail-analytics:cassandra cassandra:database
 juju add-relation contrail-analytics contrail-configuration
 juju add-relation nova-compute neutron-contrail
 juju add-relation neutron-contrail:contrail-discovery contrail-configuration:contrail-discovery
-juju add-relation neutron-contrail neutron-gateway
 juju add-relation neutron-contrail:contrail-api contrail-configuration:contrail-api
 juju add-relation neutron-contrail keystone
 sleep 60
