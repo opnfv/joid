@@ -33,20 +33,25 @@ esac
 
 echo "... Deployment Started ...."
 case "$1" in
-    'nonha' )
-        juju-deployer -vW -d -c bundles.yaml trusty-"$2"
-        ;;
     'ha' )
         juju-deployer -vW -d -c bundles.yaml trusty-"$2"-nodes
-        juju run --service nodes-api 'sudo ifup eth1'
-        juju run --service nodes-coompute 'sudo ifup eth1'
-        juju-deployer -vW -d -c bundles.yaml trusty-"$2"
-        ;;
-    'tip' )
-        juju-deployer -vW -d -c bundles.yaml trusty-"$2"
-        ;;
-    * )
-        juju-deployer -vW -d -c bundles.yaml trusty-"$2"
+        case "$3" in
+            'orangepod2' )
+                juju run --service nodes-api 'sudo ifup eth3'
+                juju run --service nodes-compute 'sudo ifup eth5'
+            ;;
+            'intelpod6' )
+                juju run --service nodes-api 'sudo ifup eth1'
+                juju run --service nodes-compute 'sudo ifup eth1'
+            ;;
+            'intelpod5' )
+                juju run --service nodes-api 'sudo ifup eth1'
+                juju run --service nodes-compute 'sudo ifup eth1'
+            ;;
+        esac
         ;;
 esac
+
+juju-deployer -vW -d -c bundles.yaml trusty-"$2"
+
 echo "... Deployment finished ...."
