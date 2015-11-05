@@ -60,7 +60,7 @@ maas maas boot-source update 1 url="http://maas.ubuntu.com/images/ephemeral-v2/d
 #maas maas boot-source-selections create 1 os="ubuntu" release="precise" arches="amd64" subarches="*" labels="*"
 maas maas boot-resources import
 maas maas sshkeys new key="`cat $HOME/.ssh/id_rsa.pub`"
-maas maas sshkeys new key="`cat $HOME/.ssh/id_maas.pub`"
+#maas maas sshkeys new key="`cat $HOME/.ssh/id_maas.pub`"
 
 #echo "... Deployment of opnfv release Started ...."
 #python deploy.py $maas_ip
