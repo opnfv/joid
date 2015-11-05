@@ -23,9 +23,11 @@ case "$3" in
         ;;
     'intelpod6' )
         sed -i -- 's/10.4.1.1/10.4.1.2/g' ./bundles.yaml
+        sed -i -- 's/#os-data-network/os-data-network/g' ./bundles.yaml
         ;;
     'intelpod5' )
         sed -i -- 's/10.4.1.1/10.4.1.2/g' ./bundles.yaml
+        sed -i -- 's/#os-data-network/os-data-network/g' ./bundles.yaml
         ;;
 esac
 
@@ -35,9 +37,9 @@ case "$1" in
         juju-deployer -vW -d -c bundles.yaml trusty-"$2"
         ;;
     'ha' )
-        juju-deployer -vW -d -c bundles.yaml openstack-phase1
         juju-deployer -vW -d -c bundles.yaml trusty-"$2"-nodes
-        juju-deployer -vW -d -c bundles.yaml openstack-phase3
+        juju run --service nodes-api 'sudo ifup eth1'
+        juju run --service nodes-coompute 'sudo ifup eth1'
         juju-deployer -vW -d -c bundles.yaml trusty-"$2"
         ;;
     'tip' )

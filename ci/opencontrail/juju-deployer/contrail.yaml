@@ -93,9 +93,10 @@ contrail:
   services:
     cassandra:
       branch: lp:~stub/charms/trusty/cassandra/noauthentication
+      to:
+        - "lxc:ubuntu=0"
       options:
         authenticator: AllowAllAuthenticator
-        - "lxc:ubuntu=0"
 
     zookeeper:
       branch: lp:~charmers/charms/precise/zookeeper/trunk

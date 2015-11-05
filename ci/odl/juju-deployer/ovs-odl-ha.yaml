@@ -8,7 +8,7 @@ openstack-phase1:
       constraints: tags=control
     nodes-compute:
       branch: "lp:charms/trusty/ubuntu"
-      num_units: 2
+      num_units: 1
       constraints: tags=compute
     "ntp": 
       charm: "cs:trusty/ntp"
@@ -19,7 +19,6 @@ openstack-phase1:
       - "nodes-compute:juju-info"
 openstack-phase2: 
   inherits: openstack-phase1
-#  overrides:
   services: 
     "percona-cluster": 
       charm: "cs:trusty/percona-cluster"
@@ -35,6 +34,31 @@ openstack-phase2:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
         - "lxc:nodes-api=2"
+    "hacluster-keystone":
+      charm: "cs:trusty/hacluster"
+      options:
+        corosync_key: |
+          'QisjNpoKHLkvyc3PEdDHP5VZjgD0kOk9t0ABPWmCELlu5AgWgnW6bJd34BVXO7VhW+3ZwNQM3W+bZ3pl28ftY4ki4N/S0KLFNia5egFgiA3AH2QXLnokS7OYXuu6GMJJ1S5mDe6P5zU+tfJe/Mebq24u7CgR0gAvohSPRdDTwdY='
+    "hacluster-horizon":
+      charm: "cs:trusty/hacluster"
+      options:
+        corosync_key: |
+          'aCVPHw6XYne+Hxv0WPiM3+yEfeIxs0Ly0EMKB494Rdzjf5rE52GcXqqxuvIa/nXJ4GCR+UdKk9FEwcASfYkeu3HDWUld9uTE6pOc+ibWYnybNH7VBfEHW8h9YmQKs3HD2T3wlTcS2irU4CUW7/IKNok4etYdM3iFn1K2ReSGXEI='
+    "hacluster-nova":
+      charm: "cs:trusty/hacluster"
+      options:
+        corosync_key: |
+          'gel86qmEze8dYKYbfqIgRpqapJpKtdYL2hxC1y5nWYBPq7EMf6V8mF01IjeUkSRs14CUDrsPpT4PWeom7EOY2fleuLx/aIuqQUfEDkhf/gvaz7BaU4hrmTCoDBK7/HvEwY+/wu4qkEeckzSRPsm9MYzqnLRshh8yjZJ70xU/mmk='
+    "hacluster-neutron": 
+      charm: "cs:trusty/hacluster"
+      options:
+        corosync_key: |
+          'KNhb4++3jlllbnscS5D3qdzOJDsQPEeZ7zOLZJHbkKrRjX9gRCijVVOiv2JCvq03HqQ7LIufQzWGl9Za8qh0f6QmQ3XhFh/Cb/3WaYFj+tEf0zArWv+8miswmM1z4eyTSrTWBq0dTgx1z96wjBxP5HV0+1LWW+3Ei4oZWyRGeR0='
+    "hacluster-glance":
+      charm: "cs:trusty/hacluster"
+      options:
+        corosync_key: |
+          'el1dd8107J5mwQDPS7tEJPZrr0XFfL95+Tku/QG90W5Q5f5SP4W8TRfKvddGmZWZl2lVd1neG5WqaHa1mq/aScJpoflzVAJCvshN7Gd2AjHhLNNugeI8S90j/7wrKUhqiCAlkKaeri2xs5bB5PZ7Z9AHuNZL7SW1al8lxrKhUFI='
     "rabbitmq-server": 
       charm: "cs:trusty/rabbitmq-server"
       num_units: 3
@@ -67,18 +91,18 @@ openstack-phase2:
         - "lxc:nodes-api=1"
         - "lxc:nodes-api=2"
     "nova-compute": 
-      charm: "cs:trusty/nova-compute"
-      num_units: 2
+      branch: "lp:~openstack-charmers/charms/trusty/nova-compute/next"
+      num_units: 4
       options: 
         "enable-live-migration": true
         "enable-resize": true
         "migration-auth-type": ssh
       to:
         - "nodes-compute=0"
-        - "nodes-compute=1"
-#        - "nodes-api=0"
-#        - "nodes-api=1"
-#        - "nodes-api=2"
+#        - "nodes-compute=1"
+        - "nodes-api=0"
+        - "nodes-api=1"
+        - "nodes-api=2"
     "nova-cloud-controller": 
       charm: "cs:trusty/nova-cloud-controller"
       num_units: 3
@@ -104,18 +128,22 @@ openstack-phase2:
         - "lxc:nodes-api=1"
         - "lxc:nodes-api=2"
     neutron-gateway:
-      branch: lp:~sdn-charmers/charms/trusty/neutron-gateway/ovs-odl
+      branch: lp:~narindergupta/charms/trusty/neutron-gateway/ovs-odl
+#      num_units: 3
 #      constraints: tags=gateway
       options:
 #        "ext-port": eth1
         plugin: ovs-odl
 #        instance-mtu: 1400
-      to: nodes-api=0
+      to:  
+        - "nodes-api=0"
     odl-controller:
-      branch: lp:~sdn-charmers/charms/trusty/odl-controller/trunk
+      branch: lp:~narindergupta/charms/trusty/odl-controller/liberty
       options:
         install-url: "https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.4-Helium-SR4/distribution-karaf-0.2.4-Helium-SR4.tar.gz"
-      to: lxc:nodes-api=1
+     # to: lxc:nodes-api=1
+      to: 
+        - "nodes-api=0"
     "glance": 
       charm: "cs:trusty/glance"
       num_units: 3
@@ -126,42 +154,12 @@ openstack-phase2:
         - "lxc:nodes-api=1"
         - "lxc:nodes-api=2"
     neutron-api-odl:
-      branch: lp:~openstack-charmers/charms/trusty/neutron-api-odl/vpp
+      branch: lp:~narindergupta/charms/trusty/neutron-api-odl/liberty
       options:
         overlay-network-type: 'vxlan gre'
         security-groups: true
     openvswitch-odl:
-      branch: lp:~alai/charms/trusty/openvswitch-odl/trunk
-openstack-phase3:
-  inherits: openstack-phase2
-  overrides:
-    cluster_count: 3
-  services:
-    "hacluster-keystone": 
-      charm: "cs:trusty/hacluster"
-      options:
-        corosync_key: |
-          'QisjNpoKHLkvyc3PEdDHP5VZjgD0kOk9t0ABPWmCELlu5AgWgnW6bJd34BVXO7VhW+3ZwNQM3W+bZ3pl28ftY4ki4N/S0KLFNia5egFgiA3AH2QXLnokS7OYXuu6GMJJ1S5mDe6P5zU+tfJe/Mebq24u7CgR0gAvohSPRdDTwdY='
-    "hacluster-horizon": 
-      charm: "cs:trusty/hacluster"
-      options:
-        corosync_key: |
-          'aCVPHw6XYne+Hxv0WPiM3+yEfeIxs0Ly0EMKB494Rdzjf5rE52GcXqqxuvIa/nXJ4GCR+UdKk9FEwcASfYkeu3HDWUld9uTE6pOc+ibWYnybNH7VBfEHW8h9YmQKs3HD2T3wlTcS2irU4CUW7/IKNok4etYdM3iFn1K2ReSGXEI='
-    "hacluster-nova": 
-      charm: "cs:trusty/hacluster"
-      options:
-        corosync_key: |
-          'gel86qmEze8dYKYbfqIgRpqapJpKtdYL2hxC1y5nWYBPq7EMf6V8mF01IjeUkSRs14CUDrsPpT4PWeom7EOY2fleuLx/aIuqQUfEDkhf/gvaz7BaU4hrmTCoDBK7/HvEwY+/wu4qkEeckzSRPsm9MYzqnLRshh8yjZJ70xU/mmk='
-    "hacluster-neutron": 
-      charm: "cs:trusty/hacluster"
-      options:
-        corosync_key: |
-          'KNhb4++3jlllbnscS5D3qdzOJDsQPEeZ7zOLZJHbkKrRjX9gRCijVVOiv2JCvq03HqQ7LIufQzWGl9Za8qh0f6QmQ3XhFh/Cb/3WaYFj+tEf0zArWv+8miswmM1z4eyTSrTWBq0dTgx1z96wjBxP5HV0+1LWW+3Ei4oZWyRGeR0='
-    "hacluster-glance": 
-      charm: "cs:trusty/hacluster"
-      options:
-        corosync_key: |
-          'el1dd8107J5mwQDPS7tEJPZrr0XFfL95+Tku/QG90W5Q5f5SP4W8TRfKvddGmZWZl2lVd1neG5WqaHa1mq/aScJpoflzVAJCvshN7Gd2AjHhLNNugeI8S90j/7wrKUhqiCAlkKaeri2xs5bB5PZ7Z9AHuNZL7SW1al8lxrKhUFI='
+      branch: lp:~openstack-charmers/charms/trusty/openvswitch-odl/trunk
   relations:
     - - "glance:ha"
       - "hacluster-glance:ha"
@@ -173,9 +171,6 @@ openstack-phase3:
       - "hacluster-nova:ha"
     - - "openstack-dashboard:ha"
       - "hacluster-horizon:ha"
-openstack-phase4:
-  inherits: openstack-phase3
-  relations:
     - - "nova-compute:amqp"
       - "rabbitmq-server:amqp"
     - - "neutron-gateway:amqp"
@@ -227,35 +222,49 @@ openstack-phase4:
     - - "neutron-api-odl:odl-controller"
       - "odl-controller:controller-api"
 trusty-liberty-nodes:
+  inherits: openstack-phase1
+  overrides:
+    series: trusty
+
+trusty-liberty:
   inherits: openstack-phase2
   overrides:
-#    os-data-network: 10.6.1.0/24
+    cluster_count: 3
+    #os-data-network: 10.4.8.0/21
     region: Canonical
     source: "cloud:trusty-liberty"
     "openstack-origin": "cloud:trusty-liberty"
     series: trusty
 
-trusty-liberty:
-  inherits: openstack-phase4
-
 trusty-kilo-nodes:
+  inherits: openstack-phase1
+  overrides:
+    series: trusty
+
+trusty-kilo:
   inherits: openstack-phase2
   overrides:
-#    os-data-network: 10.6.1.0/24
+    cluster_count: 3
+    #os-data-network: 10.4.8.0/21
     region: Canonical
     source: "cloud:trusty-kilo"
     "openstack-origin": "cloud:trusty-kilo"
     series: trusty
 
-trusty-kilo:
-  inherits: openstack-phase4
+
+trusty-juno-nodes:
+  inherits: openstack-phase1
+  overrides:
+    series: trusty
 
 trusty-juno:
   inherits: openstack-phase2
   overrides:
-#    os-data-network: 10.6.1.0/24
+    cluster_count: 3
+    #os-data-network: 10.4.8.0/21
     region: Canonical
     source: "cloud:trusty-juno"
     "openstack-origin": "cloud:trusty-juno"
     series: trusty
+
 
