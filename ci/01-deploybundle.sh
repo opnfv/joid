@@ -8,7 +8,6 @@ case "$1" in
         ;;
     'ha' )
         cp odl/juju-deployer/ovs-odl-ha.yaml ./bundles.yaml
-        juju-deployer -d -r 13 -c bundles.yaml openstack-phase1
         ;;
     'tip' )
         cp odl/juju-deployer/ovs-odl-tip.yaml ./bundles.yaml
@@ -20,13 +19,49 @@ esac
 
 case "$3" in
     'orangepod2' )
+        cp maas/orange/pod2/control-interfaces.host trusty/ubuntu-nodes-controller/network/interfaces.host
+        cp maas/orange/pod2/lxc-add-more-interfaces trusty/ubuntu-nodes-controller/lxc/add-more-interfaces
+        cp maas/orange/pod2/compute-interfaces.host trusty/ubuntu-nodes-compute/network/interfaces.host
+        cp maas/orange/pod2/lxc-add-more-interfaces trusty/ubuntu-nodes-compute/lxc/add-more-interfaces
         sed -i -- 's/10.4.1.1/192.168.2.2/g' ./bundles.yaml
+        sed -i -- 's/#os-data-network: 10.4.8.0\/21/os-data-network: 192.168.12.0\/24/g' ./bundles.yaml
+        ;;
+    'intelpod6' )
+        cp maas/intel/pod6/interfaces.host trusty/ubuntu-nodes-controller/network/interfaces.host
+        cp maas/intel/pod6/lxc-add-more-interfaces trusty/ubuntu-nodes-controller/lxc/add-more-interfaces
+        cp maas/intel/pod6/interfaces.host trusty/ubuntu-nodes-compute/network/interfaces.host
+        cp maas/intel/pod6/lxc-add-more-interfaces trusty/ubuntu-nodes-compute/lxc/add-more-interfaces
+        sed -i -- 's/10.4.1.1/10.4.1.2/g' ./bundles.yaml
+        sed -i -- 's/#os-data-network: 10.4.8.0\/21/os-data-network: 10.4.9.0\/24/g' ./bundles.yaml
+        ;;
+    'intelpod5' )
+        cp maas/intel/pod5/interfaces.host trusty/ubuntu-nodes-controller/network/interfaces.host
+        cp maas/intel/pod5/lxc-add-more-interfaces trusty/ubuntu-nodes-controller/lxc/add-more-interfaces
+        cp maas/intel/pod5/interfaces.host trusty/ubuntu-nodes-compute/network/interfaces.host
+        cp maas/intel/pod5/lxc-add-more-interfaces trusty/ubuntu-nodes-compute/lxc/add-more-interfaces
+        sed -i -- 's/10.4.1.1/10.4.1.2/g' ./bundles.yaml
+        sed -i -- 's/#os-data-network: 10.4.8.0\/21/os-data-network: 10.4.9.0\/24/g' ./bundles.yaml
         ;;
 esac
 
 echo "... Deployment Started ...."
-
-#case openstack kilo with odl
-juju-deployer -d -r 13 -c bundles.yaml trusty-"$2"
+case "$1" in
+    'nonha' )
+        juju-deployer -vW -d -c bundles.yaml trusty-"$2"-nodes
+        juju-deployer -vW -d -c bundles.yaml trusty-"$2"
+        ;;
+    'ha' )
+        juju-deployer -vW -d -c bundles.yaml trusty-"$2"-nodes
+        juju-deployer -vW -d -c bundles.yaml trusty-"$2"
+        ;;
+    'tip' )
+        juju-deployer -vW -d -c bundles.yaml trusty-"$2"-nodes
+        juju-deployer -vW -d -c bundles.yaml trusty-"$2"
+        ;;
+    * )
+        juju-deployer -vW -d -c bundles.yaml trusty-"$2"-nodes
+        juju-deployer -vW -d -c bundles.yaml trusty-"$2"
+        ;;
+esac
 
 echo "... Deployment finished ...."

@@ -7,7 +7,7 @@ openstack-phase1:
       num_units: 3
       constraints: tags=control
     nodes-compute:
-      charm: "local:trusty/ubuntu-nodes-compute"
+      charm: "local:trusty/ubuntu-nodes-controller"
       num_units: 1
       constraints: tags=compute
     "ntp": 
@@ -29,7 +29,7 @@ openstack-phase2:
         "max-connections": 10000
         "root-password": 293rhc395m
         "sst-password": 127rc14t51
-        vip: 10.4.1.15
+        vip: 10.4.1.25
       to:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
@@ -74,7 +74,7 @@ openstack-phase2:
       options: 
         "admin-password": openstack
         "admin-token": admin
-        vip: 10.4.1.13
+        vip: 10.4.1.23
       to:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
@@ -84,7 +84,7 @@ openstack-phase2:
       num_units: 3
       options: 
         secret: admin
-        vip: 10.4.1.11
+        vip: 10.4.1.21
         webroot: /
       to:
         - "lxc:nodes-api=0"
@@ -111,7 +111,7 @@ openstack-phase2:
         "network-manager": Neutron
         "quantum-security-groups": "yes"
         "service-guard": true
-        vip: 10.4.1.16
+        vip: 10.4.1.26
       to:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
@@ -122,7 +122,7 @@ openstack-phase2:
       options:
         neutron-security-groups: False
         manage-neutron-plugin-legacy-mode: False
-        vip: 10.4.1.17
+        vip: 10.4.1.27
       to: 
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
@@ -132,7 +132,7 @@ openstack-phase2:
 #      num_units: 3
 #      constraints: tags=gateway
       options:
-#        "ext-port": "eth1"
+        "ext-port": "00:1e:67:cf:bb:53"
         plugin: ovs-odl
 #        instance-mtu: 1400
       to:  
@@ -142,13 +142,12 @@ openstack-phase2:
       options:
         install-url: "https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.4-Helium-SR4/distribution-karaf-0.2.4-Helium-SR4.tar.gz"
 #        install-url: "https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.3.2-Lithium-SR2/distribution-karaf-0.3.2-Lithium-SR2.tar.gz"
-      to: 
-        - "lxc:nodes-api=1"
+      to: lxc:nodes-api=1
     "glance": 
       charm: "cs:trusty/glance"
       num_units: 3
       options: 
-        vip: 10.4.1.12
+        vip: 10.4.1.22
       to:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
@@ -230,7 +229,7 @@ trusty-liberty:
   inherits: openstack-phase2
   overrides:
     cluster_count: 3
-    #os-data-network: 10.4.8.0/21
+    os-data-network: 10.4.9.0/24
     region: Canonical
     source: "cloud:trusty-liberty"
     "openstack-origin": "cloud:trusty-liberty"
@@ -245,7 +244,7 @@ trusty-kilo:
   inherits: openstack-phase2
   overrides:
     cluster_count: 3
-    #os-data-network: 10.4.8.0/21
+    os-data-network: 10.4.9.0/24
     region: Canonical
     source: "cloud:trusty-kilo"
     "openstack-origin": "cloud:trusty-kilo"
@@ -261,7 +260,7 @@ trusty-juno:
   inherits: openstack-phase2
   overrides:
     cluster_count: 3
-    #os-data-network: 10.4.8.0/21
+    os-data-network: 10.4.9.0/24
     region: Canonical
     source: "cloud:trusty-juno"
     "openstack-origin": "cloud:trusty-juno"

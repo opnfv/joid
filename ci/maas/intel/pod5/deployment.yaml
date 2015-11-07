@@ -11,9 +11,9 @@ demo-maas:
         # server. Here you can configure the name of the virsh domain, the
         # parameters for how the network is attached.
         name: opnfv-maas-intel
-        interfaces: ['bridge=br0,model=virtio']
+        interfaces: ['bridge=brAdm,model=virtio','bridge=brData,model=virtio','bridge=brPublic,model=virtio']
         memory: 4096
-        vcpus: 2
+        vcpus: 4
         arch: amd64
         pool: default
         disk_size: 160G
@@ -74,6 +74,19 @@ demo-maas:
             gateway 10.4.0.1
             dns-nameservers 10.4.0.2 127.0.0.1
 
+            auto eth1
+            iface eth1 inet static
+            address 10.4.9.2
+            netmask 255.255.248.0
+            network 10.4.8.0
+            broadcast 10.4.15.255
+
+            auto eth2
+            iface eth2 inet static
+            address 10.2.65.3
+            netmask 255.255.255.0
+            network 10.2.65.0
+            broadcast 10.2.65.255
             #auto lo
             #iface lo inet loopback
 
@@ -104,7 +117,28 @@ demo-maas:
               dynamic_range:
                   low: 10.4.1.50
                   high: 10.4.1.254
-
+            - device: eth1
+              ip: 10.4.9.2
+              subnet_mask: 255.255.255.0
+              broadcast_ip: 10.4.9.255
+              management: 1
+              static_range:
+                  low: 10.4.9.20
+                  high: 10.4.9.100
+              dynamic_range:
+                  low: 10.4.9.101
+                  high: 10.4.9.200
+            - device: eth2
+              ip: 10.2.65.3
+              subnet_mask: 255.255.255.0
+              broadcast_ip: 10.2.65.255
+              management: 1
+              static_range:
+                  low: 10.2.65.20
+                  high: 10.2.65.100
+              dynamic_range:
+                  low: 10.2.65.101
+                  high: 10.2.65.200
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
         nodes:
@@ -193,9 +227,9 @@ demo-maas:
     # node virtual machine
     juju-bootstrap:
         name: bootstrap
-        interfaces: ['bridge=br0,model=virtio']
+        interfaces: ['bridge=brAdm,model=virtio','bridge=brData,model=virtio','bridge=brPublic,model=virtio']
         memory: 4096
-        vcpus: 2
+        vcpus: 4
         arch: amd64
         pool: default
         disk_size: 120G

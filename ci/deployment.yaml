@@ -11,7 +11,7 @@ demo-maas:
         # server. Here you can configure the name of the virsh domain, the
         # parameters for how the network is attached.
         name: opnfv-maas-intel
-        interfaces: ['bridge=brAdm,model=virtio', 'bridge=brData,model=virtio', 'bridge=brPublic,model=virtio']
+        interfaces: ['bridge=brAdm,model=virtio','bridge=brData,model=virtio','bridge=brPublic,model=virtio']
         memory: 4096
         vcpus: 4
         arch: amd64
@@ -46,7 +46,7 @@ demo-maas:
         settings:
             main_archive: http://us.archive.ubuntu.com/ubuntu
             upstream_dns: 10.4.0.2
-            maas_name: intelpod6
+            maas_name: intelpod5
             # kernel_opts: "console=tty0 console=ttyS1,115200n8"
             # ntp_server: ntp.ubuntu.com
 
@@ -78,11 +78,8 @@ demo-maas:
             iface eth1 inet static
             address 10.4.9.2
             netmask 255.255.248.0
-
-            auto eth2
-            iface eth2 inet static
-            address 10.2.66.3
-            netmask 255.255.255.0
+            network 10.4.8.0
+            broadcast 10.4.15.255
 
             #auto lo
             #iface lo inet loopback
@@ -114,43 +111,21 @@ demo-maas:
               dynamic_range:
                   low: 10.4.1.50
                   high: 10.4.1.254
-            - device: eth1
-              ip: 10.4.9.2
-              subnet_mask: 255.255.255.0
-              broadcast_ip: 10.4.9.255
-              management: 1
-              static_range:
-                  low: 10.4.9.20
-                  high: 10.4.9.150
-              dynamic_range:
-                  low: 10.4.9.151
-                  high: 10.4.9.200
-            - device: eth2
-              ip: 10.2.66.3
-              subnet_mask: 255.255.255.0
-              broadcast_ip: 10.2.66.255
-              management: 1
-              static_range:
-                  low: 10.2.66.20
-                  high: 10.2.66.150
-              dynamic_range:
-                  low: 10.2.66.151
-                  high: 10.2.66.200
 
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
         nodes:
-            - name: node2-control
-              tags: control
+            - name: node5-compute
+              tags: compute
               architecture: amd64/generic
               mac_addresses:
-                  - "00:1e:67:e0:0b:71"
-                  - "00:1e:67:e0:0b:72"
-                  - "00:1e:67:d0:9a:8c"
-                  - "00:1e:67:d0:9a:8d"
+                  - "00:1e:67:e0:0a:4a"
+                  - "00:1e:67:e0:0a:4b"
+                  - "00:1e:67:d0:9a:10"
+                  - "00:1e:67:d0:9a:11"
               power:
                   type: ipmi
-                  address: 10.4.7.2
+                  address: 10.4.7.5
                   user: root
                   pass: root
                   driver: LAN_2_0
@@ -158,50 +133,14 @@ demo-maas:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
                 
-#            - name: node1
-#              tags: physical
-#              architecture: amd64/generic
-#              mac_addresses:
-#                  - "00:1e:67:e0:08:b0"
-#                  - "00:1e:67:e0:08:b1"
-#                  - "00:1e:67:d0:99:ee"
-#                  - "00:1e:67:d0:99:ef"
-#              power:
-#                  type: ipmi
-#                  address: 10.4.2.9
-#                  user: root
-#                  pass: root
-#                  driver: LAN_2_0
-#              sticky_ip_address:
-#                  mac_address: "38:63:bb:43:b8:9c"
-#                  requested_address: 192.168.122.5
-
-            - name: node3-control
-              tags: control
-              architecture: amd64/generic
-              mac_addresses:
-                  - "00:1e:67:e0:09:32"
-                  - "00:1e:67:e0:09:33"
-                  - "00:1e:67:d0:9b:92"
-                  - "00:1e:67:d0:9b:93"
-              power:
-                  type: ipmi
-                  address: 10.4.7.3
-                  user: root
-                  pass: root
-                  driver: LAN_2_0
-#              sticky_ip_address:
-#                  mac_address: "38:63:bb:43:b8:9c"
-#                  requested_address: 192.168.122.5
-
             - name: node4-control
               tags: control
               architecture: amd64/generic
               mac_addresses:
-                  - "00:1e:67:e0:09:fa"
-                  - "00:1e:67:e0:09:fb"
-                  - "00:1e:67:d0:9c:9c"
-                  - "00:1e:67:d0:9c:9d"
+                  - "00:1e:67:e0:08:b0"
+                  - "00:1e:67:e0:08:b1"
+                  - "00:1e:67:d0:99:ee"
+                  - "00:1e:67:d0:99:ef"
               power:
                   type: ipmi
                   address: 10.4.7.4
@@ -212,17 +151,35 @@ demo-maas:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
 
-            - name: node5-compute
-              tags: compute
+            - name: node3-control
+              tags: control
               architecture: amd64/generic
               mac_addresses:
-                  - "00:1e:67:cf:bc:f7"
-                  - "00:1e:67:cf:bc:f8"
-                  - "00:1e:67:d0:9c:26"
-                  - "00:1e:67:d0:9c:27"
+                  - "00:1e:67:e0:08:7e"
+                  - "00:1e:67:e0:08:7f"
+                  - "00:1e:67:c2:23:d8"
+                  - "00:1e:67:c2:23:d9"
               power:
                   type: ipmi
-                  address: 10.4.7.5
+                  address: 10.4.7.3
+                  user: root
+                  pass: root
+                  driver: LAN_2_0
+#              sticky_ip_address:
+#                  mac_address: "38:63:bb:43:b8:9c"
+#                  requested_address: 192.168.122.5
+
+            - name: node2-control
+              tags: control
+              architecture: amd64/generic
+              mac_addresses:
+                  - "00:1e:67:cf:b8:92"
+                  - "00:1e:67:cf:b8:93"
+                  - "00:1e:67:d0:9b:0c"
+                  - "00:1e:67:d0:9b:0d"
+              power:
+                  type: ipmi
+                  address: 10.4.7.2
                   user: root
                   pass: root
                   driver: LAN_2_0
@@ -243,7 +200,7 @@ demo-maas:
     # node virtual machine
     juju-bootstrap:
         name: bootstrap
-        interfaces: ['bridge=brAdm,model=virtio', 'bridge=brData,model=virtio', 'bridge=brPublic,model=virtio']
+        interfaces: ['bridge=brAdm,model=virtio']
         memory: 4096
         vcpus: 4
         arch: amd64
