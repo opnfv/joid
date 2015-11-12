@@ -28,7 +28,7 @@ case "$3" in
         # choose the correct interface to use for data network
          sed -i -- 's/#os-data-network: 10.4.8.0\/21/os-data-network: 192.168.12.0\/24/g' ./bundles.yaml
         # Choose the external port to go out from gateway to use.
-         sed -i -- 's/#        "ext-port": "eth1"/#        "ext-port": "brPublic"/g' ./bundles.yaml
+         sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "brPublic"/g' ./bundles.yaml
          ;;
      'intelpod6' )
          cp maas/intel/pod6/interfaces.host trusty/ubuntu-nodes-controller/network/interfaces.host
@@ -40,7 +40,7 @@ case "$3" in
         # choose the correct interface to use for data network
          sed -i -- 's/#os-data-network: 10.4.8.0\/21/os-data-network: 10.4.9.0\/24/g' ./bundles.yaml
         # Choose the external port to go out from gateway to use.
-         sed -i -- 's/#        "ext-port": "eth1"/#        "ext-port": "brPublic"/g' ./bundles.yaml
+         sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "brPublic"/g' ./bundles.yaml
          ;;
      'intelpod5' )
          cp maas/intel/pod5/interfaces.host trusty/ubuntu-nodes-controller/network/interfaces.host
@@ -52,7 +52,7 @@ case "$3" in
         # choose the correct interface to use for data network
          sed -i -- 's/#os-data-network: 10.4.8.0\/21/os-data-network: 10.4.9.0\/24/g' ./bundles.yaml
         # Choose the external port to go out from gateway to use.
-         sed -i -- 's/#        "ext-port": "eth1"/#        "ext-port": "brPublic"/g' ./bundles.yaml
+         sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth2.724"/g' ./bundles.yaml
         ;;
 esac
 
