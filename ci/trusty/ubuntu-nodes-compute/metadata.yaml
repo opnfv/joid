@@ -1,4 +1,4 @@
-name: ubuntu-nodes-controller
+name: ubuntu-nodes-compute
 summary: A pristine Ubuntu Server
 maintainer: Charmers <juju@lists.ubuntu.com>
 description: |
