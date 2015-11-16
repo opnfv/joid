@@ -1,40 +1,87 @@
-openstack:
+# vim: set ts=2 et:
+openstack-phase1:
+  series: trusty
   services:
-    mysql:
-      constraints: mem=1G
+    nodes-api:
+      charm: "local:trusty/ubuntu-nodes-controller"
+      num_units: 1
+      constraints: tags=control
+    nodes-compute:
+      charm: "local:trusty/ubuntu-nodes-compute"
+      num_units: 1
+      constraints: tags=compute
+    "ntp":
+      charm: "cs:trusty/ntp"
+  relations:
+    - - "ntp:juju-info"
+      - "nodes-api:juju-info"
+    - - "ntp:juju-info"
+      - "nodes-compute:juju-info"
+openstack-phase2:
+  inherits: openstack-phase1
+  services:
+    "mysql":
+      charm: "cs:trusty/mysql"
+      num_units: 1
       options:
-        dataset-size: 50%
-    rabbitmq-server:
-      constraints: mem=1G
-    keystone:
-      branch: lp:~openstack-charmers/charms/trusty/keystone/next
-      constraints: mem=1G
+        "dataset-size": 2G
+        "max-connections": 10000
+      to:
+        - "lxc:nodes-api=0"
+    "rabbitmq-server":
+      branch: lp:charms/trusty/rabbitmq-server
+      num_units: 1
+      to:
+        - "lxc:nodes-api=0"
+    "keystone":
+      branch: lp:charms/trusty/keystone
+      num_units: 1
       options:
-        admin-password: password
-    openstack-dashboard:
-      branch: lp:~openstack-charmers/charms/trusty/openstack-dashboard/next
-      constraints: mem=1G
-    nova-compute:
+        openstack-origin-git: include-file://keystone-master.yaml
+        "admin-password": openstack
+        "admin-token": admin
+      to:
+        - "lxc:nodes-api=0"
+    "openstack-dashboard":
+      branch: lp:charms/trusty/openstack-dashboard
+      num_units: 1
+      options:
+        openstack-origin-git: include-file://horizon-master.yaml
+        secret: admin
+        webroot: /
+      to:
+        - "lxc:nodes-api=0"
+    "nova-compute":
       branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
-      constraints: mem=4G root-disk=20G
+      num_units: 1
       options:
-        manage-neutron-plugin-legacy-mode: false
-    nova-cloud-controller:
-      branch: lp:~openstack-charmers/charms/trusty/nova-cloud-controller/next
-      constraints: mem=1G
+        openstack-origin-git: include-file://nova-master.yaml
+        "manage-neutron-plugin-legacy-mode": False
+      to:
+        - "nodes-compute=0"
+#        - "nodes-compute=1"
+    "nova-cloud-controller":
+      branch: lp:charms/trusty/nova-cloud-controller
+      num_units: 1
       options:
-        network-manager: Neutron
-    neutron-gateway:
-      branch: lp:~sdn-charmers/charms/trusty/quantum-gateway/contrail
-      constraints: mem=1G
-    glance:
-      branch: lp:~openstack-charmers/charms/trusty/glance/next
-      constraints: mem=1G
-    neutron-api:
-      branch: lp:~openstack-charmers/charms/trusty/neutron-api/vpp
-      constraints: mem=1G
+        openstack-origin-git: include-file://nova-master.yaml
+        "network-manager": Neutron
+      to:
+        - "lxc:nodes-api=0"
+    "neutron-api":
+      branch: lp:~openstack-charmers/charms/trusty/neutron-api/next
+      num_units: 1
       options:
-        manage-neutron-plugin-legacy-mode: false
+        manage-neutron-plugin-legacy-mode: False
+      to:
+        - "lxc:nodes-api=0"
+    "glance":
+      branch: lp:charms/trusty/glance
+      num_units: 1
+      options:
+        openstack-origin-git: include-file://glance-master.yaml
+      to:
+        - "lxc:nodes-api=0"
   relations:
     - [ keystone, mysql ]
     - [ nova-cloud-controller, mysql ]
@@ -47,9 +94,6 @@ openstack:
     - [ nova-compute, glance ]
     - [ glance, mysql ]
     - [ glance, keystone ]
-    - [ neutron-gateway, mysql ]
-    - [ "neutron-gateway:amqp", "rabbitmq-server:amqp" ]
-    - [ neutron-gateway, nova-cloud-controller ]
     - [ openstack-dashboard, keystone ]
     - [ neutron-api, mysql ]
     - [ neutron-api, rabbitmq-server ]
@@ -57,59 +101,50 @@ openstack:
     - [ neutron-api, keystone ]
     - [ neutron-api, neutron-api-contrail ]
 contrail:
-  inherits: openstack
+  inherits: openstack-phase2
   services:
-    cassandra:
-      branch: lp:~sdn-charmers/charms/precise/cassandra/forced-install
-      series: precise
-      constraints: mem=8G root-disk=20G
-      units: 3
     zookeeper:
-      branch: lp:~sdn-charmers/charms/precise/zookeeper/fix-symlink
+      branch: lp:~charmers/charms/precise/zookeeper/trunk
       series: precise
-      constraints: mem=1G
-      units: 3
-    contrail-configuration:
-      branch: lp:~sdn-charmers/charms/trusty/contrail-configuration/trunk
-      constraints: mem=4G
+      to:
+        - "lxc:nodes-api=0"
+    cassandra:
+      branch: lp:~stub/charms/trusty/cassandra/noauthentication
+      to:
+        - "lxc:nodes-api=0"
       options:
-        vip: x.x.x.x
-      units: 2
+        authenticator: AllowAllAuthenticator
+    contrail-configuration:
+      branch:  lp:~sdn-charmers/charms/trusty/contrail-configuration/trunk
+      to:
+        - "lxc:nodes-api=0"
     contrail-control:
       branch: lp:~sdn-charmers/charms/trusty/contrail-control/trunk
-      constraints: mem=2G
-      units: 2
+      to:
+        - "lxc:nodes-api=0"
     contrail-analytics:
       branch: lp:~sdn-charmers/charms/trusty/contrail-analytics/trunk
-      constraints: mem=4G
-      units: 2
+      to:
+        - "lxc:nodes-api=0"
     contrail-webui:
       branch: lp:~sdn-charmers/charms/trusty/contrail-webui/trunk
-      units: 2
+      to:
+        - "lxc:nodes-api=0"
     neutron-api-contrail:
       branch: lp:~sdn-charmers/charms/trusty/neutron-api-contrail/trunk
     neutron-contrail:
       branch: lp:~sdn-charmers/charms/trusty/neutron-contrail/trunk
-    haproxy:
-      options:
-        peering_mode: active-active
-      units: 2
-    keepalived:
-      branch: lp:~sdn-charmers/charms/trusty/keepalived/trunk
-      options:
-        virtual-ip: x.x.x.x
-  overrides:
-    admin-role: admin
   relations:
     - [ "contrail-configuration:cassandra", "cassandra:database" ]
     - [ contrail-configuration, zookeeper ]
     - [ contrail-configuration, rabbitmq-server ]
     - [ contrail-configuration, keystone ]
-    - [ contrail-configuration, neutron-gateway ]
     - [ neutron-api-contrail, contrail-configuration ]
     - [ neutron-api-contrail, keystone ]
+    - [ "contrail-control:contrail-api", "contrail-configuration:contrail-api" ]
     - [ "contrail-control:contrail-discovery", "contrail-configuration:contrail-discovery" ]
     - [ "contrail-control:contrail-ifmap", "contrail-configuration:contrail-ifmap" ]
+    - [ contrail-control, keystone ]
     - [ "contrail-analytics:cassandra", "cassandra:database" ]
     - [ contrail-analytics, contrail-configuration ]
     - [ contrail-webui, keystone ]
@@ -118,32 +153,65 @@ contrail:
     - [ "contrail-webui:cassandra", "cassandra:database" ]
     - [ nova-compute, neutron-contrail ]
     - [ "neutron-contrail:contrail-discovery", "contrail-configuration:contrail-discovery" ]
-    - [ neutron-contrail, neutron-gateway ]
     - [ "neutron-contrail:contrail-api", "contrail-configuration:contrail-api" ]
     - [ neutron-contrail, keystone ]
-    - [ contrail-configuration, haproxy ]
-    - [ contrail-analytics, haproxy ]
-    - [ contrail-webui, haproxy ]
-    - [ haproxy, keepalived ]
-trusty-icehouse-contrail:
+
+trusty-liberty-nodes:
+  inherits: openstack-phase1
+  series: trusty
+  overrides:
+    series: trusty
+
+trusty-liberty:
   inherits: contrail
   series: trusty
   services:
-    haproxy:
-      charm: cs:trusty/haproxy
-    mysql:
-      charm: cs:trusty/mysql
-    rabbitmq-server:
-      charm: cs:trusty/rabbitmq-server
-trusty-juno-contrail:
-  inherits: contrail
-  series: trusty
-  services:
-    haproxy:
-      charm: cs:trusty/haproxy
     mysql:
       charm: cs:trusty/mysql
     rabbitmq-server:
       charm: cs:trusty/rabbitmq-server
   overrides:
+    series: trusty
+    #os-data-network: 10.4.8.0/21
+    region: Canonical
+    openstack-origin: cloud:trusty-liberty
+
+trusty-kilo-nodes:
+  inherits: openstack-phase1
+  series: trusty
+  overrides:
+    series: trusty
+
+trusty-kilo:
+  inherits: contrail
+  series: trusty
+  services:
+    mysql:
+      charm: cs:trusty/mysql
+    rabbitmq-server:
+      charm: cs:trusty/rabbitmq-server
+  overrides:
+    series: trusty
+    #os-data-network: 10.4.8.0/21
+    region: Canonical
+    openstack-origin: cloud:trusty-kilo
+
+trusty-juno-nodes:
+  inherits: openstack-phase1
+  overrides:
+    series: trusty
+
+trusty-juno:
+  inherits: contrail
+  series: trusty
+  services:
+    mysql:
+      charm: cs:trusty/mysql
+    rabbitmq-server:
+      charm: cs:trusty/rabbitmq-server
+  overrides:
+    series: trusty
+    #os-data-network: 10.4.8.0/21
+    region: Canonical
     openstack-origin: cloud:trusty-juno
+

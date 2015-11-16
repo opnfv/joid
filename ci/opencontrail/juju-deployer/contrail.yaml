@@ -1,74 +1,81 @@
-openstack:
+# vim: set ts=2 et:
+openstack-phase1:
+  series: trusty
   services:
-    ubuntu:
-      branch: "lp:charms/trusty/ubuntu"
+    nodes-api:
+      charm: "local:trusty/ubuntu-nodes-controller"
+      num_units: 1
       constraints: tags=control
+    nodes-compute:
+      charm: "local:trusty/ubuntu-nodes-compute"
       num_units: 1
-    ubuntu-compute:
-      branch: "lp:charms/trusty/ubuntu"
       constraints: tags=compute
+    "ntp":
+      charm: "cs:trusty/ntp"
+  relations:
+    - - "ntp:juju-info"
+      - "nodes-api:juju-info"
+    - - "ntp:juju-info"
+      - "nodes-compute:juju-info"
+openstack-phase2:
+  inherits: openstack-phase1
+  services:
+    "mysql":
+      charm: "cs:trusty/mysql"
       num_units: 1
-    mysql:
-      constraints: mem=1G
       options:
-        dataset-size: 50%
-        max-connections: 20000
+        "dataset-size": 2G
+        "max-connections": 10000
       to:
-        - "lxc:ubuntu=0"
-
-    rabbitmq-server:
-      constraints: mem=1G
+        - "lxc:nodes-api=0"
+    "rabbitmq-server":
+      branch: lp:charms/trusty/rabbitmq-server
+      num_units: 1
       to:
-        - "lxc:ubuntu=0"
-
-    keystone:
-      branch: lp:~openstack-charmers/charms/trusty/keystone/next
-      constraints: mem=1G
+        - "lxc:nodes-api=0"
+    "keystone":
+      branch: lp:charms/trusty/keystone
+      num_units: 1
       options:
-        admin-password: openstack
-        admin-role: admin
+        "admin-password": openstack
+        "admin-token": admin
       to:
-        - "lxc:ubuntu=0"
-
-    openstack-dashboard:
-      branch: lp:~openstack-charmers/charms/trusty/openstack-dashboard/next
-      constraints: mem=1G
+        - "lxc:nodes-api=0"
+    "openstack-dashboard":
+      branch: lp:charms/trusty/openstack-dashboard
+      num_units: 1
+      options:
+        secret: admin
+        webroot: /
       to:
-        - "lxc:ubuntu=0"
-
-    nova-compute:
+        - "lxc:nodes-api=0"
+    "nova-compute":
       branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
-      constraints: tags=compute
+      num_units: 1
+      options:
+        "manage-neutron-plugin-legacy-mode": False
+      to:
+        - "nodes-compute=0"
+#        - "nodes-compute=1"
+    "nova-cloud-controller":
+      branch: lp:charms/trusty/nova-cloud-controller
+      num_units: 1
+      options:
+        "network-manager": Neutron
+      to:
+        - "lxc:nodes-api=0"
+    "neutron-api":
+      branch: lp:~openstack-charmers/charms/trusty/neutron-api/next
+      num_units: 1
+      options:
+        manage-neutron-plugin-legacy-mode: False
+      to:
+        - "lxc:nodes-api=0"
+    "glance":
+      branch: lp:charms/trusty/glance
       num_units: 1
       to:
-        - "ubuntu-compute=0"
-      options:
-        manage-neutron-plugin-legacy-mode: false
-    nova-cloud-controller:
-      branch: lp:~openstack-charmers/charms/trusty/nova-cloud-controller/next
-      constraints: mem=1G
-      options:
-        network-manager: Neutron
-      to:
-        - "lxc:ubuntu=0"
-
-#    neutron-gateway:
-#      branch: lp:~sdn-charmers/charms/trusty/quantum-gateway/contrail
-#      constraints: tags=virtual
-
-    glance:
-      branch: lp:~openstack-charmers/charms/trusty/glance/next
-      constraints: mem=1G
-      to:
-        - "lxc:ubuntu=0"
-
-    neutron-api:
-      branch: lp:~openstack-charmers/charms/trusty/neutron-api/vpp
-#      constraints: tags=virtual
-      to:
-        - "lxc:ubuntu=0"
-      options:
-        manage-neutron-plugin-legacy-mode: false
+        - "lxc:nodes-api=0"
   relations:
     - [ keystone, mysql ]
     - [ nova-cloud-controller, mysql ]
@@ -87,52 +94,40 @@ openstack:
     - [ neutron-api, nova-cloud-controller ]
     - [ neutron-api, keystone ]
     - [ neutron-api, neutron-api-contrail ]
-
 contrail:
-  inherits: openstack
+  inherits: openstack-phase2
   services:
-    cassandra:
-      branch: lp:~stub/charms/trusty/cassandra/noauthentication
-      to:
-        - "lxc:ubuntu=0"
-      options:
-        authenticator: AllowAllAuthenticator
-
     zookeeper:
       branch: lp:~charmers/charms/precise/zookeeper/trunk
       series: precise
       to:
-        - "lxc:ubuntu=0"
-
+        - "lxc:nodes-api=0"
+    cassandra:
+      branch: lp:~stub/charms/trusty/cassandra/noauthentication
+      to:
+        - "lxc:nodes-api=0"
+      options:
+        authenticator: AllowAllAuthenticator
     contrail-configuration:
       branch:  lp:~sdn-charmers/charms/trusty/contrail-configuration/trunk
       to:
-        - "lxc:ubuntu=0"
-#      options:
-#        floating-ip-pools: "[ { project: admin, network: public, pool-name: floatingip_pool, target-projects: [ admin ] } ]"
-
+        - "lxc:nodes-api=0"
     contrail-control:
       branch: lp:~sdn-charmers/charms/trusty/contrail-control/trunk
       to:
-        - "lxc:ubuntu=0"
-
+        - "lxc:nodes-api=0"
     contrail-analytics:
       branch: lp:~sdn-charmers/charms/trusty/contrail-analytics/trunk
       to:
-        - "lxc:ubuntu=0"
-
+        - "lxc:nodes-api=0"
     contrail-webui:
       branch: lp:~sdn-charmers/charms/trusty/contrail-webui/trunk
       to:
-        - "lxc:ubuntu=0"
-
+        - "lxc:nodes-api=0"
     neutron-api-contrail:
       branch: lp:~sdn-charmers/charms/trusty/neutron-api-contrail/trunk
     neutron-contrail:
       branch: lp:~sdn-charmers/charms/trusty/neutron-contrail/trunk
-
-  overrides:
-    admin-role: admin
   relations:
     - [ "contrail-configuration:cassandra", "cassandra:database" ]
     - [ contrail-configuration, zookeeper ]
@@ -155,25 +150,13 @@ contrail:
     - [ "neutron-contrail:contrail-api", "contrail-configuration:contrail-api" ]
     - [ neutron-contrail, keystone ]
 
-precise-icehouse-contrail:
-  inherits: contrail
-  series: precise
-  services:
-    mysql:
-      charm: cs:precise/mysql
-    rabbitmq-server:
-      charm: cs:precise/rabbitmq-server
-  overrides:
-    openstack-origin: cloud:precise-icehouse
-trusty-icehouse-contrail:
-  inherits: contrail
+trusty-liberty-nodes:
+  inherits: openstack-phase1
   series: trusty
-  services:
-    mysql:
-      charm: cs:trusty/mysql
-    rabbitmq-server:
-      charm: cs:trusty/rabbitmq-server
-trusty-juno-contrail:
+  overrides:
+    series: trusty
+
+trusty-liberty:
   inherits: contrail
   series: trusty
   services:
@@ -182,25 +165,47 @@ trusty-juno-contrail:
     rabbitmq-server:
       charm: cs:trusty/rabbitmq-server
   overrides:
-    openstack-origin: cloud:trusty-juno
-trusty-kilo-contrail:
-  inherits: contrail
-  series: trusty
-  services:
-    mysql:
-      charm: cs:trusty/mysql
-    rabbitmq-server:
-      charm: cs:trusty/rabbitmq-server
-  overrides:
-    openstack-origin: cloud:trusty-kilo
-trusty-liberty-contrail:
-  inherits: contrail
-  series: trusty
-  services:
-    mysql:
-      charm: cs:trusty/mysql
-    rabbitmq-server:
-      charm: cs:trusty/rabbitmq-server
-  overrides:
+    series: trusty
+    #os-data-network: 10.4.8.0/21
+    region: Canonical
     openstack-origin: cloud:trusty-liberty
+
+trusty-kilo-nodes:
+  inherits: openstack-phase1
+  series: trusty
+  overrides:
+    series: trusty
+
+trusty-kilo:
+  inherits: contrail
+  series: trusty
+  services:
+    mysql:
+      charm: cs:trusty/mysql
+    rabbitmq-server:
+      charm: cs:trusty/rabbitmq-server
+  overrides:
+    series: trusty
+    #os-data-network: 10.4.8.0/21
+    region: Canonical
+    openstack-origin: cloud:trusty-kilo
+
+trusty-juno-nodes:
+  inherits: openstack-phase1
+  overrides:
+    series: trusty
+
+trusty-juno:
+  inherits: contrail
+  series: trusty
+  services:
+    mysql:
+      charm: cs:trusty/mysql
+    rabbitmq-server:
+      charm: cs:trusty/rabbitmq-server
+  overrides:
+    series: trusty
+    #os-data-network: 10.4.8.0/21
+    region: Canonical
+    openstack-origin: cloud:trusty-juno
 

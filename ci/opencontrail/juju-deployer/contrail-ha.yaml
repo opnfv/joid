@@ -1,38 +1,144 @@
-openstack:
+# vim: set ts=2 et:
+openstack-phase1:
+  series: trusty
   services:
-    mysql:
-      constraints: mem=1G
-      options:
-        dataset-size: 50%
-    rabbitmq-server:
-      constraints: mem=1G
-    keystone:
-      branch: lp:~openstack-charmers/charms/trusty/keystone/next
-      constraints: mem=1G
-      options:
-        admin-password: password
-    openstack-dashboard:
-      branch: lp:~openstack-charmers/charms/trusty/openstack-dashboard/next
-      constraints: mem=1G
-    nova-compute:
-      branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
-      constraints: mem=4G root-disk=20G
-      options:
-        manage-neutron-plugin-legacy-mode: false
-    nova-cloud-controller:
-      branch: lp:~openstack-charmers/charms/trusty/nova-cloud-controller/next
-      constraints: mem=1G
-      options:
-        network-manager: Neutron
-    glance:
-      branch: lp:~openstack-charmers/charms/trusty/glance/next
-      constraints: mem=1G
-    neutron-api:
-      branch: lp:~openstack-charmers/charms/trusty/neutron-api/next
-      constraints: mem=1G
-      options:
-        manage-neutron-plugin-legacy-mode: false
+    nodes-api:
+      charm: "local:trusty/ubuntu-nodes-controller"
+      num_units: 3
+      constraints: tags=control
+    nodes-compute:
+      charm: "local:trusty/ubuntu-nodes-compute"
+      num_units: 1
+      constraints: tags=compute
+    "ntp": 
+      charm: "cs:trusty/ntp"
   relations:
+    - - "ntp:juju-info"
+      - "nodes-api:juju-info"
+    - - "ntp:juju-info"
+      - "nodes-compute:juju-info"
+openstack-phase2: 
+  inherits: openstack-phase1
+  services: 
+    "percona-cluster": 
+      charm: "cs:trusty/percona-cluster"
+      num_units: 3
+      options: 
+        "dataset-size": 2G
+        "lp1366997-workaround": true
+        "max-connections": 10000
+        "root-password": 293rhc395m
+        "sst-password": 127rc14t51
+        vip: 10.4.1.15
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
+    "hacluster-keystone":
+      charm: "cs:trusty/hacluster"
+      options:
+        corosync_key: |
+          'QisjNpoKHLkvyc3PEdDHP5VZjgD0kOk9t0ABPWmCELlu5AgWgnW6bJd34BVXO7VhW+3ZwNQM3W+bZ3pl28ftY4ki4N/S0KLFNia5egFgiA3AH2QXLnokS7OYXuu6GMJJ1S5mDe6P5zU+tfJe/Mebq24u7CgR0gAvohSPRdDTwdY='
+    "hacluster-horizon":
+      charm: "cs:trusty/hacluster"
+      options:
+        corosync_key: |
+          'aCVPHw6XYne+Hxv0WPiM3+yEfeIxs0Ly0EMKB494Rdzjf5rE52GcXqqxuvIa/nXJ4GCR+UdKk9FEwcASfYkeu3HDWUld9uTE6pOc+ibWYnybNH7VBfEHW8h9YmQKs3HD2T3wlTcS2irU4CUW7/IKNok4etYdM3iFn1K2ReSGXEI='
+    "hacluster-nova":
+      charm: "cs:trusty/hacluster"
+      options:
+        corosync_key: |
+          'gel86qmEze8dYKYbfqIgRpqapJpKtdYL2hxC1y5nWYBPq7EMf6V8mF01IjeUkSRs14CUDrsPpT4PWeom7EOY2fleuLx/aIuqQUfEDkhf/gvaz7BaU4hrmTCoDBK7/HvEwY+/wu4qkEeckzSRPsm9MYzqnLRshh8yjZJ70xU/mmk='
+    "hacluster-neutron": 
+      charm: "cs:trusty/hacluster"
+      options:
+        corosync_key: |
+          'KNhb4++3jlllbnscS5D3qdzOJDsQPEeZ7zOLZJHbkKrRjX9gRCijVVOiv2JCvq03HqQ7LIufQzWGl9Za8qh0f6QmQ3XhFh/Cb/3WaYFj+tEf0zArWv+8miswmM1z4eyTSrTWBq0dTgx1z96wjBxP5HV0+1LWW+3Ei4oZWyRGeR0='
+    "hacluster-glance":
+      charm: "cs:trusty/hacluster"
+      options:
+        corosync_key: |
+          'el1dd8107J5mwQDPS7tEJPZrr0XFfL95+Tku/QG90W5Q5f5SP4W8TRfKvddGmZWZl2lVd1neG5WqaHa1mq/aScJpoflzVAJCvshN7Gd2AjHhLNNugeI8S90j/7wrKUhqiCAlkKaeri2xs5bB5PZ7Z9AHuNZL7SW1al8lxrKhUFI='
+    "rabbitmq-server": 
+      branch: lp:charms/trusty/rabbitmq-server
+      num_units: 3
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
+    "keystone": 
+      branch: lp:charms/trusty/keystone
+      num_units: 3
+      options: 
+        "admin-password": openstack
+        "admin-token": admin
+        vip: 10.4.1.13
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
+    "openstack-dashboard": 
+      branch: lp:charms/trusty/openstack-dashboard
+      num_units: 3
+      options: 
+        secret: admin
+        vip: 10.4.1.11
+        webroot: /
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
+    "nova-compute": 
+      branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
+      num_units: 1
+      options: 
+        "enable-live-migration": False
+        "manage-neutron-plugin-legacy-mode": False
+      to:
+        - "nodes-compute=0"
+#        - "nodes-compute=1"
+#        - "nodes-api=0"
+#        - "nodes-api=1"
+#        - "nodes-api=2"
+    "nova-cloud-controller": 
+      branch: lp:charms/trusty/nova-cloud-controller
+      num_units: 3
+      options: 
+        "console-access-protocol": novnc
+        "network-manager": Neutron
+        "quantum-security-groups": "yes"
+        "service-guard": true
+        vip: 10.4.1.16
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
+    "neutron-api": 
+      branch: lp:~openstack-charmers/charms/trusty/neutron-api/next
+      num_units: 3
+      options:
+        neutron-security-groups: True
+        manage-neutron-plugin-legacy-mode: False
+        vip: 10.4.1.17
+      to: 
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
+    "glance": 
+      branch: lp:charms/trusty/glance
+      num_units: 3
+      options: 
+        vip: 10.4.1.12
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
+  relations:
+    - [ "glance:ha", "hacluster-glance:ha" ]
+    - [ "keystone:ha", "hacluster-keystone:ha" ]
+    - [ "neutron-api:ha", "hacluster-neutron:ha" ]
+    - [ "nova-cloud-controller:ha", "hacluster-nova:ha" ]
+    - [ "openstack-dashboard:ha", "hacluster-horizon:ha" ]
     - [ keystone, mysql ]
     - [ nova-cloud-controller, mysql ]
     - [ nova-cloud-controller, rabbitmq-server ]
@@ -55,44 +161,63 @@ contrail:
   services:
     cassandra:
       branch: lp:~stub/charms/trusty/cassandra/noauthentication
-      constraints: mem=8G root-disk=20G
+      num_units: 3
       options:
         authenticator: AllowAllAuthenticator
-      units: 3
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
     zookeeper:
       branch: lp:~charmers/charms/precise/zookeeper/trunk
+      num_units: 3
       series: precise
-      constraints: mem=1G
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
       units: 3
     contrail-configuration:
       branch: lp:~sdn-charmers/charms/trusty/contrail-configuration/trunk
-      constraints: mem=4G
+      num_units: 2
       options:
-        vip: x.x.x.x
-      units: 2
+        vip: 10.4.1.18
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
     contrail-control:
       branch: lp:~sdn-charmers/charms/trusty/contrail-control/trunk
-      constraints: mem=2G
-      units: 2
+      num_units: 2
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
     contrail-analytics:
       branch: lp:~sdn-charmers/charms/trusty/contrail-analytics/trunk
-      constraints: mem=4G
-      units: 2
+      num_units: 2
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
     contrail-webui:
       branch: lp:~sdn-charmers/charms/trusty/contrail-webui/trunk
-      units: 2
+      num_units: 2
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
     neutron-api-contrail:
       branch: lp:~sdn-charmers/charms/trusty/neutron-api-contrail/trunk
     neutron-contrail:
       branch: lp:~sdn-charmers/charms/trusty/neutron-contrail/trunk
     haproxy:
+      num_units: 2
       options:
         peering_mode: active-active
-      units: 2
+      to:
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
     keepalived:
       branch: lp:~sdn-charmers/charms/trusty/keepalived/trunk
       options:
-        virtual-ip: x.x.x.x
+        virtual-ip: 10.4.1.19
   overrides:
     admin-role: admin
   relations:
@@ -120,25 +245,62 @@ contrail:
     - [ contrail-analytics, haproxy ]
     - [ contrail-webui, haproxy ]
     - [ haproxy, keepalived ]
-trusty-icehouse-contrail:
+trusty-liberty-nodes:
+  inherits: openstack-phase1
+  series: trusty
+  overrides:
+    series: trusty
+    
+trusty-liberty: 
   inherits: contrail
   series: trusty
   services:
-    haproxy:
-      charm: cs:trusty/haproxy
-    mysql:
-      charm: cs:trusty/mysql
-    rabbitmq-server:
-      charm: cs:trusty/rabbitmq-server
-trusty-juno-contrail:
-  inherits: contrail
-  series: trusty
-  services:
-    haproxy:
-      charm: cs:trusty/haproxy
     mysql:
       charm: cs:trusty/mysql
     rabbitmq-server:
       charm: cs:trusty/rabbitmq-server
   overrides:
+    series: trusty
+    #os-data-network: 10.4.8.0/21
+    region: Canonical
+    openstack-origin: cloud:trusty-liberty
+
+trusty-kilo-nodes:
+  inherits: openstack-phase1
+  series: trusty
+  overrides:
+    series: trusty
+
+trusty-kilo:
+  inherits: contrail
+  series: trusty
+  services:
+    mysql:
+      charm: cs:trusty/mysql
+    rabbitmq-server:
+      charm: cs:trusty/rabbitmq-server
+  overrides:
+    series: trusty
+    #os-data-network: 10.4.8.0/21
+    region: Canonical
+    openstack-origin: cloud:trusty-kilo
+
+trusty-juno-nodes:
+  inherits: openstack-phase1
+  overrides:
+    series: trusty
+
+trusty-juno:
+  inherits: contrail
+  series: trusty
+  services:
+    mysql:
+      charm: cs:trusty/mysql
+    rabbitmq-server:
+      charm: cs:trusty/rabbitmq-server
+  overrides:
+    series: trusty
+    #os-data-network: 10.4.8.0/21
+    region: Canonical
     openstack-origin: cloud:trusty-juno
+
