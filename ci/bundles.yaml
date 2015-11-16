@@ -92,7 +92,7 @@ openstack-phase2:
         - "lxc:nodes-api=2"
     "nova-compute": 
       branch: "lp:~openstack-charmers/charms/trusty/nova-compute/next"
-      num_units: 4
+      num_units: 1
       options: 
         "enable-live-migration": true
         "enable-resize": true
@@ -100,9 +100,9 @@ openstack-phase2:
       to:
         - "nodes-compute=0"
 #        - "nodes-compute=1"
-        - "nodes-api=0"
-        - "nodes-api=1"
-        - "nodes-api=2"
+#        - "nodes-api=0"
+#        - "nodes-api=1"
+#        - "nodes-api=2"
     "nova-cloud-controller": 
       charm: "cs:trusty/nova-cloud-controller"
       num_units: 3

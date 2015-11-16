@@ -1,95 +1,180 @@
-openstack-services:
+# vim: set ts=2 et:
+openstack-phase1:
+  series: trusty
   services:
-    ubuntu:
-      branch: "lp:charms/trusty/ubuntu"
-      num_utils: 1
+    nodes-api:
+      charm: "local:trusty/ubuntu-nodes-controller"
+      num_units: 1
       constraints: tags=control
-    neutron-gateway:
-      branch: lp:~sdn-charmers/charms/trusty/neutron-gateway/ovs-odl
-      options:
-        plugin: ovs-odl
-        instance-mtu: 1400
-      to: ubuntu=0
-    nova-compute:
-      branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
+    nodes-compute:
+      charm: "local:trusty/ubuntu-nodes-compute"
       num_units: 1
       constraints: tags=compute
+    "ntp":
+      charm: "cs:trusty/ntp"
+  relations:
+    - - "ntp:juju-info"
+      - "nodes-api:juju-info"
+    - - "ntp:juju-info"
+      - "nodes-compute:juju-info"
+openstack-phase2:
+  inherits: openstack-phase1
+  services:
+    "mysql":
+      charm: "cs:trusty/mysql"
+      num_units: 1
       options:
-        enable-live-migration: False
-        manage-neutron-plugin-legacy-mode: False
-    neutron-api:
+        "dataset-size": 2G
+        "max-connections": 10000
+      to:
+        - "lxc:nodes-api=0"
+    "rabbitmq-server":
+      branch: lp:charms/trusty/rabbitmq-server
+      num_units: 1
+      to:
+        - "lxc:nodes-api=0"
+    "keystone":
+      branch: lp:charms/trusty/keystone
+      num_units: 1
+      options:
+        "admin-password": openstack
+        "admin-token": admin
+      to:
+        - "lxc:nodes-api=0"
+    "openstack-dashboard":
+      branch: lp:charms/trusty/openstack-dashboard
+      num_units: 1
+      options:
+        secret: admin
+      to:
+        - "lxc:nodes-api=0"
+    "nova-compute":
+      branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
+      num_units: 1
+      options:
+        "enable-live-migration": False
+        "manage-neutron-plugin-legacy-mode": False
+      to:
+        - "nodes-compute=0"
+#        - "nodes-compute=1"
+    "nova-cloud-controller":
+      branch: lp:charms/trusty/nova-cloud-controller
+      num_units: 1
+      options:
+        "console-access-protocol": novnc
+        "network-manager": Neutron
+        "quantum-security-groups": "yes"
+      to:
+        - "lxc:nodes-api=0"
+    "neutron-api":
       branch: lp:~openstack-charmers/charms/trusty/neutron-api/next
+      num_units: 1
       options:
-        neutron-security-groups: False
+        neutron-security-groups: True
         manage-neutron-plugin-legacy-mode: False
-      to: lxc:ubuntu=0
-    neutron-api-odl:
-      branch: lp:~openstack-charmers/charms/trusty/neutron-api-odl/vpp
+      to:
+        - "lxc:nodes-api=0"
+    neutron-gateway:
+      branch: lp:charms/trusty/neutron-gateway
       options:
-        overlay-network-type: 'vxlan gre'
-        security-groups: true
+#        "ext-port": "eth1"
+        plugin: ovs-odl
+        instance-mtu: 1400
+      to:
+        - "nodes-api=0"
     odl-controller:
       branch: lp:~sdn-charmers/charms/trusty/odl-controller/trunk
       options:
         install-url: "https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.4-Helium-SR4/distribution-karaf-0.2.4-Helium-SR4.tar.gz"
-      to: lxc:ubuntu=0
+#        install-url: "https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.3.2-Lithium-SR2/distribution-karaf-0.3.2-Lithium-SR2.tar.gz"
+        http-proxy: "http://squid.internal:3128"
+        https-proxy: "http://squid.internal:3128"
+      to:
+        - "lxc:nodes-api=0"
+    "glance":
+      branch: lp:charms/trusty/glance
+      num_units: 1
+      to:
+        - "lxc:nodes-api=0"
+    neutron-api-odl:
+      branch: lp:~openstack-charmers/charms/trusty/neutron-api-odl/vpp
+      options:
+        overlay-network-type: 'vxlan gre'
+        security-groups: True
     openvswitch-odl:
-      branch: lp:~alai/charms/trusty/openvswitch-odl/trunk
-    mysql:
-      charm: cs:trusty/mysql
-      options:
-        dataset-size: 50%
-        max-connections: 20000
-      to: lxc:ubuntu=0
-    rabbitmq-server:
-      charm: cs:trusty/rabbitmq-server
-      to: lxc:ubuntu=0
-    keystone:
-      charm: cs:trusty/keystone
-      options:
-        admin-password: openstack
-        admin-token: admin
-      to: lxc:ubuntu=0
-    openstack-dashboard:
-      charm: cs:trusty/openstack-dashboard
-      to: lxc:ubuntu=0
-    nova-cloud-controller:
-      charm: cs:trusty/nova-cloud-controller
-      options:
-        network-manager: Neutron
-        quantum-security-groups: "yes"
-      to: lxc:ubuntu=0
-    glance:
-      charm: cs:trusty/glance
-      to: lxc:ubuntu=0
+      branch: lp:~openstack-charmers/charms/trusty/openvswitch-odl/trunk
   relations:
-    - ['neutron-api:neutron-plugin-api-subordinate', 'neutron-api-odl:neutron-plugin-api-subordinate']
-    - ['nova-compute:neutron-plugin', 'openvswitch-odl:neutron-plugin']
-    - ['neutron-gateway', 'openvswitch-odl']
-    - ['openvswitch-odl:ovsdb-manager', 'odl-controller:ovsdb-manager']
-    - ['neutron-api-odl:odl-controller', 'odl-controller:controller-api']
-    - ['keystone:shared-db', 'mysql:shared-db']
-    - ['nova-cloud-controller:shared-db', 'mysql:shared-db']
-    - ['nova-cloud-controller:amqp', 'rabbitmq-server:amqp']
-    - ['nova-cloud-controller:image-service', 'glance:image-service']
-    - ['nova-cloud-controller:identity-service', 'keystone:identity-service']
-    - ['nova-compute:cloud-compute', 'nova-cloud-controller:cloud-compute']
-    - ['nova-compute:amqp', 'rabbitmq-server:amqp']
-    - ['nova-compute:image-service', 'glance:image-service']
-    - ['glance:shared-db', 'mysql:shared-db']
-    - ['glance:identity-service', 'keystone:identity-service']
-    - ['glance:amqp', 'rabbitmq-server:amqp']
-    - ['neutron-api:shared-db', 'mysql:shared-db']
-    - ['neutron-api:amqp', 'rabbitmq-server:amqp']
-    - ['neutron-api:neutron-api', 'nova-cloud-controller:neutron-api']
-    - ['neutron-api:identity-service', 'keystone:identity-service']
-    - ['neutron-gateway:amqp', 'rabbitmq-server:amqp']
-    - ['neutron-gateway:neutron-plugin-api', 'neutron-api:neutron-plugin-api']
-    - ['neutron-gateway:quantum-network-service', 'nova-cloud-controller:quantum-network-service']
-    - ['openstack-dashboard:identity-service','keystone:identity-service']
+    - - "neutron-api:neutron-plugin-api-subordinate"
+      - "neutron-api-odl:neutron-plugin-api-subordinate"
+    - - "nova-compute:neutron-plugin"
+      - "openvswitch-odl:neutron-plugin"
+    - - "neutron-gateway"
+      - "openvswitch-odl"
+    - - "openvswitch-odl:ovsdb-manager"
+      - "odl-controller:ovsdb-manager"
+    - - "neutron-api-odl:odl-controller"
+      - "odl-controller:controller-api"
+    - - "keystone:shared-db"
+      - "mysql:shared-db"
+    - - "nova-cloud-controller:shared-db"
+      - "mysql:shared-db"
+    - - "nova-cloud-controller:amqp"
+      - "rabbitmq-server:amqp"
+    - - "nova-cloud-controller:image-service"
+      - "glance:image-service"
+    - - "nova-cloud-controller:identity-service"
+      - "keystone:identity-service"
+    - - "nova-cloud-controller:cloud-compute"
+      - "nova-compute:cloud-compute"
+    - - "nova-compute:amqp"
+      - "rabbitmq-server:amqp"
+    - - "nova-compute:image-service"
+      - "glance:image-service"
+    - - "glance:shared-db"
+      - "mysql:shared-db"
+    - - "glance:identity-service"
+      - "keystone:identity-service"
+    - - "glance:amqp"
+      - "rabbitmq-server:amqp"
+    - - "openstack-dashboard:identity-service"
+      - "keystone:identity-service"
+    - - "neutron-api:shared-db"
+      - "mysql:shared-db"
+    - - "neutron-api:amqp"
+      - "rabbitmq-server:amqp"
+    - - "nova-cloud-controller:neutron-api"
+      - "neutron-api:neutron-api"
+    - - "neutron-api:identity-service"
+      - "keystone:identity-service"
+    - - "neutron-gateway:amqp"
+      - "rabbitmq-server:amqp"
+    - - "neutron-gateway:neutron-plugin-api"
+      - "neutron-api:neutron-plugin-api"
+    - - "nova-cloud-controller:quantum-network-service"
+      - "neutron-gateway:quantum-network-service"
+trusty-liberty-nodes:
+  inherits: openstack-phase1
+  overrides:
+    series: trusty
+
+trusty-liberty:
+  inherits: openstack-phase2
+  overrides:
+    #os-data-network: 10.4.8.0/21
+    region: Canonical
+    source: "cloud:trusty-liberty"
+    "openstack-origin": "cloud:trusty-liberty"
+    series: trusty
+
+trusty-kilo-nodes:
+  inherits: openstack-phase1
+  overrides:
+    series: trusty
+
 # master
-trusty-master:
-  inherits: openstack-services
+trusty-kilo:
+  inherits: openstack-phase2
+  series: trusty
   services:
     keystone:
       options:
@@ -118,9 +203,10 @@ trusty-master:
     nova-cloud-controller:
       options:
         openstack-origin-git: include-file://nova-master.yaml
-trusty-kilo:
-  inherits: trusty-master
-  series: trusty
   overrides:
+    region: Canonical
+    #os-data-network: 10.4.8.0/21
     openstack-origin: cloud:trusty-kilo
     source: cloud:trusty-kilo
+    series: trusty
+

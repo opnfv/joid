@@ -11,6 +11,8 @@ case "$1" in
         ;;
     'tip' )
         cp odl/juju-deployer/ovs-odl-tip.yaml ./bundles.yaml
+        cp odl/juju-deployer/source/* ./
+        sed -i -- "s|branch: master|branch: stable/$2|g" ./*.yaml
         ;;
     * )
         cp odl/juju-deployer/ovs-odl.yaml ./bundles.yaml
