@@ -139,25 +139,25 @@ openstack-phase2:
     - [ "neutron-api:ha", "hacluster-neutron:ha" ]
     - [ "nova-cloud-controller:ha", "hacluster-nova:ha" ]
     - [ "openstack-dashboard:ha", "hacluster-horizon:ha" ]
-    - [ keystone, mysql ]
-    - [ nova-cloud-controller, mysql ]
+    - [ keystone, percona-cluster ]
+    - [ nova-cloud-controller, percona-cluster ]
     - [ nova-cloud-controller, rabbitmq-server ]
     - [ nova-cloud-controller, glance ]
     - [ nova-cloud-controller, keystone ]
     - [ nova-compute, nova-cloud-controller ]
-    - [ "nova-compute:shared-db", "mysql:shared-db" ]
+    - [ "nova-compute:shared-db", "percona-cluster:shared-db" ]
     - [ "nova-compute:amqp", "rabbitmq-server:amqp" ]
     - [ nova-compute, glance ]
-    - [ glance, mysql ]
+    - [ glance, percona-cluster ]
     - [ glance, keystone ]
     - [ openstack-dashboard, keystone ]
-    - [ neutron-api, mysql ]
+    - [ neutron-api, percona-cluster ]
     - [ neutron-api, rabbitmq-server ]
     - [ neutron-api, nova-cloud-controller ]
     - [ neutron-api, keystone ]
     - [ neutron-api, neutron-api-contrail ]
 contrail:
-  inherits: openstack
+  inherits: openstack-phase2
   services:
     cassandra:
       branch: lp:~stub/charms/trusty/cassandra/noauthentication
@@ -208,6 +208,7 @@ contrail:
     neutron-contrail:
       branch: lp:~sdn-charmers/charms/trusty/neutron-contrail/trunk
     haproxy:
+      charm: cs:trusty/haproxy
       num_units: 2
       options:
         peering_mode: active-active
@@ -254,11 +255,6 @@ trusty-liberty-nodes:
 trusty-liberty: 
   inherits: contrail
   series: trusty
-  services:
-    mysql:
-      charm: cs:trusty/mysql
-    rabbitmq-server:
-      charm: cs:trusty/rabbitmq-server
   overrides:
     series: trusty
     #os-data-network: 10.4.8.0/21
@@ -274,11 +270,6 @@ trusty-kilo-nodes:
 trusty-kilo:
   inherits: contrail
   series: trusty
-  services:
-    mysql:
-      charm: cs:trusty/mysql
-    rabbitmq-server:
-      charm: cs:trusty/rabbitmq-server
   overrides:
     series: trusty
     #os-data-network: 10.4.8.0/21
@@ -293,11 +284,6 @@ trusty-juno-nodes:
 trusty-juno:
   inherits: contrail
   series: trusty
-  services:
-    mysql:
-      charm: cs:trusty/mysql
-    rabbitmq-server:
-      charm: cs:trusty/rabbitmq-server
   overrides:
     series: trusty
     #os-data-network: 10.4.8.0/21
