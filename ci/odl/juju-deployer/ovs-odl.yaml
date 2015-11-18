@@ -227,7 +227,7 @@ openstack-phase2:
     - - "heat:identity-service"
       - "keystone:identity-service"
     - - "heat:amqp"
-      - "rabbitmq:amqp"
+      - "rabbitmq-server:amqp"
 trusty-liberty-nodes:
   inherits: openstack-phase1
   overrides:

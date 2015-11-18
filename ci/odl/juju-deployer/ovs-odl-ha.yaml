@@ -296,11 +296,11 @@ openstack-phase2:
     - - "ceilometer:shared-db"
       - "mongodb:database"
     - - "heat:shared-db"
-      - "mysql:shared-db"
+      - "percona-cluster:shared-db"
     - - "heat:identity-service"
       - "keystone:identity-service"
     - - "heat:amqp"
-      - "rabbitmq:amqp"
+      - "rabbitmq-server:amqp"
 trusty-liberty-nodes:
   inherits: openstack-phase1
   overrides:
