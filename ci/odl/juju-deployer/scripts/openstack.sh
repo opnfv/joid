@@ -21,6 +21,9 @@ unitMachine()
 	juju status | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"services\"][\"$1\"][\"units\"][\"$1/$2\"][\"machine\"]" 2> /dev/null
 }
 
+juju run --service ceph 'sudo ceph osd pool set cinder-ceph size 1'
+juju run --service ceph 'sudo ceph osd pool set cinder-ceph min_size 1'
+
 mkdir -m 0700 -p cloud
 controller_address=$(unitAddress keystone 0)
 configOpenrc admin openstack admin http://$controller_address:5000/v2.0 Canonical > cloud/admin-openrc

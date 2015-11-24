@@ -119,7 +119,7 @@ openstack-phase2:
       options:
         block-device: None
         glance-api-version: 2
-        ha-mcastport: 5401
+#        ha-mcastport: 5401
       to:
         - "lxc:nodes-api=0"
     cinder-ceph:
@@ -137,7 +137,7 @@ openstack-phase2:
       branch: lp:charms/trusty/keystone
       num_units: 3
       options: 
-        ha-mcastport: 5402
+#        ha-mcastport: 5402
         "admin-password": openstack
         "admin-token": admin
         vip: 10.4.1.13
@@ -216,7 +216,7 @@ openstack-phase2:
       options: 
         ceph-osd-replication-count: 1
         vip: 10.4.1.12
-        ha-mcastport: 5402
+#        ha-mcastport: 5402
       to:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
