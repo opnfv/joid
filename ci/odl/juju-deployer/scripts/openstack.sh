@@ -21,8 +21,13 @@ unitMachine()
 	juju status | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"services\"][\"$1\"][\"units\"][\"$1/$2\"][\"machine\"]" 2> /dev/null
 }
 
+<<<<<<< HEAD
 juju run --service ceph 'sudo ceph osd pool set cinder-ceph size 1'
 juju run --service ceph 'sudo ceph osd pool set cinder-ceph min_size 1'
+=======
+#juju run --service ceph 'sudo ceph osd pool set cinder-ceph size 1'
+#juju run --service ceph 'sudo ceph osd pool set cinder-ceph min_size 1'
+>>>>>>> 69227d1... modified the bundle to include the ceph and cinder changes.
 
 mkdir -m 0700 -p cloud
 controller_address=$(unitAddress keystone 0)
