@@ -247,6 +247,7 @@ trusty-liberty:
   overrides:
     series: trusty
     #os-data-network: 10.4.8.0/21
+    #prefer-ipv6: true
     region: Canonical
     openstack-origin: cloud:trusty-liberty
     source: "cloud:trusty-liberty"
@@ -269,6 +270,7 @@ trusty-kilo:
   overrides:
     series: trusty
     #os-data-network: 10.4.8.0/21
+    #prefer-ipv6: true
     region: Canonical
     openstack-origin: cloud:trusty-kilo
     source: "cloud:trusty-kilo"
@@ -291,6 +293,7 @@ trusty-juno:
   overrides:
     series: trusty
     #os-data-network: 10.4.8.0/21
+    #prefer-ipv6: true
     region: Canonical
     openstack-origin: cloud:trusty-juno
     source: "cloud:trusty-juno"

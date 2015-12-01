@@ -262,6 +262,7 @@ trusty-liberty:
   inherits: openstack-phase2
   overrides:
     #os-data-network: 10.4.8.0/21
+    #prefer-ipv6: true
     region: Canonical
     source: "cloud:trusty-liberty"
     "openstack-origin": "cloud:trusty-liberty"
@@ -280,6 +281,7 @@ trusty-kilo:
   overrides:
     region: Canonical
     #os-data-network: 10.4.8.0/21
+    #prefer-ipv6: true
     openstack-origin: cloud:trusty-kilo
     source: cloud:trusty-kilo
     series: trusty

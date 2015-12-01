@@ -12,6 +12,9 @@ case "$1" in
     'orangepod2' )
         cp maas/orange/pod2/deployment.yaml ./deployment.yaml
         ;;
+    'attvirpod1' )
+        cp maas/att/virpod1/deployment.yaml ./deployment.yaml
+        ;;
     * )
         cp maas/intel/pod5/deployment.yaml ./deployment.yaml
         ;;
