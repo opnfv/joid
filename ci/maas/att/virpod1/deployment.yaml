@@ -5,7 +5,7 @@ demo-maas:
         # Defines the general setup for the MAAS environment, including the
         # username and password for the host as well as the MAAS server.
         user: ubuntu
-        password: ubuntu
+        password: opnfv-joid
 
         # Contains the virtual machine parameters for creating the MAAS virtual
         # server. Here you can configure the name of the virsh domain, the
@@ -33,11 +33,11 @@ demo-maas:
         virsh:
             rsa_priv_key: /home/ubuntu/.ssh/id_rsa
             rsa_pub_key: /home/ubuntu/.ssh/id_rsa.pub
-            uri: qemu+ssh://ubuntu@192.168.1.2/system
+            uri: qemu+ssh://ubuntu@192.168.10.2/system
 
         # Defines the IP Address that the configuration script will use to
         # to access the MAAS controller via SSH.
-        ip_address: 192.168.1.2
+        ip_address: 192.168.10.3
 
         # This section allows the user to set a series of options on the
         # MAAS server itself. The list of config options can be found in
@@ -45,8 +45,8 @@ demo-maas:
         #  - http://maas.ubuntu.com/docs/api.html#maas-server
         settings:
             main_archive: http://us.archive.ubuntu.com/ubuntu
-            upstream_dns: 192.168.1.2
-            maas_name: intelpod6
+            upstream_dns: 192.168.10.1
+            maas_name: attvirpod1
             # kernel_opts: "console=tty0 console=ttyS1,115200n8"
             # ntp_server: ntp.ubuntu.com
 
@@ -67,12 +67,12 @@ demo-maas:
 
             auto eth0
             iface eth0 inet static
-            address 192.168.1.2
+            address 192.168.10.3
             netmask 255.255.255.0
-            network 192.168.1.0
-            broadcast 192.168.1.255
-            gateway 192.168.1.1
-            dns-nameservers 192.168.1.1 127.0.0.1
+            network 192.168.10.0
+            broadcast 192.168.10.255
+            gateway 192.168.10.1
+            dns-nameservers 192.168.10.1 127.0.0.1
 
         # The node-group-interfaces section is used to configure the MAAS
         # network interfaces. Basic configuration is supported, such as which
@@ -82,37 +82,37 @@ demo-maas:
         #   ${maas_ip} - the ip address of the MAAS controller 
         node_group_ifaces:
             - device: eth0
-              ip: 192.168.1.2
+              ip: 192.168.10.3
               subnet_mask: 255.255.255.0
-              broadcast_ip: 192.168.1.255
-              router_ip: 192.168.1.1
+              broadcast_ip: 192.168.10.255
+              router_ip: 192.168.10.1
               static_range:
-                  low: 192.168.1.20
-                  high: 192.168.1.100
+                  low: 192.168.10.20
+                  high: 192.168.10.100
               dynamic_range:
-                  low: 192.168.1.101
-                  high: 192.168.1.200
+                  low: 192.168.10.101
+                  high: 192.168.10.200
 
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
         nodes:
-            - name: node2-control
+            - name: controller1
               tags: control
               architecture: amd64/generic
               mac_addresses:
-                  - "00:1e:67:e0:0b:71"
+                  - "B8:AE:ED:76:FB:45"
               power:
                   type: ether_wake
-                  address: 38:63:bb:43:b8:9c
+                  address: B8:AE:ED:76:FB:45
 
-            - name: node5-compute
+            - name: compute1
               tags: compute
               architecture: amd64/generic
               mac_addresses:
-                  - "00:1e:67:cf:bc:f7"
+                  - "B8:AE:ED:76:FB:C4"
               power:
                   type: ether_wake
-                  address: 38:63:bb:43:b8:9d
+                  address: B8:AE:ED:76:FB:C4
 
     # Contains the virtual machine parameters for creating the Juju bootstrap
     # node virtual machine
