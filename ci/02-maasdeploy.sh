@@ -48,7 +48,7 @@ sudo apt-add-repository ppa:maas-deployers/stable -y
 sudo apt-add-repository ppa:juju/stable -y
 sudo apt-add-repository ppa:maas/stable -y
 sudo apt-get update -y
-sudo apt-get install git maas-deployer juju juju-deployer maas-cli -y
+sudo apt-get install openssh-server git maas-deployer juju juju-deployer maas-cli -y
 juju init -f
 
 cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys

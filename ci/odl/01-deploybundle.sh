@@ -59,8 +59,8 @@ case "$3" in
      'attvirpod1' )
          cp maas/att/virpod1/interfaces.host trusty/ubuntu-nodes-controller/network/interfaces.host
          cp maas/att/virpod1/interfaces.host trusty/ubuntu-nodes-compute/network/interfaces.host
-         cp maas/att/airpod1/lxc-add-more-interfaces trusty/ubuntu-nodes-controller/lxc/add-more-interfaces
-         cp maas/att/airpod1/lxc-add-more-interfaces trusty/ubuntu-nodes-compute/lxc/add-more-interfaces
+         cp maas/att/virpod1/lxc-add-more-interfaces trusty/ubuntu-nodes-controller/lxc/add-more-interfaces
+         cp maas/att/virpod1/lxc-add-more-interfaces trusty/ubuntu-nodes-compute/lxc/add-more-interfaces
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
          sed -i -- 's/10.4.1.1/192.168.1.1/g' ./bundles.yaml
         # Choose the external port to go out from gateway to use.
