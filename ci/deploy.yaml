@@ -2,12 +2,12 @@
 # deployed and automated.
 opnfv:
     # Defines the openstack release needs to be get installed.
-    release:A
+    release:B
     # Defines the openstack release needs to be get installed.
-    openstack:kilo
+    openstack:liberty
     # Defines the sdn plugin to be get installed.
     sdn:odl
     # Defines the ha type to be get installed.
     type:nonha
     # Defines the lab where release to be get installed.
-    lab:intellab5
+    lab:default

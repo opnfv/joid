@@ -16,7 +16,7 @@ case "$1" in
         cp maas/att/virpod1/deployment.yaml ./deployment.yaml
         ;;
     * )
-        cp maas/intel/pod5/deployment.yaml ./deployment.yaml
+        cp maas/default/deployment.yaml ./deployment.yaml
         ;;
 esac
 
@@ -30,15 +30,7 @@ if [ ! -e /var/lib/libvirt/images ]; then
 
     sudo apt-get install libvirt-bin -y
     sudo adduser ubuntu libvirtd
-    sudo virsh pool-define /dev/stdin <<EOF
-<pool type='dir'>
-  <name>default</name>
-  <target>
-    <path>/var/lib/libvirt/images</path>
-  </target>
-</pool>
-EOF
-
+    sudo virsh pool-define-as default --type dir --target /var/lib/libvirt/images/
     sudo virsh pool-start default
     sudo virsh pool-autostart default
 
@@ -52,7 +44,7 @@ sudo apt-get install openssh-server git maas-deployer juju juju-deployer maas-cl
 juju init -f
 
 cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
-maas-deployer -c deployment.yaml -d --force
+sudo maas-deployer -c deployment.yaml -d --force
 
 echo "... Deployment of maas finish ...."
 

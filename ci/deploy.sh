@@ -7,8 +7,8 @@ set -ex
 
 opnfvsdn=odl
 opnfvtype=nonha
-openstack=kilo
-opnfvlab=intelpod5
+openstack=liberty
+opnfvlab=default
 opnfvrel=b
 
 read_config() {
@@ -22,7 +22,7 @@ read_config() {
 usage() { echo "Usage: $0 [-s <odl|opencontrail>]
                          [-t <nonha|ha|tip>] 
                          [-o <juno|kilo|liberty>]
-                         [-l <intelpod5>]
+                         [-l <default|intelpod5>]
                          [-r <a|b>]" 1>&2 exit 1; } 
 
 while getopts ":s:t:o:l:h:r:" opt; do
@@ -51,10 +51,9 @@ while getopts ":s:t:o:l:h:r:" opt; do
 done
 
 deploy_dep() {
-    sudo apt-get install git -y 
     sudo apt-add-repository ppa:juju/stable -y
     sudo apt-get update
-    sudo apt-get install juju juju-deployer -y
+    sudo apt-get install juju git juju-deployer -y
     juju init -f
     cp environments.yaml ~/.juju/
 }
