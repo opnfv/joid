@@ -11,7 +11,7 @@ case "$1" in
         ;;
     'tip' )
         cp opencontrail/juju-deployer/contrail-tip.yaml ./bundles.yaml
-        cp opencontrail/juju-deployer/source/* ./
+        cp common/source/* ./
         sed -i -- "s|branch: master|branch: stable/$2|g" ./*.yaml
         ;;
     * )
@@ -62,9 +62,9 @@ case "$3" in
          cp maas/att/virpod1/lxc-add-more-interfaces trusty/ubuntu-nodes-controller/lxc/add-more-interfaces
          cp maas/att/virpod1/lxc-add-more-interfaces trusty/ubuntu-nodes-compute/lxc/add-more-interfaces
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
-         sed -i -- 's/10.4.1.1/192.168.1.1/g' ./bundles.yaml
+         sed -i -- 's/10.4.1.1/192.168.10.1/g' ./bundles.yaml
         # Choose the external port to go out from gateway to use.
-         sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "juju-br0"/g' ./bundles.yaml
+         sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth1"/g' ./bundles.yaml
         ;;
 esac
 
@@ -88,4 +88,3 @@ case "$1" in
         ;;
 esac
 
-echo "... Deployment finished ...."

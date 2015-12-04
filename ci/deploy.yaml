@@ -8,6 +8,6 @@ opnfv:
     # Defines the sdn plugin to be get installed.
     sdn:odl
     # Defines the ha type to be get installed.
-    type:nonha
+    type:ha
     # Defines the lab where release to be get installed.
     lab:default

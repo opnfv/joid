@@ -5,7 +5,7 @@ set -ex
 #need to put mutiple cases here where decide this bundle to deploy by default use the odl bundle.
 # Below parameters are the default and we can according the release
 
-opnfvsdn=odl
+opnfvsdn=nosdn
 opnfvtype=nonha
 openstack=liberty
 opnfvlab=default
@@ -19,9 +19,9 @@ read_config() {
     opnfvsdn=`grep sdn: deploy.yaml | cut -d ":" -f2`
 }
 
-usage() { echo "Usage: $0 [-s <odl|opencontrail>]
+usage() { echo "Usage: $0 [-s <nosdn|odl|opencontrail>]
                          [-t <nonha|ha|tip>] 
-                         [-o <juno|kilo|liberty>]
+                         [-o <juno|liberty>]
                          [-l <default|intelpod5>]
                          [-r <a|b>]" 1>&2 exit 1; } 
 
@@ -60,7 +60,7 @@ deploy_dep() {
 
 deploy() {
     #copy the script which needs to get deployed as part of ofnfv release
-    echo "deploying now"
+    echo "...... deploying now ......"
     echo "   " >> environments.yaml
     echo "        enable-os-refresh-update: false" >> environments.yaml
     echo "        enable-os-upgrade: false" >> environments.yaml
@@ -76,12 +76,24 @@ deploy() {
     ./01-deploybundle.sh $opnfvtype $openstack $opnfvlab
 }
 
+check_status() {
+    while [ $? -eq 0 ]; do
+       sleep 60
+       echo " still executing the reltionship within charms ..."
+       juju status | grep executing > /dev/null
+    done
+    echo "...... deployment finishing ......."
+}
+
 if [ "$#" -eq 0 ]; then
   echo "This installtion will use deploy.yaml" 
   read_config
 fi
 
-echo "deploying started"
+echo "...... deployment started ......"
 #deploy_dep
 deploy
-echo "deploying finished"
+check_status
+
+echo "...... deployment finished  ......."
+
