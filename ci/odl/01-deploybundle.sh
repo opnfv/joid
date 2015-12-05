@@ -64,7 +64,7 @@ case "$3" in
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
          sed -i -- 's/10.4.1.1/192.168.1.1/g' ./bundles.yaml
         # Choose the external port to go out from gateway to use.
-         sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "juju-br0"/g' ./bundles.yaml
+         sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth1"/g' ./bundles.yaml
         ;;
 esac
 
