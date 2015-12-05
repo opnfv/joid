@@ -5,7 +5,7 @@ demo-maas:
         # Defines the general setup for the MAAS environment, including the
         # username and password for the host as well as the MAAS server.
         user: ubuntu
-        password: opnfv-joid
+        password: ubuntu
 
         # Contains the virtual machine parameters for creating the MAAS virtual
         # server. Here you can configure the name of the virsh domain, the
@@ -22,7 +22,8 @@ demo-maas:
         apt_http_proxy:
 
         apt_sources:
-          - ppa:maas/stable
+#          - ppa:maas/stable
+          - ppa:maas/next
           - ppa:juju/stable
 
         # Virsh power settings
@@ -45,7 +46,7 @@ demo-maas:
         #  - http://maas.ubuntu.com/docs/api.html#maas-server
         settings:
             main_archive: http://us.archive.ubuntu.com/ubuntu
-            upstream_dns: 192.168.10.1
+            upstream_dns: 8.8.8.8
             maas_name: attvirpod1
             # kernel_opts: "console=tty0 console=ttyS1,115200n8"
             # ntp_server: ntp.ubuntu.com
@@ -72,7 +73,7 @@ demo-maas:
             network 192.168.10.0
             broadcast 192.168.10.255
             gateway 192.168.10.1
-            dns-nameservers 192.168.10.1 127.0.0.1
+            dns-nameservers 8.8.8.8 127.0.0.1
 
         # The node-group-interfaces section is used to configure the MAAS
         # network interfaces. Basic configuration is supported, such as which
@@ -100,10 +101,10 @@ demo-maas:
               tags: control
               architecture: amd64/generic
               mac_addresses:
-                  - "B8:AE:ED:76:FB:45"
+                  - "B8:AE:ED:76:F9:FF"
               power:
                   type: ether_wake
-                  address: B8:AE:ED:76:FB:45
+                  address: B8:AE:ED:76:F9:FF
 
             - name: compute1
               tags: compute
