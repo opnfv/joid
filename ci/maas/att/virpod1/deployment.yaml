@@ -22,7 +22,6 @@ demo-maas:
         apt_http_proxy:
 
         apt_sources:
-#          - ppa:maas/stable
           - ppa:maas/next
           - ppa:juju/stable
 
@@ -101,19 +100,19 @@ demo-maas:
               tags: control
               architecture: amd64/generic
               mac_addresses:
-                  - "B8:AE:ED:76:F9:FF"
+                  - "<controller1-mac>"
               power:
                   type: ether_wake
-                  address: B8:AE:ED:76:F9:FF
+                  address: <controller1-mac>
 
             - name: compute1
               tags: compute
               architecture: amd64/generic
               mac_addresses:
-                  - "B8:AE:ED:76:FB:C4"
+                  - "<compute1-mac>"
               power:
                   type: ether_wake
-                  address: B8:AE:ED:76:FB:C4
+                  address:  <compute1-mac>
 
     # Contains the virtual machine parameters for creating the Juju bootstrap
     # node virtual machine
