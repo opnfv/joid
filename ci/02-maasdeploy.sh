@@ -49,6 +49,8 @@ juju init -f
 cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 sudo maas-deployer -c deployment.yaml -d --force
 
+sudo chown $USER:$USER environments.yaml
+
 echo "... Deployment of maas finish ...."
 
 maas_ip=`grep " ip_address" deployment.yaml | cut -d " "  -f 10`
