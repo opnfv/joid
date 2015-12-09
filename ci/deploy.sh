@@ -85,6 +85,31 @@ check_status() {
     echo "...... deployment finishing ......."
 }
 
+configOpenrc()
+{
+        cat <<-EOF
+                export OS_USERNAME=$1
+                export OS_PASSWORD=$2
+                export OS_TENANT_NAME=$3
+                export OS_AUTH_URL=$4
+                export OS_REGION_NAME=$5
+                EOF
+}
+
+unitAddress()
+{
+    juju status | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"services\"][\"$1\"][\"units\"][\"$1/$2\"][\"public-address\"]" 2> /dev/null
+}
+
+createopenrc()
+{
+    mkdir -m 0700 -p cloud
+
+    controller_address=$(unitAddress keystone 0)
+    configOpenrc admin openstack admin http://$controller_address:5000/v2.0 Canonical > cloud/admin-openrc
+    chmod 0600 cloud/admin-openrc
+}
+
 if [ "$#" -eq 0 ]; then
   echo "This installtion will use deploy.yaml" 
   read_config
@@ -94,6 +119,12 @@ echo "...... deployment started ......"
 #deploy_dep
 deploy
 check_status
-
 echo "...... deployment finished  ......."
+
+echo "...... creating OpenRc file for consuming by various user ......."
+
+createopenrc
+
+echo "...... finished  ......."
+
 
