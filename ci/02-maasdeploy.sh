@@ -15,6 +15,9 @@ case "$1" in
     'attvirpod1' )
         cp maas/att/virpod1/deployment.yaml ./deployment.yaml
         ;;
+    'juniperpod1' )
+        cp maas/juniper/pod1/deployment.yaml ./deployment.yaml
+        ;;
     * )
         cp maas/default/deployment.yaml ./deployment.yaml
         ;;

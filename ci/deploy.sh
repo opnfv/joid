@@ -87,14 +87,13 @@ check_status() {
 
 configOpenrc()
 {
-        cat <<-EOF
-                export OS_USERNAME=$1
-                export OS_PASSWORD=$2
-                export OS_TENANT_NAME=$3
-                export OS_AUTH_URL=$4
-                export OS_REGION_NAME=$5
-                EOF
-}
+    echo"  " > ./cloud/admin-openrc
+    echo  "export OS_USERNAME=$1" >> ./cloud/admin-openrc 
+    echo  "export OS_PASSWORD=$2" >> ./cloud/admin-openrc
+    echo  "export OS_TENANT_NAME=$3" >> ./cloud/admin-openrc
+    echo  "export OS_AUTH_URL=$4" >> ./cloud/admin-openrc
+    echo  "export OS_REGION_NAME=$5" >> ./cloud/admin-openrc
+ }
 
 unitAddress()
 {
@@ -106,7 +105,7 @@ createopenrc()
     mkdir -m 0700 -p cloud
 
     controller_address=$(unitAddress keystone 0)
-    configOpenrc admin openstack admin http://$controller_address:5000/v2.0 Canonical > cloud/admin-openrc
+    configOpenrc admin openstack admin http://$controller_address:5000/v2.0 Canonical 
     chmod 0600 cloud/admin-openrc
 }
 
