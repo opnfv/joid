@@ -92,7 +92,7 @@ openstack-phase2:
         monitor-secret: AQAi5a9UeJXUExAA+By9u+GPhl8/XiUQ4nwI3A==
         osd-devices: /srv
         monitor-count: 1        
-#        osd-reformat: 'yes'
+        osd-reformat: 'no'
 #        ceph-cluster-network: 192.168.0.0/24
 #        ceph-public-network: 192.168.0.0/24
       to:

@@ -77,10 +77,20 @@ deploy() {
 }
 
 check_status() {
-    while [ $? -eq 0 ]; do
-       sleep 60
-       echo " still executing the reltionship within charms ..."
-       juju status | grep executing > /dev/null
+    retval=0
+    timeoutiter=0
+    while [ $retval -eq 0 ]; do
+       sleep 30
+       juju status > status.txt 
+       if [ "$(grep -c "executing" status.txt )" -ge 1 ]; then
+           echo " still executing the reltionship within charms ..."
+           if [ $timeoutiter -ge 60 ] then
+               retval=1
+           fi
+           timeoutiter=$((timeoutiter+1))
+       else
+           retval=1
+       fi
     done
     echo "...... deployment finishing ......."
 }
