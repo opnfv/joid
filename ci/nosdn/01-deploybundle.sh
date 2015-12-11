@@ -61,10 +61,19 @@ case "$3" in
          cp maas/att/virpod1/interfaces.host trusty/ubuntu-nodes-compute/network/interfaces.host
          cp maas/att/virpod1/lxc-add-more-interfaces trusty/ubuntu-nodes-controller/lxc/add-more-interfaces
          cp maas/att/virpod1/lxc-add-more-interfaces trusty/ubuntu-nodes-compute/lxc/add-more-interfaces
+        # As virtual environment does not need special treatment for interfaces.
+         sed -i -- 's/local:trusty\/ubuntu-nodes-controller/cs:trusty\/ubuntu/g' ./bundles.yaml
+         sed -i -- 's/local:trusty\/ubuntu-nodes-compute/cs:trusty\/ubuntu/g' ./bundles.yaml
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
          sed -i -- 's/10.4.1.1/192.168.10.1/g' ./bundles.yaml
         # Choose the external port to go out from gateway to use.
          sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth1"/g' ./bundles.yaml
+        ;;
+     'default' )
+         sed -i -- 's/local:trusty\/ubuntu-nodes-controller/cs:trusty\/ubuntu/g' ./bundles.yaml
+         sed -i -- 's/local:trusty\/ubuntu-nodes-compute/cs:trusty\/ubuntu/g' ./bundles.yaml
+         sed -i -- 's/10.4.1.1/192.168.122.1/g' ./bundles.yaml
+#         sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth1"/g' ./bundles.yaml
         ;;
 esac
 
