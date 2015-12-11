@@ -97,7 +97,7 @@ check_status() {
 
 configOpenrc()
 {
-    echo"  " > ./cloud/admin-openrc
+    echo  "  " > ./cloud/admin-openrc
     echo  "export OS_USERNAME=$1" >> ./cloud/admin-openrc 
     echo  "export OS_PASSWORD=$2" >> ./cloud/admin-openrc
     echo  "export OS_TENANT_NAME=$3" >> ./cloud/admin-openrc
