@@ -120,8 +120,8 @@ createopenrc()
 }
 
 if [ "$#" -eq 0 ]; then
-  echo "This installtion will use deploy.yaml" 
-  read_config
+  echo "This installtion will use default options" 
+  #read_config
 fi
 
 echo "...... deployment started ......"
