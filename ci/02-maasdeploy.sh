@@ -26,6 +26,20 @@ case "$1" in
         ;;
 esac
 
+#make sure no password asked during the deployment. 
+
+echo "$USER ALL=(ALL) NOPASSWD:ALL" > 90-joid-init
+
+if [ -e /etc/sudoers.d/90-joid-init ]; then
+    cp /etc/sudoers.d/90-joid-init 91-joid-init
+    cat 90-joid-init >> 91-joid-init
+    sudo chown root:root 90-joid-init
+    sudo mv 91-joid-init /etc/sudoers.d/
+else
+    sudo chown root:root 90-joid-init
+    sudo mv 90-joid-init /etc/sudoers.d/
+fi
+
 echo "... Deployment of maas Started ...."
 
 if [ ! -e $HOME/.ssh/id_rsa ]; then
@@ -90,11 +104,11 @@ if [ $virtinstall ]; then
     maas maas tags new name='control'
     maas maas tags new name='compute'
 
-    controlnodeid=`maas maas nodes new autodetect_nodegroup='yes' name='node1-control' tags='control' hostname='node1-control' power_type='virsh' mac_addresses=$node1controlmac power_parameters_power_address='qemu+ssh://ubuntu@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node1-control' | grep system_id | cut -d '"' -f 4 `
+    controlnodeid=`maas maas nodes new autodetect_nodegroup='yes' name='node1-control' tags='control' hostname='node1-control' power_type='virsh' mac_addresses=$node1controlmac power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node1-control' | grep system_id | cut -d '"' -f 4 `
 
     maas maas tag update-nodes control add=$controlnodeid
 
-    computenodeid=`maas maas nodes new autodetect_nodegroup='yes' name='node2-compute' tags='compute' hostname='node2-compute' power_type='virsh' mac_addresses=$node2computemac power_parameters_power_address='qemu+ssh://ubuntu@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node2-compute' | grep system_id | cut -d '"' -f 4 `
+    computenodeid=`maas maas nodes new autodetect_nodegroup='yes' name='node2-compute' tags='compute' hostname='node2-compute' power_type='virsh' mac_addresses=$node2computemac power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node2-compute' | grep system_id | cut -d '"' -f 4 `
 
     maas maas tag update-nodes compute add=$computenodeid
 
