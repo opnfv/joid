@@ -22,7 +22,7 @@ demo-maas:
         apt_http_proxy:
 
         apt_sources:
-          - ppa:maas/stable
+          - ppa:maas/next
           - ppa:juju/stable
 
         # Virsh power settings
@@ -149,11 +149,6 @@ demo-maas:
               architecture: amd64/generic
               mac_addresses:
                   - "38:63:bb:3f:bc:c8"
-                  - "38:63:bb:3f:bc:c9"
-                  - "38:63:bb:3f:bc:ca"
-                  - "38:63:bb:3f:bc:cb"
-                  - "a0:36:9f:4e:88:5c"
-                  - "a0:36:9f:4e:88:5e"
               power:
                   type: ipmi
                   address: 192.168.2.11
@@ -169,11 +164,6 @@ demo-maas:
               architecture: amd64/generic
               mac_addresses:
                   - "38:63:bb:44:34:84"
-                  - "38:63:bb:44:34:85"
-                  - "38:63:bb:44:34:86"
-                  - "38:63:bb:44:34:87"
-                  - "a0:36:9f:4e:8b:0c"
-                  - "a0:36:9f:4e:8b:0e"
               power:
                   type: ipmi
                   address: 192.168.2.12
@@ -186,11 +176,6 @@ demo-maas:
               architecture: amd64/generic
               mac_addresses:
                   - "38:63:bb:3f:1d:8c"
-                  - "38:63:bb:3f:1d:8d"
-                  - "38:63:bb:3f:1d:8e"
-                  - "38:63:bb:3f:1d:8f"
-                  - "a0:36:9f:4e:8a:3c"
-                  - "a0:36:9f:4e:8a:3e"
               power:
                   type: ipmi
                   address: 192.168.2.13
@@ -203,11 +188,6 @@ demo-maas:
               architecture: amd64/generic
               mac_addresses:
                   - "38:63:bb:3f:2d:a8"
-                  - "38:63:bb:3f:2d:a9"
-                  - "38:63:bb:3f:2d:aa"
-                  - "38:63:bb:3f:2d:ab"
-                  - "a0:36:9f:4e:8b:18"
-                  - "a0:36:9f:4e:8b:1a"
               power:
                   type: ipmi
                   address: 192.168.2.14
@@ -219,13 +199,7 @@ demo-maas:
               tags: control
               architecture: amd64/generic
               mac_addresses:
-                  - "40:f2:e9:29:de:8a"
-                  - "40:f2:e9:29:de:8b"
-                  - "40:f2:e9:29:de:8c"
-                  - "40:f2:e9:29:de:8d"
-                  - "a0:36:9f:1f:66:f0"
-                  - "a0:36:9f:1f:66:f2"
-                  - "42:f2:e9:29:de:89"
+                  - "94:57:a5:52:c9:48"
               power:
                   type: ipmi
                   address: 192.168.2.15
@@ -237,13 +211,7 @@ demo-maas:
               tags: control
               architecture: amd64/generic
               mac_addresses:
-                  - "40:f2:e9:2a:30:3a"
-                  - "40:f2:e9:2a:30:3b"
-                  - "40:f2:e9:2a:30:3c"
-                  - "40:f2:e9:2a:30:3d"
-                  - "a0:36:9f:1f:67:1c"
-                  - "a0:36:9f:1f:67:1e"
-                  - "42:f2:e9:2a:30:39"
+                  - "94:57:a5:52:63:b0"
               power:
                   type: ipmi
                   address: 192.168.2.16
@@ -255,26 +223,13 @@ demo-maas:
               tags: control
               architecture: amd64/generic
               mac_addresses:
-                  - "40:f2:e9:2a:4d:e2"
-                  - "40:f2:e9:2a:4d:e3"
-                  - "40:f2:e9:2a:4d:e4"
-                  - "40:f2:e9:2a:4d:e5"
-                  - "42:f2:e9:2a:4d:e1"
+                  - "94:57:a5:52:f1:80"
               power:
                   type: ipmi
                   address: 192.168.2.17
                   user: Administrator
                   pass: pod2Admin
                   driver: LAN_2_0
-
-#            - name: jenkins-slave
-#              tags: jenkins-slave
-#              architecture: amd64/generic
-#              mac_addresses:
-#                  - "52:54:00:f0:5c:53"
-#              power:
-#                  type: virsh
-#                  address: qemu+ssh://ubuntu@10.4.1.1/system
 
     # Contains the virtual machine parameters for creating the Juju bootstrap
     # node virtual machine
