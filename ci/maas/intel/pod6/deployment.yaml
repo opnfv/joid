@@ -145,9 +145,6 @@ demo-maas:
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:e0:0b:71"
-                  - "00:1e:67:e0:0b:72"
-                  - "00:1e:67:d0:9a:8c"
-                  - "00:1e:67:d0:9a:8d"
               power:
                   type: ipmi
                   address: 10.4.7.2
@@ -181,9 +178,6 @@ demo-maas:
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:e0:09:32"
-                  - "00:1e:67:e0:09:33"
-                  - "00:1e:67:d0:9b:92"
-                  - "00:1e:67:d0:9b:93"
               power:
                   type: ipmi
                   address: 10.4.7.3
@@ -199,9 +193,6 @@ demo-maas:
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:e0:09:fa"
-                  - "00:1e:67:e0:09:fb"
-                  - "00:1e:67:d0:9c:9c"
-                  - "00:1e:67:d0:9c:9d"
               power:
                   type: ipmi
                   address: 10.4.7.4
@@ -217,9 +208,6 @@ demo-maas:
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:cf:bc:f7"
-                  - "00:1e:67:cf:bc:f8"
-                  - "00:1e:67:d0:9c:26"
-                  - "00:1e:67:d0:9c:27"
               power:
                   type: ipmi
                   address: 10.4.7.5

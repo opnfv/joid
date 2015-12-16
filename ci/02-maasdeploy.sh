@@ -60,12 +60,13 @@ sudo apt-add-repository ppa:maas-deployers/stable -y
 sudo apt-add-repository ppa:juju/stable -y
 sudo apt-add-repository ppa:maas/stable -y
 sudo apt-get update -y
-sudo apt-get install openssh-server git maas-deployer juju juju-deployer maas-cli -y
+sudo apt-get install openssh-server git maas-deployer juju juju-deployer maas-cli python-pip -y
+sudo pip install shyaml
 juju init -f
 
 cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 
-if [ $virtinstall ]; then
+if [ "$virtinstall" -eq 1 ]; then
     sudo virsh net-dumpxml default > default-net-org.xml
     sudo sed -i '/dhcp/d' default-net-org.xml
     sudo sed -i '/range/d' default-net-org.xml
@@ -89,7 +90,7 @@ maas maas boot-resources import
 maas maas sshkeys new key="`cat $HOME/.ssh/id_rsa.pub`"
 
 #adding compute and control nodes VM to MAAS for deployment purpose.
-if [ $virtinstall ]; then
+if [ "$virtinstall" -eq 1 ]; then
     # create two more VMs to do the deployment.
     sudo virt-install --connect qemu:///system --name node1-control --ram 8192 --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node1-control
 
