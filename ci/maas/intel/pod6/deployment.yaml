@@ -22,7 +22,7 @@ demo-maas:
         apt_http_proxy:
 
         apt_sources:
-          - ppa:maas/stable
+          - ppa:maas/next
           - ppa:juju/stable
 
         # Virsh power settings

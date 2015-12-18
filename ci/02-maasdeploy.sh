@@ -75,6 +75,15 @@ if [ "$virtinstall" -eq 1 ]; then
     sudo virsh net-start default
 fi
 
+enableautomode() {
+    listofnodes=`maas maas nodes list | grep system_id | cut -d '"' -f 4`
+
+    for nodes in $listofnodes
+    do
+        maas maas interface link-subnet $nodes $1  mode=AUTO subnet=10.4.9.0/24
+    done
+}
+
 sudo maas-deployer -c deployment.yaml -d --force
 
 sudo chown $USER:$USER environments.yaml
@@ -88,6 +97,22 @@ maas maas boot-source update 1 url="http://maas.ubuntu.com/images/ephemeral-v2/d
 #maas maas boot-source-selections create 1 os="ubuntu" release="precise" arches="amd64" subarches="*" labels="*"
 maas maas boot-resources import
 maas maas sshkeys new key="`cat $HOME/.ssh/id_rsa.pub`"
+
+# Enable interfaces with maas
+case "$1" in
+    'intelpod5' )
+        ;;
+    'intelpod6' )
+        enableautomode eth1 || true
+        ;;
+    'orangepod2' )
+        ;;
+    'attvirpod1' )
+        ;;
+    'juniperpod1' )
+        ;;
+esac
+
 
 #adding compute and control nodes VM to MAAS for deployment purpose.
 if [ "$virtinstall" -eq 1 ]; then
