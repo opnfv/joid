@@ -117,12 +117,12 @@ esac
 #adding compute and control nodes VM to MAAS for deployment purpose.
 if [ "$virtinstall" -eq 1 ]; then
     # create two more VMs to do the deployment.
-    sudo virt-install --connect qemu:///system --name node1-control --ram 8192 --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node1-control
+    sudo virt-install --connect qemu:///system --name node1-control --ram 8192 --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node1-control
 
     sudo virt-install --connect qemu:///system --name node2-compute --ram 8192 --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node2-compute
 
-    node1controlmac=`grep  "mac address" node1-control | cut -d "'" -f 2`
-    node2computemac=`grep  "mac address" node2-compute | cut -d "'" -f 2`
+    node1controlmac=`grep  "mac address" node1-control | head -1 | cut -d "'" -f 2`
+    node2computemac=`grep  "mac address" node2-compute | head -1 | cut -d "'" -f 2`
 
     sudo virsh -c qemu:///system define --file node1-control
     sudo virsh -c qemu:///system define --file node2-compute
