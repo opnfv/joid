@@ -44,16 +44,15 @@ case "$3" in
          sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth2"/g' ./bundles.yaml
          ;;
      'intelpod5' )
-         cp maas/intel/pod5/interfaces.host trusty/ubuntu-nodes-controller/network/interfaces.host
-         cp maas/intel/pod5/lxc-add-more-interfaces trusty/ubuntu-nodes-controller/lxc/add-more-interfaces
-         cp maas/intel/pod5/interfaces.host trusty/ubuntu-nodes-compute/network/interfaces.host
-         cp maas/intel/pod5/lxc-add-more-interfaces trusty/ubuntu-nodes-compute/lxc/add-more-interfaces
+        # As environment does not need special treatment for interfaces for MAAS 1.9
+         sed -i -- 's/local:trusty\/ubuntu-nodes-controller/cs:trusty\/ubuntu/g' ./bundles.yaml
+         sed -i -- 's/local:trusty\/ubuntu-nodes-compute/cs:trusty\/ubuntu/g' ./bundles.yaml
         # As per your lab vip address list be deafult uses 10.4.1.21 - 10.4.1.29
          sed -i -- 's/10.4.1.1/10.4.1.2/g' ./bundles.yaml
         # choose the correct interface to use for data network
          sed -i -- 's/#os-data-network: 10.4.8.0\/21/os-data-network: 10.4.9.0\/24/g' ./bundles.yaml
         # Choose the external port to go out from gateway to use.
-         sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "brPublic"/g' ./bundles.yaml
+         sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth2.724"/g' ./bundles.yaml
         ;;
      'attvirpod1' )
         # As virtual environment does not need special treatment for interfaces.

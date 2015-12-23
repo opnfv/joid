@@ -75,14 +75,34 @@ if [ "$virtinstall" -eq 1 ]; then
     sudo virsh net-start default
 fi
 
+#Below function will mark the interfaces in Auto mode to enbled by MAAS
 enableautomode() {
     listofnodes=`maas maas nodes list | grep system_id | cut -d '"' -f 4`
 
     for nodes in $listofnodes
     do
-        maas maas interface link-subnet $nodes $1  mode=AUTO subnet=10.4.9.0/24
+        maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3
     done
 }
+
+#Below function will create vlan and update interface with the new vlan
+# will return the vlan id created
+crvlanupdsubnet() {
+    newvlanid=`maas maas vlans create $2 name=$3 vid=$4 | grep resource | cut -d '/' -f 6 `
+    maas maas subnet update $5 vlan=$newvlanid
+    eval "$1"="'$newvlanid'"
+}
+
+#Below function will create interface with new vlan and bind to physical interface
+crnodevlanint() {
+    listofnodes=`maas maas nodes list | grep system_id | cut -d '"' -f 4`
+
+    for nodes in $listofnodes
+    do
+        parentid=`maas maas interface read $nodes eth2 | grep interfaces | cut -d '/' -f 8`
+        maas maas interfaces create-vlan $nodes vlan=$1 parent=$parentid
+     done
+ }
 
 sudo maas-deployer -c deployment.yaml -d --force
 
@@ -97,22 +117,6 @@ maas maas boot-source update 1 url="http://maas.ubuntu.com/images/ephemeral-v2/d
 #maas maas boot-source-selections create 1 os="ubuntu" release="precise" arches="amd64" subarches="*" labels="*"
 maas maas boot-resources import
 maas maas sshkeys new key="`cat $HOME/.ssh/id_rsa.pub`"
-
-# Enable interfaces with maas
-case "$1" in
-    'intelpod5' )
-        ;;
-    'intelpod6' )
-        enableautomode eth1 || true
-        ;;
-    'orangepod2' )
-        ;;
-    'attvirpod1' )
-        ;;
-    'juniperpod1' )
-        ;;
-esac
-
 
 #adding compute and control nodes VM to MAAS for deployment purpose.
 if [ "$virtinstall" -eq 1 ]; then
@@ -139,6 +143,29 @@ if [ "$virtinstall" -eq 1 ]; then
     maas maas tag update-nodes compute add=$computenodeid
 
 fi
+
+# Enable vlan interfaces with maas
+case "$1" in
+    'intelpod5' )
+        maas refresh
+        crvlanupdsubnet vlan721 1 "DataNetwork" 721 2 || true
+        crvlanupdsubnet vlan724 2 "PublicNetwork" 724 3 || true
+        crnodevlanint $vlan721 || true
+        crnodevlanint $vlan724 || true
+        enableautomode eth2.721 AUTO "10.4.9.0/24" || true
+        ;;
+    'intelpod6' )
+        enableautomode eth1 AUTO "10.4.9.0/24" || true
+        ;;
+    'orangepod2' )
+        ;;
+    'attvirpod1' )
+        ;;
+    'juniperpod1' )
+        ;;
+esac
+
+echo " .... MAAS deployment finished successfully ...."
 
 #echo "... Deployment of opnfv release Started ...."
 #python deploy.py $maas_ip

@@ -22,7 +22,7 @@ demo-maas:
         apt_http_proxy:
 
         apt_sources:
-          - ppa:maas/stable
+          - ppa:maas/next
           - ppa:juju/stable
 
         # Virsh power settings
@@ -227,7 +227,7 @@ demo-maas:
     # node virtual machine
     juju-bootstrap:
         name: bootstrap
-        interfaces: ['bridge=brAdm,model=virtio','bridge=brData,model=virtio','bridge=brPublic,model=virtio']
+        interfaces: ['bridge=brAdm,model=virtio','bridge=brPublic,model=virtio']
         memory: 4096
         vcpus: 4
         arch: amd64
