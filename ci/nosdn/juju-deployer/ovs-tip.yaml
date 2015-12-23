@@ -140,6 +140,7 @@ openstack-phase2:
       branch: lp:charms/trusty/neutron-gateway
       options:
         openstack-origin-git: include-file://neutron-master.yaml
+        instance-mtu: 1400
 #        "ext-port": "eth1"
       to:
         - "nodes-api=0"

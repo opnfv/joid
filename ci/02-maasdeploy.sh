@@ -31,9 +31,9 @@ esac
 echo "$USER ALL=(ALL) NOPASSWD:ALL" > 90-joid-init
 
 if [ -e /etc/sudoers.d/90-joid-init ]; then
-    cp /etc/sudoers.d/90-joid-init 91-joid-init
+    sudo cp /etc/sudoers.d/90-joid-init 91-joid-init
     cat 90-joid-init >> 91-joid-init
-    sudo chown root:root 90-joid-init
+    sudo chown root:root 91-joid-init
     sudo mv 91-joid-init /etc/sudoers.d/
 else
     sudo chown root:root 90-joid-init
