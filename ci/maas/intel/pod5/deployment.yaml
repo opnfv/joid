@@ -142,14 +142,23 @@ demo-maas:
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
         nodes:
+            - name: node6-control
+              tags: control
+              architecture: amd64/generic
+              mac_addresses:
+                  - "00:15:17:ac:3b:b4"
+              power:
+                  type: ipmi
+                  address: 10.4.7.6
+                  user: root
+                  pass: root
+                  driver: LAN_2_0
+
             - name: node5-compute
               tags: compute
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:e0:0a:4a"
-                  - "00:1e:67:e0:0a:4b"
-                  - "00:1e:67:d0:9a:10"
-                  - "00:1e:67:d0:9a:11"
               power:
                   type: ipmi
                   address: 10.4.7.5
@@ -160,14 +169,11 @@ demo-maas:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
                 
-            - name: node4-control
-              tags: control
+            - name: node4-compute
+              tags: compute
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:e0:08:b0"
-                  - "00:1e:67:e0:08:b1"
-                  - "00:1e:67:d0:99:ee"
-                  - "00:1e:67:d0:99:ef"
               power:
                   type: ipmi
                   address: 10.4.7.4
@@ -183,9 +189,6 @@ demo-maas:
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:e0:08:7e"
-                  - "00:1e:67:e0:08:7f"
-                  - "00:1e:67:c2:23:d8"
-                  - "00:1e:67:c2:23:d9"
               power:
                   type: ipmi
                   address: 10.4.7.3
@@ -201,9 +204,6 @@ demo-maas:
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:cf:b8:92"
-                  - "00:1e:67:cf:b8:93"
-                  - "00:1e:67:d0:9b:0c"
-                  - "00:1e:67:d0:9b:0d"
               power:
                   type: ipmi
                   address: 10.4.7.2

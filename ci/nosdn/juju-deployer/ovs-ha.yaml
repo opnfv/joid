@@ -8,7 +8,7 @@ openstack-phase1:
       constraints: tags=control
     nodes-compute:
       charm: "local:trusty/ubuntu-nodes-compute"
-      num_units: 1
+      num_units: 2
       constraints: tags=compute
     "ntp": 
       charm: "cs:trusty/ntp"
@@ -31,7 +31,7 @@ openstack-phase2:
       charm: cs:trusty/ceilometer-agent
     ceph:
       charm: cs:trusty/ceph
-      num_units: 1
+      num_units: 2
       options:
         monitor-count: 1
         fsid: 5a791d94-980b-11e4-b6f6-3c970e8b1cf7
@@ -42,6 +42,7 @@ openstack-phase2:
 #        ceph-public-network: 192.168.0.0/24
       to:
         - "nodes-compute=0"
+        - "nodes-compute=1"
     ceph-osd:
       charm: cs:trusty/ceph-osd
       num_units: 3
@@ -150,7 +151,7 @@ openstack-phase2:
         - "lxc:nodes-api=2"
     nova-compute:
       charm: cs:trusty/nova-compute
-      num_units: 1
+      num_units: 2
       options:
         enable-live-migration: true
         enable-resize: true
@@ -158,7 +159,7 @@ openstack-phase2:
         migration-auth-type: ssh
       to:
         - "nodes-compute=0"
-#        - "nodes-compute=1"
+        - "nodes-compute=1"
 #        - "nodes-api=0"
 #        - "nodes-api=1"
 #        - "nodes-api=2"
@@ -324,7 +325,7 @@ trusty-liberty:
     source: "cloud:trusty-liberty"
     "openstack-origin": "cloud:trusty-liberty"
     series: trusty
-    ceph-osd-replication-count: 1
+    ceph-osd-replication-count: 2
 
 trusty-kilo-nodes:
   inherits: openstack-phase1
@@ -340,7 +341,7 @@ trusty-kilo:
     source: "cloud:trusty-kilo"
     "openstack-origin": "cloud:trusty-kilo"
     series: trusty
-    ceph-osd-replication-count: 1
+    ceph-osd-replication-count: 2
 
 trusty-juno-nodes:
   inherits: openstack-phase1
@@ -356,5 +357,5 @@ trusty-juno:
     source: "cloud:trusty-juno"
     "openstack-origin": "cloud:trusty-juno"
     series: trusty
-    ceph-osd-replication-count: 1
+    ceph-osd-replication-count: 2
 
