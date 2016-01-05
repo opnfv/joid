@@ -12,7 +12,7 @@ demo-maas:
         pool: default
         disk_size: 20G
         sticky_ip_address:
-            requested_address: 192.168.122.5
+            requested_address: 192.168.122.25
 
     maas:
         # Defines the general setup for the MAAS environment, including the
@@ -113,7 +113,7 @@ demo-maas:
                   low: 192.168.122.101
                   high: 192.168.122.200
               dynamic_range:
-                  low: 192.168.122.5
+                  low: 192.168.122.25
                   high: 192.168.122.100
 
         # Physical nodes to be added to the MAAS cluster. Nodes will be
