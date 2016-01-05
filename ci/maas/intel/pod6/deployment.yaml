@@ -188,8 +188,8 @@ demo-maas:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
 
-            - name: node4-control
-              tags: control
+            - name: node4-compute
+              tags: compute
               architecture: amd64/generic
               mac_addresses:
                   - "00:1e:67:e0:09:fa"
@@ -218,6 +218,19 @@ demo-maas:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
 
+            - name: node6-control
+              tags: control
+              architecture: amd64/generic
+              mac_addresses:
+                  - "00:15:17:aa:eb:3c"
+              power:
+                  type: ipmi
+                  address: 10.4.7.6
+                  user: root
+                  pass: root
+                  driver: LAN_2_0
+#              sticky_ip_address:
+#                  mac_address: "38:63:bb:43:b8:9c"
 #            - name: jenkins-slave
 #              tags: jenkins-slave
 #              architecture: amd64/generic
@@ -231,7 +244,7 @@ demo-maas:
     # node virtual machine
     juju-bootstrap:
         name: bootstrap
-        interfaces: ['bridge=brAdm,model=virtio', 'bridge=brData,model=virtio', 'bridge=brPublic,model=virtio']
+        interfaces: ['bridge=brAdm,model=virtio', 'bridge=brPublic,model=virtio']
         memory: 4096
         vcpus: 4
         arch: amd64
