@@ -140,6 +140,21 @@ demo-maas:
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
         nodes:
+            - name: node1-control
+              tags: control
+              architecture: amd64/generic
+              mac_addresses:
+                  - "00:1e:67:d8:ba:45"
+              power:
+                  type: ipmi
+                  address: 10.4.7.1
+                  user: root
+                  pass: root
+                  driver: LAN_2_0
+#              sticky_ip_address:
+#                  mac_address: "38:63:bb:43:b8:9c"
+#                  requested_address: 192.168.122.5
+
             - name: node2-control
               tags: control
               architecture: amd64/generic
@@ -155,24 +170,6 @@ demo-maas:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
                 
-#            - name: node1
-#              tags: physical
-#              architecture: amd64/generic
-#              mac_addresses:
-#                  - "00:1e:67:e0:08:b0"
-#                  - "00:1e:67:e0:08:b1"
-#                  - "00:1e:67:d0:99:ee"
-#                  - "00:1e:67:d0:99:ef"
-#              power:
-#                  type: ipmi
-#                  address: 10.4.2.9
-#                  user: root
-#                  pass: root
-#                  driver: LAN_2_0
-#              sticky_ip_address:
-#                  mac_address: "38:63:bb:43:b8:9c"
-#                  requested_address: 192.168.122.5
-
             - name: node3-control
               tags: control
               architecture: amd64/generic
@@ -218,19 +215,6 @@ demo-maas:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
 
-            - name: node6-control
-              tags: control
-              architecture: amd64/generic
-              mac_addresses:
-                  - "00:15:17:aa:eb:3c"
-              power:
-                  type: ipmi
-                  address: 10.4.7.6
-                  user: root
-                  pass: root
-                  driver: LAN_2_0
-#              sticky_ip_address:
-#                  mac_address: "38:63:bb:43:b8:9c"
 #            - name: jenkins-slave
 #              tags: jenkins-slave
 #              architecture: amd64/generic
