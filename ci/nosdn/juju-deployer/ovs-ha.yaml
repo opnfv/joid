@@ -104,7 +104,7 @@ openstack-phase2:
       to:
         - "lxc:nodes-api=0"
     mysql:
-      charm: cs:trusty/percona-cluster
+      branch: "lp:~openstack-charmers/charms/trusty/percona-cluster/next"
       num_units: 3
       options:
         max-connections: 20000

@@ -21,7 +21,7 @@ openstack-phase2:
   inherits: openstack-phase1
   services: 
     "percona-cluster": 
-      charm: "cs:trusty/percona-cluster"
+      branch: "lp:~openstack-charmers/charms/trusty/percona-cluster/next"
       num_units: 3
       options: 
         "dataset-size": 2G
