@@ -75,19 +75,19 @@ echo "... Deployment Started ...."
 case "$1" in
     'nonha' )
         juju-deployer -vW -d -c bundles.yaml trusty-"$2"-nodes
-        juju-deployer -vW -d -t 7200 -c bundles.yaml trusty-"$2"
+        juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml trusty-"$2"
         ;;
     'ha' )
         juju-deployer -vW -d -c bundles.yaml trusty-"$2"-nodes
-        juju-deployer -vW -d -t 7200 -c bundles.yaml trusty-"$2"
+        juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml trusty-"$2"
         ;;
     'tip' )
         juju-deployer -vW -d -c bundles.yaml trusty-"$2"-nodes
-        juju-deployer -vW -d -t 7200 -c bundles.yaml trusty-"$2"
+        juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml trusty-"$2"
         ;;
     * )
         juju-deployer -vW -d -c bundles.yaml trusty-"$2"-nodes
-        juju-deployer -vW -d -t 7200 -c bundles.yaml trusty-"$2"
+        juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml trusty-"$2"
         ;;
 esac
 
