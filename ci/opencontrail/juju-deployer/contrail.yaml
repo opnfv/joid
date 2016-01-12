@@ -106,7 +106,6 @@ openstack-phase2:
       options:
         "admin-password": openstack
         "admin-token": admin
-        "admin-role": admin
       to:
         - "lxc:nodes-api=0"
     "openstack-dashboard":
@@ -247,6 +246,7 @@ trusty-liberty:
     openstack-origin: cloud:trusty-liberty
     source: "cloud:trusty-liberty"
     ceph-osd-replication-count: 1
+    admin-role: admin
 
 trusty-kilo-nodes:
   inherits: openstack-phase1
@@ -270,6 +270,7 @@ trusty-kilo:
     openstack-origin: cloud:trusty-kilo
     source: "cloud:trusty-kilo"
     ceph-osd-replication-count: 1
+    admin-role: admin
 
 
 trusty-juno-nodes:
@@ -293,5 +294,6 @@ trusty-juno:
     openstack-origin: cloud:trusty-juno
     source: "cloud:trusty-juno"
     ceph-osd-replication-count: 1
+    admin-role: admin
 
 

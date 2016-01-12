@@ -80,7 +80,6 @@ openstack-phase2:
       options:
         admin-password: openstack
         admin-token: admin
-        admin-role: admin
         ha-mcastport: 5403
       to:
         - "lxc:nodes-api=0"
@@ -259,6 +258,8 @@ trusty-liberty:
     "openstack-origin": "cloud:trusty-liberty"
     series: trusty
     ceph-osd-replication-count: 1
+    admin-role: admin
+
 
 trusty-kilo-nodes:
   inherits: openstack-phase1
@@ -275,6 +276,8 @@ trusty-kilo:
     "openstack-origin": "cloud:trusty-kilo"
     series: trusty
     ceph-osd-replication-count: 1
+    admin-role: admin
+
 
 trusty-juno-nodes:
   inherits: openstack-phase1
@@ -291,4 +294,6 @@ trusty-juno:
     "openstack-origin": "cloud:trusty-juno"
     series: trusty
     ceph-osd-replication-count: 1
+    admin-role: admin
+
 

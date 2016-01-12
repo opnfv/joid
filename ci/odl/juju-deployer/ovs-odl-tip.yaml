@@ -98,7 +98,6 @@ openstack-phase2:
         openstack-origin-git: include-file://keystone-master.yaml
         "admin-password": openstack
         "admin-token": admin
-        "admin-role": admin
       to:
         - "lxc:nodes-api=0"
     "openstack-dashboard":
@@ -269,6 +268,7 @@ trusty-liberty:
     "openstack-origin": "cloud:trusty-liberty"
     series: trusty
     ceph-osd-replication-count: 1
+    admin-role: admin
 
 trusty-kilo-nodes:
   inherits: openstack-phase1
@@ -287,5 +287,5 @@ trusty-kilo:
     source: cloud:trusty-kilo
     series: trusty
     ceph-osd-replication-count: 1
-
+    admin-role: admin
 
