@@ -91,8 +91,8 @@ enableautomodebyname() {
     if [ ! -z "$4" ]; then
         for i in `seq 1 7`;
         do
-            listofnodes=`maas maas nodes list hostname=node$i-$4 | grep system_id | cut -d '"' -f 4`
-            if [ ! -z "$listofnodes" ]; then
+            nodes=`maas maas nodes list hostname=node$i-$4 | grep system_id | cut -d '"' -f 4`
+            if [ ! -z "$nodes" ]; then
                 maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3
             fi
        done
