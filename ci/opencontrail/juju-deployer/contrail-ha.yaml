@@ -3,11 +3,11 @@ openstack-phase1:
   series: trusty
   services:
     nodes-api:
-      charm: "local:trusty/ubuntu-nodes-controller"
+      charm: "cs:trusty/ubuntu"
       num_units: 3
       constraints: tags=control
     nodes-compute:
-      charm: "local:trusty/ubuntu-nodes-compute"
+      charm: "cs:trusty/ubuntu"
       num_units: 2
       constraints: tags=compute
     "ntp": 
