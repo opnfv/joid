@@ -96,6 +96,7 @@ openstack-phase2:
 #        ha-mcastport: 5402
         "admin-password": openstack
         "admin-token": admin
+        "admin-role": admin
       to:
         - "lxc:nodes-api=0"
     "openstack-dashboard": 
