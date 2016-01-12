@@ -78,11 +78,25 @@ fi
 #Below function will mark the interfaces in Auto mode to enbled by MAAS
 enableautomode() {
     listofnodes=`maas maas nodes list | grep system_id | cut -d '"' -f 4`
-
     for nodes in $listofnodes
     do
         maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3
     done
+}
+
+#Below function will mark the interfaces in Auto mode to enbled by MAAS
+# using hostname of the node added into MAAS
+
+enableautomodebyname() {
+    if [ ! -z "$4" ]; then
+        for i in `seq 1 7`;
+        do
+            listofnodes=`maas maas nodes list hostname=node$i-$4 | grep system_id | cut -d '"' -f 4`
+            if [ ! -z "$listofnodes" ]; then
+                maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3
+            fi
+       done
+    fi
 }
 
 #Below function will create vlan and update interface with the new vlan
@@ -152,12 +166,20 @@ case "$1" in
         crvlanupdsubnet vlan724 2 "PublicNetwork" 724 3 || true
         crnodevlanint $vlan721 || true
         crnodevlanint $vlan724 || true
-        enableautomode eth2.721 AUTO "10.4.9.0/24" || true
+        enableautomodebyname eth1.721 AUTO "10.4.9.0/24" compute || true
+        enableautomodebyname eth1.721 AUTO "10.4.9.0/24" control || true
         ;;
     'intelpod6' )
-        enableautomode eth1 AUTO "10.4.9.0/24" || true
+        maas refresh
+        enableautomodebyname eth1 AUTO "10.4.9.0/24" compute || true
+        enableautomodebyname eth1 AUTO "10.4.9.0/24" control || true
         ;;
     'orangepod2' )
+        maas refresh
+        enableautomodebyname eth4 AUTO "192.168.22.0/24" compute || true
+        enableautomodebyname eth5 AUTO "192.168.12.0/24" compute || true
+        enableautomodebyname eth2 AUTO "192.168.22.0/24" control || true
+        enableautomodebyname eth3 AUTO "192.168.12.0/24" control || true
         ;;
     'attvirpod1' )
         ;;

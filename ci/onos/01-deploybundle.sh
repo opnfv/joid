@@ -21,10 +21,6 @@ esac
 
 case "$3" in
     'orangepod2' )
-        cp maas/orange/pod2/control-interfaces.host trusty/ubuntu-nodes-controller/network/interfaces.host
-        cp maas/orange/pod2/lxc-add-more-interfaces trusty/ubuntu-nodes-controller/lxc/add-more-interfaces
-        cp maas/orange/pod2/compute-interfaces.host trusty/ubuntu-nodes-compute/network/interfaces.host
-        cp maas/orange/pod2/lxc-add-more-interfaces trusty/ubuntu-nodes-compute/lxc/add-more-interfaces
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
          sed -i -- 's/10.4.1.1/192.168.2.2/g' ./bundles.yaml
         # choose the correct interface to use for data network
@@ -33,10 +29,6 @@ case "$3" in
          sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth1"/g' ./bundles.yaml
          ;;
      'intelpod6' )
-         cp maas/intel/pod6/interfaces.host trusty/ubuntu-nodes-controller/network/interfaces.host
-         cp maas/intel/pod6/lxc-add-more-interfaces trusty/ubuntu-nodes-controller/lxc/add-more-interfaces
-         cp maas/intel/pod6/interfaces.host trusty/ubuntu-nodes-compute/network/interfaces.host
-         cp maas/intel/pod6/lxc-add-more-interfaces trusty/ubuntu-nodes-compute/lxc/add-more-interfaces
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
          sed -i -- 's/10.4.1.1/10.4.1.2/g' ./bundles.yaml
         # choose the correct interface to use for data network
@@ -45,10 +37,6 @@ case "$3" in
          sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "brPublic"/g' ./bundles.yaml
          ;;
      'intelpod5' )
-         cp maas/intel/pod5/interfaces.host trusty/ubuntu-nodes-controller/network/interfaces.host
-         cp maas/intel/pod5/lxc-add-more-interfaces trusty/ubuntu-nodes-controller/lxc/add-more-interfaces
-         cp maas/intel/pod5/interfaces.host trusty/ubuntu-nodes-compute/network/interfaces.host
-         cp maas/intel/pod5/lxc-add-more-interfaces trusty/ubuntu-nodes-compute/lxc/add-more-interfaces
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
          sed -i -- 's/10.4.1.1/10.4.1.2/g' ./bundles.yaml
         # choose the correct interface to use for data network
@@ -57,21 +45,12 @@ case "$3" in
          sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "brPublic"/g' ./bundles.yaml
         ;;
      'attvirpod1' )
-         cp maas/att/virpod1/interfaces.host trusty/ubuntu-nodes-controller/network/interfaces.host
-         cp maas/att/virpod1/interfaces.host trusty/ubuntu-nodes-compute/network/interfaces.host
-         cp maas/att/virpod1/lxc-add-more-interfaces trusty/ubuntu-nodes-controller/lxc/add-more-interfaces
-         cp maas/att/virpod1/lxc-add-more-interfaces trusty/ubuntu-nodes-compute/lxc/add-more-interfaces
-        # As virtual environment does not need special treatment for interfaces.
-         sed -i -- 's/local:trusty\/ubuntu-nodes-controller/cs:trusty\/ubuntu/g' ./bundles.yaml
-         sed -i -- 's/local:trusty\/ubuntu-nodes-compute/cs:trusty\/ubuntu/g' ./bundles.yaml
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
          sed -i -- 's/10.4.1.1/192.168.10.1/g' ./bundles.yaml
         # Choose the external port to go out from gateway to use.
          sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth1"/g' ./bundles.yaml
         ;;
      'default' )
-         sed -i -- 's/local:trusty\/ubuntu-nodes-controller/cs:trusty\/ubuntu/g' ./bundles.yaml
-         sed -i -- 's/local:trusty\/ubuntu-nodes-compute/cs:trusty\/ubuntu/g' ./bundles.yaml
          sed -i -- 's/10.4.1.1/192.168.122.1/g' ./bundles.yaml
         # sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth1"/g' ./bundles.yaml
         ;;
