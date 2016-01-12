@@ -80,6 +80,7 @@ openstack-phase2:
       options:
         admin-password: openstack
         admin-token: admin
+        admin-role: admin
         ha-mcastport: 5403
       to:
         - "lxc:nodes-api=0"
