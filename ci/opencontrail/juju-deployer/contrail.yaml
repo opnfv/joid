@@ -106,6 +106,7 @@ openstack-phase2:
       options:
         "admin-password": openstack
         "admin-token": admin
+        "admin-role": admin
       to:
         - "lxc:nodes-api=0"
     "openstack-dashboard":
