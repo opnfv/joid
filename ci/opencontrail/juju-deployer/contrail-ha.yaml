@@ -117,21 +117,21 @@ openstack-phase2:
         - "nodes-compute=1"
     ceph-osd:
       charm: cs:trusty/ceph-osd
-      num_units: 1
+      num_units: 3
       options:
         osd-devices: /srv
         osd-reformat: 'yes'
       to:
         - "nodes-api=0"
+        - "nodes-api=1"
+        - "nodes-api=2"
     ceph-radosgw:
       charm: cs:trusty/ceph-radosgw
-      num_units: 3
+      num_units: 1
       options:
         use-embedded-webserver: true
       to:
         - "lxc:nodes-api=0"
-        - "lxc:nodes-api=1"
-        - "lxc:nodes-api=2"
 
     cinder:
       charm: cs:trusty/cinder
