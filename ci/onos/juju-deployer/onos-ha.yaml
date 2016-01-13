@@ -31,8 +31,8 @@ openstack-phase2:
         "sst-password": 127rc14t51
         vip: 10.4.1.15
       to:
-        - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
+        - "lxc:nodes-api=0"
         - "lxc:nodes-api=2"
     "hacluster-keystone":
       charm: "cs:trusty/hacluster"
@@ -70,9 +70,9 @@ openstack-phase2:
       options:
         vip: 10.4.1.14
       to:
+        - "lxc:nodes-api=2"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
-        - "lxc:nodes-api=2"
     "ceilometer-agent":
       branch: "lp:~openstack-charmers/charms/trusty/ceilometer-agent/next"
     "mongodb":
@@ -111,9 +111,10 @@ openstack-phase2:
       num_units: 3
       options:
         use-embedded-webserver: true
+        operator-roles: "Memeber,admin"
       to:
-        - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
+        - "lxc:nodes-api=0"
         - "lxc:nodes-api=2"
 
     cinder:
@@ -124,9 +125,9 @@ openstack-phase2:
         glance-api-version: 2
 #        ha-mcastport: 5401
       to:
+        - "lxc:nodes-api=2"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
-        - "lxc:nodes-api=2"
     cinder-ceph:
       charm: cs:trusty/cinder-ceph
     "rabbitmq-server": 
@@ -145,8 +146,8 @@ openstack-phase2:
         "admin-token": admin
         vip: 10.4.1.13
       to:
-        - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
+        - "lxc:nodes-api=0"
         - "lxc:nodes-api=2"
     "openstack-dashboard": 
       branch: lp:charms/trusty/openstack-dashboard
@@ -156,9 +157,9 @@ openstack-phase2:
         vip: 10.4.1.11
         webroot: /
       to:
+        - "lxc:nodes-api=2"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
-        - "lxc:nodes-api=2"
     "nova-compute": 
       branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
       num_units: 2
@@ -181,8 +182,8 @@ openstack-phase2:
         "service-guard": true
         vip: 10.4.1.16
       to:
-        - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
+        - "lxc:nodes-api=0"
         - "lxc:nodes-api=2"
     "neutron-api": 
       branch: lp:~openstack-charmers/charms/trusty/neutron-api/next
@@ -192,9 +193,9 @@ openstack-phase2:
         manage-neutron-plugin-legacy-mode: False
         vip: 10.4.1.17
       to: 
+        - "lxc:nodes-api=2"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
-        - "lxc:nodes-api=2"
     neutron-gateway:
       branch: "lp:~wuwenbin2/onosfw/neutron-gateway"
       options:
@@ -214,9 +215,9 @@ openstack-phase2:
         vip: 10.4.1.12
 #        ha-mcastport: 5402
       to:
+        - "lxc:nodes-api=2"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
-        - "lxc:nodes-api=2"
     neutron-api-onos:
       branch: "lp:~wuwenbin2/onosfw/neutron-api-onos"
       options:
@@ -345,7 +346,7 @@ trusty-liberty:
     series: trusty
     ceph-osd-replication-count: 2
     admin-role: admin
-
+    keystone-admin-role: admin
 
 trusty-kilo-nodes:
   inherits: openstack-phase1
@@ -364,8 +365,7 @@ trusty-kilo:
     series: trusty
     ceph-osd-replication-count: 2
     admin-role: admin
-
-
+    keystone-admin-role: admin
 
 trusty-juno-nodes:
   inherits: openstack-phase1
@@ -384,6 +384,5 @@ trusty-juno:
     series: trusty
     ceph-osd-replication-count: 2
     admin-role: admin
-
-
+    keystone-admin-role: admin
 

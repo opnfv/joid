@@ -266,7 +266,7 @@ trusty-liberty:
     series: trusty
     ceph-osd-replication-count: 1
     admin-role: admin
-
+    keystone-admin-role: admin
 
 trusty-kilo-nodes:
   inherits: openstack-phase1
@@ -284,8 +284,7 @@ trusty-kilo:
     series: trusty
     ceph-osd-replication-count: 1
     admin-role: admin
-
-
+    keystone-admin-role: admin
 
 trusty-juno-nodes:
   inherits: openstack-phase1
@@ -303,6 +302,5 @@ trusty-juno:
     series: trusty
     ceph-osd-replication-count: 1
     admin-role: admin
-
-
+    keystone-admin-role: admin
 
