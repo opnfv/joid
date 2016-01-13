@@ -166,8 +166,8 @@ case "$1" in
         crvlanupdsubnet vlan724 2 "PublicNetwork" 724 3 || true
         crnodevlanint $vlan721 || true
         crnodevlanint $vlan724 || true
-        enableautomodebyname eth1.721 AUTO "10.4.9.0/24" compute || true
-        enableautomodebyname eth1.721 AUTO "10.4.9.0/24" control || true
+        enableautomodebyname eth2.721 AUTO "10.4.9.0/24" compute || true
+        enableautomodebyname eth2.721 AUTO "10.4.9.0/24" control || true
         ;;
     'intelpod6' )
         maas refresh
