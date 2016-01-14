@@ -111,7 +111,7 @@ openstack-phase2:
       num_units: 3
       options:
         use-embedded-webserver: true
-        operator-roles: "Memeber,admin"
+        operator-roles: "Member,admin"
       to:
         - "lxc:nodes-api=1"
         - "lxc:nodes-api=0"
