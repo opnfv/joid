@@ -112,11 +112,11 @@ deploy() {
         createresource
     fi
 
-    cp ./$opnfvsdn/01-deploybundle.sh ./01-deploybundle.sh
+    #cp ./$opnfvsdn/01-deploybundle.sh ./01-deploybundle.sh
     ./00-bootstrap.sh
 
     #case default:
-    ./01-deploybundle.sh $opnfvtype $openstack $opnfvlab
+    ./01-deploybundle.sh $opnfvtype $openstack $opnfvlab $opnfvsdn
 }
 
 #check whether charms are still executing the code even juju-deployer says installed.
