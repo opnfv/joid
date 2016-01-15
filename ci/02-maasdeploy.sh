@@ -20,6 +20,9 @@ case "$1" in
     'juniperpod1' )
         cp maas/juniper/pod1/deployment.yaml ./deployment.yaml
         ;;
+    'cengnlynxpod1' )
+        cp maas/cengn_lynx/pod1/deployment.yaml ./deployment.yaml
+        ;;
     * )
         virtinstall=1
         cp maas/default/deployment.yaml ./deployment.yaml
@@ -184,6 +187,15 @@ case "$1" in
     'attvirpod1' )
         ;;
     'juniperpod1' )
+        ;;
+    'cengnlynxpod1' )
+        maas refresh
+        crvlanupdsubnet vlan1201 1 "DataNetwork" 1201 2 || true
+        crvlanupdsubnet vlan1202 2 "PublicNetwork" 1202 3 || true
+        crnodevlanint $vlan1201 || true
+        crnodevlanint $vlan1202 || true
+        enableautomode eth2.1201 AUTO "172.16.121.3/24" compute || true
+        enableautomode eth2.1201 AUTO "172.16.121.3/24" control || true
         ;;
 esac
 
