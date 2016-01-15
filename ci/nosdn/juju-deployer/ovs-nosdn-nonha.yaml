@@ -75,6 +75,11 @@ openstack-phase2:
         ha-mcastport: 5402
       to:
         - "lxc:nodes-api=0"
+    opnfv-promise:
+      branch: lp:~narindergupta/charms/trusty/promise/trunk
+      num_units: 1
+      to:
+        - "lxc:nodes-api=0"
     keystone:
       charm: cs:trusty/keystone
       num_units: 1
