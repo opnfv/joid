@@ -50,6 +50,10 @@ case "$3" in
         # Choose the external port to go out from gateway to use.
          sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth1"/g' ./bundles.yaml
         ;;
+     'cengnlynxpod1' )
+         sed -i -- 's/10.4.1.1/10.120.0.1/g' ./bundles.yaml
+         sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth2.1202"/g' ./bundles.yaml
+        ;;
      'default' )
          sed -i -- 's/10.4.1.1/192.168.122.1/g' ./bundles.yaml
          sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth1"/g' ./bundles.yaml
