@@ -10,6 +10,7 @@ opnfvtype=nonha
 openstack=liberty
 opnfvlab=default
 opnfvrel=b
+opnfvfeature=odl_l2
 
 read_config() {
     opnfvrel=`grep release: deploy.yaml | cut -d ":" -f2`
@@ -23,9 +24,10 @@ usage() { echo "Usage: $0 [-s <nosdn|odl|opencontrail>]
                          [-t <nonha|ha|tip>] 
                          [-o <juno|liberty>]
                          [-l <default|intelpod5>]
+                         [-f <ipv6|l2|l3|dvr>]
                          [-r <a|b>]" 1>&2 exit 1; } 
 
-while getopts ":s:t:o:l:h:r:" opt; do
+while getopts ":s:t:o:l:h:r:f:" opt; do
     case "${opt}" in
         s)
             opnfvsdn=${OPTARG}
@@ -41,6 +43,9 @@ while getopts ":s:t:o:l:h:r:" opt; do
             ;;
         r)
             opnfvrel=${OPTARG}
+            ;;
+        f)
+            opnfvfeature=${OPTARG}
             ;;
         h)
             usage
@@ -116,7 +121,7 @@ deploy() {
     ./00-bootstrap.sh
 
     #case default:
-    ./01-deploybundle.sh $opnfvtype $openstack $opnfvlab $opnfvsdn
+    ./01-deploybundle.sh $opnfvtype $openstack $opnfvlab $opnfvsdn $opnfvfeature
 }
 
 #check whether charms are still executing the code even juju-deployer says installed.
