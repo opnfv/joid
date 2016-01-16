@@ -188,9 +188,9 @@ case "$1" in
         ;;
     'orangepod2' )
         maas refresh
-        enableautomodebyname eth4 AUTO "192.168.22.0/24" compute || true
+        enableautomodebyname eth1 DHCP "192.168.2.0/24" compute || true
         enableautomodebyname eth5 AUTO "192.168.12.0/24" compute || true
-        enableautomodebyname eth2 AUTO "192.168.22.0/24" control || true
+        enableautomodebyname eth1 DHCP "192.168.2.0/24" control || true
         enableautomodebyname eth3 AUTO "192.168.12.0/24" control || true
         ;;
     'attvirpod1' )
