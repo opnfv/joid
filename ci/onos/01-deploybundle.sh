@@ -4,18 +4,18 @@ set -ex
 
 case "$1" in
     'nonha' )
-        cp onos/juju-deployer/onos.yaml ./bundles.yaml
+        cp onos/juju-deployer/ovs-onos-nonha.yaml ./bundles.yaml
         ;;
     'ha' )
-        cp onos/juju-deployer/onos-ha.yaml ./bundles.yaml
+        cp onos/juju-deployer/ovs-onos-ha.yaml ./bundles.yaml
         ;;
     'tip' )
-        cp onos/juju-deployer/onos-tip.yaml ./bundles.yaml
+        cp onos/juju-deployer/ovs-onos-tip.yaml ./bundles.yaml
         cp common/source/* ./
         sed -i -- "s|branch: master|branch: stable/$2|g" ./*.yaml
         ;;
     * )
-        cp onos/juju-deployer/onos.yaml ./bundles.yaml
+        cp onos/juju-deployer/ovs-onos-nonha.yaml ./bundles.yaml
         ;;
 esac
 
@@ -76,3 +76,6 @@ case "$1" in
         ;;
 esac
 
+echo "... onos prepare test ..."
+    sleep 180s
+    sh onos/juju_test_prepare.sh "$3"
