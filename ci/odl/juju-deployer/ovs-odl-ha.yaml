@@ -54,16 +54,16 @@ openstack-phase2:
       options:
         corosync_key: |
           'KNhb4++3jlllbnscS5D3qdzOJDsQPEeZ7zOLZJHbkKrRjX9gRCijVVOiv2JCvq03HqQ7LIufQzWGl9Za8qh0f6QmQ3XhFh/Cb/3WaYFj+tEf0zArWv+8miswmM1z4eyTSrTWBq0dTgx1z96wjBxP5HV0+1LWW+3Ei4oZWyRGeR0='
-    "hacluster-glance":
-      charm: "cs:trusty/hacluster"
-      options:
-        corosync_key: |
-          'el1dd8107J5mwQDPS7tEJPZrr0XFfL95+Tku/QG90W5Q5f5SP4W8TRfKvddGmZWZl2lVd1neG5WqaHa1mq/aScJpoflzVAJCvshN7Gd2AjHhLNNugeI8S90j/7wrKUhqiCAlkKaeri2xs5bB5PZ7Z9AHuNZL7SW1al8lxrKhUFI='
-    "hacluster-ceilometer":
-      charm: "cs:trusty/hacluster"
-      options:
-        corosync_key: |
-          'cHkgKGJpdHMgPSA5NjApLgpQcmVzcyBrZXlzIG9uIHlvdXIga2V5Ym9hcmQgdG8gZ2VuZXJhdGUgZW50cm9weSAoYml0cyA9IDEwMDgpLgpXcml0aW5nIGNvcm9zeW5jIGtleSB0byAvZXRjL2Nvcm9zeW5jL2F1dGhrZXkuCg=='
+#    "hacluster-glance":
+#      charm: "cs:trusty/hacluster"
+#      options:
+#        corosync_key: |
+#          'el1dd8107J5mwQDPS7tEJPZrr0XFfL95+Tku/QG90W5Q5f5SP4W8TRfKvddGmZWZl2lVd1neG5WqaHa1mq/aScJpoflzVAJCvshN7Gd2AjHhLNNugeI8S90j/7wrKUhqiCAlkKaeri2xs5bB5PZ7Z9AHuNZL7SW1al8lxrKhUFI='
+#    "hacluster-ceilometer":
+#      charm: "cs:trusty/hacluster"
+#      options:
+#        corosync_key: |
+#          'cHkgKGJpdHMgPSA5NjApLgpQcmVzcyBrZXlzIG9uIHlvdXIga2V5Ym9hcmQgdG8gZ2VuZXJhdGUgZW50cm9weSAoYml0cyA9IDEwMDgpLgpXcml0aW5nIGNvcm9zeW5jIGtleSB0byAvZXRjL2Nvcm9zeW5jL2F1dGhrZXkuCg=='
     "ceilometer":
       branch: "lp:~openstack-charmers/charms/trusty/ceilometer/next"
       num_units: 3
@@ -234,8 +234,8 @@ openstack-phase2:
     openvswitch-odl:
       branch: lp:~openstack-charmers/charms/trusty/openvswitch-odl/trunk
   relations:
-    - - "glance:ha"
-      - "hacluster-glance:ha"
+#    - - "glance:ha"
+#      - "hacluster-glance:ha"
     - - "keystone:ha"
       - "hacluster-keystone:ha"
     - - "neutron-api:ha"
@@ -244,8 +244,8 @@ openstack-phase2:
       - "hacluster-nova:ha"
     - - "openstack-dashboard:ha"
       - "hacluster-horizon:ha"
-    - - "ceilometer:ha"
-      - "hacluster-ceilometer:ha"
+#    - - "ceilometer:ha"
+#      - "hacluster-ceilometer:ha"
     - - "neutron-api:neutron-plugin-api-subordinate"
       - "neutron-api-odl:neutron-plugin-api-subordinate"
     - - "nova-compute:neutron-plugin"
@@ -345,7 +345,7 @@ trusty-liberty-nodes:
 trusty-liberty:
   inherits: openstack-phase2
   overrides:
-    cluster_count: 3
+#    cluster_count: 3
     #os-data-network: 10.4.8.0/21
     #prefer-ipv6: true
     region: Canonical
@@ -364,7 +364,7 @@ trusty-kilo-nodes:
 trusty-kilo:
   inherits: openstack-phase2
   overrides:
-    cluster_count: 3
+#    cluster_count: 3
     #os-data-network: 10.4.8.0/21
     #prefer-ipv6: true
     region: Canonical
@@ -383,7 +383,7 @@ trusty-juno-nodes:
 trusty-juno:
   inherits: openstack-phase2
   overrides:
-    cluster_count: 3
+#    cluster_count: 3
     #os-data-network: 10.4.8.0/21
     #prefer-ipv6: true
     region: Canonical
