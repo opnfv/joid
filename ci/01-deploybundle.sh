@@ -76,3 +76,10 @@ case "$1" in
         ;;
 esac
 
+case "$4" in
+    'onos' )
+         echo "... onos prepare test ..."
+         sleep 180s
+         sh onos/juju_test_prepare.sh "$3"
+        ;;
+esac
