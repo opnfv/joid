@@ -56,6 +56,12 @@ case "$3" in
         ;;
 esac
 
+case "$5" in
+    'ipv6' )
+         sed -i -- 's/#prefer-ipv6: true/prefer-ipv6: true/g' ./bundles.yaml
+        ;;
+esac
+
 echo "... Deployment Started ...."
 case "$1" in
     'nonha' )
