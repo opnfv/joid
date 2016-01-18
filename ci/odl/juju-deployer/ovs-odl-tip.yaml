@@ -21,7 +21,7 @@ openstack-phase2:
   inherits: openstack-phase1
   services:
     "mysql":
-      charm: "cs:trusty/mysql"
+      branch: "lp:~openstack-charmers/charms/trusty/percona-cluster/next"
       num_units: 1
       options:
         "dataset-size": 2G
@@ -45,7 +45,7 @@ openstack-phase2:
       to:
         - "lxc:nodes-api=0"
     ceph:
-      charm: cs:trusty/ceph
+      branch: "lp:~openstack-charmers/charms/trusty/ceph/next"
       num_units: 1
       options:
         fsid: 5a791d94-980b-11e4-b6f6-3c970e8b1cf7
@@ -75,7 +75,7 @@ openstack-phase2:
 
 #        - "lxc:nodes-api=0"
     cinder:
-      charm: cs:trusty/cinder
+      branch: "lp:~openstack-charmers/charms/trusty/cinder/next"
       num_units: 1
       options:
         block-device: None
@@ -85,14 +85,14 @@ openstack-phase2:
       to:
         - "lxc:nodes-api=0"
     cinder-ceph:
-      charm: cs:trusty/cinder-ceph
+      branch: "lp:~openstack-charmers/charms/trusty/cinder-ceph/next"
     "rabbitmq-server":
-      branch: lp:charms/trusty/rabbitmq-server
+      branch: lp:~openstack-charmers/charms/trusty/rabbitmq-server/next
       num_units: 1
       to:
         - "lxc:nodes-api=0"
     "keystone":
-      branch: lp:charms/trusty/keystone
+      branch: lp:~openstack-charmers/charms/trusty/keystone/next
       num_units: 1
       options:
         openstack-origin-git: include-file://keystone-master.yaml
@@ -101,7 +101,7 @@ openstack-phase2:
       to:
         - "lxc:nodes-api=0"
     "openstack-dashboard":
-      branch: lp:charms/trusty/openstack-dashboard
+      branch: lp:~openstack-charmers/charms/trusty/openstack-dashboard/next
       num_units: 1
       options:
         openstack-origin-git: include-file://horizon-master.yaml
@@ -119,7 +119,7 @@ openstack-phase2:
         - "nodes-compute=0"
 #        - "nodes-compute=1"
     "nova-cloud-controller":
-      branch: lp:charms/trusty/nova-cloud-controller
+      branch: lp:~openstack-charmers/charms/trusty/nova-cloud-controller/next
       num_units: 1
       options:
         openstack-origin-git: include-file://nova-master.yaml
@@ -137,7 +137,7 @@ openstack-phase2:
       to:
         - "lxc:nodes-api=0"
     neutron-gateway:
-      branch: lp:charms/trusty/neutron-gateway
+      branch: lp:~openstack-charmers/charms/trusty/neutron-gateway/next
       options:
         openstack-origin-git: include-file://neutron-master.yaml
 #        "ext-port": "eth1"
@@ -148,14 +148,15 @@ openstack-phase2:
     odl-controller:
       branch: lp:~openstack-charmers/charms/trusty/odl-controller/next
       options:
-        install-url: "https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.4-Helium-SR4/distribution-karaf-0.2.4-Helium-SR4.tar.gz"
-#        install-url: "https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.3.2-Lithium-SR2/distribution-karaf-0.3.2-Lithium-SR2.tar.gz"
+        #install-url: "https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.4-Helium-SR4/distribution-karaf-0.2.4-Helium-SR4.tar.gz"
+        install-url: "https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.3.3-Lithium-SR3/distribution-karaf-0.3.3-Lithium-SR3.tar.gz"
+        profile: "openvswitch-odl-lithium"
         http-proxy: "http://squid.internal:3128"
         https-proxy: "http://squid.internal:3128"
       to:
-        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
     "glance":
-      branch: lp:charms/trusty/glance
+      branch: lp:~openstack-charmers/charms/trusty/glance/next
       num_units: 1
       options:
         openstack-origin-git: include-file://glance-master.yaml

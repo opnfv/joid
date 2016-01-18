@@ -204,11 +204,11 @@ openstack-phase2:
     odl-controller:
       branch: lp:~openstack-charmers/charms/trusty/odl-controller/next
       options:
-        install-url: "https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.4-Helium-SR4/distribution-karaf-0.2.4-Helium-SR4.tar.gz"
-#        install-url: "https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.3.2-Lithium-SR2/distribution-karaf-0.3.2-Lithium-SR2.tar.gz"
+        #install-url: "https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.4-Helium-SR4/distribution-karaf-0.2.4-Helium-SR4.tar.gz"
+        install-url: "https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.3.3-Lithium-SR3/distribution-karaf-0.3.3-Lithium-SR3.tar.gz"
+        profile: "openvswitch-odl-lithium"
         http-proxy: "http://squid.internal:3128"
         https-proxy: "http://squid.internal:3128"
-
       to: 
         - "lxc:nodes-api=1"
     "glance": 
