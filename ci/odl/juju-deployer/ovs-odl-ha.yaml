@@ -227,7 +227,7 @@ openstack-phase2:
       to:
         - "lxc:nodes-api=2"
     neutron-api-odl:
-      branch: lp:~openstack-charmers/charms/trusty/neutron-api-odl/vpp
+      branch: lp:~openstack-charmers/charms/trusty/neutron-api-odl/next
       options:
         overlay-network-type: 'vxlan gre'
         security-groups: True
