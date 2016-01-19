@@ -10,20 +10,20 @@ openstack-phase1:
       charm: "cs:trusty/ubuntu"
       num_units: 2
       constraints: tags=compute
-    "ntp": 
+    "ntp":
       charm: "cs:trusty/ntp"
   relations:
     - - "ntp:juju-info"
       - "nodes-api:juju-info"
     - - "ntp:juju-info"
       - "nodes-compute:juju-info"
-openstack-phase2: 
+openstack-phase2:
   inherits: openstack-phase1
-  services: 
-    "percona-cluster": 
+  services:
+    "percona-cluster":
       branch: "lp:~openstack-charmers/charms/trusty/percona-cluster/next"
       num_units: 3
-      options: 
+      options:
         "dataset-size": 2G
         "lp1366997-workaround": true
         "max-connections": 10000
@@ -49,7 +49,7 @@ openstack-phase2:
       options:
         corosync_key: |
           'gel86qmEze8dYKYbfqIgRpqapJpKtdYL2hxC1y5nWYBPq7EMf6V8mF01IjeUkSRs14CUDrsPpT4PWeom7EOY2fleuLx/aIuqQUfEDkhf/gvaz7BaU4hrmTCoDBK7/HvEwY+/wu4qkEeckzSRPsm9MYzqnLRshh8yjZJ70xU/mmk='
-    "hacluster-neutron": 
+    "hacluster-neutron":
       branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
       options:
         corosync_key: |
@@ -91,7 +91,7 @@ openstack-phase2:
         fsid: 5a791d94-980b-11e4-b6f6-3c970e8b1cf7
         monitor-secret: AQAi5a9UeJXUExAA+By9u+GPhl8/XiUQ4nwI3A==
         osd-devices: /srv
-        monitor-count: 1        
+        monitor-count: 1
         osd-reformat: 'false'
 #        ceph-cluster-network: 192.168.0.0/24
 #        ceph-public-network: 192.168.0.0/24
@@ -127,17 +127,17 @@ openstack-phase2:
         - "lxc:nodes-api=2"
     cinder-ceph:
       branch: lp:~openstack-charmers/charms/trusty/cinder-ceph/next
-    "rabbitmq-server": 
+    "rabbitmq-server":
       branch: lp:~openstack-charmers/charms/trusty/rabbitmq-server/next
       num_units: 3
       to:
         - "lxc:nodes-api=2"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
-    "keystone": 
+    "keystone":
       branch: lp:~openstack-charmers/charms/trusty/keystone/next
       num_units: 3
-      options: 
+      options:
 #        ha-mcastport: 5402
         "admin-password": openstack
         "admin-token": admin
@@ -146,10 +146,10 @@ openstack-phase2:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
         - "lxc:nodes-api=2"
-    "openstack-dashboard": 
+    "openstack-dashboard":
       branch: lp:~openstack-charmers/charms/trusty/openstack-dashboard/next
       num_units: 3
-      options: 
+      options:
         secret: admin
         vip: 10.4.1.11
         webroot: /
@@ -157,10 +157,10 @@ openstack-phase2:
         - "lxc:nodes-api=1"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=2"
-    "nova-compute": 
+    "nova-compute":
       branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
       num_units: 2
-      options: 
+      options:
         "enable-live-migration": False
         "manage-neutron-plugin-legacy-mode": False
       to:
@@ -169,27 +169,28 @@ openstack-phase2:
 #        - "nodes-api=0"
 #        - "nodes-api=1"
 #        - "nodes-api=2"
-    "nova-cloud-controller": 
+    "nova-cloud-controller":
       branch: lp:~openstack-charmers/charms/trusty/nova-cloud-controller/next
       num_units: 3
-      options: 
+      options:
         "console-access-protocol": novnc
         "network-manager": Neutron
         "quantum-security-groups": "yes"
         "service-guard": true
+        "neutron-external-network": ext_net
         vip: 10.4.1.16
       to:
         - "lxc:nodes-api=2"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
-    "neutron-api": 
+    "neutron-api":
       branch: lp:~openstack-charmers/charms/trusty/neutron-api/next
       num_units: 3
       options:
         neutron-security-groups: True
         manage-neutron-plugin-legacy-mode: False
         vip: 10.4.1.17
-      to: 
+      to:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
         - "lxc:nodes-api=2"
@@ -199,7 +200,7 @@ openstack-phase2:
 #        "ext-port": "eth1"
         plugin: ovs-odl
         instance-mtu: 1400
-      to:  
+      to:
         - "nodes-api=0"
     odl-controller:
       branch: lp:~openstack-charmers/charms/trusty/odl-controller/next
@@ -209,12 +210,12 @@ openstack-phase2:
         profile: "openvswitch-odl-lithium"
         http-proxy: "http://squid.internal:3128"
         https-proxy: "http://squid.internal:3128"
-      to: 
+      to:
         - "lxc:nodes-api=1"
-    "glance": 
+    "glance":
       branch: lp:~openstack-charmers/charms/trusty/glance/next
       num_units: 3
-      options: 
+      options:
         vip: 10.4.1.12
 #        ha-mcastport: 5402
       to:
@@ -393,4 +394,3 @@ trusty-juno:
     ceph-osd-replication-count: 2
     admin-role: admin
     keystone-admin-role: admin
-
