@@ -141,7 +141,7 @@ openstack-phase2:
       options:
         openstack-origin-git: include-file://neutron-master.yaml
 #        "ext-port": "eth1"
-        plugin: ovs-onos
+        plugin: onos
         instance-mtu: 1400
       to:
         - "nodes-api=0"
