@@ -103,28 +103,28 @@ openstack-phase2:
         - "lxc:nodes-api=0"
     ceph:
       charm: cs:trusty/ceph
-      num_units: 2
+      num_units: 3
       options:
         fsid: 5a791d94-980b-11e4-b6f6-3c970e8b1cf7
         monitor-secret: AQAi5a9UeJXUExAA+By9u+GPhl8/XiUQ4nwI3A==
-        osd-devices: /srv
-        monitor-count: 1
+        osd-devices: ""
+        monitor-count: 3
         osd-reformat: 'no'
 #        ceph-cluster-network: 192.168.0.0/24
 #        ceph-public-network: 192.168.0.0/24
       to:
-        - "nodes-compute=0"
-        - "nodes-compute=1"
+        - "lxc:nodes-api=2"
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
     ceph-osd:
       charm: cs:trusty/ceph-osd
-      num_units: 3
+      num_units: 2
       options:
         osd-devices: /srv
         osd-reformat: 'yes'
       to:
-        - "nodes-api=0"
-        - "nodes-api=1"
-        - "nodes-api=2"
+        - "nodes-compute=0"
+        - "nodes-compute=1"
     ceph-radosgw:
       charm: cs:trusty/ceph-radosgw
       num_units: 1
@@ -356,6 +356,7 @@ trusty-liberty:
   overrides:
     series: trusty
     #os-data-network: 10.4.8.0/21
+    #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
     region: Canonical
     openstack-origin: cloud:trusty-liberty
@@ -376,6 +377,7 @@ trusty-kilo:
   overrides:
     series: trusty
     #os-data-network: 10.4.8.0/21
+    #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
     region: Canonical
     openstack-origin: cloud:trusty-kilo
@@ -395,6 +397,7 @@ trusty-juno:
   overrides:
     series: trusty
     #os-data-network: 10.4.8.0/21
+    #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
     region: Canonical
     openstack-origin: cloud:trusty-juno
