@@ -135,6 +135,9 @@ maas maas boot-source update 1 url="http://maas.ubuntu.com/images/ephemeral-v2/d
 maas maas boot-resources import
 maas maas sshkeys new key="`cat $HOME/.ssh/id_rsa.pub`"
 
+#Added the Qtip public to run the Qtip test after install on bare metal nodes.
+maas maas sshkeys new key="`cat ./maas/sshkeys/QtipKey.pub`"
+
 #adding compute and control nodes VM to MAAS for deployment purpose.
 if [ "$virtinstall" -eq 1 ]; then
     # create two more VMs to do the deployment.
