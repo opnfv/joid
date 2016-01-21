@@ -17,7 +17,7 @@ keystone user-create --name demo --tenant demo --pass demo --email demo@demo.dem
 nova keypair-add --pub-key id_rsa.pub ubuntu-keypair
 
 # configure external network
-neutron net-create ext-net --router:external --provider:physical_network external --provider:network_type flat
+neutron net-create ext-net --router:external --provider:physical_network external --provider:network_type flat --shared
 neutron subnet-create ext-net --name ext-subnet --allocation-pool start=10.5.8.5,end=10.5.8.254 --disable-dhcp --gateway 10.5.8.1 10.5.8.0/24
 
 # create vm network
