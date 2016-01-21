@@ -86,26 +86,29 @@ openstack-phase2:
         - "lxc:nodes-api=0"
     ceph:
       branch: lp:~openstack-charmers/charms/trusty/ceph/next
-      num_units: 2
+      num_units: 3
       options:
         fsid: 5a791d94-980b-11e4-b6f6-3c970e8b1cf7
         monitor-secret: AQAi5a9UeJXUExAA+By9u+GPhl8/XiUQ4nwI3A==
-        osd-devices: /srv
-        monitor-count: 1
-        osd-reformat: 'false'
+        osd-devices: ""
+        monitor-count: 3
+#        osd-reformat: 'false'
 #        ceph-cluster-network: 192.168.0.0/24
 #        ceph-public-network: 192.168.0.0/24
       to:
-        - "nodes-compute=0"
-        - "nodes-compute=1"
+        - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
     ceph-osd:
       branch: lp:~openstack-charmers/charms/trusty/ceph-osd/next
-      num_units: 1
+      num_units: 2
       options:
         osd-devices: /srv
         osd-reformat: 'yes'
       to:
-        - "nodes-api=1"
+        - "nodes-compute=0"
+        - "nodes-compute=1"
+#        - "nodes-api=0"
     ceph-radosgw:
       branch: lp:~openstack-charmers/charms/trusty/ceph-radosgw/next
       num_units: 1
@@ -348,6 +351,7 @@ trusty-liberty:
   overrides:
 #    cluster_count: 3
     #os-data-network: 10.4.8.0/21
+    #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
     region: Canonical
     source: "cloud:trusty-liberty"
@@ -367,6 +371,7 @@ trusty-kilo:
   overrides:
 #    cluster_count: 3
     #os-data-network: 10.4.8.0/21
+    #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
     region: Canonical
     source: "cloud:trusty-kilo"
@@ -386,6 +391,7 @@ trusty-juno:
   overrides:
 #    cluster_count: 3
     #os-data-network: 10.4.8.0/21
+    #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
     region: Canonical
     source: "cloud:trusty-juno"
