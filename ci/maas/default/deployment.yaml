@@ -11,8 +11,8 @@ demo-maas:
         arch: amd64
         pool: default
         disk_size: 20G
-        sticky_ip_address:
-            requested_address: 192.168.122.25
+#        sticky_ip_address:
+#            requested_address: 192.168.122.25
 
     maas:
         # Defines the general setup for the MAAS environment, including the
