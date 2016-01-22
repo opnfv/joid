@@ -29,6 +29,10 @@ case "$1" in
         ;;
 esac
 
+#just make sure the ssh keys added into maas for the current user
+sed --i "s@/home/ubuntu@$HOME@g" ./deployment.yaml
+sed --i "s@qemu+ssh://ubuntu@qemu+ssh://$USER@g" ./deployment.yaml
+
 #make sure no password asked during the deployment. 
 
 echo "$USER ALL=(ALL) NOPASSWD:ALL" > 90-joid-init
