@@ -54,6 +54,10 @@ case "$3" in
          sed -i -- 's/10.4.1.1/10.120.0.1/g' ./bundles.yaml
          sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth2.1202"/g' ./bundles.yaml
         ;;
+     'juniperpod1' )
+         sed -i -- 's/10.4.1.1/172.16.50.1/g' ./bundles.yaml
+         sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth1"/g' ./bundles.yaml
+         ;;
      'default' )
          sed -i -- 's/10.4.1.1/192.168.122.1/g' ./bundles.yaml
          sed -i -- 's/#        "ext-port": "eth1"/        "ext-port": "eth1"/g' ./bundles.yaml
@@ -69,19 +73,19 @@ esac
 echo "... Deployment Started ...."
 case "$1" in
     'nonha' )
-        juju-deployer -vW -d -c bundles.yaml trusty-"$2"-nodes
+        juju-deployer -vW -d -t 3600 -c bundles.yaml trusty-"$2"-nodes
         juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml trusty-"$2"
         ;;
     'ha' )
-        juju-deployer -vW -d -c bundles.yaml trusty-"$2"-nodes
+        juju-deployer -vW -d -t 3600 -c bundles.yaml trusty-"$2"-nodes
         juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml trusty-"$2"
         ;;
     'tip' )
-        juju-deployer -vW -d -c bundles.yaml trusty-"$2"-nodes
+        juju-deployer -vW -d -t 3600 -c bundles.yaml trusty-"$2"-nodes
         juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml trusty-"$2"
         ;;
     * )
-        juju-deployer -vW -d -c bundles.yaml trusty-"$2"-nodes
+        juju-deployer -vW -d -t 3600 -c bundles.yaml trusty-"$2"-nodes
         juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml trusty-"$2"
         ;;
 esac
