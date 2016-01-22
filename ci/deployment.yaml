@@ -12,7 +12,7 @@ demo-maas:
         pool: default
         disk_size: 20G
         sticky_ip_address:
-            requested_address: 192.168.122.5
+            requested_address: 192.168.122.25
 
     maas:
         # Defines the general setup for the MAAS environment, including the
@@ -36,7 +36,7 @@ demo-maas:
 
         # Package sources. These will be used on the MAAS controller.
         apt_sources:
-          - ppa:maas/stable
+          - ppa:maas/next
           - ppa:juju/stable
 
         # Virsh power settings
@@ -110,11 +110,11 @@ demo-maas:
               broadcast_ip: 192.168.122.255
               router_ip: 192.168.122.1
               static_range:
-                  low: 192.168.122.51
-                  high: 192.168.122.60
+                  low: 192.168.122.101
+                  high: 192.168.122.200
               dynamic_range:
-                  low: 192.168.122.5
-                  high: 192.168.122.50
+                  low: 192.168.122.25
+                  high: 192.168.122.100
 
         # Physical nodes to be added to the MAAS cluster. Nodes will be
         # configured, commissioned and put into the Ready state so
