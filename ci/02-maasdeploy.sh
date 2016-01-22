@@ -53,15 +53,14 @@ if [ ! -e $HOME/.ssh/id_rsa ]; then
     ssh-keygen -N '' -f $HOME/.ssh/id_rsa
 fi
 
-if [ ! -e /var/lib/libvirt/images ]; then
+#define the pool and try to start even though its already exist.
+# For fresh install this may or may not there.
 
-    sudo apt-get install libvirt-bin -y
-    sudo adduser $USER libvirtd
-    sudo virsh pool-define-as default --type dir --target /var/lib/libvirt/images/
-    sudo virsh pool-start default
-    sudo virsh pool-autostart default
-
-fi
+sudo apt-get install libvirt-bin -y
+sudo adduser $USER libvirtd
+sudo virsh pool-define-as default --type dir --target /var/lib/libvirt/images/ || true
+sudo virsh pool-start default || true
+sudo virsh pool-autostart default || true
 
 sudo apt-add-repository ppa:maas-deployers/stable -y
 sudo apt-add-repository ppa:juju/stable -y
