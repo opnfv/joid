@@ -36,7 +36,7 @@ demo-maas:
 
         # Package sources. These will be used on the MAAS controller.
         apt_sources:
-          - ppa:maas/next
+          - ppa:maas/stable
           - ppa:juju/stable
 
         # Virsh power settings
