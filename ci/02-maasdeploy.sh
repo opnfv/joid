@@ -32,6 +32,7 @@ echo "$USER ALL=(ALL) NOPASSWD:ALL" > 90-joid-init
 
 if [ -e /etc/sudoers.d/90-joid-init ]; then
     sudo cp /etc/sudoers.d/90-joid-init 91-joid-init
+    sudo chown $USER:$USER 91-joid-init
     cat 90-joid-init >> 91-joid-init
     sudo chown root:root 91-joid-init
     sudo mv 91-joid-init /etc/sudoers.d/
@@ -49,7 +50,7 @@ fi
 if [ ! -e /var/lib/libvirt/images ]; then
 
     sudo apt-get install libvirt-bin -y
-    sudo adduser ubuntu libvirtd
+    sudo adduser $USER libvirtd
     sudo virsh pool-define-as default --type dir --target /var/lib/libvirt/images/
     sudo virsh pool-start default
     sudo virsh pool-autostart default
