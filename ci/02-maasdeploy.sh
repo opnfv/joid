@@ -122,7 +122,7 @@ crnodevlanint() {
 
     for nodes in $listofnodes
     do
-        parentid=`maas maas interface read $nodes eth2 | grep interfaces | cut -d '/' -f 8`
+        parentid=`maas maas interface read $nodes $2 | grep interfaces | cut -d '/' -f 8`
         maas maas interfaces create-vlan $nodes vlan=$1 parent=$parentid
      done
  }
@@ -176,8 +176,8 @@ case "$1" in
         maas refresh
         crvlanupdsubnet vlan721 1 "DataNetwork" 721 2 || true
         crvlanupdsubnet vlan724 2 "PublicNetwork" 724 3 || true
-        crnodevlanint $vlan721 || true
-        crnodevlanint $vlan724 || true
+        crnodevlanint $vlan721 eth2|| true
+        crnodevlanint $vlan724 eth2|| true
         enableautomodebyname eth2.721 AUTO "10.4.9.0/24" compute || true
         enableautomodebyname eth2.721 AUTO "10.4.9.0/24" control || true
         ;;
@@ -201,10 +201,10 @@ case "$1" in
         maas refresh
         crvlanupdsubnet vlan1201 1 "DataNetwork" 1201 2 || true
         crvlanupdsubnet vlan1202 2 "PublicNetwork" 1202 3 || true
-        crnodevlanint $vlan1201 || true
-        crnodevlanint $vlan1202 || true
-        enableautomode eth2.1201 AUTO "172.16.121.3/24" compute || true
-        enableautomode eth2.1201 AUTO "172.16.121.3/24" control || true
+        crnodevlanint $vlan1201 eth1 || true
+        crnodevlanint $vlan1202 eth1 || true
+        enableautomode eth1.1201 AUTO "172.16.121.3/24" compute || true
+        enableautomode eth1.1201 AUTO "172.16.121.3/24" control || true
         ;;
 esac
 
