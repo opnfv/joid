@@ -236,7 +236,7 @@ demo-maas:
     juju-bootstrap:
         name: bootstrap
         interfaces: ['bridge=brAdm,model=virtio']
-        memory: 4096
+        memory: 8192
         vcpus: 2
         arch: amd64
         pool: default
