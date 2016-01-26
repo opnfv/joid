@@ -52,32 +52,32 @@ openstack-phase2:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
     "hacluster-keystone":
-      charm: "cs:trusty/hacluster"
+      branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
       options:
         corosync_key: |
           'QisjNpoKHLkvyc3PEdDHP5VZjgD0kOk9t0ABPWmCELlu5AgWgnW6bJd34BVXO7VhW+3ZwNQM3W+bZ3pl28ftY4ki4N/S0KLFNia5egFgiA3AH2QXLnokS7OYXuu6GMJJ1S5mDe6P5zU+tfJe/Mebq24u7CgR0gAvohSPRdDTwdY='
     "hacluster-horizon":
-      charm: "cs:trusty/hacluster"
+      branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
       options:
         corosync_key: |
           'aCVPHw6XYne+Hxv0WPiM3+yEfeIxs0Ly0EMKB494Rdzjf5rE52GcXqqxuvIa/nXJ4GCR+UdKk9FEwcASfYkeu3HDWUld9uTE6pOc+ibWYnybNH7VBfEHW8h9YmQKs3HD2T3wlTcS2irU4CUW7/IKNok4etYdM3iFn1K2ReSGXEI='
     "hacluster-nova":
-      charm: "cs:trusty/hacluster"
+      branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
       options:
         corosync_key: |
           'gel86qmEze8dYKYbfqIgRpqapJpKtdYL2hxC1y5nWYBPq7EMf6V8mF01IjeUkSRs14CUDrsPpT4PWeom7EOY2fleuLx/aIuqQUfEDkhf/gvaz7BaU4hrmTCoDBK7/HvEwY+/wu4qkEeckzSRPsm9MYzqnLRshh8yjZJ70xU/mmk='
     "hacluster-neutron": 
-      charm: "cs:trusty/hacluster"
+      branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
       options:
         corosync_key: |
           'KNhb4++3jlllbnscS5D3qdzOJDsQPEeZ7zOLZJHbkKrRjX9gRCijVVOiv2JCvq03HqQ7LIufQzWGl9Za8qh0f6QmQ3XhFh/Cb/3WaYFj+tEf0zArWv+8miswmM1z4eyTSrTWBq0dTgx1z96wjBxP5HV0+1LWW+3Ei4oZWyRGeR0='
     "hacluster-glance":
-      charm: "cs:trusty/hacluster"
+      branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
       options:
         corosync_key: |
           'el1dd8107J5mwQDPS7tEJPZrr0XFfL95+Tku/QG90W5Q5f5SP4W8TRfKvddGmZWZl2lVd1neG5WqaHa1mq/aScJpoflzVAJCvshN7Gd2AjHhLNNugeI8S90j/7wrKUhqiCAlkKaeri2xs5bB5PZ7Z9AHuNZL7SW1al8lxrKhUFI='
     "hacluster-ceilometer":
-      charm: "cs:trusty/hacluster"
+      branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
       options:
         corosync_key: |
           'cHkgKGJpdHMgPSA5NjApLgpQcmVzcyBrZXlzIG9uIHlvdXIga2V5Ym9hcmQgdG8gZ2VuZXJhdGUgZW50cm9weSAoYml0cyA9IDEwMDgpLgpXcml0aW5nIGNvcm9zeW5jIGtleSB0byAvZXRjL2Nvcm9zeW5jL2F1dGhrZXkuCg=='
@@ -102,14 +102,14 @@ openstack-phase2:
       to:
         - "lxc:nodes-api=0"
     ceph:
-      charm: cs:trusty/ceph
+      branch: lp:~openstack-charmers/charms/trusty/ceph/next
       num_units: 3
       options:
         fsid: 5a791d94-980b-11e4-b6f6-3c970e8b1cf7
         monitor-secret: AQAi5a9UeJXUExAA+By9u+GPhl8/XiUQ4nwI3A==
         osd-devices: ""
         monitor-count: 3
-        osd-reformat: 'no'
+#        osd-reformat: 'no'
 #        ceph-cluster-network: 192.168.0.0/24
 #        ceph-public-network: 192.168.0.0/24
       to:
@@ -117,7 +117,7 @@ openstack-phase2:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
     ceph-osd:
-      charm: cs:trusty/ceph-osd
+      branch: lp:~openstack-charmers/charms/trusty/ceph-osd/next
       num_units: 2
       options:
         osd-devices: /srv
@@ -126,7 +126,7 @@ openstack-phase2:
         - "nodes-compute=0"
         - "nodes-compute=1"
     ceph-radosgw:
-      charm: cs:trusty/ceph-radosgw
+      branch: lp:~openstack-charmers/charms/trusty/ceph-radosgw/next
       num_units: 1
       options:
         use-embedded-webserver: true
@@ -135,7 +135,7 @@ openstack-phase2:
         - "lxc:nodes-api=0"
 
     cinder:
-      charm: cs:trusty/cinder
+      branch: lp:~openstack-charmers/charms/trusty/cinder/next
       num_units: 3
       options:
         block-device: None
@@ -146,16 +146,16 @@ openstack-phase2:
         - "lxc:nodes-api=1"
         - "lxc:nodes-api=2"
     cinder-ceph:
-      charm: cs:trusty/cinder-ceph
+      branch: lp:~openstack-charmers/charms/trusty/cinder-ceph/next
     "rabbitmq-server": 
-      branch: lp:charms/trusty/rabbitmq-server
+      branch: lp:~openstack-charmers/charms/trusty/rabbitmq-server/next
       num_units: 3
       to:
         - "lxc:nodes-api=1"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=2"
     "keystone": 
-      branch: lp:charms/trusty/keystone
+      branch: lp:~openstack-charmers/charms/trusty/keystone/next
       num_units: 3
       options: 
         "admin-password": openstack
@@ -166,7 +166,7 @@ openstack-phase2:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
     "openstack-dashboard": 
-      branch: lp:charms/trusty/openstack-dashboard
+      branch: lp:~openstack-charmers/charms/trusty/openstack-dashboard/next
       num_units: 3
       options: 
         secret: admin
@@ -189,13 +189,14 @@ openstack-phase2:
 #        - "nodes-api=1"
 #        - "nodes-api=2"
     "nova-cloud-controller": 
-      branch: lp:charms/trusty/nova-cloud-controller
+      branch: lp:~openstack-charmers/charms/trusty/nova-cloud-controller/next
       num_units: 3
       options: 
         "console-access-protocol": novnc
         "network-manager": Neutron
         "quantum-security-groups": "yes"
         "service-guard": true
+        "neutron-external-network": ext_net
         vip: 10.4.1.16
       to:
         - "lxc:nodes-api=1"
@@ -213,7 +214,7 @@ openstack-phase2:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
     "glance": 
-      branch: lp:charms/trusty/glance
+      branch: lp:~openstack-charmers/charms/trusty/glance/next
       num_units: 3
       options: 
         vip: 10.4.1.12
