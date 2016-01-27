@@ -2,7 +2,7 @@
 
 set -ex
 
-export JUJU_DEV_FEATURE_FLAGS=address-allocation
+#export JUJU_DEV_FEATURE_FLAGS=address-allocation
 
 juju bootstrap --debug --to bootstrap.maas
 sleep 5
