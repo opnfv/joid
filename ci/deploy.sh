@@ -110,7 +110,6 @@ deploy() {
     echo "        enable-os-upgrade: false" >> environments.yaml
     echo "        admin-secret: admin" >> environments.yaml
     echo "        default-series: trusty" >> environments.yaml
-    echo "        address-allocation: true" >> environments.yaml
 
     cp environments.yaml ~/.juju/
 
