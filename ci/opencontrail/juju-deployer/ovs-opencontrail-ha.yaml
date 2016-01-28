@@ -158,7 +158,7 @@ openstack-phase2:
       branch: lp:~openstack-charmers/charms/trusty/keystone/next
       num_units: 3
       options: 
-        "admin-password": openstack
+        admin-password: openstack
         "admin-token": admin
         vip: 10.4.1.13
       to:

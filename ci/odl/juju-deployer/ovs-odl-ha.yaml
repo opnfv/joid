@@ -142,7 +142,7 @@ openstack-phase2:
       num_units: 3
       options:
 #        ha-mcastport: 5402
-        "admin-password": openstack
+        admin-password: openstack
         "admin-token": admin
         vip: 10.4.1.13
       to:
