@@ -132,7 +132,7 @@ openstack-phase2:
       to:
         - "lxc:nodes-api=0"
     neutron-api:
-      branch: lp:~openstack-charmers/charms/trusty/neutron-api/next
+      branch: lp:~opnfv-team/charms/trusty/neutron-api/next
       num_units: 1
       options:
         manage-neutron-plugin-legacy-mode: False
@@ -207,9 +207,9 @@ contrail:
       to:
         - "lxc:nodes-api=0"
     neutron-api-contrail:
-      branch: lp:~sdn-charmers/charms/trusty/neutron-api-contrail/trunk
+      branch: lp:~opnfv-team/charms/trusty/neutron-api-contrail/trunk
     neutron-contrail:
-      branch: lp:~sdn-charmers/charms/trusty/neutron-contrail/trunk
+      branch: lp:~opnfv-team/charms/trusty/neutron-contrail/trunk
   relations:
     - [ "contrail-configuration:cassandra", "cassandra:database" ]
     - [ contrail-configuration, zookeeper ]
@@ -232,7 +232,7 @@ contrail:
     - [ "neutron-contrail:contrail-api", "contrail-configuration:contrail-api" ]
     - [ neutron-contrail, keystone ]
 
-trusty-liberty-nodes:
+/trusty-liberty-nodes:
   inherits: openstack-phase1
   series: trusty
   overrides:
