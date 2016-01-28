@@ -203,7 +203,7 @@ openstack-phase2:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=2"
     neutron-api: 
-      branch: lp:~openstack-charmers/charms/trusty/neutron-api/next
+      branch: lp:~opnfv-team/charms/trusty/neutron-api/next
       num_units: 3
       options:
         neutron-security-groups: True
@@ -303,9 +303,9 @@ contrail:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
     neutron-api-contrail:
-      branch: lp:~sdn-charmers/charms/trusty/neutron-api-contrail/trunk
+      branch: lp:~opnfv-team/charms/trusty/neutron-api-contrail/trunk
     neutron-contrail:
-      branch: lp:~sdn-charmers/charms/trusty/neutron-contrail/trunk
+      branch: lp:~opnfv-team/charms/trusty/neutron-contrail/trunk
     haproxy:
       charm: cs:trusty/haproxy
       num_units: 2
