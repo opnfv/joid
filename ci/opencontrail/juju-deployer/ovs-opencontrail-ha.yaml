@@ -10,7 +10,7 @@ openstack-phase1:
       charm: "cs:trusty/ubuntu"
       num_units: 2
       constraints: tags=compute
-    "ntp": 
+    ntp: 
       charm: "cs:trusty/ntp"
     zookeeper:
       branch: lp:~charmers/charms/precise/zookeeper/trunk
@@ -37,51 +37,51 @@ openstack-phase1:
 openstack-phase2: 
   inherits: openstack-phase1
   services: 
-    "percona-cluster": 
+    percona-cluster: 
       branch: "lp:~openstack-charmers/charms/trusty/percona-cluster/next"
       num_units: 3
       options: 
-        "dataset-size": 2G
-        "lp1366997-workaround": true
-        "max-connections": 10000
-        "root-password": 293rhc395m
-        "sst-password": 127rc14t51
+        dataset-size: 2G
+        lp1366997-workaround: true
+        max-connections: 10000
+        root-password: 293rhc395m
+        sst-password: 127rc14t51
         vip: 10.4.1.15
       to:
         - "lxc:nodes-api=2"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
-    "hacluster-keystone":
+    hacluster-keystone:
       branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
       options:
         corosync_key: |
           'QisjNpoKHLkvyc3PEdDHP5VZjgD0kOk9t0ABPWmCELlu5AgWgnW6bJd34BVXO7VhW+3ZwNQM3W+bZ3pl28ftY4ki4N/S0KLFNia5egFgiA3AH2QXLnokS7OYXuu6GMJJ1S5mDe6P5zU+tfJe/Mebq24u7CgR0gAvohSPRdDTwdY='
-    "hacluster-horizon":
+    hacluster-horizon:
       branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
       options:
         corosync_key: |
           'aCVPHw6XYne+Hxv0WPiM3+yEfeIxs0Ly0EMKB494Rdzjf5rE52GcXqqxuvIa/nXJ4GCR+UdKk9FEwcASfYkeu3HDWUld9uTE6pOc+ibWYnybNH7VBfEHW8h9YmQKs3HD2T3wlTcS2irU4CUW7/IKNok4etYdM3iFn1K2ReSGXEI='
-    "hacluster-nova":
+    hacluster-nova:
       branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
       options:
         corosync_key: |
           'gel86qmEze8dYKYbfqIgRpqapJpKtdYL2hxC1y5nWYBPq7EMf6V8mF01IjeUkSRs14CUDrsPpT4PWeom7EOY2fleuLx/aIuqQUfEDkhf/gvaz7BaU4hrmTCoDBK7/HvEwY+/wu4qkEeckzSRPsm9MYzqnLRshh8yjZJ70xU/mmk='
-    "hacluster-neutron": 
+    hacluster-neutron: 
       branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
       options:
         corosync_key: |
           'KNhb4++3jlllbnscS5D3qdzOJDsQPEeZ7zOLZJHbkKrRjX9gRCijVVOiv2JCvq03HqQ7LIufQzWGl9Za8qh0f6QmQ3XhFh/Cb/3WaYFj+tEf0zArWv+8miswmM1z4eyTSrTWBq0dTgx1z96wjBxP5HV0+1LWW+3Ei4oZWyRGeR0='
-    "hacluster-glance":
+    hacluster-glance:
       branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
       options:
         corosync_key: |
           'el1dd8107J5mwQDPS7tEJPZrr0XFfL95+Tku/QG90W5Q5f5SP4W8TRfKvddGmZWZl2lVd1neG5WqaHa1mq/aScJpoflzVAJCvshN7Gd2AjHhLNNugeI8S90j/7wrKUhqiCAlkKaeri2xs5bB5PZ7Z9AHuNZL7SW1al8lxrKhUFI='
-    "hacluster-ceilometer":
+    hacluster-ceilometer:
       branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
       options:
         corosync_key: |
           'cHkgKGJpdHMgPSA5NjApLgpQcmVzcyBrZXlzIG9uIHlvdXIga2V5Ym9hcmQgdG8gZ2VuZXJhdGUgZW50cm9weSAoYml0cyA9IDEwMDgpLgpXcml0aW5nIGNvcm9zeW5jIGtleSB0byAvZXRjL2Nvcm9zeW5jL2F1dGhrZXkuCg=='
-    "ceilometer":
+    ceilometer:
       branch: "lp:~openstack-charmers/charms/trusty/ceilometer/next"
       num_units: 3
       options:
@@ -90,9 +90,9 @@ openstack-phase2:
         - "lxc:nodes-api=2"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
-    "ceilometer-agent":
+    ceilometer-agent:
       branch: "lp:~openstack-charmers/charms/trusty/ceilometer-agent/next"
-    "mongodb":
+    mongodb:
       charm: "cs:trusty/mongodb"
       num_units: 1
       to:
@@ -147,25 +147,25 @@ openstack-phase2:
         - "lxc:nodes-api=2"
     cinder-ceph:
       branch: lp:~openstack-charmers/charms/trusty/cinder-ceph/next
-    "rabbitmq-server": 
+    rabbitmq-server: 
       branch: lp:~openstack-charmers/charms/trusty/rabbitmq-server/next
       num_units: 3
       to:
         - "lxc:nodes-api=1"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=2"
-    "keystone": 
+    keystone: 
       branch: lp:~openstack-charmers/charms/trusty/keystone/next
       num_units: 3
       options: 
         admin-password: openstack
-        "admin-token": admin
+        admin-token: admin
         vip: 10.4.1.13
       to:
         - "lxc:nodes-api=2"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
-    "openstack-dashboard": 
+    openstack-dashboard: 
       branch: lp:~openstack-charmers/charms/trusty/openstack-dashboard/next
       num_units: 3
       options: 
@@ -176,33 +176,33 @@ openstack-phase2:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
         - "lxc:nodes-api=2"
-    "nova-compute": 
+    nova-compute: 
       branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
       num_units: 2
       options: 
-        "enable-live-migration": False
-        "manage-neutron-plugin-legacy-mode": False
+        enable-live-migration: False
+        manage-neutron-plugin-legacy-mode: False
       to:
         - "nodes-compute=0"
         - "nodes-compute=1"
 #        - "nodes-api=0"
 #        - "nodes-api=1"
 #        - "nodes-api=2"
-    "nova-cloud-controller": 
+    nova-cloud-controller: 
       branch: lp:~openstack-charmers/charms/trusty/nova-cloud-controller/next
       num_units: 3
       options: 
-        "console-access-protocol": novnc
-        "network-manager": Neutron
-        "quantum-security-groups": "yes"
-        "service-guard": true
-        "neutron-external-network": ext_net
+        console-access-protocol: novnc
+        network-manager: Neutron
+        quantum-security-groups: "yes"
+        service-guard: true
+        neutron-external-network: ext_net
         vip: 10.4.1.16
       to:
         - "lxc:nodes-api=1"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=2"
-    "neutron-api": 
+    neutron-api: 
       branch: lp:~openstack-charmers/charms/trusty/neutron-api/next
       num_units: 3
       options:
@@ -213,7 +213,7 @@ openstack-phase2:
         - "lxc:nodes-api=2"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
-    "glance": 
+    glance: 
       branch: lp:~openstack-charmers/charms/trusty/glance/next
       num_units: 3
       options: 
