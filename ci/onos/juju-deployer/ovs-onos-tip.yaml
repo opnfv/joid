@@ -94,7 +94,7 @@ openstack-phase2:
       num_units: 1
       options:
         openstack-origin-git: include-file://keystone-master.yaml
-        "admin-password": openstack
+        admin-password: openstack
         "admin-token": admin
       to:
         - "lxc:nodes-api=0"
