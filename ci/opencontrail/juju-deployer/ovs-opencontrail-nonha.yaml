@@ -10,7 +10,7 @@ openstack-phase1:
       charm: "cs:trusty/ubuntu"
       num_units: 1
       constraints: tags=compute
-    "ntp":
+    ntp:
       charm: "cs:trusty/ntp"
     zookeeper:
       branch: lp:~charmers/charms/precise/zookeeper/trunk
@@ -31,25 +31,25 @@ openstack-phase1:
 openstack-phase2:
   inherits: openstack-phase1
   services:
-    "mysql":
+    mysql:
       branch: "lp:~openstack-charmers/charms/trusty/percona-cluster/next"
       num_units: 1
       options:
-        "dataset-size": 2G
-        "max-connections": 10000
+        dataset-size: 2G
+        max-connections: 10000
       to:
         - "lxc:nodes-api=0"
-    "mongodb":
+    mongodb:
       charm: "cs:trusty/mongodb"
       num_units: 1
       to:
         - "lxc:nodes-api=0"
-    "ceilometer":
+    ceilometer:
       branch: "lp:~openstack-charmers/charms/trusty/ceilometer/next"
       num_units: 1
       to:
         - "lxc:nodes-api=0"
-    "ceilometer-agent":
+    ceilometer-agent:
       branch: "lp:~openstack-charmers/charms/trusty/ceilometer-agent/next"
     heat:
       branch: "lp:~openstack-charmers/charms/trusty/heat/next"
@@ -95,20 +95,20 @@ openstack-phase2:
         - "lxc:nodes-api=0"
     cinder-ceph:
       branch: lp:~openstack-charmers/charms/trusty/cinder-ceph/next
-    "rabbitmq-server":
+    rabbitmq-server:
       branch: lp:~openstack-charmers/charms/trusty/rabbitmq-server/next
       num_units: 1
       to:
         - "lxc:nodes-api=0"
-    "keystone":
+    keystone:
       branch: lp:~openstack-charmers/charms/trusty/keystone/next
       num_units: 1
       options:
         admin-password: openstack
-        "admin-token": admin
+        admin-token: admin
       to:
         - "lxc:nodes-api=0"
-    "openstack-dashboard":
+    openstack-dashboard:
       branch: lp:~openstack-charmers/charms/trusty/openstack-dashboard/next
       num_units: 1
       options:
@@ -116,29 +116,29 @@ openstack-phase2:
         webroot: /
       to:
         - "lxc:nodes-api=0"
-    "nova-compute":
+    nova-compute:
       branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
       num_units: 1
       options:
-        "manage-neutron-plugin-legacy-mode": False
+        manage-neutron-plugin-legacy-mode: False
       to:
         - "nodes-compute=0"
 #        - "nodes-compute=1"
-    "nova-cloud-controller":
+    nova-cloud-controller:
       branch: lp:~openstack-charmers/charms/trusty/nova-cloud-controller/next
       num_units: 1
       options:
-        "network-manager": Neutron
+        network-manager: Neutron
       to:
         - "lxc:nodes-api=0"
-    "neutron-api":
+    neutron-api:
       branch: lp:~openstack-charmers/charms/trusty/neutron-api/next
       num_units: 1
       options:
         manage-neutron-plugin-legacy-mode: False
       to:
         - "lxc:nodes-api=0"
-    "glance":
+    glance:
       branch: lp:~openstack-charmers/charms/trusty/glance/next
       num_units: 1
       to:
