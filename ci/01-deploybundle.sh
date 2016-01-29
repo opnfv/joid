@@ -58,6 +58,10 @@ case "$3" in
          sed -i -- 's/10.4.1.1/172.16.50.1/g' ./bundles.yaml
          sed -i -- 's/#        ext-port: "eth1"/        ext-port: "eth1"/g' ./bundles.yaml
          ;;
+     'custom' )
+         sed -i -- 's/10.4.1.1/192.168.122.1/g' ./bundles.yaml
+         sed -i -- 's/#        ext-port: "eth1"/        ext-port: "eth1"/g' ./bundles.yaml
+        ;;
      'default' )
          sed -i -- 's/10.4.1.1/192.168.122.1/g' ./bundles.yaml
          sed -i -- 's/#        ext-port: "eth1"/        ext-port: "eth1"/g' ./bundles.yaml
