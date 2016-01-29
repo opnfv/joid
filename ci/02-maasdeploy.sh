@@ -23,6 +23,9 @@ case "$1" in
     'cengnlynxpod1' )
         cp maas/cengn_lynx/pod1/deployment.yaml ./deployment.yaml
         ;;
+    'custom' )
+        cp maas/custom/deployment.yaml ./deployment.yaml
+        ;;
     * )
         virtinstall=1
         ./cleanvm.sh
@@ -68,8 +71,11 @@ sudo virsh pool-autostart default || true
 sudo apt-add-repository ppa:maas-deployers/stable -y
 sudo apt-add-repository ppa:juju/stable -y
 sudo apt-add-repository ppa:maas/stable -y
+sudo apt-add-repository ppa:cloud-archive/liberty -y
 sudo apt-get update -y
-sudo apt-get install openssh-server git maas-deployer juju juju-deployer maas-cli python-pip -y
+sudo apt-get dist-upgrade -y
+sudo apt-get install openssh-server git maas-deployer juju juju-deployer maas-cli python-pip python-openstackclient
+
 sudo pip install shyaml
 juju init -f
 
