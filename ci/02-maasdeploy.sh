@@ -73,8 +73,8 @@ sudo apt-add-repository ppa:juju/stable -y
 sudo apt-add-repository ppa:maas/stable -y
 sudo apt-add-repository cloud-archive:liberty -y
 sudo apt-get update -y
-apt-get apt-get upgrade -y && apt-get autoremove -y && apt-get autoclean -y
-sudo apt-get install openssh-server git maas-deployer juju juju-deployer maas-cli python-pip python-openstackclient
+sudo apt-get dist-upgrade -y 
+sudo apt-get install openssh-server git maas-deployer juju juju-deployer maas-cli python-pip python-openstackclient -y
 
 sudo pip install shyaml
 juju init -f
