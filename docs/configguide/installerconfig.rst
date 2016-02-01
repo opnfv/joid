@@ -2,13 +2,15 @@
 Deploy JOID in your LAB
 =======================
 
+
+
 Bare Metal Installations:
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 Requirements as per Pharos:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Networking:
 ^^^^^^^^^^^
-**minimum 2 networks**
+**Minimum 2 networks**
 
 | ``1. First for Admin network with gateway to access external network``
 | ``2. Second for public network to consume by tenants for floating ips``
@@ -16,10 +18,9 @@ Networking:
 **NOTE: JOID support multiple isolated networks for data as well as storage.
 Based on your network options for Openstack.**
 
-Minimum 6 physical servers.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-1. Jump Host server:
-~~~~~~~~~~~~~~~~~~~~
+**Minimum 6 physical servers**
+
+1. Jump host server:
 
 | ``   Minimum H/W Spec needed``
 | ``  CPU cores: 16``
@@ -27,8 +28,7 @@ Minimum 6 physical servers.
 | ``  Hard Disk: 1(250 GB)``
 | ``  NIC: eth0(Admin, Management), eth1 (external network)``
 
-2. Control Node Servers (minimum 3):
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2. Control node servers (minimum 3):
 
 | ``  Minimum H/W Spec``
 | ``  CPU cores: 16``
@@ -36,8 +36,7 @@ Minimum 6 physical servers.
 | ``  Hard Disk: 1(500 GB)``
 | ``  NIC: eth0(Admin, Management), eth1 (external network)``
 
-3. Compute Node Servers (minimum 2):
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3. Compute node servers (minimum 2):
 
 | ``  Minimum H/W Spec``
 | ``  CPU cores: 16``
@@ -50,7 +49,7 @@ the Openstack please consider higher spec for each nodes.**
 
 Make sure all servers are connected to top of rack switch and configured accordingly. No DHCP server should be up and configured. Only gateway at eth0 and eth1 network should be configure to access the network outside your lab.
 
-Jump Node configuration:
+Jump node configuration:
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. Install Ubuntu 14.04 LTS server version of OS on the nodes.
@@ -112,6 +111,11 @@ deployment.yaml file
 Prerequisite:
 ~~~~~~~~~~~~~
 
+1. Make sure Jump host node has been configured with bridges on each interface,
+so that appropriate MAAS and JUJU bootstrap VM can be created. For example if
+you have three network admin, data and public then I would suggest to give names
+like brAdm, brData and brPublic.
+2. You have information about the node MAC address and power management details (IPMI IP, username, password) of the nodes used for control and compute node.
 
 modify deployment.yaml
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -165,11 +169,6 @@ used as separate data network for tenants in openstack with network
 | ``       enableautomodebyname eth2 AUTO "10.4.9.0/24" control || true``
 | ``       ;;``
 
-Deployment of OPNFV using JOID:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Once you have done the change in above section then run the following
-commands to do the automatic deployments.
 
 MAAS Install
 ~~~~~~~~~~~~
@@ -180,52 +179,111 @@ commands to start the MAAS deployment.
 
 ``   ./02-maasdeploy.sh intelpod7``
 
+This will take approximately 40 minutes to couple hours depending on your
+environment. This script will do the following:
+
+1. Create 2 VMs (KVM).
+2. Install MAAS in one of the VMs.
+3. Configure the MAAS to enlist and commission a VM for Juju bootstrap node.
+4. Configure the MAAS to enlist and commission bare metal servers.
+
+When it's done, you should be able to view MAAS webpage (http://<MAAS IP>/MAAS) and see 1 bootstrap node and bare metal servers in the 'Ready' state on the nodes page.
+
+Virtual deployment
+~~~~~~~~~~~~~~~~~~
+By default, just running the script ./02-maasdeploy.sh will automatically create the KVM VMs on a single machine and configure everything for you.
+
 OPNFV Install
-~~~~~~~~~~~~~
+-------------
+JOID allows you to deploy different combinations of OpenStack release and SDN solution in HA or non-HA mode.
+
+For OpenStack, it supports Juno and Liberty. For SDN, it supports Openvswitch, OpenContrail, OpenDayLight and ONOS.
+
+In addition to HA or non-HA mode, it also supports to deploy the latest from the development tree (tip).
+
+
+The deploy.sh in the joid/ci directoy will do all the work for you. For example, the following deploy OpenStack Libery with OpenDayLight in a HA mode in the Intelpod7.
+
 
 | ``   ./deploy.sh -o liberty -s odl -t ha -l intelpod7 -f none``
 | ``   ``
 
-NOTE: Possible options are as follows:
+By default, the SDN is Openvswitch, non-HA, Liberty, Intelpod5, OPNFV Brahmaputra release and ODL_L2 for the OPNFV feature.
 
-| ``   choose which sdn controller to use.``
-| ``     [-s ``\ \ ``]``
-| ``     nosdn: openvswitch only and no other SDN.``
-| ``     odl: OpenDayLight Lithium version.``
-| ``     opencontrail: OpenContrail SDN can be installed with Juno Openstack today.``
-| ``     onos: ONOS framework as SDN.``
-| ``     ``
-| ``     [-t ``\ \ ``] ``
-| ``     nonha: NO HA mode of Openstack``
-| ``     ha: HA mode of openstack.``
-| ``     [-o ``\ \ ``]``
-| ``     juno: Juno Openstack``
-| ``     liberty: Liberty version of openstack.``
-| ``     [-l ``\ \ ``] etc...``
-| ``     default: For virtual deployment where installation will be done on KVM created using ./02-maasdeploy.sh``
-| ``     intelpod5: Install on bare metal OPNFV pod5 of Intel lab.``
-| ``     intelpod6``
-| ``     orangepod2``
-| ``     ..``
-| ``     ..``
-| ``     ``\ \ ``: if you make changes as per your pod above then please use that.``
-| ``     [-f ``\ \ ``]``
-| ``     none: no special feature will be enabled.``
-| ``     ipv6: ipv6 will be enabled for tenant in openstack.``
-| ``     ``
+Possible options for each choice are as follows:
+
+| ``   [-s ``\ \ ``]``
+| ``   nosdn: openvswitch only and no other SDN.``
+| ``   odl: OpenDayLight Lithium version.``
+| ``   opencontrail: OpenContrail SDN.``
+| ``   onos: ONOS framework as SDN.``
+| ``   ``
+| ``   [-t ``\ \ ``] ``
+| ``   nonha: NO HA mode of Openstack.``
+| ``   ha: HA mode of openstack.``
+| ``    tip: the tip of the development.``
+| ``   ``
+| ``   [-o ``\ \ ``]``
+| ``   juno: OpenStack Juno version.``
+| ``   liberty: OpenStack Liberty version.``
+| ``   ``
+| ``   [-l ``\ \ ``] etc...``
+| ``   default: For virtual deployment where installation will be done on KVM created using ./02-maasdeploy.sh``
+| ``   intelpod5: Install on bare metal OPNFV pod5 of Intel lab.``
+| ``   intelpod6``
+| ``   orangepod2``
+| ``   ..``
+| ``   (other pods)``
+| ``   Note: if you make changes as per your pod above then please use your pod.``
+| ``   ``
+| ``   [-f ``\ \ ``]``
+| ``   none: no special feature will be enabled.``
+| ``   ipv6: ipv6 will be enabled for tenant in openstack.``
+| ``   ``
+
+
+By default debug is enabled in script and error messages will be printed
+on the SSH terminal where you are running the scripts.
+It could take an hour to couple hours (max) to complete.
+
+Is the deployment done successfully?
+------------------------------------
+Once juju-deployer is complete, use juju status to verify that all deployed unit are in the ready state.
+
+| ``   juju status --format tabular``
+
+Find the Openstack-dashboard IP address from the *juju status* output, and see if you can log in via browser. The username and password is admin/openstack.
+
+Optionall, see if you can log in Juju GUI. Juju GUI is on the Juju bootstrap node which is the second VM you define in the 02-maasdeploy.sh. The username and password is admin/admin.
+
+If you deploy ODL, OpenContrail or ONOS, find the IP address of the web UI and login. Please refer to each SDN bundle.yaml for username/password.
 
 Troubleshoot
 ~~~~~~~~~~~~
+To access to any deployed units, juju ssh for example to login into nova-compute unit and look for /var/log/juju/unit-<of interest> for more info.
 
-By default debug is enabled in script and error messages will be printed
-on ssh terminal where you are running the scripts.
-
-To access of any control or compute nodes. juju ssh for example to login
-into openstack-dashboard container.
-
-| ``   juju ssh openstack-dashboard/0 ``
 | ``   juju ssh nova-compute/0``
-| ``   juju ssh neutron-gateway/0``
 
-By default juju will add the Ubuntu user keys for authentication into
-the deployed server and only ssh access will be available.
+Example:
+
+| ``   ubuntu@R4N4B1:~$ juju ssh nova-compute/0``
+| ``   Warning: Permanently added '172.16.50.60' (ECDSA) to the list of known hosts.``
+| ``   Warning: Permanently added '3-r4n3b1-compute.maas' (ECDSA) to the list of known hosts.``
+| ``   Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-77-generic x86_64)``
+| ``   ``
+| ``    * Documentation:  https://help.ubuntu.com/``
+| ``   <skipped>``
+| ``   Last login: Tue Feb  2 21:23:56 2016 from bootstrap.maas``
+| ``   ubuntu@3-R4N3B1-compute:~$ sudo -i``
+| ``   root@3-R4N3B1-compute:~# cd /var/log/juju/``
+| ``   root@3-R4N3B1-compute:/var/log/juju# ls``
+| ``   machine-2.log  unit-ceilometer-agent-0.log  unit-ceph-osd-0.log  unit-neutron-contrail-0.log  unit-nodes-compute-0.log  unit-nova-compute-0.log  unit-ntp-0.log``
+| ``   root@3-R4N3B1-compute:/var/log/juju#``
+
+**By default juju will add the Ubuntu user keys for authentication into
+the deployed server and only ssh access will be available.**
+
+Once you resolve the error, go back to the jump host to rerun the charm hook with:
+
+| ``   juju resolved --retry <unit>``
+
