@@ -1,26 +1,23 @@
-<Project> post installation procedures
-======================================
-Add a brief introduction to the methods of validating the installation
-according to this specific installer or feature.
+JOID post installation procedures
+=================================
 
-Automated post installation activities
---------------------------------------
-Describe specific post installation activities performed by the OPNFV
-deployment pipeline including testing activities and reports. Refer to
-the relevant testing guides, results, and release notes.
+Configure OpenStack
+-------------------
+In each SDN directory, for example joid/ci/opencontrail, there is a folder
+for Juju deployer where you can find the charm bundle yaml files that the
+deploy.sh uses to deploy.
 
-note: this section should be singular and derived from the test projects
-once we have one test suite to run for all deploy tools.  This is not the
-case yet so each deploy tool will need to provide (hopefully very simillar)
-documentation of this.
+In the same directory, there is **scripts** folder where you can find shell
+scripts to help you configure the OpenStack cloud that you just deployed. These
+scripts are created to help you configure a basic OpenStack Cloud to verify
+the cloud. For more info on OpenStack Cloud configuration, please refer to the
+OpenStack Cloud Administrator Guide on docs.openstack.org. Similarly, for
+complete SDN configuration, please refer to the respective SDN adminstrator guide.
 
-<Project> post configuration procedures
---------------------------------------
-Describe any deploy tool or feature specific scripts, tests or procedures
-that should be carried out on the deployment post install and configuration
-in this section.
+Each SDN solution requires slightly different setup, please refer to the **README**
+in each SDN folder. Most likely you will need to modify the **openstack.sh**
+and **cloud-setup.sh** scripts for the floating IP range, private IP network,
+and SSH keys. Please go through **openstack.sh**, **glance.sh** and
+**cloud-setup.sh** and make changes as you see fit.
 
-Platform components validation
----------------------------------
-Describe any component specific validation procedures necessary for your
-deployment tool in this section.
+
