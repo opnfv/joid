@@ -26,7 +26,7 @@ case "$3" in
         # choose the correct interface to use for data network
          sed -i -- 's/#os-data-network: 10.4.8.0\/21/os-data-network: 192.168.12.0\/24/g' ./bundles.yaml
         # Choose the external port to go out from gateway to use.
-         sed -i -- 's/#        ext-port: "eth1"/        ext-port: "eth1"/g' ./bundles.yaml
+         sed -i -- 's/#ext-port: "eth1"/ext-port: "eth1"/g' ./bundles.yaml
          ;;
      'intelpod6' )
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
@@ -34,7 +34,7 @@ case "$3" in
         # choose the correct interface to use for data network
          sed -i -- 's/#os-data-network: 10.4.8.0\/21/os-data-network: 10.4.9.0\/24/g' ./bundles.yaml
         # Choose the external port to go out from gateway to use.
-         sed -i -- 's/#        ext-port: "eth1"/        ext-port: "eth2"/g' ./bundles.yaml
+         sed -i -- 's/#ext-port: "eth1"/ext-port: "eth2"/g' ./bundles.yaml
          ;;
      'intelpod5' )
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
@@ -42,35 +42,39 @@ case "$3" in
         # choose the correct interface to use for data network
          sed -i -- 's/#os-data-network: 10.4.8.0\/21/os-data-network: 10.4.9.0\/24/g' ./bundles.yaml
         # Choose the external port to go out from gateway to use.
-         sed -i -- 's/#        ext-port: "eth1"/        ext-port: "eth2.724"/g' ./bundles.yaml
+         sed -i -- 's/#ext-port: "eth1"/ext-port: "eth2.724"/g' ./bundles.yaml
         ;;
      'attvirpod1' )
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
          sed -i -- 's/10.4.1.1/192.168.10.1/g' ./bundles.yaml
         # Choose the external port to go out from gateway to use.
-         sed -i -- 's/#        ext-port: "eth1"/        ext-port: "eth1"/g' ./bundles.yaml
+         sed -i -- 's/#ext-port: "eth1"/ext-port: "eth1"/g' ./bundles.yaml
         ;;
      'cengnlynxpod1' )
          sed -i -- 's/10.4.1.1/10.120.0.1/g' ./bundles.yaml
-         sed -i -- 's/#        ext-port: "eth1"/        ext-port: "eth2.1202"/g' ./bundles.yaml
+         sed -i -- 's/#ext-port: "eth1"/ext-port: "eth2.1202"/g' ./bundles.yaml
         ;;
      'juniperpod1' )
          sed -i -- 's/10.4.1.1/172.16.50.1/g' ./bundles.yaml
-         sed -i -- 's/#        ext-port: "eth1"/        ext-port: "eth1"/g' ./bundles.yaml
+         sed -i -- 's/#ext-port: "eth1"/ext-port: "eth1"/g' ./bundles.yaml
          ;;
      'custom' )
          sed -i -- 's/10.4.1.1/192.168.122.1/g' ./bundles.yaml
-         sed -i -- 's/#        ext-port: "eth1"/        ext-port: "eth1"/g' ./bundles.yaml
+         sed -i -- 's/#ext-port: "eth1"/ext-port: "eth1"/g' ./bundles.yaml
         ;;
      'default' )
          sed -i -- 's/10.4.1.1/192.168.122.1/g' ./bundles.yaml
-         sed -i -- 's/#        ext-port: "eth1"/        ext-port: "eth1"/g' ./bundles.yaml
+         sed -i -- 's/#ext-port: "eth1"/ext-port: "eth1"/g' ./bundles.yaml
         ;;
 esac
 
 case "$5" in
     'ipv6' )
          sed -i -- 's/#prefer-ipv6: true/prefer-ipv6: true/g' ./bundles.yaml
+        ;;
+    'dvr' )
+         sed -i -- 's/#enable-dvr: true/enable-dvr: true/g' ./bundles.yaml
+         sed -i -- 's/#l2-population: true/l2-population: true/g' ./bundles.yaml
         ;;
 esac
 

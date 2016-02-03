@@ -138,7 +138,7 @@ openstack-phase2:
       branch: "lp:~openstack-charmers/charms/trusty/neutron-gateway/next"
       options:
         openstack-origin-git: include-file://neutron-master.yaml
-#        ext-port: "eth1"
+        #ext-port: "eth1"
         plugin: onos
         instance-mtu: 1400
       to:

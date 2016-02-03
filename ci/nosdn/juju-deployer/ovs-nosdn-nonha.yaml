@@ -113,7 +113,7 @@ openstack-phase2:
       num_units: 1
       options:
         instance-mtu: 1400
-#        ext-port: "eth1"
+        #ext-port: "eth1"
       to:
         - "nodes-api=0"
     neutron-openvswitch:
@@ -260,6 +260,9 @@ trusty-liberty:
     #os-data-network: 10.4.8.0/21
     #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
+    #enable-dvr: true
+    #l2-population: true
+    #ext-port: "eth1"
     region: Canonical
     source: "cloud:trusty-liberty"
     openstack-origin: "cloud:trusty-liberty"
@@ -279,6 +282,9 @@ trusty-kilo:
     #os-data-network: 10.4.8.0/21
     #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
+    #enable-dvr: true
+    #l2-population: true
+    #ext-port: "eth1"
     region: Canonical
     source: "cloud:trusty-kilo"
     openstack-origin: "cloud:trusty-kilo"
@@ -298,6 +304,9 @@ trusty-juno:
     #os-data-network: 10.4.8.0/21
     #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
+    #enable-dvr: true
+    #l2-population: true
+    #ext-port: "eth1"
     region: Canonical
     source: "cloud:trusty-juno"
     openstack-origin: "cloud:trusty-juno"

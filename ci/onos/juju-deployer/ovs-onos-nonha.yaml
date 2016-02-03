@@ -137,7 +137,7 @@ openstack-phase2:
     neutron-gateway:
       branch: lp:~openstack-charmers/charms/trusty/neutron-gateway/next
       options:
-#        ext-port: "eth1"
+        #ext-port: "eth1"
         plugin: onos
         instance-mtu: 1400
       to:  
