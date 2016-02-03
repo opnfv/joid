@@ -201,7 +201,7 @@ openstack-phase2:
     neutron-gateway:
       branch: "lp:~wuwenbin2/onosfw/neutron-gateway"
       options:
-#        ext-port: "eth1"
+        #ext-port: "eth1"
         plugin: onos
         instance-mtu: 1400
       to:  

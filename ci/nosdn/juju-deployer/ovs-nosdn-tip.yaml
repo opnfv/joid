@@ -139,7 +139,7 @@ openstack-phase2:
       options:
         openstack-origin-git: include-file://neutron-master.yaml
         instance-mtu: 1400
-#        ext-port: "eth1"
+        #ext-port: "eth1"
       to:
         - "nodes-api=0"
     glance:
@@ -256,6 +256,9 @@ trusty-liberty:
     #os-data-network: 10.4.8.0/21
     #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
+    #enable-dvr: true
+    #l2-population: true
+    #ext-port: "eth1"
     region: Canonical
     source: "cloud:trusty-liberty"
     openstack-origin: "cloud:trusty-liberty"
@@ -278,6 +281,9 @@ trusty-kilo:
     #os-data-network: 10.4.8.0/21
     #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
+    #enable-dvr: true
+    #l2-population: true
+    #ext-port: "eth1"
     openstack-origin: cloud:trusty-kilo
     source: cloud:trusty-kilo
     series: trusty

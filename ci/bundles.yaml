@@ -3,14 +3,14 @@ openstack-phase1:
   series: trusty
   services:
     nodes-api:
-      charm: "local:trusty/ubuntu-nodes-controller"
+      charm: "cs:trusty/ubuntu"
       num_units: 1
       constraints: tags=control
     nodes-compute:
-      charm: "local:trusty/ubuntu-nodes-compute"
+      charm: "cs:trusty/ubuntu"
       num_units: 1
       constraints: tags=compute
-    "ntp": 
+    ntp: 
       charm: "cs:trusty/ntp"
   relations:
     - - "ntp:juju-info"
@@ -20,22 +20,22 @@ openstack-phase1:
 openstack-phase2: 
   inherits: openstack-phase1
   services: 
-    "mysql": 
-      charm: "cs:trusty/mysql"
+    mysql: 
+      branch: "lp:~openstack-charmers/charms/trusty/percona-cluster/next"
       num_units: 1
       options: 
-        "dataset-size": 2G
-        "max-connections": 10000
+        dataset-size: 2G
+        max-connections: 10000
       to:
         - "lxc:nodes-api=0"
-    "ceilometer":
+    ceilometer:
       branch: "lp:~openstack-charmers/charms/trusty/ceilometer/next"
       num_units: 1
       to:
         - "lxc:nodes-api=0"
-    "ceilometer-agent":
+    ceilometer-agent:
       branch: "lp:~openstack-charmers/charms/trusty/ceilometer-agent/next"
-    "mongodb":
+    mongodb:
       charm: "cs:trusty/mongodb"
       num_units: 1
       to:
@@ -45,36 +45,35 @@ openstack-phase2:
       to:
         - "lxc:nodes-api=0"
     ceph:
-      charm: cs:trusty/ceph
+      branch: "lp:~openstack-charmers/charms/trusty/ceph/next"
       num_units: 1
       options:
         fsid: 5a791d94-980b-11e4-b6f6-3c970e8b1cf7
         monitor-secret: AQAi5a9UeJXUExAA+By9u+GPhl8/XiUQ4nwI3A==
-        osd-devices: /srv
+        osd-devices: ""
         monitor-count: 1        
-#        osd-reformat: 'yes'
+#        osd-reformat: 'no'
 #        ceph-cluster-network: 192.168.0.0/24
 #        ceph-public-network: 192.168.0.0/24
       to:
+        - "lxc:nodes-api=0"
+    ceph-osd:
+      branch: "lp:~openstack-charmers/charms/trusty/ceph-osd/next"
+      num_units: 1
+      options:
+        osd-devices: /srv
+        osd-reformat: 'yes'
+      to:
         - "nodes-compute=0"
-#        - "nodes-compute=1"
-#    ceph-osd:
-#      charm: cs:trusty/ceph-osd
-#      num_units: 1
-#      options:
-#        osd-devices: /srv
-#        osd-reformat: 'yes'
-#      to:
-#        - "nodes-compute=0"
-#    ceph-radosgw:
-#      charm: cs:trusty/ceph-radosgw
-#      num_units: 1
-#      options:
-#        use-embedded-webserver: true
-#      to:
-#        - "lxc:nodes-api=0"
+    ceph-radosgw:
+      branch: "lp:~openstack-charmers/charms/trusty/ceph-radosgw/next"
+      num_units: 1
+      options:
+        use-embedded-webserver: true
+      to:
+        - "lxc:nodes-api=0"
     cinder:
-      charm: cs:trusty/cinder
+      branch: "lp:~openstack-charmers/charms/trusty/cinder/next"
       num_units: 1
       options:
         block-device: None
@@ -83,51 +82,51 @@ openstack-phase2:
       to:
         - "lxc:nodes-api=0"
     cinder-ceph:
-      charm: cs:trusty/cinder-ceph
-    "rabbitmq-server": 
-      branch: lp:charms/trusty/rabbitmq-server
+      branch: "lp:~openstack-charmers/charms/trusty/cinder-ceph/next"
+    rabbitmq-server: 
+      branch: "lp:~openstack-charmers/charms/trusty/rabbitmq-server/next"
       num_units: 1
       to:
         - "lxc:nodes-api=0"
-    "keystone": 
-      branch: lp:charms/trusty/keystone
+    keystone: 
+      branch: "lp:~openstack-charmers/charms/trusty/keystone/next"
       num_units: 1
       options: 
 #        ha-mcastport: 5402
-        "admin-password": openstack
-        "admin-token": admin
+        admin-password: openstack
+        admin-token: admin
       to:
         - "lxc:nodes-api=0"
-    "openstack-dashboard": 
-      branch: lp:charms/trusty/openstack-dashboard
+    openstack-dashboard: 
+      branch: "lp:~openstack-charmers/charms/trusty/openstack-dashboard/next"
       num_units: 1
       options: 
         secret: admin
         webroot: /
       to:
         - "lxc:nodes-api=0"
-    "nova-compute": 
+    nova-compute: 
       branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
       num_units: 1
       options: 
-        "enable-live-migration": False
-        "manage-neutron-plugin-legacy-mode": False
+        enable-live-migration: False
+        manage-neutron-plugin-legacy-mode: False
       to:
         - "nodes-compute=0"
 #        - "nodes-compute=1"
 #        - "nodes-api=0"
 #        - "nodes-api=1"
 #        - "nodes-api=2"
-    "nova-cloud-controller": 
-      branch: lp:charms/trusty/nova-cloud-controller
+    nova-cloud-controller: 
+      branch: lp:~openstack-charmers/charms/trusty/nova-cloud-controller/next
       num_units: 1
       options: 
-        "console-access-protocol": novnc
-        "network-manager": Neutron
-        "quantum-security-groups": "yes"
+        console-access-protocol: novnc
+        network-manager: Neutron
+        quantum-security-groups: "yes"
       to:
         - "lxc:nodes-api=0"
-    "neutron-api": 
+    neutron-api: 
       branch: lp:~openstack-charmers/charms/trusty/neutron-api/next
       num_units: 1
       options:
@@ -136,25 +135,51 @@ openstack-phase2:
       to: 
         - "lxc:nodes-api=0"
     neutron-gateway:
-      branch: lp:charms/trusty/neutron-gateway
+      branch: lp:~openstack-charmers/charms/trusty/neutron-gateway/next
       options:
-#        "ext-port": "eth1"
+        #ext-port: "eth1"
+        plugin: ovs-odl
+        instance-mtu: 1400
       to:  
         - "nodes-api=0"
-    "glance": 
-      branch: lp:charms/trusty/glance
+    odl-controller:
+      branch: lp:~openstack-charmers/charms/trusty/odl-controller/next
+      options:
+        #install-url: "https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.2.4-Helium-SR4/distribution-karaf-0.2.4-Helium-SR4.tar.gz"
+        install-url: "https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.3.3-Lithium-SR3/distribution-karaf-0.3.3-Lithium-SR3.tar.gz"
+        profile: "openvswitch-odl-lithium"
+        http-proxy: "http://squid.internal:3128"
+        https-proxy: "http://squid.internal:3128"
+      to:
+        - "lxc:nodes-api=0"
+    glance: 
+      branch: lp:~openstack-charmers/charms/trusty/glance/next
       num_units: 1
       to:
         - "lxc:nodes-api=0"
-    neutron-openvswitch:
-      branch: lp:~openstack-charmers/charms/trusty/neutron-openvswitch/next
+    opnfv-promise:
+      branch: lp:~narindergupta/charms/trusty/promise/trunk
+      num_units: 1
+      to:
+        - "lxc:nodes-api=0"
+    neutron-api-odl:
+      branch: lp:~openstack-charmers/charms/trusty/neutron-api-odl/next
+      options:
+        overlay-network-type: 'vxlan gre'
+        security-groups: True
+    openvswitch-odl:
+      branch: lp:~openstack-charmers/charms/trusty/openvswitch-odl/trunk
   relations:
-    - - neutron-openvswitch:neutron-plugin-api
-      - neutron-api:neutron-plugin-api
-    - - nova-compute:neutron-plugin
-      - neutron-openvswitch:neutron-plugin
-    - - neutron-openvswitch:amqp
-      - rabbitmq-server:amqp
+    - - "neutron-api:neutron-plugin-api-subordinate"
+      - "neutron-api-odl:neutron-plugin-api-subordinate"
+    - - "nova-compute:neutron-plugin"
+      - "openvswitch-odl:neutron-plugin"
+    - - "neutron-gateway"
+      - "openvswitch-odl"
+    - - "openvswitch-odl:ovsdb-manager"
+      - "odl-controller:ovsdb-manager"
+    - - "neutron-api-odl:odl-controller"
+      - "odl-controller:controller-api"
     - - "keystone:shared-db"
       - "mysql:shared-db"
     - - "nova-cloud-controller:shared-db"
@@ -229,12 +254,12 @@ openstack-phase2:
       - "cinder-ceph:ceph"
     - - "ceph:client"
       - "glance:ceph"
-#    - - ceph-osd:mon
-#      - ceph:osd
-#    - - ceph-radosgw:mon
-#      - ceph:radosgw
-#    - - ceph-radosgw:identity-service
-#      - keystone:identity-service
+    - - "ceph-osd:mon"
+      - "ceph:osd"
+    - - "ceph-radosgw:mon"
+      - "ceph:radosgw"
+    - - "ceph-radosgw:identity-service"
+      - "keystone:identity-service"
 trusty-liberty-nodes:
   inherits: openstack-phase1
   overrides:
@@ -244,12 +269,18 @@ trusty-liberty:
   inherits: openstack-phase2
   overrides:
     #os-data-network: 10.4.8.0/21
+    #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
+    #enable-dvr: true
+    #l2-population: true
+    #ext-port: "eth1"
     region: Canonical
     source: "cloud:trusty-liberty"
-    "openstack-origin": "cloud:trusty-liberty"
+    openstack-origin: "cloud:trusty-liberty"
     series: trusty
     ceph-osd-replication-count: 1
+    admin-role: admin
+    keystone-admin-role: admin
 
 trusty-kilo-nodes:
   inherits: openstack-phase1
@@ -260,13 +291,18 @@ trusty-kilo:
   inherits: openstack-phase2
   overrides:
     #os-data-network: 10.4.8.0/21
+    #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
+    #enable-dvr: true
+    #l2-population: true
+    #ext-port: "eth1"
     region: Canonical
     source: "cloud:trusty-kilo"
-    "openstack-origin": "cloud:trusty-kilo"
+    openstack-origin: "cloud:trusty-kilo"
     series: trusty
     ceph-osd-replication-count: 1
-
+    admin-role: admin
+    keystone-admin-role: admin
 
 trusty-juno-nodes:
   inherits: openstack-phase1
@@ -277,11 +313,16 @@ trusty-juno:
   inherits: openstack-phase2
   overrides:
     #os-data-network: 10.4.8.0/21
+    #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
+    #enable-dvr: true
+    #l2-population: true
+    #ext-port: "eth1"
     region: Canonical
     source: "cloud:trusty-juno"
-    "openstack-origin": "cloud:trusty-juno"
+    openstack-origin: "cloud:trusty-juno"
     series: trusty
     ceph-osd-replication-count: 1
-
+    admin-role: admin
+    keystone-admin-role: admin
 
