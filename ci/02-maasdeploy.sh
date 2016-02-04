@@ -200,6 +200,7 @@ case "$1" in
         enableautomodebyname eth3 AUTO "192.168.12.0/24" control || true
         ;;
     'attvirpod1' )
+        enableautomodebyname eth1 AUTO "192.168.10.0/24" control || true
         ;;
     'juniperpod1' )
         ;;
