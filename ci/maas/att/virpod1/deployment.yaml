@@ -103,7 +103,7 @@ demo-maas:
                   - "<controller1-mac>"
               power:
                   type: ether_wake
-                  address: <controller1-mac>
+                  mac_address: <controller1-mac>
 
             - name: compute1
               tags: compute
@@ -112,7 +112,7 @@ demo-maas:
                   - "<compute1-mac>"
               power:
                   type: ether_wake
-                  address:  <compute1-mac>
+                  mac_address:  <compute1-mac>
 
     # Contains the virtual machine parameters for creating the Juju bootstrap
     # node virtual machine
