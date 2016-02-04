@@ -96,7 +96,7 @@ demo-maas:
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
         nodes:
-            - name: controller1
+            - name: node1-control
               tags: control
               architecture: amd64/generic
               mac_addresses:
@@ -105,7 +105,7 @@ demo-maas:
                   type: ether_wake
                   mac_address: <controller1-mac>
 
-            - name: compute1
+            - name: node2-compute
               tags: compute
               architecture: amd64/generic
               mac_addresses:
