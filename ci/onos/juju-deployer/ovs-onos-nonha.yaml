@@ -144,6 +144,8 @@ openstack-phase2:
         - "nodes-api=0"
     onos-controller:
       branch: "lp:~wuwenbin2/onosfw/onos-controller"
+      options:
+        #ext-port: "eth1"
       to: 
         - "lxc:nodes-api=0"
     glance: 
