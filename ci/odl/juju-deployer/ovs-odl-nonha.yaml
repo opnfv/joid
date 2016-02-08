@@ -144,7 +144,7 @@ openstack-phase2:
         - "nodes-api=0"
     odl-controller:
       branch: lp:~opnfv-team/charms/trusty/odl-controller/Be
-       options:
+      options:
         install-url: "https://nexus.opendaylight.org/content/repositories/staging/org/opendaylight/integration/distribution-karaf/0.4.0-Beryllium-RC2/distribution-karaf-0.4.0-Beryllium-RC2.tar.gz"
         profile: "openvswitch-odl-Be"
         http-proxy: "http://squid.internal:3128"
