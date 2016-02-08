@@ -77,13 +77,13 @@ case "$5" in
          sed -i -- 's/#l2-population: true/l2-population: true/g' ./bundles.yaml
         ;;
     'sfc' )
-         sed -i -- 's/profile: "openvswitch-odl-Be"/profile: "openvswitch-odl-Be-sfc/g' ./bundles.yaml
+         sed -i -- 's/profile: "openvswitch-odl-Be"/profile: "openvswitch-odl-Be-sfc"/g' ./bundles.yaml
         ;;
     'vpn' )
-         sed -i -- 's/profile: "openvswitch-odl-Be"/profile: "openvswitch-odl-Be-vpn/g' ./bundles.yaml
+         sed -i -- 's/profile: "openvswitch-odl-Be"/profile: "openvswitch-odl-Be-vpn"/g' ./bundles.yaml
         ;;
     'odl_l3' )
-         sed -i -- 's/profile: "openvswitch-odl-Be"/profile: "openvswitch-odl-Be-l3/g' ./bundles.yaml
+         sed -i -- 's/profile: "openvswitch-odl-Be"/profile: "openvswitch-odl-Be-l3"/g' ./bundles.yaml
         ;;
 esac
 
