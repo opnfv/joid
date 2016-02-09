@@ -166,6 +166,7 @@ openstack-phase2:
       options:
         enable-live-migration: False
         manage-neutron-plugin-legacy-mode: False
+        enable-resize: True
       to:
         - "nodes-compute=0"
         - "nodes-compute=1"
