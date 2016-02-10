@@ -135,7 +135,6 @@ openstack-phase2:
         enable-resize: true
         manage-neutron-plugin-legacy-mode: false
         migration-auth-type: ssh
-        enable-resize: true
       to:
         - "nodes-compute=0"
 #        - "nodes-compute=1"
