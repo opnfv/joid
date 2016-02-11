@@ -12,6 +12,9 @@ openstack-phase1:
       constraints: tags=compute
     ntp:
       charm: "cs:trusty/ntp"
+      options:
+        source: "0.ubuntu.pool.ntp.org 1.ubuntu.pool.ntp.org 2.ubuntu.pool.ntp.org 3.ubuntu.pool.ntp.org"
+        auto_peers: false
     zookeeper:
       branch: lp:~charmers/charms/precise/zookeeper/trunk
       series: precise
@@ -224,7 +227,8 @@ contrail:
     - [ "contrail-control:contrail-ifmap", "contrail-configuration:contrail-ifmap" ]
     - [ contrail-control, keystone ]
     - [ "contrail-analytics:cassandra", "cassandra:database" ]
-    - [ contrail-analytics, contrail-configuration ]
+    - [ "contrail-analytics:contrail-analytics-api", "contrail-configuration:contrail-analytics-api" ]
+    - [ "contrail-configuration:contrail-discovery", "contrail-analytics:contrail-discovery" ]
     - [ contrail-webui, keystone ]
     - [ "contrail-webui:contrail_api", "contrail-configuration:contrail-api" ]
     - [ "contrail-webui:contrail_discovery", "contrail-configuration:contrail-discovery" ]
@@ -233,6 +237,9 @@ contrail:
     - [ "neutron-contrail:contrail-discovery", "contrail-configuration:contrail-discovery" ]
     - [ "neutron-contrail:contrail-api", "contrail-configuration:contrail-api" ]
     - [ neutron-contrail, keystone ]
+    - [ contrail-configuration, ntp ]
+    - [ contrail-control, ntp ]
+    - [ contrail-analytics, ntp ]
     - [ "ceph-osd:mon", "ceph:osd" ]
     - [ "ceph-radosgw:mon", "ceph:radosgw" ]
     - [ "ceph-radosgw:identity-service", "keystone:identity-service" ]
