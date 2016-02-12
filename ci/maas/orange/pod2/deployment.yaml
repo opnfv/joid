@@ -114,10 +114,10 @@ demo-maas:
               router_ip: 192.168.2.1
               static_range:
                   low: 192.168.2.50
-                  high: 192.168.2.99
+                  high: 192.168.2.80
               dynamic_range:
-                  low: 192.168.2.100
-                  high: 192.168.2.200
+                  low: 192.168.2.81
+                  high: 192.168.2.254
             - device: eth1
               ip: 192.168.12.5
               subnet_mask: 255.255.255.0
@@ -125,10 +125,10 @@ demo-maas:
               management: 1
               static_range:
                   low: 192.168.12.50
-                  high: 192.168.12.99
+                  high: 192.168.12.80
               dynamic_range:
-                  low: 192.168.12.100
-                  high: 192.168.12.200
+                  low: 192.168.12.81
+                  high: 192.168.12.254
             - device: eth2
               ip: 192.168.22.5
               subnet_mask: 255.255.255.0
@@ -136,10 +136,10 @@ demo-maas:
               management: 1
               static_range:
                   low: 192.168.22.50
-                  high: 192.168.22.99
+                  high: 192.168.22.80
               dynamic_range:
-                  low: 192.168.22.100
-                  high: 192.168.22.200
+                  low: 192.168.22.81
+                  high: 192.168.22.254
 
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
