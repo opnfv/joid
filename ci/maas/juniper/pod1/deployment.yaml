@@ -11,8 +11,7 @@ demo-maas:
         # server. Here you can configure the name of the virsh domain, the
         # parameters for how the network is attached.
         name: opnfv-maas-juniper
-        interfaces: ['bridge=brAdm,model=virtio','bridge=brPublic,model=virtio']
-        #interfaces: ['bridge=brAdm,model=virtio','bridge=brData,model=virtio','bridge=brPublic,model=virtio']
+        interfaces: ['bridge=brAdm,model=virtio', 'bridge=brPublic,model=virtio']
         memory: 4096
         vcpus: 1
         arch: amd64
@@ -72,7 +71,6 @@ demo-maas:
             netmask 255.255.255.0
             network 172.16.50.0
             broadcast 172.16.50.255
-            #gateway x.x.x.x
             dns-nameservers 8.8.8.8 127.0.0.1
 
             auto eth1
@@ -82,13 +80,6 @@ demo-maas:
             network 10.10.0.0
             broadcast 10.10.15.255
             gateway 10.10.10.1
-
-            #auto eth2
-            #iface eth2 inet static
-            #address 10.2.65.3
-            #netmask 255.255.255.0
-            #network 10.2.65.0
-            #broadcast 10.2.65.255
 
         # The node-group-interfaces section is used to configure the MAAS
         # network interfaces. Basic configuration is supported, such as which
@@ -104,39 +95,13 @@ demo-maas:
               router_ip: 172.16.50.50
               static_range:
                   low: 172.16.50.60
-                  high: 172.16.50.129
+                  high: 172.16.50.90
               dynamic_range:
-                  low: 172.16.50.130
-                  high: 172.16.50.200
-            #- device: eth1
-            #  ip: 10.10.15.50
-            #  subnet_mask: 255.255.240.0
-            #  broadcast_ip: 10.10.15.255
-            #  router_ip: 10.10.10.1
-              #management: 1
-            #  static_range:
-            #      low: 10.10.15.60
-            #      high: 10.10.15.129
-            #  dynamic_range:
-            #      low: 10.10.15.130
-            #      high: 10.10.15.200
-            #- device: eth2
-            #  ip: 10.2.65.3
-            #  subnet_mask: 255.255.255.0
-            #  broadcast_ip: 10.2.65.255
-            #  management: 1
-            #  static_range:
-            #      low: 10.2.65.20
-            #      high: 10.2.65.100
-            #  dynamic_range:
-            #      low: 10.2.65.101
-            #      high: 10.2.65.200
+                  low: 172.16.50.91
+                  high: 172.16.50.254
+
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
-        
-        # Juniper pod1: server 2, 4 and 6 have 32GB RAM and 4 cores. server 3 
-        # and 5 have 64GB RAM and 12 cores. Make server 2, 4 and 6 as control
-        # nodes and 3 and 5 as compute nodes.
         nodes:
             - name: 2-R4N4B2-control
               tags: control
@@ -149,10 +114,7 @@ demo-maas:
                   user: ADMIN
                   pass: ADMIN
                   driver: LAN_2_0
-#              sticky_ip_address:
-#                  mac_address: "38:63:bb:43:b8:9c"
-#                  requested_address: 192.168.122.5
-                
+
             - name: 3-R4N3B1-compute
               tags: compute
               architecture: amd64/generic
@@ -164,9 +126,6 @@ demo-maas:
                   user: ADMIN
                   pass: ADMIN
                   driver: LAN_2_0
-#              sticky_ip_address:
-#                  mac_address: "38:63:bb:43:b8:9c"
-#                  requested_address: 192.168.122.5
 
             - name: 4-R4N4B4-control
               tags: control
@@ -179,9 +138,6 @@ demo-maas:
                   user: ADMIN
                   pass: ADMIN
                   driver: LAN_2_0
-#              sticky_ip_address:
-#                  mac_address: "38:63:bb:43:b8:9c"
-#                  requested_address: 192.168.122.5
 
             - name: 5-R4N3B2-compute
               tags: compute
@@ -194,9 +150,6 @@ demo-maas:
                   user: ADMIN
                   pass: ADMIN
                   driver: LAN_2_0
-#              sticky_ip_address:
-#                  mac_address: "38:63:bb:43:b8:9c"
-#                  requested_address: 192.168.122.5
 
             - name: 6-R4N4B3-control
               tags: control
@@ -209,25 +162,12 @@ demo-maas:
                   user: ADMIN
                   pass: ADMIN
                   driver: LAN_2_0
-#              sticky_ip_address:
-#                  mac_address: "38:63:bb:43:b8:9c"
-#                  requested_address: 192.168.122.5
-
-#            - name: jenkins-slave
-#              tags: jenkins-slave
-#              architecture: amd64/generic
-#              mac_addresses:
-#                  - "52:54:00:f0:5c:53"
-#              power:
-#                  type: virsh
-#                  address: qemu+ssh://ubuntu@10.4.1.1/system
 
     # Contains the virtual machine parameters for creating the Juju bootstrap
     # node virtual machine
     juju-bootstrap:
         name: bootstrap
-        interfaces: ['bridge=brAdm,model=virtio','bridge=brPublic,model=virtio']
-        #interfaces: ['bridge=brAdm,model=virtio','bridge=brData,model=virtio','bridge=brPublic,model=virtio']
+        interfaces: ['bridge=brAdm,model=virtio', 'bridge=brPublic,model=virtio']
         memory: 4096
         vcpus: 2
         arch: amd64
