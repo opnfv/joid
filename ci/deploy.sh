@@ -163,7 +163,7 @@ unitAddress()
 
 createopenrc()
 {
-    if [ "$opnfvsdn" -eq "onos" ]; then
+    if [ "$opnfvsdn" == "onos" ]; then
         sh onos/juju_test_prepare.sh "$opnfvlab"
         check_status
     fi
