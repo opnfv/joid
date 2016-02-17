@@ -310,7 +310,7 @@ contrail:
     neutron-contrail:
       branch: lp:~opnfv-team/charms/trusty/neutron-contrail/trunk
     haproxy:
-      charm: cs:trusty/haproxy
+      branch: lp:~opnfv-team/charms/trusty/haproxy/trunk
       num_units: 2
       options:
         peering_mode: active-active
