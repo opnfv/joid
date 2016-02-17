@@ -163,6 +163,11 @@ unitAddress()
 
 createopenrc()
 {
+    if [ "$opnfvsdn" -eq "onos" ]
+        ./onos/juju_test_prepare.sh "$opnfvlab"
+        check_status
+    fi
+
     mkdir -m 0700 -p cloud
 
     controller_address=$(unitAddress keystone 0)
