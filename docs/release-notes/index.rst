@@ -3,7 +3,7 @@
 .. (c) <optionally add copywriters name>
 
 =======================
-<project> Release Notes
+JOID Release Notes
 =======================
 
 .. toctree::
