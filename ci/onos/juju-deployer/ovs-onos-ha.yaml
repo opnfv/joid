@@ -166,8 +166,10 @@ openstack-phase2:
       branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
       num_units: 2
       options: 
-        enable-live-migration: False
-        manage-neutron-plugin-legacy-mode: False
+        enable-live-migration: true
+        enable-resize: true
+        manage-neutron-plugin-legacy-mode: false
+        migration-auth-type: ssh
       to:
         - "nodes-compute=0"
         - "nodes-compute=1"

@@ -112,8 +112,10 @@ openstack-phase2:
       num_units: 1
       options:
         openstack-origin-git: include-file://nova-master.yaml
-        enable-live-migration: False
-        manage-neutron-plugin-legacy-mode: False
+        enable-live-migration: true
+        enable-resize: true
+        manage-neutron-plugin-legacy-mode: false
+        migration-auth-type: ssh
       to:
         - "nodes-compute=0"
 #        - "nodes-compute=1"
