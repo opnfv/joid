@@ -141,6 +141,8 @@ check_status() {
            retval=1
        fi
     done
+    status=`juju action do heat/0 domain-setup`
+    echo $status
     echo "...... deployment finishing ......."
 }
 
