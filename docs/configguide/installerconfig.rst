@@ -1,5 +1,5 @@
 ==================
-JOID Configuration 
+JOID Configuration
 ==================
 
 
