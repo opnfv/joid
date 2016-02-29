@@ -8,7 +8,7 @@ openstack-phase1:
       constraints: tags=control
     nodes-compute:
       charm: "cs:trusty/ubuntu"
-      num_units: 1
+      num_units: 2
       constraints: tags=compute
     ntp: 
       charm: "cs:trusty/ntp"
@@ -46,25 +46,27 @@ openstack-phase2:
         - "lxc:nodes-api=0"
     ceph:
       branch: "lp:~openstack-charmers/charms/trusty/ceph/next"
-      num_units: 1
+      num_units: 2
       options:
         fsid: 5a791d94-980b-11e4-b6f6-3c970e8b1cf7
         monitor-secret: AQAi5a9UeJXUExAA+By9u+GPhl8/XiUQ4nwI3A==
         osd-devices: ""
-        monitor-count: 1        
+        monitor-count: 2
 #        osd-reformat: 'no'
 #        ceph-cluster-network: 192.168.0.0/24
 #        ceph-public-network: 192.168.0.0/24
       to:
         - "lxc:nodes-api=0"
+        - "lxc:nodes-api=0"
     ceph-osd:
       branch: "lp:~openstack-charmers/charms/trusty/ceph-osd/next"
-      num_units: 1
+      num_units: 2
       options:
         osd-devices: /srv
         osd-reformat: 'yes'
       to:
         - "nodes-compute=0"
+        - "nodes-compute=1"
     ceph-radosgw:
       branch: "lp:~openstack-charmers/charms/trusty/ceph-radosgw/next"
       num_units: 1
@@ -280,7 +282,7 @@ trusty-liberty:
     source: "cloud:trusty-liberty"
     openstack-origin: "cloud:trusty-liberty"
     series: trusty
-    ceph-osd-replication-count: 1
+    ceph-osd-replication-count: 2
     admin-role: admin
     keystone-admin-role: admin
 
@@ -302,7 +304,7 @@ trusty-kilo:
     source: "cloud:trusty-kilo"
     openstack-origin: "cloud:trusty-kilo"
     series: trusty
-    ceph-osd-replication-count: 1
+    ceph-osd-replication-count: 2
     admin-role: admin
     keystone-admin-role: admin
 
@@ -324,7 +326,7 @@ trusty-juno:
     source: "cloud:trusty-juno"
     openstack-origin: "cloud:trusty-juno"
     series: trusty
-    ceph-osd-replication-count: 1
+    ceph-osd-replication-count: 2
     admin-role: admin
     keystone-admin-role: admin
 

@@ -157,11 +157,15 @@ if [ "$virtinstall" -eq 1 ]; then
 
     sudo virt-install --connect qemu:///system --name node2-compute --ram 8192 --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node2-compute
 
+    sudo virt-install --connect qemu:///system --name node5-compute --ram 8192 --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node5-compute
+
     node1controlmac=`grep  "mac address" node1-control | head -1 | cut -d "'" -f 2`
     node2computemac=`grep  "mac address" node2-compute | head -1 | cut -d "'" -f 2`
+    node5computemac=`grep  "mac address" node5-compute | head -1 | cut -d "'" -f 2`
 
     sudo virsh -c qemu:///system define --file node1-control
     sudo virsh -c qemu:///system define --file node2-compute
+    sudo virsh -c qemu:///system define --file node5-compute
 
     maas maas tags new name='control'
     maas maas tags new name='compute'
@@ -174,6 +178,9 @@ if [ "$virtinstall" -eq 1 ]; then
 
     maas maas tag update-nodes compute add=$computenodeid
 
+    computenodeid=`maas maas nodes new autodetect_nodegroup='yes' name='node5-compute' tags='compute' hostname='node5-compute' power_type='virsh' mac_addresses=$node5computemac power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node5-compute' | grep system_id | cut -d '"' -f 4 `
+
+    maas maas tag update-nodes compute add=$computenodeid
 fi
 
 # Enable vlan interfaces with maas
