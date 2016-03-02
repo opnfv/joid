@@ -149,6 +149,7 @@ openstack-phase2:
       branch: "lp:~wuwenbin2/onosfw/onos-controller"
       options:
         #ext-port: "eth1"
+        #gateway-mac: "default"
       to:
         - "lxc:nodes-api=0"
     glance:
