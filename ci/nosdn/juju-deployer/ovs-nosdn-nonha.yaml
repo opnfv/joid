@@ -131,7 +131,7 @@ openstack-phase2:
         - "lxc:nodes-api=0"
     nova-compute:
       branch: "lp:~openstack-charmers/charms/trusty/nova-compute/next"
-      num_units: 1
+      num_units: 2
       options:
         enable-live-migration: true
         enable-resize: true
@@ -139,7 +139,7 @@ openstack-phase2:
         migration-auth-type: ssh
       to:
         - "nodes-compute=0"
-#        - "nodes-compute=1"
+        - "nodes-compute=1"
 #        - "nodes-api=0"
 #        - "nodes-api=1"
 #        - "nodes-api=2"
