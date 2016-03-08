@@ -97,33 +97,33 @@ cengn-lynx-pod1:
               broadcast_ip: 10.120.0.255
               router_ip: 10.120.0.254
               static_range:
-                  low: 10.120.0.20
-                  high: 10.120.0.100
+                  low: 10.120.0.50
+                  high: 10.120.0.80
               dynamic_range:
-                  low: 10.120.0.101
-                  high: 10.120.0.200
+                  low: 10.120.0.81
+                  high: 10.120.0.249
             - device: eth1
               ip: 172.16.121.3
               subnet_mask: 255.255.255.0
               broadcast_ip: 172.16.121.255
               management: 1
               static_range:
-                low: 172.16.121.20
-                high: 172.16.121.100
+                low: 172.16.121.50
+                high: 172.16.121.80
               dynamic_range:
-                low: 172.16.121.101
-                high: 172.16.121.200
+                low: 172.16.121.81
+                high: 172.16.121.249
             - device: eth2
               ip: 172.16.122.3
               subnet_mask: 255.255.255.0
               broadcast_ip: 172.16.122.255
               management: 1
               static_range:
-                low: 172.16.122.20
-                high: 172.16.122.100
+                low: 172.16.122.50
+                high: 172.16.122.80
               dynamic_range:
-                low: 172.16.122.101
-                high: 172.16.122.200
+                low: 172.16.122.81
+                high: 172.16.122.249
             
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
