@@ -55,6 +55,8 @@ case "$3" in
          sed -i -- 's/#ext-port: "eth1"/ext-port: "eth1"/g' ./bundles.yaml
         ;;
      'cengnlynxpod1' )
+        # Chose the hard drive(s) to use for CEPH OSD
+         sed -i -- 's|osd-devices: /srv|osd-devices: /dev/sdb|g' ./bundles.yaml
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
          sed -i -- 's/10.4.1.1/10.120.0.1/g' ./bundles.yaml
         # choose the correct interface to use for data network
