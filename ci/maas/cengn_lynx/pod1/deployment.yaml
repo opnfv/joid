@@ -128,8 +128,8 @@ cengn-lynx-pod1:
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
         nodes:
-          - name: node1-compute
-            tags: compute
+          - name: node3-control
+            tags: control
             architecture: amd64/generic
             mac_addresses:
               - "0c:c4:7a:3a:c5:b6"
@@ -152,8 +152,8 @@ cengn-lynx-pod1:
                 pass: root
                 driver: LAN_2_0
 
-          - name: node3-control
-            tags: control
+          - name: node1-compute
+            tags: compute
             architecture: amd64/generic
             mac_addresses:
               - "0c:c4:7a:1f:6f:c0"
