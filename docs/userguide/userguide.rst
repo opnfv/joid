@@ -669,6 +669,17 @@ The following are the common issues we have collected from the community:
       use the command juju status --format=tabular and make sure all service containers receive an IP address and they are executing code. Ensure there is no service in the error state.
 - In case the cleanup process hangs,remove the files from the ~/.juju/ directory except environments.yaml and shutdown all nodes manually.
 
+**Direct console access** via the OpenStack GUI can be quite helpful if you need to login to a VM but cannot get to it over the network.
+It can be enabled by setting the ``console-access-protocol`` in the ``nova-cloud-controller`` to ``vnc``.  One option is to directly edit the juju-deployer bundle and set it there prior to deploying OpenStack.
+
+::
+
+      nova-cloud-controller:
+      options:
+        console-access-protocol: vnc
+
+To access the console, just click on the instance in the OpenStack GUI and select the Console tab.
+
 Post Installation Configuration
 ===============================
 Configuring OpenStack
