@@ -11,8 +11,7 @@ cengn-lynx-pod1:
         # server. Here you can configure the name of the virsh domain, the
         # parameters for how the network is attached.
         name: opnfv-maas-cengn-lynx
-        # TODO interfaces: ['bridge=brAdm,model=virtio','bridge=brData,model=virtio','bridge=brPublic,model=virtio']
-        interfaces: ['bridge=brAdm,model=virtio','bridge=brPublic,model=virtio']
+        interfaces: ['bridge=brAdm,model=virtio','bridge=brData,model=virtio','bridge=brPublic,model=virtio']
         memory: 4096
         vcpus: 4
         arch: amd64
