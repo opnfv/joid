@@ -184,6 +184,7 @@ openstack-phase2:
         network-manager: Neutron
         quantum-security-groups: "yes"
         service-guard: true
+        neutron-external-network: ext_net
         vip: 10.4.1.16
       to:
         - "lxc:nodes-api=1"
@@ -349,10 +350,12 @@ trusty-liberty-nodes:
 trusty-liberty:
   inherits: openstack-phase2
   overrides:
-    cluster_count: 3
+    #cluster_count: 3
     #os-data-network: 10.4.8.0/21
     #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
+    #enable-dvr: true
+    #l2-population: true
     region: Canonical
     source: "cloud:trusty-liberty"
     openstack-origin: "cloud:trusty-liberty"
@@ -369,10 +372,12 @@ trusty-kilo-nodes:
 trusty-kilo:
   inherits: openstack-phase2
   overrides:
-    cluster_count: 3
+    #cluster_count: 3
     #os-data-network: 10.4.8.0/21
     #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
+    #enable-dvr: true
+    #l2-population: true
     region: Canonical
     source: "cloud:trusty-kilo"
     openstack-origin: "cloud:trusty-kilo"
@@ -389,10 +394,12 @@ trusty-juno-nodes:
 trusty-juno:
   inherits: openstack-phase2
   overrides:
-    cluster_count: 3
+    #cluster_count: 3
     #os-data-network: 10.4.8.0/21
     #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
+    #enable-dvr: true
+    #l2-population: true
     region: Canonical
     source: "cloud:trusty-juno"
     openstack-origin: "cloud:trusty-juno"
