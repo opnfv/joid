@@ -7,7 +7,7 @@
 # set the gateway ip and cidr and compute-node eth name.
 case "$1" in
     'orangepod2' )
-       GW_IP=161.105.231.1
+       GW_IP=192.168.2.1
        CIDR=161.105.231.0/24
        COMPUTE_ETH=eth1
         ;;
