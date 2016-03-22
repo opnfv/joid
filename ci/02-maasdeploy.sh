@@ -196,8 +196,8 @@ case "$1" in
         ;;
     'intelpod6' )
         maas refresh
-        enableautomodebyname eth1 AUTO "10.4.9.0/24" compute || true
-        enableautomodebyname eth1 AUTO "10.4.9.0/24" control || true
+        enableautomodebyname eth4 AUTO "10.6.12.0/24" compute || true
+        enableautomodebyname eth4 AUTO "10.6.12.0/24" control || true
         ;;
     'orangepod2' )
         maas refresh

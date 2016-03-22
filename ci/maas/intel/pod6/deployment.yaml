@@ -11,7 +11,7 @@ demo-maas:
         # server. Here you can configure the name of the virsh domain, the
         # parameters for how the network is attached.
         name: opnfv-maas-intel
-        interfaces: ['bridge=brAdm,model=virtio', 'bridge=brData,model=virtio', 'bridge=brPublic,model=virtio']
+        interfaces: ['bridge=brAdm,model=virtio', 'bridge=brData,model=virtio', 'bridge=brPublic,model=virtio', 'bridge=brExt,model=virtio']
         memory: 4096
         vcpus: 4
         arch: amd64
@@ -33,11 +33,11 @@ demo-maas:
         virsh:
             rsa_priv_key: /home/ubuntu/.ssh/id_rsa
             rsa_pub_key: /home/ubuntu/.ssh/id_rsa.pub
-            uri: qemu+ssh://ubuntu@10.4.1.1/system
+            uri: qemu+ssh://jenkins@10.6.1.1/system
 
         # Defines the IP Address that the configuration script will use to
         # to access the MAAS controller via SSH.
-        ip_address: 10.4.1.2
+        ip_address: 10.6.1.2
 
         # This section allows the user to set a series of options on the
         # MAAS server itself. The list of config options can be found in
@@ -45,7 +45,7 @@ demo-maas:
         #  - http://maas.ubuntu.com/docs/api.html#maas-server
         settings:
             main_archive: http://us.archive.ubuntu.com/ubuntu
-            upstream_dns: 10.4.0.2
+            upstream_dns: 8.8.8.8
             maas_name: intelpod6
             # kernel_opts: "console=tty0 console=ttyS1,115200n8"
             # ntp_server: ntp.ubuntu.com
@@ -67,23 +67,27 @@ demo-maas:
 
             auto eth0
             iface eth0 inet static
-            address 10.4.1.2
-            netmask 255.255.248.0
-            network 10.4.0.0
-            broadcast 10.4.7.255
-            gateway 10.4.0.1
-            dns-nameservers 10.4.0.2 127.0.0.1
+            address 10.6.1.2
+            netmask 255.255.255.0
+            network 10.6.1.0
+            broadcast 10.6.1.255
+            gateway 10.6.1.1
+            dns-nameservers 8.8.8.8 10.6.1.2 127.0.0.1
 
             auto eth1
             iface eth1 inet static
-            address 10.4.9.2
-            netmask 255.255.248.0
+            address 10.6.12.2
+            netmask 255.255.255.0
 
             auto eth2
             iface eth2 inet static
-            address 10.2.66.3
+            address 10.6.13.2
             netmask 255.255.255.0
 
+            auto eth3
+            iface eth3 inet static
+            address 10.2.117.107
+            netmask 255.255.255.0
             #auto lo
             #iface lo inet loopback
 
@@ -104,38 +108,38 @@ demo-maas:
         #   ${maas_ip} - the ip address of the MAAS controller 
         node_group_ifaces:
             - device: eth0
-              ip: 10.4.1.2
-              subnet_mask: 255.255.248.0
-              broadcast_ip: 10.4.7.255
-              router_ip: 10.4.0.1
+              ip: 10.6.1.2
+              subnet_mask: 255.255.255.0
+              broadcast_ip: 10.6.1.255
+              router_ip: 10.6.1.1
               static_range:
-                  low: 10.4.2.20
-                  high: 10.4.2.254
+                  low: 10.6.1.50
+                  high: 10.6.1.80
               dynamic_range:
-                  low: 10.4.1.50
-                  high: 10.4.1.254
+                  low: 10.6.1.81
+                  high: 10.6.1.250
             - device: eth1
-              ip: 10.4.9.2
+              ip: 10.6.12.2
               subnet_mask: 255.255.255.0
-              broadcast_ip: 10.4.9.255
+              broadcast_ip: 10.6.12.255
               management: 1
               static_range:
-                  low: 10.4.9.20
-                  high: 10.4.9.150
+                  low: 10.6.12.20
+                  high: 10.6.12.150
               dynamic_range:
-                  low: 10.4.9.151
-                  high: 10.4.9.200
+                  low: 10.6.12.151
+                  high: 10.6.12.200
             - device: eth2
-              ip: 10.2.66.3
+              ip: 10.6.13.2
               subnet_mask: 255.255.255.0
-              broadcast_ip: 10.2.66.255
+              broadcast_ip: 10.6.13.255
               management: 1
               static_range:
-                  low: 10.2.66.20
-                  high: 10.2.66.150
+                  low: 10.6.13.20
+                  high: 10.6.13.150
               dynamic_range:
-                  low: 10.2.66.151
-                  high: 10.2.66.200
+                  low: 10.6.13.151
+                  high: 10.6.13.200
 
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
@@ -144,10 +148,10 @@ demo-maas:
               tags: control
               architecture: amd64/generic
               mac_addresses:
-                  - "00:1e:67:d8:ba:45"
+                  - "00:1e:67:d8:ba:46"
               power:
                   type: ipmi
-                  address: 10.4.7.1
+                  address: 10.2.117.96
                   user: root
                   pass: root
                   driver: LAN_2_0
@@ -159,10 +163,10 @@ demo-maas:
               tags: control
               architecture: amd64/generic
               mac_addresses:
-                  - "00:1e:67:e0:0b:71"
+                  - "00:1e:67:e0:0b:72"
               power:
                   type: ipmi
-                  address: 10.4.7.2
+                  address: 10.2.117.97
                   user: root
                   pass: root
                   driver: LAN_2_0
@@ -174,10 +178,10 @@ demo-maas:
               tags: control
               architecture: amd64/generic
               mac_addresses:
-                  - "00:1e:67:e0:09:32"
+                  - "00:1e:67:e0:09:33"
               power:
                   type: ipmi
-                  address: 10.4.7.3
+                  address: 10.2.117.98
                   user: root
                   pass: root
                   driver: LAN_2_0
@@ -189,10 +193,10 @@ demo-maas:
               tags: compute
               architecture: amd64/generic
               mac_addresses:
-                  - "00:1e:67:e0:09:fa"
+                  - "00:1e:67:e0:09:fb"
               power:
                   type: ipmi
-                  address: 10.4.7.4
+                  address: 10.2.117.99
                   user: root
                   pass: root
                   driver: LAN_2_0
@@ -204,10 +208,10 @@ demo-maas:
               tags: compute
               architecture: amd64/generic
               mac_addresses:
-                  - "00:1e:67:cf:bc:f7"
+                  - "00:1e:67:cf:bc:f8"
               power:
                   type: ipmi
-                  address: 10.4.7.5
+                  address: 10.2.117.100
                   user: root
                   pass: root
                   driver: LAN_2_0
@@ -228,7 +232,7 @@ demo-maas:
     # node virtual machine
     juju-bootstrap:
         name: bootstrap
-        interfaces: ['bridge=brAdm,model=virtio', 'bridge=brPublic,model=virtio']
+        interfaces: ['bridge=brAdm,model=virtio', 'bridge=brPublic,model=virtio', 'bridge=brExt,model=virtio']
         memory: 4096
         vcpus: 4
         arch: amd64
