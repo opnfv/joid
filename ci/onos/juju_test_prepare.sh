@@ -8,7 +8,7 @@
 case "$1" in
     'orangepod2' )
        GW_IP=192.168.2.1
-       CIDR=161.105.231.0/24
+       CIDR=161.105.231.0/26
        COMPUTE_ETH=eth1
         ;;
      'intelpod6' )
@@ -51,7 +51,8 @@ launch_eth() {
 # create external network and subnet in openstack
 create_ext_network() {
   keystoneIp=$(juju status --format short | grep keystone/0 | grep -v ha | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}')
-  configOpenrc admin openstack admin http://$keystoneIp:5000/v2.0 Canonical
+  adminPasswd=$(juju get keystone | grep admin-password -A 5 | grep value | awk '{print $2}')
+  configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v2.0 Canonical
   juju scp ./admin-openrc nova-cloud-controller/0:
   juju ssh nova-cloud-controller/0 "source admin-openrc;neutron net-create ext-net --shared --router:external=True;neutron subnet-create ext-net --name ext-subnet $CIDR"
 }
