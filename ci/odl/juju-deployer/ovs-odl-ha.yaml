@@ -39,6 +39,11 @@ openstack-phase2:
       options:
         corosync_key: |
           'QisjNpoKHLkvyc3PEdDHP5VZjgD0kOk9t0ABPWmCELlu5AgWgnW6bJd34BVXO7VhW+3ZwNQM3W+bZ3pl28ftY4ki4N/S0KLFNia5egFgiA3AH2QXLnokS7OYXuu6GMJJ1S5mDe6P5zU+tfJe/Mebq24u7CgR0gAvohSPRdDTwdY='
+    hacluster-heat:
+      branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
+      options:
+        corosync_key: |
+          'Q29yb3N5bmMgQ2x1c3RlciBFbmdpbmUgQXV0aGVudGljYXRpb24ga2V5IGdlbmVyYXRvci4KR2F0aGVyaW5nIDEwMjQgYml0cyBmb3Iga2V5IGZyb20gL2Rldi9yYW5kb20uClByZXNzIGtleXMgb24geW91ciBrZXlib2FyZCB0byBnZW5lcmF0ZSBlbnRyb3B5LgpQcmVzcyBrZXlzIG9uIHlvdXIga2V5Ym9hcmQgdG8gZ2VuZXJhdGUgZW50cm9weSAoYml0cyA9IDkxMikuClByZXNzIGtleXMgb24geW91ciBrZXlib2FyZCB0byBnZW5lcmF0ZSBlbnRyb3B5IChiaXRzID0gOTYwKS4KUHJlc3Mga2V5cyBvbiB5b3VyIGtleWJvYXJkIHRvIGdlbmVyYX'
     hacluster-horizon:
       branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
       options:
@@ -69,6 +74,7 @@ openstack-phase2:
       num_units: 3
       options:
         vip: 10.4.1.14
+        #os-public-hostname: api.public-fqdn
       to:
         - "lxc:nodes-api=2"
         - "lxc:nodes-api=0"
@@ -82,8 +88,14 @@ openstack-phase2:
         - "lxc:nodes-api=0"
     heat:
       branch: "lp:~openstack-charmers/charms/trusty/heat/next"
+      num_units: 3
+      options:
+        vip: 10.4.1.18
+        #os-public-hostname: api.public-fqdn
       to:
         - "lxc:nodes-api=0"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
     ceph:
       branch: lp:~openstack-charmers/charms/trusty/ceph/next
       num_units: 3
@@ -123,6 +135,7 @@ openstack-phase2:
       options:
         block-device: None
         glance-api-version: 2
+        #os-public-hostname: api.public-fqdn
 #        ha-mcastport: 5401
       to:
         - "lxc:nodes-api=1"
@@ -145,6 +158,7 @@ openstack-phase2:
         admin-password: openstack
         admin-token: admin
         vip: 10.4.1.13
+        #os-public-hostname: api.public-fqdn
       to:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
@@ -184,6 +198,7 @@ openstack-phase2:
         service-guard: true
         neutron-external-network: ext_net
         vip: 10.4.1.16
+        #os-public-hostname: api.public-fqdn
       to:
         - "lxc:nodes-api=2"
         - "lxc:nodes-api=0"
@@ -195,6 +210,7 @@ openstack-phase2:
         neutron-security-groups: True
         manage-neutron-plugin-legacy-mode: False
         vip: 10.4.1.17
+        #os-public-hostname: api.public-fqdn
       to:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
@@ -221,6 +237,7 @@ openstack-phase2:
       num_units: 3
       options:
         vip: 10.4.1.12
+        #os-public-hostname: api.public-fqdn
 #        ha-mcastport: 5402
       to:
         - "lxc:nodes-api=1"
@@ -238,6 +255,71 @@ openstack-phase2:
         security-groups: True
     openvswitch-odl:
       branch: lp:~openstack-charmers/charms/trusty/openvswitch-odl/trunk
+    haproxy:
+      options:
+        services: |
+          - service_name: nova
+            service_host: "0.0.0.0"
+            service_port: 8774
+            service_options: [balance leastconn, cookie SRVNAME insert]
+            server_options: maxconn 100 cookie S{i} check
+            servers: [[nova, 10.4.1.16, 8774, check ]]
+          - service_name: swift
+            service_host: "0.0.0.0"
+            service_port: 80
+            service_options: [balance leastconn, cookie SRVNAME insert]
+            server_options: maxconn 100 cookie S{i} check
+            servers: [[swift, 10.4.1.100, 80, check ]]
+          - service_name: glance
+            service_host: "0.0.0.0"
+            service_port: 9292
+            service_options: [balance leastconn, cookie SRVNAME insert]
+            server_options: maxconn 100 cookie S{i} check
+            servers: [[glance, 10.4.1.12, 9292, check ]]
+          - service_name: cinderv2
+            service_host: "0.0.0.0"
+            service_port: 8776
+            service_options: [balance leastconn, cookie SRVNAME insert]
+            server_options: maxconn 100 cookie S{i} check
+            servers: [[cinderv2, 10.4.1.100, 8776, check ]]
+          - service_name: ceilometer
+            service_host: "0.0.0.0"
+            service_port: 8777
+            service_options: [balance leastconn, cookie SRVNAME insert]
+            server_options: maxconn 100 cookie S{i} check
+            servers: [[ceilometer, 10.4.1.14, 8777, check ]]
+          - service_name: keystone
+            service_host: "0.0.0.0"
+            service_port: 5000
+            service_options: [balance leastconn, cookie SRVNAME insert]
+            server_options: maxconn 100 cookie S{i} check
+            servers: [[keystone, 10.4.1.13, 5000, check ]]
+          - service_name: heat
+            service_host: "0.0.0.0"
+            service_port: 8004
+            service_options: [balance leastconn, cookie SRVNAME insert]
+            server_options: maxconn 100 cookie S{i} check
+            servers: [[heat, 10.4.1.18, 8004, check ]]
+          - service_name: neutron
+            service_host: "0.0.0.0"
+            service_port: 9696
+            service_options: [balance leastconn, cookie SRVNAME insert]
+            server_options: maxconn 100 cookie S{i} check
+            servers: [[neutron, 10.4.1.17, 9696, check ]]
+          - service_name: heat-cfn
+            service_host: "0.0.0.0"
+            service_port: 8000
+            service_options: [balance leastconn, cookie SRVNAME insert]
+            server_options: maxconn 100 cookie S{i} check
+            servers: [[heat-cfn, 192.168.2.162, 8000, check ]]
+          - service_name: cinder
+            service_host: "0.0.0.0"
+            service_port: 8776
+            service_options: [balance leastconn, cookie SRVNAME insert]
+            server_options: maxconn 100 cookie S{i} check
+            servers: [[cinder, 192.168.2.161, 8776, check ]]
+      to:
+        - "lxc:nodes-api=0"
   relations:
     - - "glance:ha"
       - "hacluster-glance:ha"
