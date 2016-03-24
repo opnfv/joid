@@ -39,11 +39,11 @@ openstack-phase2:
       options:
         corosync_key: |
           'QisjNpoKHLkvyc3PEdDHP5VZjgD0kOk9t0ABPWmCELlu5AgWgnW6bJd34BVXO7VhW+3ZwNQM3W+bZ3pl28ftY4ki4N/S0KLFNia5egFgiA3AH2QXLnokS7OYXuu6GMJJ1S5mDe6P5zU+tfJe/Mebq24u7CgR0gAvohSPRdDTwdY='
-    hacluster-heat:
-      branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
-      options:
-        corosync_key: |
-          'Q29yb3N5bmMgQ2x1c3RlciBFbmdpbmUgQXV0aGVudGljYXRpb24ga2V5IGdlbmVyYXRvci4KR2F0aGVyaW5nIDEwMjQgYml0cyBmb3Iga2V5IGZyb20gL2Rldi9yYW5kb20uClByZXNzIGtleXMgb24geW91ciBrZXlib2FyZCB0byBnZW5lcmF0ZSBlbnRyb3B5LgpQcmVzcyBrZXlzIG9uIHlvdXIga2V5Ym9hcmQgdG8gZ2VuZXJhdGUgZW50cm9weSAoYml0cyA9IDkxMikuClByZXNzIGtleXMgb24geW91ciBrZXlib2FyZCB0byBnZW5lcmF0ZSBlbnRyb3B5IChiaXRzID0gOTYwKS4KUHJlc3Mga2V5cyBvbiB5b3VyIGtleWJvYXJkIHRvIGdlbmVyYX'
+#    hacluster-heat:
+#      branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
+#      options:
+#        corosync_key: |
+#          'Q29yb3N5bmMgQ2x1c3RlciBFbmdpbmUgQXV0aGVudGljYXRpb24ga2V5IGdlbmVyYXRvci4KR2F0aGVyaW5nIDEwMjQgYml0cyBmb3Iga2V5IGZyb20gL2Rldi9yYW5kb20uClByZXNzIGtleXMgb24geW91ciBrZXlib2FyZCB0byBnZW5lcmF0ZSBlbnRyb3B5LgpQcmVzcyBrZXlzIG9uIHlvdXIga2V5Ym9hcmQgdG8gZ2VuZXJhdGUgZW50cm9weSAoYml0cyA9IDkxMikuClByZXNzIGtleXMgb24geW91ciBrZXlib2FyZCB0byBnZW5lcmF0ZSBlbnRyb3B5IChiaXRzID0gOTYwKS4KUHJlc3Mga2V5cyBvbiB5b3VyIGtleWJvYXJkIHRvIGdlbmVyYX'
     hacluster-horizon:
       branch: "lp:~openstack-charmers/charms/trusty/hacluster/next"
       options:
@@ -90,7 +90,7 @@ openstack-phase2:
       branch: "lp:~openstack-charmers/charms/trusty/heat/next"
       num_units: 3
       options:
-        vip: 10.4.1.18
+        #vip: 10.4.1.18
         #os-public-hostname: api.public-fqdn
       to:
         - "lxc:nodes-api=0"
@@ -334,8 +334,8 @@ openstack-phase2:
       - "hacluster-horizon:ha"
     - - "ceilometer:ha"
       - "hacluster-ceilometer:ha"
-    - - "heat:ha"
-      - "hacluster-heat:ha"
+#    - - "heat:ha"
+#      - "hacluster-heat:ha"
     - - "neutron-api:neutron-plugin-api-subordinate"
       - "neutron-api-odl:neutron-plugin-api-subordinate"
     - - "nova-compute:neutron-plugin"
