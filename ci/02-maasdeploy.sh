@@ -37,7 +37,7 @@ esac
 sed --i "s@/home/ubuntu@$HOME@g" ./deployment.yaml
 sed --i "s@qemu+ssh://ubuntu@qemu+ssh://$USER@g" ./deployment.yaml
 
-#make sure no password asked during the deployment. 
+#make sure no password asked during the deployment.
 
 echo "$USER ALL=(ALL) NOPASSWD:ALL" > 90-joid-init
 
@@ -73,8 +73,14 @@ sudo apt-add-repository ppa:juju/stable -y
 sudo apt-add-repository ppa:maas/stable -y
 sudo apt-add-repository cloud-archive:liberty -y
 sudo apt-get update -y
-sudo apt-get dist-upgrade -y 
+sudo apt-get dist-upgrade -y
 sudo apt-get install openssh-server git maas-deployer juju juju-deployer maas-cli python-pip python-openstackclient gsutil -y
+
+# To avoid problem between apiclient/maas_client and apiclient from google
+# we remove the package google-api-python-client from yardstick installer
+if [ $(pip list |grep google-api-python-client |wc -l) == 1 ]; then
+    sudo pip uninstall google-api-python-client
+fi
 
 sudo pip install shyaml
 juju init -f
@@ -226,4 +232,3 @@ echo " .... MAAS deployment finished successfully ...."
 
 #echo "... Deployment of opnfv release Started ...."
 #python deploy.py $maas_ip
-
