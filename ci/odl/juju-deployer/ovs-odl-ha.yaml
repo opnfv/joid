@@ -256,6 +256,7 @@ openstack-phase2:
     openvswitch-odl:
       branch: lp:~openstack-charmers/charms/trusty/openvswitch-odl/trunk
     haproxy:
+      charm: cs:trusty/haproxy
       options:
         services: |
           - service_name: nova
