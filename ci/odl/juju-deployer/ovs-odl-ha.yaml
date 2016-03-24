@@ -333,6 +333,8 @@ openstack-phase2:
       - "hacluster-horizon:ha"
     - - "ceilometer:ha"
       - "hacluster-ceilometer:ha"
+    - - "heat:ha"
+      - "hacluster-heat:ha"
     - - "neutron-api:neutron-plugin-api-subordinate"
       - "neutron-api-odl:neutron-plugin-api-subordinate"
     - - "nova-compute:neutron-plugin"
