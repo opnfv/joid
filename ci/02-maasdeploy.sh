@@ -193,12 +193,8 @@ fi
 case "$1" in
     'intelpod5' )
         maas refresh
-        crvlanupdsubnet vlan721 1 "DataNetwork" 721 2 || true
-        crvlanupdsubnet vlan724 2 "PublicNetwork" 724 3 || true
-        crnodevlanint $vlan721 eth2|| true
-        crnodevlanint $vlan724 eth2|| true
-        enableautomodebyname eth2.721 AUTO "10.4.9.0/24" compute || true
-        enableautomodebyname eth2.721 AUTO "10.4.9.0/24" control || true
+        enableautomodebyname eth4 AUTO "10.5.12.0/24" compute || true
+        enableautomodebyname eth4 AUTO "10.5.12.0/24" control || true
         ;;
     'intelpod6' )
         maas refresh
