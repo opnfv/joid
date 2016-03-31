@@ -81,7 +81,7 @@ demo-maas:
 
             auto eth2
             iface eth2 inet static
-            address 10.6.13.2
+            address 10.6.15.2
             netmask 255.255.255.0
 
             auto eth3
@@ -130,16 +130,16 @@ demo-maas:
                   low: 10.6.12.151
                   high: 10.6.12.200
             - device: eth2
-              ip: 10.6.13.2
+              ip: 10.6.15.2
               subnet_mask: 255.255.255.0
-              broadcast_ip: 10.6.13.255
+              broadcast_ip: 10.6.15.255
               management: 1
               static_range:
-                  low: 10.6.13.20
-                  high: 10.6.13.150
+                  low: 10.6.15.20
+                  high: 10.6.15.150
               dynamic_range:
-                  low: 10.6.13.151
-                  high: 10.6.13.200
+                  low: 10.6.15.151
+                  high: 10.6.15.200
 
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
