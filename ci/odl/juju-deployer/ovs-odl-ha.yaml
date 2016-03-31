@@ -319,8 +319,8 @@ openstack-phase2:
 #            service_options: [balance leastconn, cookie SRVNAME insert]
 #            server_options: maxconn 100 cookie S{i} check
 #            servers: [[cinder, 192.168.2.161, 8776, check ]]
-      to:
-        - "lxc:nodes-api=0"
+#      to:
+#        - "lxc:nodes-api=0"
   relations:
     - - "glance:ha"
       - "hacluster-glance:ha"
