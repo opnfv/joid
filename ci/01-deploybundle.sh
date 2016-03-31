@@ -28,7 +28,7 @@ case "$3" in
         # Choose the external port to go out from gateway to use.
          sed -i -- 's/#ext-port: "eth1"/ext-port: "eth1"/g' ./bundles.yaml
         # Use host for public API for Orange pod2
-         sed -i -- 's/#os-public-hostname: api.public-fqdn/os-public-hostname: api.pod2.opnfv.fr/g' ./bundles.yaml
+        # sed -i -- 's/#os-public-hostname: api.public-fqdn/os-public-hostname: api.pod2.opnfv.fr/g' ./bundles.yaml
          ;;
      'intelpod6' )
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20

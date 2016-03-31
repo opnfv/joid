@@ -255,70 +255,70 @@ openstack-phase2:
         security-groups: True
     openvswitch-odl:
       branch: lp:~openstack-charmers/charms/trusty/openvswitch-odl/trunk
-    haproxy:
-      charm: cs:trusty/haproxy
-      options:
-        services: |
-          - service_name: nova
-            service_host: "0.0.0.0"
-            service_port: 8774
-            service_options: [balance leastconn, cookie SRVNAME insert]
-            server_options: maxconn 100 cookie S{i} check
-            servers: [[nova, 10.4.1.16, 8774, check ]]
-          - service_name: swift
-            service_host: "0.0.0.0"
-            service_port: 80
-            service_options: [balance leastconn, cookie SRVNAME insert]
-            server_options: maxconn 100 cookie S{i} check
-            servers: [[swift, 10.4.1.100, 80, check ]]
-          - service_name: glance
-            service_host: "0.0.0.0"
-            service_port: 9292
-            service_options: [balance leastconn, cookie SRVNAME insert]
-            server_options: maxconn 100 cookie S{i} check
-            servers: [[glance, 10.4.1.12, 9292, check ]]
-          - service_name: cinderv2
-            service_host: "0.0.0.0"
-            service_port: 8776
-            service_options: [balance leastconn, cookie SRVNAME insert]
-            server_options: maxconn 100 cookie S{i} check
-            servers: [[cinderv2, 10.4.1.100, 8776, check ]]
-          - service_name: ceilometer
-            service_host: "0.0.0.0"
-            service_port: 8777
-            service_options: [balance leastconn, cookie SRVNAME insert]
-            server_options: maxconn 100 cookie S{i} check
-            servers: [[ceilometer, 10.4.1.14, 8777, check ]]
-          - service_name: keystone
-            service_host: "0.0.0.0"
-            service_port: 5000
-            service_options: [balance leastconn, cookie SRVNAME insert]
-            server_options: maxconn 100 cookie S{i} check
-            servers: [[keystone, 10.4.1.13, 5000, check ]]
-          - service_name: heat
-            service_host: "0.0.0.0"
-            service_port: 8004
-            service_options: [balance leastconn, cookie SRVNAME insert]
-            server_options: maxconn 100 cookie S{i} check
-            servers: [[heat, 10.4.1.18, 8004, check ]]
-          - service_name: neutron
-            service_host: "0.0.0.0"
-            service_port: 9696
-            service_options: [balance leastconn, cookie SRVNAME insert]
-            server_options: maxconn 100 cookie S{i} check
-            servers: [[neutron, 10.4.1.17, 9696, check ]]
-          - service_name: heat-cfn
-            service_host: "0.0.0.0"
-            service_port: 8000
-            service_options: [balance leastconn, cookie SRVNAME insert]
-            server_options: maxconn 100 cookie S{i} check
-            servers: [[heat-cfn, 192.168.2.162, 8000, check ]]
-          - service_name: cinder
-            service_host: "0.0.0.0"
-            service_port: 8776
-            service_options: [balance leastconn, cookie SRVNAME insert]
-            server_options: maxconn 100 cookie S{i} check
-            servers: [[cinder, 192.168.2.161, 8776, check ]]
+#    haproxy:
+#      charm: cs:trusty/haproxy
+#      options:
+#        services: |
+#          - service_name: nova
+#            service_host: "0.0.0.0"
+#            service_port: 8774
+#            service_options: [balance leastconn, cookie SRVNAME insert]
+#            server_options: maxconn 100 cookie S{i} check
+#            servers: [[nova, 10.4.1.16, 8774, check ]]
+#          - service_name: swift
+#            service_host: "0.0.0.0"
+#            service_port: 80
+#            service_options: [balance leastconn, cookie SRVNAME insert]
+#            server_options: maxconn 100 cookie S{i} check
+#            servers: [[swift, 10.4.1.100, 80, check ]]
+#          - service_name: glance
+#            service_host: "0.0.0.0"
+#            service_port: 9292
+#            service_options: [balance leastconn, cookie SRVNAME insert]
+#            server_options: maxconn 100 cookie S{i} check
+#            servers: [[glance, 10.4.1.12, 9292, check ]]
+#          - service_name: cinderv2
+#            service_host: "0.0.0.0"
+#            service_port: 8776
+#            service_options: [balance leastconn, cookie SRVNAME insert]
+#            server_options: maxconn 100 cookie S{i} check
+#            servers: [[cinderv2, 10.4.1.100, 8776, check ]]
+#          - service_name: ceilometer
+#            service_host: "0.0.0.0"
+#            service_port: 8777
+#            service_options: [balance leastconn, cookie SRVNAME insert]
+#            server_options: maxconn 100 cookie S{i} check
+#            servers: [[ceilometer, 10.4.1.14, 8777, check ]]
+#          - service_name: keystone
+#            service_host: "0.0.0.0"
+#            service_port: 5000
+#            service_options: [balance leastconn, cookie SRVNAME insert]
+#            server_options: maxconn 100 cookie S{i} check
+#            servers: [[keystone, 10.4.1.13, 5000, check ]]
+#          - service_name: heat
+#            service_host: "0.0.0.0"
+#            service_port: 8004
+#            service_options: [balance leastconn, cookie SRVNAME insert]
+#            server_options: maxconn 100 cookie S{i} check
+#            servers: [[heat, 10.4.1.18, 8004, check ]]
+#          - service_name: neutron
+#            service_host: "0.0.0.0"
+#            service_port: 9696
+#            service_options: [balance leastconn, cookie SRVNAME insert]
+#            server_options: maxconn 100 cookie S{i} check
+#            servers: [[neutron, 10.4.1.17, 9696, check ]]
+#          - service_name: heat-cfn
+#            service_host: "0.0.0.0"
+#            service_port: 8000
+#            service_options: [balance leastconn, cookie SRVNAME insert]
+#            server_options: maxconn 100 cookie S{i} check
+#            servers: [[heat-cfn, 192.168.2.162, 8000, check ]]
+#          - service_name: cinder
+#            service_host: "0.0.0.0"
+#            service_port: 8776
+#            service_options: [balance leastconn, cookie SRVNAME insert]
+#            server_options: maxconn 100 cookie S{i} check
+#            servers: [[cinder, 192.168.2.161, 8776, check ]]
       to:
         - "lxc:nodes-api=0"
   relations:
