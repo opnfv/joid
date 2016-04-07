@@ -12,14 +12,14 @@ case "$1" in
        COMPUTE_ETH=eth1
         ;;
      'intelpod6' )
-       GW_IP=10.2.66.1
-       CIDR=10.2.66.0/24
-       COMPUTE_ETH=eth2
+       GW_IP=10.6.15.254
+       CIDR=10.6.15.0/24
+       COMPUTE_ETH=eth5
         ;;
      'intelpod5' )
-       GW_IP=10.2.65.1
-       CIDR=10.2.65.0/24
-       COMPUTE_ETH=eth2.724
+       GW_IP=10.5.15.254
+       CIDR=10.5.15.0/24
+       COMPUTE_ETH=eth5
         ;;
      'attvirpod1' )
        GW_IP=10.10.15.1
