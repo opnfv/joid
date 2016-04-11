@@ -126,7 +126,6 @@ openstack-phase2:
       options:
         console-access-protocol: novnc
         network-manager: Neutron
-        quantum-security-groups: "yes"
       to:
         - "lxc:nodes-api=0"
     neutron-api:
