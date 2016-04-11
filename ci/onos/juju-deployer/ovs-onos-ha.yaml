@@ -182,7 +182,6 @@ openstack-phase2:
       options:
         console-access-protocol: novnc
         network-manager: Neutron
-        quantum-security-groups: "yes"
         service-guard: true
         vip: 10.4.1.16
       to:

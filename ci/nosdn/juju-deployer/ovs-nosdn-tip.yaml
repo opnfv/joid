@@ -128,7 +128,6 @@ openstack-phase2:
         openstack-origin-git: include-file://nova-master.yaml
         console-access-protocol: novnc
         network-manager: Neutron
-        quantum-security-groups: "yes"
       to:
         - "lxc:nodes-api=0"
     neutron-api:
