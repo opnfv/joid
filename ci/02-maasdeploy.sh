@@ -11,6 +11,9 @@ case "$1" in
     'intelpod6' )
         cp maas/intel/pod6/deployment.yaml ./deployment.yaml
         ;;
+    'orangepod1' )
+        cp maas/orange/pod1/deployment.yaml ./deployment.yaml
+        ;;
     'orangepod2' )
         cp maas/orange/pod2/deployment.yaml ./deployment.yaml
         ;;
