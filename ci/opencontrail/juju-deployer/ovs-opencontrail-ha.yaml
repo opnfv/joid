@@ -280,42 +280,47 @@ contrail:
   services:
     contrail-configuration:
       branch: lp:~sdn-charmers/charms/trusty/contrail-configuration/trunk
-      num_units: 2
+      num_units: 3
       options:
         vip: 10.4.1.18
       to:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
     contrail-control:
       branch: lp:~sdn-charmers/charms/trusty/contrail-control/trunk
-      num_units: 2
+      num_units: 3
       to:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
     contrail-analytics:
       branch: lp:~sdn-charmers/charms/trusty/contrail-analytics/trunk
-      num_units: 2
+      num_units: 3
       to:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
     contrail-webui:
       branch: lp:~sdn-charmers/charms/trusty/contrail-webui/trunk
-      num_units: 2
+      num_units: 3
       to:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
     neutron-api-contrail:
       branch: lp:~opnfv-team/charms/trusty/neutron-api-contrail/trunk
     neutron-contrail:
       branch: lp:~opnfv-team/charms/trusty/neutron-contrail/trunk
     haproxy:
       branch: lp:~opnfv-team/charms/trusty/haproxy/trunk
-      num_units: 2
+      num_units: 3
       options:
         peering_mode: active-active
       to:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
     keepalived:
       branch: lp:~sdn-charmers/charms/trusty/keepalived/trunk
       options:
