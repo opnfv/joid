@@ -2,6 +2,11 @@
 #placeholder for deployment script.
 set -ex
 
+#copy and download charms
+    cp $4/fetch-charms.sh ./fetch-charms.sh
+    sh ./fetch-charms.sh
+
+
 case "$1" in
     'nonha' )
         cp $4/juju-deployer/ovs-$4-nonha.yaml ./bundles.yaml
