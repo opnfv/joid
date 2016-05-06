@@ -125,7 +125,7 @@ openstack-phase2:
       num_units: 3
       options:
         neutron-security-groups: true
-        flat-network-providers: *
+        flat-network-providers: "*"
         vip: 10.4.1.17
       to:
         - "lxc:nodes-api=2"
