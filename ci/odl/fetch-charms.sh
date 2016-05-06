@@ -1,6 +1,6 @@
 #!/bin/sh -ex
 
-distro=$distro
+distro=trusty
 mkdir -p $distro
 
 # openstack
