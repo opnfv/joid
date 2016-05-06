@@ -135,7 +135,7 @@ openstack-phase2:
       num_units: 1
       options:
         neutron-security-groups: True
-        manage-neutron-plugin-legacy-mode: False
+        flat-network-providers: *
       to:
         - "lxc:nodes-api=0"
     neutron-gateway:

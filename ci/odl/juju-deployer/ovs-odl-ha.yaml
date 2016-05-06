@@ -207,7 +207,7 @@ openstack-phase2:
       num_units: 3
       options:
         neutron-security-groups: True
-        manage-neutron-plugin-legacy-mode: False
+        flat-network-providers: *
         vip: 10.4.1.17
         #os-public-hostname: api.public-fqdn
       to:
