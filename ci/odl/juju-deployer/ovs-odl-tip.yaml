@@ -265,12 +265,13 @@ openstack-phase2:
       - "ceph:radosgw"
     - - "ceph-radosgw:identity-service"
       - "keystone:identity-service"
-trusty-liberty-nodes:
+
+trusty-mitaka-nodes:
   inherits: openstack-phase1
   overrides:
     series: trusty
 
-trusty-liberty:
+trusty-mitaka:
   inherits: openstack-phase2
   overrides:
     #os-data-network: 10.4.8.0/21
@@ -280,32 +281,8 @@ trusty-liberty:
     #l2-population: true
     #ext-port: "eth1"
     region: Canonical
-    source: "cloud:trusty-liberty"
-    openstack-origin: "cloud:trusty-liberty"
-    series: trusty
-    ceph-osd-replication-count: 2
-    admin-role: admin
-    keystone-admin-role: admin
-
-trusty-kilo-nodes:
-  inherits: openstack-phase1
-  overrides:
-    series: trusty
-
-# master
-trusty-kilo:
-  inherits: openstack-phase2
-  series: trusty
-  overrides:
-    region: Canonical
-    #os-data-network: 10.4.8.0/21
-    #ceph-cluster-network: 10.4.0.0/21
-    #prefer-ipv6: true
-    #enable-dvr: true
-    #l2-population: true
-    #ext-port: "eth1"
-    openstack-origin: cloud:trusty-kilo
-    source: cloud:trusty-kilo
+    source: "cloud:trusty-mitaka"
+    openstack-origin: "cloud:trusty-mitaka"
     series: trusty
     ceph-osd-replication-count: 2
     admin-role: admin

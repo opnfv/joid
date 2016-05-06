@@ -24,6 +24,9 @@ case "$1" in
         ;;
 esac
 
+#changing the target to the openstack release we want to deploy. 
+sed -i -- "s|mitaka|$2|g" ./bundles.yaml
+
 case "$3" in
     'orangepod1' )
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
