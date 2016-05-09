@@ -88,14 +88,14 @@ openstack-phase2:
         - "lxc:nodes-api=0"
     heat:
       charm: "local:trusty/heat"
-      num_units: 3
+      num_units: 1
       options:
         #vip: 10.4.1.18
         #os-public-hostname: api.public-fqdn
       to:
         - "lxc:nodes-api=0"
-        - "lxc:nodes-api=1"
-        - "lxc:nodes-api=2"
+#        - "lxc:nodes-api=1"
+#        - "lxc:nodes-api=2"
     ceph:
       charm: local:trusty/ceph
       num_units: 3
