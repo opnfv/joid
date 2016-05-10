@@ -55,6 +55,16 @@ case "$3" in
         # Use host for public API for Orange pod2
         # sed -i -- 's/#os-public-hostname: api.public-fqdn/os-public-hostname: api.pod2.opnfv.fr/g' ./bundles.yaml
          ;;
+     'intelpod9' )
+        # As per your lab vip address list be deafult uses 10.9.1.11 - 10.9.1.20
+         sed -i -- 's/10.4.1.1/10.9.1.2/g' ./bundles.yaml
+        # choose the correct interface to use for data network
+         sed -i -- 's/#os-data-network: 10.4.8.0\/21/os-data-network: 10.9.12.0\/24/g' ./bundles.yaml
+        # Choose the external port to go out from gateway to use.
+         sed -i -- 's/#ext-port: "eth1"/ext-port: "eth5"/g' ./bundles.yaml
+        # Provide the gateway MAC to route the traffic externally.
+         sed -i -- 's/#gateway-mac: "default"/gateway-mac: "default"/g' ./bundles.yaml
+         ;;
      'intelpod6' )
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
          sed -i -- 's/10.4.1.1/10.6.1.2/g' ./bundles.yaml
