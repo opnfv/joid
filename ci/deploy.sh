@@ -11,6 +11,8 @@ openstack=liberty
 opnfvlab=default
 opnfvrel=b
 opnfvfeature=odl_l2
+opnfvdistro=trusty
+opnfvarch=amd64
 
 read_config() {
     opnfvrel=`grep release: deploy.yaml | cut -d ":" -f2`
@@ -25,6 +27,8 @@ usage() { echo "Usage: $0 [-s <nosdn|odl|opencontrail>]
                          [-o <juno|liberty>]
                          [-l <default|intelpod5>]
                          [-f <ipv6|l2|l3|dvr>]
+                         [-d <trusty|xenial>]
+                         [-a <amd64>]
                          [-r <a|b>]" 1>&2 exit 1; } 
 
 while getopts ":s:t:o:l:h:r:f:" opt; do
@@ -46,6 +50,12 @@ while getopts ":s:t:o:l:h:r:f:" opt; do
             ;;
         f)
             opnfvfeature=${OPTARG}
+            ;;
+        d)
+            opnfvdistro=${OPTARG}
+            ;;
+        a)
+            opnfvarch=${OPTARG}
             ;;
         h)
             usage
@@ -102,7 +112,7 @@ deploy() {
     echo "        enable-os-refresh-update: false" >> environments.yaml
     echo "        enable-os-upgrade: false" >> environments.yaml
     echo "        admin-secret: admin" >> environments.yaml
-    echo "        default-series: trusty" >> environments.yaml
+    echo "        default-series: $opnfvdistro" >> environments.yaml
 
     cp environments.yaml ~/.juju/
 
@@ -110,11 +120,11 @@ deploy() {
         createresource
     fi
 
-    #cp ./$opnfvsdn/01-deploybundle.sh ./01-deploybundle.sh
+    #bootstrap the node
     ./00-bootstrap.sh
 
-    #case default:
-    ./01-deploybundle.sh $opnfvtype $openstack $opnfvlab $opnfvsdn $opnfvfeature
+    #case default deploy the opnfv platform:
+    ./01-deploybundle.sh $opnfvtype $openstack $opnfvlab $opnfvsdn $opnfvfeature $opnfvdistro
 }
 
 #check whether charms are still executing the code even juju-deployer says installed.

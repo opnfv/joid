@@ -2,8 +2,12 @@
 #placeholder for deployment script.
 set -ex
 
-#copy and download charms
+#    ./01-deploybundle.sh $opnfvtype $openstack $opnfvlab $opnfvsdn $opnfvfeature $opnfvdistro
+
+    #copy and download charms
     cp $4/fetch-charms.sh ./fetch-charms.sh
+    #modify the ubuntu series wants to deploy
+    sed -i -- "s|trusty|$6|g" ./fetch-charms.sh
     sh ./fetch-charms.sh
 
 
@@ -26,6 +30,9 @@ esac
 
 #changing the target to the openstack release we want to deploy. 
 sed -i -- "s|mitaka|$2|g" ./bundles.yaml
+
+#changing the target to the ubuntu distro we want to deploy. 
+sed -i -- "s|trusty|$6|g" ./bundles.yaml
 
 case "$3" in
     'orangepod1' )
@@ -121,29 +128,6 @@ case "$5" in
 esac
 
 echo "... Deployment Started ...."
-case "$1" in
-    'nonha' )
-        juju-deployer -vW -d -t 3600 -c bundles.yaml trusty-"$2"-nodes
-        juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml trusty-"$2"
-        ;;
-    'ha' )
-        juju-deployer -vW -d -t 3600 -c bundles.yaml trusty-"$2"-nodes
-        juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml trusty-"$2"
-        ;;
-    'tip' )
-        juju-deployer -vW -d -t 3600 -c bundles.yaml trusty-"$2"-nodes
-        juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml trusty-"$2"
-        ;;
-    * )
-        juju-deployer -vW -d -t 3600 -c bundles.yaml trusty-"$2"-nodes
-        juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml trusty-"$2"
-        ;;
-esac
+        juju-deployer -vW -d -t 3600 -c bundles.yaml $6-"$2"-nodes
+        juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $6-"$2"
 
-#case "$4" in
-#    'onos' )
-#         echo "... onos prepare test ..."
-#         sleep 180s
-#         sh onos/juju_test_prepare.sh "$3"
-#        ;;
-#esac
