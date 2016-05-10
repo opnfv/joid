@@ -31,7 +31,7 @@ usage() { echo "Usage: $0 [-s <nosdn|odl|opencontrail>]
                          [-a <amd64>]
                          [-r <a|b>]" 1>&2 exit 1; } 
 
-while getopts ":s:t:o:l:h:r:f:" opt; do
+while getopts ":s:t:o:l:h:r:f:d:a:" opt; do
     case "${opt}" in
         s)
             opnfvsdn=${OPTARG}
