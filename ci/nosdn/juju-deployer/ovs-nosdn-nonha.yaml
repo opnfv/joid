@@ -11,7 +11,7 @@ openstack-phase1:
       num_units: 2
       constraints: tags=compute
     ntp: 
-      charm: "cs:trusty/ntp"
+      charm: "local:trusty/ntp"
   relations:
     - - "ntp:juju-info"
       - "nodes-api:juju-info"
@@ -79,7 +79,6 @@ openstack-phase2:
         - "lxc:nodes-api=0"
     opnfv-promise:
       charm: local:trusty/promise
-      num_units: 1
       to:
         - "lxc:nodes-api=0"
     keystone:
@@ -92,8 +91,7 @@ openstack-phase2:
       to:
         - "lxc:nodes-api=0"
     mongodb:
-      charm: cs:trusty/mongodb
-      num_units: 1
+      charm: local:trusty/mongodb
       to:
         - "lxc:nodes-api=0"
     mysql:
@@ -267,7 +265,7 @@ trusty-mitaka:
     #l2-population: true
     #ext-port: "eth1"
     region: Canonical
-    source: "cloud:trusty-mitaka"
+    #source: "cloud:trusty-mitaka"
     openstack-origin: "cloud:trusty-mitaka"
     series: trusty
     ceph-osd-replication-count: 2

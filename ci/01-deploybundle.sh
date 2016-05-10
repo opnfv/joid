@@ -7,8 +7,8 @@ set -ex
     #copy and download charms
     cp $4/fetch-charms.sh ./fetch-charms.sh
     #modify the ubuntu series wants to deploy
-    sed -i -- "s|trusty|$6|g" ./fetch-charms.sh
-    sh ./fetch-charms.sh
+    sed -i -- "s|distro=trusty|distro=$6|g" ./fetch-charms.sh
+    sh ./fetch-charms.sh $6
 
 
 case "$1" in
@@ -31,8 +31,16 @@ esac
 #changing the target to the openstack release we want to deploy. 
 sed -i -- "s|mitaka|$2|g" ./bundles.yaml
 
-#changing the target to the ubuntu distro we want to deploy. 
-sed -i -- "s|trusty|$6|g" ./bundles.yaml
+#update source if trusty is target distribution
+case "$6" in
+    'trusty' )
+        sed -i -- "s|#source|source|g" ./bundles.yaml
+        ;;
+    'xenial' )
+        #changing the target to the ubuntu distro we want to deploy. 
+        sed -i -- "s|trusty|$6|g" ./bundles.yaml
+        ;;
+esac
 
 case "$3" in
     'orangepod1' )
