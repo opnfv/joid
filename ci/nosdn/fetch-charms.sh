@@ -25,4 +25,4 @@ bzr branch lp:~openstack-charmers/charms/trusty/rabbitmq-server/next $distro/rab
 bzr branch lp:~openstack-charmers/charms/trusty/hacluster/next $distro/hacluster
 bzr branch lp:~openstack-charmers/charms/trusty/heat/next $distro/heat
 bzr branch lp:~billy-olsen/charms/xenial/mongodb/trunk $distro/mongodb
-bzr branck lp:~narindergupta/opnfv/ntp $distro/ntp
+bzr branch lp:~narindergupta/opnfv/ntp $distro/ntp
