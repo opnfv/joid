@@ -11,6 +11,9 @@ case "$1" in
     'intelpod6' )
         cp maas/intel/pod6/deployment.yaml ./deployment.yaml
         ;;
+    'intelpod9' )
+        cp maas/intel/pod9/deployment.yaml ./deployment.yaml
+        ;;
     'orangepod1' )
         cp maas/orange/pod1/deployment.yaml ./deployment.yaml
         ;;
@@ -203,6 +206,11 @@ case "$1" in
         maas refresh
         enableautomodebyname eth4 AUTO "10.6.12.0/24" compute || true
         enableautomodebyname eth4 AUTO "10.6.12.0/24" control || true
+        ;;
+    'intelpod9' )
+        maas refresh
+        enableautomodebyname eth4 AUTO "10.9.12.0/24" compute || true
+        enableautomodebyname eth4 AUTO "10.9.12.0/24" control || true
         ;;
     'orangepod2' )
         maas refresh
