@@ -212,6 +212,13 @@ case "$1" in
         enableautomodebyname eth4 AUTO "10.9.12.0/24" compute || true
         enableautomodebyname eth4 AUTO "10.9.12.0/24" control || true
         ;;
+    'orangepod1' )
+        maas refresh
+        enableautomodebyname eth2 DHCP "192.168.21.0/24" compute || true
+        enableautomodebyname eth3 AUTO "192.168.11.0/24" compute || true
+        enableautomodebyname eth2 DHCP "192.168.21.0/24" control || true
+        enableautomodebyname eth3 AUTO "192.168.11.0/24" control || true
+        ;;
     'orangepod2' )
         maas refresh
         enableautomodebyname eth4 DHCP "192.168.22.0/24" compute || true
