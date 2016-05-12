@@ -39,11 +39,16 @@ openstack-phase2:
       options:
         corosync_key: |
           'QisjNpoKHLkvyc3PEdDHP5VZjgD0kOk9t0ABPWmCELlu5AgWgnW6bJd34BVXO7VhW+3ZwNQM3W+bZ3pl28ftY4ki4N/S0KLFNia5egFgiA3AH2QXLnokS7OYXuu6GMJJ1S5mDe6P5zU+tfJe/Mebq24u7CgR0gAvohSPRdDTwdY='
-#    hacluster-heat:
-#      charm: "local:trusty/hacluster"
-#      options:
-#        corosync_key: |
-#          'Q29yb3N5bmMgQ2x1c3RlciBFbmdpbmUgQXV0aGVudGljYXRpb24ga2V5IGdlbmVyYXRvci4KR2F0aGVyaW5nIDEwMjQgYml0cyBmb3Iga2V5IGZyb20gL2Rldi9yYW5kb20uClByZXNzIGtleXMgb24geW91ciBrZXlib2FyZCB0byBnZW5lcmF0ZSBlbnRyb3B5LgpQcmVzcyBrZXlzIG9uIHlvdXIga2V5Ym9hcmQgdG8gZ2VuZXJhdGUgZW50cm9weSAoYml0cyA9IDkxMikuClByZXNzIGtleXMgb24geW91ciBrZXlib2FyZCB0byBnZW5lcmF0ZSBlbnRyb3B5IChiaXRzID0gOTYwKS4KUHJlc3Mga2V5cyBvbiB5b3VyIGtleWJvYXJkIHRvIGdlbmVyYX'
+    hacluster-cinder:
+      charm: "local:trusty/hacluster"
+      options:
+        corosync_key: |
+          'cc6n5Zv6M2mQ2mUhTx/aKoImQ7q77pKDdkSwBUG5VqoSb23SxnGUsAxH5E8lOeCZ84EURzS71FEb8F9P5YY+2deh0+tdXukoKTugdVmJfarahPpWpEEZRRCigUngdFw/479FOcFCkN1SJtQNqWi1ACYSn1/GRoQ2vP+2byrkV6E='
+    hacluster-heat:
+      charm: "local:trusty/hacluster"
+      options:
+        corosync_key: |
+          'tNeFXmOqzytRq7loxLMDaaMqZZXjC7BNfMbcKxSNeIPyBj4lkJwHZyuV7mo0ogzcfVJqLBHBULai+ed9uyWCZJxLXoi+WwTj5AqcXfxfSo9vLCthukJJ4zuKvzeGibZRszwINf32RW9jtXSCPosv8a+9MSg49KD1c9fS20aEuIM='
     hacluster-horizon:
       charm: "local:trusty/hacluster"
       options:
@@ -69,6 +74,11 @@ openstack-phase2:
       options:
         corosync_key: |
           'cHkgKGJpdHMgPSA5NjApLgpQcmVzcyBrZXlzIG9uIHlvdXIga2V5Ym9hcmQgdG8gZ2VuZXJhdGUgZW50cm9weSAoYml0cyA9IDEwMDgpLgpXcml0aW5nIGNvcm9zeW5jIGtleSB0byAvZXRjL2Nvcm9zeW5jL2F1dGhrZXkuCg=='
+#    hacluster-ceph-radosgw:
+#      charm: "local:trusty/hacluster"
+#      options:
+#        corosync_key: |
+#          'tk8U/FkH1+dNsvj6IU0C8AST7i/9ylIoCD8kWpPjB+UE2AYR7tkgkjnc4m5dzIYPYTceY7Hnb9xLJ0nlcQLYYFBRAJOg3drNTcVrfh63y9g9La1J1r51YSbOqXq1Q6RUhxP4OQBtDGE6/4NtZwuRPvPGLcI2ENiVm78l8JFkXRw='
     ceilometer:
       charm: "local:trusty/ceilometer"
       num_units: 3
@@ -88,14 +98,14 @@ openstack-phase2:
         - "lxc:nodes-api=0"
     heat:
       charm: "local:trusty/heat"
-      num_units: 1
+      num_units: 3
       options:
-        #vip: 10.4.1.18
+        vip: 10.4.1.18
         #os-public-hostname: api.public-fqdn
       to:
         - "lxc:nodes-api=0"
-#        - "lxc:nodes-api=1"
-#        - "lxc:nodes-api=2"
+        - "lxc:nodes-api=1"
+        - "lxc:nodes-api=2"
     ceph:
       charm: local:trusty/ceph
       num_units: 3
@@ -124,17 +134,22 @@ openstack-phase2:
     ceph-radosgw:
       charm: local:trusty/ceph-radosgw
       num_units: 1
+#      vip: 10.4.1.10
+      #os-public-hostname: api.public-fqdn
       options:
         use-embedded-webserver: true
         operator-roles: "Member,admin"
       to:
         - "lxc:nodes-api=0"
+#        - "lxc:nodes-api=1"
+#        - "lxc:nodes-api=2"
     cinder:
       charm: local:trusty/cinder
       num_units: 3
       options:
         block-device: None
         glance-api-version: 2
+        vip: 10.4.1.19
         #os-public-hostname: api.public-fqdn
 #        ha-mcastport: 5401
       to:
@@ -253,72 +268,6 @@ openstack-phase2:
         security-groups: True
     openvswitch-odl:
       charm: local:trusty/openvswitch-odl
-#    haproxy:
-#      charm: cs:trusty/haproxy
-#      options:
-#        services: |
-#          - service_name: nova
-#            service_host: "0.0.0.0"
-#            service_port: 8774
-#            service_options: [balance leastconn, cookie SRVNAME insert]
-#            server_options: maxconn 100 cookie S{i} check
-#            servers: [[nova, 10.4.1.16, 8774, check ]]
-#          - service_name: swift
-#            service_host: "0.0.0.0"
-#            service_port: 80
-#            service_options: [balance leastconn, cookie SRVNAME insert]
-#            server_options: maxconn 100 cookie S{i} check
-#            servers: [[swift, 10.4.1.100, 80, check ]]
-#          - service_name: glance
-#            service_host: "0.0.0.0"
-#            service_port: 9292
-#            service_options: [balance leastconn, cookie SRVNAME insert]
-#            server_options: maxconn 100 cookie S{i} check
-#            servers: [[glance, 10.4.1.12, 9292, check ]]
-#          - service_name: cinderv2
-#            service_host: "0.0.0.0"
-#            service_port: 8776
-#            service_options: [balance leastconn, cookie SRVNAME insert]
-#            server_options: maxconn 100 cookie S{i} check
-#            servers: [[cinderv2, 10.4.1.100, 8776, check ]]
-#          - service_name: ceilometer
-#            service_host: "0.0.0.0"
-#            service_port: 8777
-#            service_options: [balance leastconn, cookie SRVNAME insert]
-#            server_options: maxconn 100 cookie S{i} check
-#            servers: [[ceilometer, 10.4.1.14, 8777, check ]]
-#          - service_name: keystone
-#            service_host: "0.0.0.0"
-#            service_port: 5000
-#            service_options: [balance leastconn, cookie SRVNAME insert]
-#            server_options: maxconn 100 cookie S{i} check
-#            servers: [[keystone, 10.4.1.13, 5000, check ]]
-#          - service_name: heat
-#            service_host: "0.0.0.0"
-#            service_port: 8004
-#            service_options: [balance leastconn, cookie SRVNAME insert]
-#            server_options: maxconn 100 cookie S{i} check
-#            servers: [[heat, 10.4.1.18, 8004, check ]]
-#          - service_name: neutron
-#            service_host: "0.0.0.0"
-#            service_port: 9696
-#            service_options: [balance leastconn, cookie SRVNAME insert]
-#            server_options: maxconn 100 cookie S{i} check
-#            servers: [[neutron, 10.4.1.17, 9696, check ]]
-#          - service_name: heat-cfn
-#            service_host: "0.0.0.0"
-#            service_port: 8000
-#            service_options: [balance leastconn, cookie SRVNAME insert]
-#            server_options: maxconn 100 cookie S{i} check
-#            servers: [[heat-cfn, 192.168.2.162, 8000, check ]]
-#          - service_name: cinder
-#            service_host: "0.0.0.0"
-#            service_port: 8776
-#            service_options: [balance leastconn, cookie SRVNAME insert]
-#            server_options: maxconn 100 cookie S{i} check
-#            servers: [[cinder, 192.168.2.161, 8776, check ]]
-#      to:
-#        - "lxc:nodes-api=0"
   relations:
     - - "glance:ha"
       - "hacluster-glance:ha"
@@ -332,8 +281,12 @@ openstack-phase2:
       - "hacluster-horizon:ha"
     - - "ceilometer:ha"
       - "hacluster-ceilometer:ha"
-#    - - "heat:ha"
-#      - "hacluster-heat:ha"
+    - - "cinder:ha"
+      - "hacluster-cinder:ha"
+    - - "heat:ha"
+      - "hacluster-heat:ha"
+#    - - "ceph-radosgw:ha"
+#      - "hacluster-ceph-radosgw:ha"
     - - "neutron-api:neutron-plugin-api-subordinate"
       - "neutron-api-odl:neutron-plugin-api-subordinate"
     - - "nova-compute:neutron-plugin"
@@ -447,4 +400,3 @@ trusty-mitaka:
     ceph-osd-replication-count: 2
     admin-role: admin
     keystone-admin-role: admin
-
