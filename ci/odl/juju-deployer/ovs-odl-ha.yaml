@@ -225,7 +225,7 @@ openstack-phase2:
     odl-controller:
       charm: local:trusty/odl-controller
       options:
-        install-url: "https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.4.1-Beryllium-SR1/distribution-karaf-0.4.1-Beryllium-SR1.tar.gz"
+        install-url: "https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.4.2-Beryllium-SR2/distribution-karaf-0.4.2-Beryllium-SR2.tar.gz"
         profile: "openvswitch-odl-beryllium"
         http-proxy: "http://squid.internal:3128"
         https-proxy: "http://squid.internal:3128"
