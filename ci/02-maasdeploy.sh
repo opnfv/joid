@@ -209,8 +209,14 @@ case "$1" in
         ;;
     'intelpod9' )
         maas refresh
-        enableautomodebyname eth4 AUTO "10.9.12.0/24" compute || true
-        enableautomodebyname eth4 AUTO "10.9.12.0/24" control || true
+        crvlanupdsubnet vlan902 1 "DataNetwork" 902 2 || true
+        crvlanupdsubnet vlan905 2 "PublicNetwork" 905 3 || true
+        crnodevlanint $vlan902 eth0 || true
+        crnodevlanint $vlan905 eth1 || true
+        enableautomodebyname eth0.902 AUTO "10.9.12.0/24" compute || true
+        enableautomodebyname eth1.905 AUTO "10.9.15.0/24" compute || true
+        enableautomodebyname eth0.902 AUTO "10.9.12.0/24" control || true
+        enableautomodebyname eth1.905 AUTO "10.9.15.0/24" control || true
         ;;
     'orangepod2' )
         maas refresh

@@ -145,8 +145,8 @@ demo-maas:
         # Defines the physical nodes which are added to the MAAS cluster
         # controller upon startup of the node.
         nodes:
-            - name: node1-control
-              tags: control
+            - name: node1-compute
+              tags: compute
               architecture: amd64/generic
               mac_addresses:
                   - "00:1E:67:D4:30:38"
@@ -160,11 +160,11 @@ demo-maas:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
 
-            - name: node4-compute
+            - name: node2-compute
               tags: compute
               architecture: amd64/generic
               mac_addresses:
-                  - "00:1E:67:D4:33:A2"
+                  - "00:1E:67:D4:33:A3"
               power:
                   type: ipmi
                   address: 10.2.117.144
@@ -175,8 +175,8 @@ demo-maas:
 #                  mac_address: "38:63:bb:43:b8:9c"
 #                  requested_address: 192.168.122.5
 
-            - name: node5-compute
-              tags: compute
+            - name: node3-control
+              tags: control
               architecture: amd64/generic
               mac_addresses:
                   - "00:1E:67:D4:2F:BA"
