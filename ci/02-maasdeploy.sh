@@ -155,8 +155,6 @@ maas_ip=`grep " ip_address" deployment.yaml | cut -d " "  -f 10`
 apikey=`grep maas-oauth: environments.yaml | cut -d "'" -f 2`
 maas login maas http://${maas_ip}/MAAS/api/1.0 ${apikey}
 maas maas boot-source update 1 url="http://maas.ubuntu.com/images/ephemeral-v2/daily/"
-#maas maas boot-source-selections create 1 os="ubuntu" release="precise" arches="amd64" subarches="*" labels="*"
-maas maas node-groups import-boot-images
 maas maas sshkeys new key="`cat $HOME/.ssh/id_rsa.pub`"
 
 #Added the Qtip public to run the Qtip test after install on bare metal nodes.

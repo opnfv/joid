@@ -17,6 +17,7 @@ demo-maas:
         arch: amd64
         pool: default
         disk_size: 160G
+        release: trusty
 
         # Apt http proxy setting(s)
         apt_http_proxy:
@@ -24,6 +25,23 @@ demo-maas:
         apt_sources:
           - ppa:maas/stable
           - ppa:juju/stable
+
+        boot_source:
+            url: http://maas.ubuntu.com/images/ephemeral-v2/releases/
+            keyring_filename: /usr/share/keyrings/ubuntu-cloudimage-keyring.gpg
+            selections:
+                1:
+                    release: trusty
+                    os: ubuntu
+                    arches: amd64
+                    subarches: "*"
+                    labels: daily
+                2:
+                    release: xenial
+                    os: ubuntu
+                    arches: amd64
+                    subarches: "*"
+                    labels: daily
 
         # Virsh power settings
         # Specifies the uri and keys to use for virsh power control of the 
