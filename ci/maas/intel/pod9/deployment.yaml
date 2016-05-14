@@ -27,8 +27,9 @@ demo-maas:
           - ppa:juju/stable
 
         boot_source:
-            url: http://maas.ubuntu.com/images/ephemeral-v2/releases/
+            url: http://maas.ubuntu.com/images/ephemeral-v2/daily/
             keyring_filename: /usr/share/keyrings/ubuntu-cloudimage-keyring.gpg
+            exclusive: true
             selections:
                 1:
                     release: trusty
