@@ -160,7 +160,7 @@ sudo chown $USER:$USER environments.yaml
 
 echo "... Deployment of maas finish ...."
 
-maas_ip=`grep " ip_address" deployment.yaml | cut -d " "  -f 10`
+maas_ip=`grep " ip_address" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
 apikey=`grep maas-oauth: environments.yaml | cut -d "'" -f 2`
 maas login maas http://${maas_ip}/MAAS/api/1.0 ${apikey}
 maas maas sshkeys new key="`cat $HOME/.ssh/id_rsa.pub`"
