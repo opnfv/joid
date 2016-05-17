@@ -33,26 +33,6 @@ demo-maas:
     network_config: 
     node_group_ifaces:
     - broadcast_ip: 
-      dynamic_range:
-        high: 
-        low: 
-      static_range:
-        high: 
-        low: 
-    - broadcast_ip: 
-      dynamic_range:
-        high: 
-        low: 
-      static_range:
-        high: 
-        low: 
-    - broadcast_ip: 
-      dynamic_range:
-        high: 
-        low: 
-      static_range:
-        high: 
-        low: 
     nodes:
     - name: 
     password: ubuntu

@@ -26,9 +26,6 @@ def setInDict(dataDict, mapList, value):
 def getFromDict(dataDict, mapList):
     return reduce(lambda d, k: d[k], mapList, dataDict)
 
-if len(labcfg["labconfig"]["nodes"]) < 3:
-    print("minimum three nodes are needed for opnfv architecture deployment")
-    exit() 
 
 # lets modify the maas general settings:
 
@@ -52,21 +49,23 @@ while c < len(labcfg["labconfig"]["bridges"]):
     brname = getFromDict(labcfg, ["labconfig","bridges",c,"bridge"])
     brcidr = getFromDict(labcfg, ["labconfig","bridges",c,"cidr"])
     if brtype == "admin":
+        if c > 0:
+            opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"].append({})
         ethbrAdmin = getFromDict(labcfg, ["labconfig","bridges",c,"bridge"])
         brgway = getFromDict(labcfg, ["labconfig","bridges",c,"gateway"])
         tmpcidr = brcidr[:-4]
         setInDict(opnfvcfg, ["demo-maas", "maas", "ip_address"], tmpcidr+"5")
         opnfvcfg["demo-maas"]["maas"]["interfaces"][y] = "bridge="+brname+",model=virtio" 
-        opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["device"] = "eth"+str(y) 
-        opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["ip"] = tmpcidr+"5" 
-        opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["subnet_mask"] = "255.255.255.0" 
-        opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["broadcast_ip"] = tmpcidr+"255" 
-        opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["router_ip"] = brgway 
-        opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["static_range"]["low"] = tmpcidr+"50" 
-        opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["static_range"]["high"] = tmpcidr+"80" 
-        opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["dynamic_range"]["low"] = tmpcidr+"81" 
-        opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["dynamic_range"]["high"] = tmpcidr+"250" 
+
+        nodegroup={"device": "eth"+str(y), "ip": tmpcidr+"5","subnet_mask": "255.255.255.0", \
+                   "broadcast_ip": tmpcidr+"255", "router_ip": brgway,\
+                   "static_range":{"high":tmpcidr+"80","low":tmpcidr+"50"},\
+                   "dynamic_range":{"high":tmpcidr+"250","low":tmpcidr+"81"}}
+
+        opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y] = nodegroup
+
         opnfvcfg["demo-maas"]["juju-bootstrap"]["interfaces"][z] = "bridge="+brname+",model=virtio" 
+
         ethbrAdm = ('auto lo\n'
                     '    iface lo inet loopback\n\n'
                     'auto eth'+str(y)+'\n'
@@ -81,18 +80,21 @@ while c < len(labcfg["labconfig"]["bridges"]):
         opnfvcfg["demo-maas"]["maas"]["interfaces"].append("bridge="+brname+",model=virtio")
         brgway = getFromDict(labcfg, ["labconfig","bridges",c,"gateway"])
         if brtype != "external":
+            if c > 0:
+                opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"].append({})
             tmpcidr = brcidr[:-4]
-            opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["device"] = "eth"+str(y) 
-            opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["ip"] = tmpcidr+"5" 
-            opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["subnet_mask"] = "255.255.255.0" 
-            opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["broadcast_ip"] = tmpcidr+"255" 
             if brgway:
-                opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["router_ip"] = brgway 
-            opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["management"] = 1 
-            opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["static_range"]["low"] = tmpcidr+"20" 
-            opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["static_range"]["high"] = tmpcidr+"150" 
-            opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["dynamic_range"]["low"] = tmpcidr+"151" 
-            opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y]["dynamic_range"]["high"] = tmpcidr+"200" 
+                nodegroup={"device": "eth"+str(y), "ip": tmpcidr+"5","subnet_mask": "255.255.255.0", \
+                           "broadcast_ip": tmpcidr+"255", "management": 1, "router_ip": brgway,\
+                           "static_range":{"high":tmpcidr+"80","low":tmpcidr+"50"},\
+                           "dynamic_range":{"high":tmpcidr+"250","low":tmpcidr+"81"}}
+            else:
+                nodegroup={"device": "eth"+str(y), "ip": tmpcidr+"5","subnet_mask": "255.255.255.0", \
+                           "broadcast_ip": tmpcidr+"255", "management": 1, \
+                           "static_range":{"high":tmpcidr+"80","low":tmpcidr+"50"},\
+                           "dynamic_range":{"high":tmpcidr+"250","low":tmpcidr+"81"}}
+
+            opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y] = nodegroup
             ethbrAdm  = (ethbrAdm+'\n'
                         'auto eth'+str(y)+'\n'
                         '    iface eth'+str(y)+' inet static\n'
@@ -121,6 +123,11 @@ setInDict(opnfvcfg, ["demo-maas", "maas", "network_config"], ethbrAdm)
 value = get_ip_address(ethbrAdmin) 
 value = "qemu+ssh://"+getpass.getuser()+"@"+value+"/system"
 setInDict(opnfvcfg, ["demo-maas", "maas", "virsh", "uri"], value)
+
+if len(labcfg["labconfig"]["nodes"]) < 1:
+    print("looks like virtual deployment where nodes were not defined")
+    opnfvcfg["demo-maas"]["maas"]["nodes"].remove()
+    exit() 
 
 #lets insert the node details here:
 c=0

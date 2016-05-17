@@ -4,8 +4,44 @@ set -ex
 
 virtinstall=0
 
+#install the packages needed
+sudo apt-add-repository ppa:maas-deployers/stable -y
+sudo apt-add-repository ppa:juju/stable -y
+sudo apt-add-repository ppa:maas/stable -y
+sudo apt-add-repository cloud-archive:liberty -y
+sudo apt-get update -y
+sudo apt-get dist-upgrade -y
+sudo apt-get install openssh-server git maas-deployer juju juju-deployer maas-cli python-pip python-openstackclient gsutil -y
+
 cp maas/deployment.yaml ./deployment.yaml
-cp ../labconfig/intel/pod6/labconfig.yaml ./
+
+#first parameter should be custom and second should be either 
+# absolute location of file (including file name) or url of the 
+# file to download.
+
+if [ "$1" == "custom" ]; then
+    if [ -e $2 ]; then
+        cp $2 ./labconfig.yaml || true
+        python deploy.py
+    else
+        wget $2 -t 3 -T 10 -O ./labconfig.yaml || true
+        count=`wc -l labconfig.yaml  | cut -d " " -f 1`
+
+        if [ $count -lt 10 ]; then
+            rm -rf labconfig.yaml
+        else
+            python deploy.py
+        fi
+    fi
+
+    if [ ! -e ./labconfig.yaml ]; then
+        virtinstall=1
+        cp ../labconfig/default/labconfig.yaml ./
+        python deploy.py
+    fi
+fi
+
+exit 1
 
 case "$1" in
     'intelpod5' )
@@ -19,7 +55,9 @@ case "$1" in
         python deploy.py
         ;;
     'intelpod9' )
-        cp maas/intel/pod9/deployment.yaml ./deployment.yaml
+        cp ../labconfig/intel/pod6/labconfig.yaml ./
+        #to be removed later once converted for all labs.
+        python deploy.py
         ;;
     'orangepod1' )
         cp maas/orange/pod1/deployment.yaml ./deployment.yaml
@@ -77,14 +115,6 @@ sudo adduser $USER libvirtd
 sudo virsh pool-define-as default --type dir --target /var/lib/libvirt/images/ || true
 sudo virsh pool-start default || true
 sudo virsh pool-autostart default || true
-
-sudo apt-add-repository ppa:maas-deployers/stable -y
-sudo apt-add-repository ppa:juju/stable -y
-sudo apt-add-repository ppa:maas/stable -y
-sudo apt-add-repository cloud-archive:liberty -y
-sudo apt-get update -y
-sudo apt-get dist-upgrade -y
-sudo apt-get install openssh-server git maas-deployer juju juju-deployer maas-cli python-pip python-openstackclient gsutil -y
 
 # To avoid problem between apiclient/maas_client and apiclient from google
 # we remove the package google-api-python-client from yardstick installer
