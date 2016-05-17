@@ -1,0 +1,81 @@
+labconfig:
+    lab_location: intelpod5
+    bridges:
+        - type: admin
+          bridge: brAdm
+          cidr: 10.5.1.0/24
+          gateway: 10.5.1.1
+        - type: data
+          bridge: brData
+          cidr: 10.5.12.0/24
+          gateway:
+        - type: public
+          bridge: brPublic
+          cidr: 10.5.15.0/24
+          gateway: 10.5.15.254
+        - type: external
+          bridge: brExt
+          cidr:
+          gateway:
+          ipaddress: 10.2.117.92
+    labsettings:
+        upstream_dns: 8.8.8.8
+    nodes:
+        - type: control
+          architecture: x86_64 
+          pxe_mac_address:
+              - "00:1e:67:d8:ba:46"
+          power:
+              type: ipmi
+              address: 10.2.117.81
+              user: root
+              pass: root
+        - type: control
+          architecture: x86_64 
+          pxe_mac_address:
+              - "00:1e:67:e0:0b:72"
+          power:
+              type: ipmi
+              address: 10.2.117.82
+              user: root
+              pass: root
+        - type: control
+          architecture: x86_64 
+          pxe_mac_address:
+              - "00:1e:67:e0:08:7f"
+          power:
+              type: ipmi
+              address: 10.2.117.83
+              user: root
+              pass: root
+        - type: compute
+          architecture: x86_64 
+          pxe_mac_address:
+              - "00:1e:67:e0:08:b1"
+          power:
+              type: ipmi
+              address: 10.2.117.84
+              user: root
+              pass: root
+        - type: compute
+          architecture: x86_64 
+          pxe_mac_address:
+              - "00:1e:67:e0:0a:4b"
+          power:
+              type: ipmi
+              address: 10.2.117.85
+              user: root
+              pass: root
+opnfv:
+    release: c
+    distro: trusty
+    type: nonha
+    openstack: liberty
+    sdncontroller: 
+        - type: nosdn
+    storage: 
+        - type: ceph
+          disk: /srv/osd
+    floating-ip-range: 
+    feature: odl_l2 
+    ext-port: eth5

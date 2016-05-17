@@ -4,12 +4,17 @@ set -ex
 
 virtinstall=0
 
+cp maas/deployment.yaml ./deployment.yaml
+cp ../labconfig/intel/pod6/labconfig.yaml ./
+
 case "$1" in
     'intelpod5' )
         cp maas/intel/pod5/deployment.yaml ./deployment.yaml
         ;;
     'intelpod6' )
-        cp maas/intel/pod6/deployment.yaml ./deployment.yaml
+        cp ../labconfig/intel/pod6/labconfig.yaml ./
+        #to be removed later once converted for all labs.
+        python deploy.py
         ;;
     'intelpod9' )
         cp maas/intel/pod9/deployment.yaml ./deployment.yaml
@@ -39,9 +44,6 @@ case "$1" in
         ;;
 esac
 
-#just make sure the ssh keys added into maas for the current user
-sed --i "s@/home/ubuntu@$HOME@g" ./deployment.yaml
-sed --i "s@qemu+ssh://ubuntu@qemu+ssh://$USER@g" ./deployment.yaml
 
 #make sure no password asked during the deployment.
 
@@ -144,6 +146,13 @@ crnodevlanint() {
         maas maas interfaces create-vlan $nodes vlan=$1 parent=$parentid
      done
  }
+
+#convert labconfig file to deployment.yaml to consume by MAAS.
+#python deploy.py
+
+#just make sure the ssh keys added into maas for the current user
+sed --i "s@/home/ubuntu@$HOME@g" ./deployment.yaml
+sed --i "s@qemu+ssh://ubuntu@qemu+ssh://$USER@g" ./deployment.yaml
 
 sudo maas-deployer -c deployment.yaml -d --force
 
