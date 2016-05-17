@@ -129,6 +129,9 @@ while c < len(labcfg["labconfig"]["nodes"]):
     # setup value of name and tags accordigly
     value = getFromDict(labcfg, ["labconfig","nodes",c, "type"])
     namevalue = "node" + str(c+1) + "-" + value 
+    if c > 0:
+        opnfvcfg["demo-maas"]["maas"]["nodes"].append({})
+
     opnfvcfg["demo-maas"]["maas"]["nodes"][c]["name"] = namevalue
     opnfvcfg["demo-maas"]["maas"]["nodes"][c]["tags"] = value
 
@@ -141,26 +144,23 @@ while c < len(labcfg["labconfig"]["nodes"]):
     # setup mac_addresses
     value = getFromDict(labcfg, ["labconfig","nodes",c, "pxe_mac_address"])
     opnfvcfg["demo-maas"]["maas"]["nodes"][c]["mac_addresses"] = value
+    valuetype = getFromDict(labcfg, ["labconfig","nodes",c, "power", "type"])
 
-    value = getFromDict(labcfg, ["labconfig","nodes",c, "power", "type"])
-    opnfvcfg["demo-maas"]["maas"]["nodes"][c]["power"]["type"] = value
-    if value == "wakeonlan":
-        value = getFromDict(labcfg, ["labconfig","nodes",c, "power", "mac_address"])
-        opnfvcfg["demo-maas"]["maas"]["nodes"][c]["power"]["mac_address"] = value
-
-    if value == "ipmi":
-        value = getFromDict(labcfg, ["labconfig","nodes",c, "power", "address"])
-        opnfvcfg["demo-maas"]["maas"]["nodes"][c]["power"]["address"] = value
-        value = getFromDict(labcfg, ["labconfig","nodes",c, "power", "user"])
-        opnfvcfg["demo-maas"]["maas"]["nodes"][c]["power"]["user"] = value
-        value = getFromDict(labcfg, ["labconfig","nodes",c, "power", "pass"])
-        opnfvcfg["demo-maas"]["maas"]["nodes"][c]["power"]["pass"] = value
-        opnfvcfg["demo-maas"]["maas"]["nodes"][c]["power"]["driver"] = "LAN_2_0"
+    if valuetype == "wakeonlan":
+        macvalue = getFromDict(labcfg, ["labconfig","nodes",c, "power", "mac_address"])
+        power={"type": "ether_wake", "mac_address": macvalue}
+        opnfvcfg["demo-maas"]["maas"]["nodes"][c]["power"] = power
+    if valuetype == "ipmi":
+        valueaddr = getFromDict(labcfg, ["labconfig","nodes",c, "power", "address"])
+        valueuser = getFromDict(labcfg, ["labconfig","nodes",c, "power", "user"])
+        valuepass = getFromDict(labcfg, ["labconfig","nodes",c, "power", "pass"])
+        valuedriver = "LAN_2_0"
+        power={"type": valuetype, "address": valueaddr,"user": valueuser, "pass": valuepass, "driver": valuedriver}
+        opnfvcfg["demo-maas"]["maas"]["nodes"][c]["power"] = power
 
 
     c=c+1
 
 with open('deployment.yaml', 'w') as opnfvf:
    yaml.dump(opnfvcfg, opnfvf, default_flow_style=False)
-
 

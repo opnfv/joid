@@ -78,4 +78,4 @@ opnfv:
           disk: sda,sdb
     floating-ip-range: 
     feature: odl_l2 
-    ext-port: eth0
+    ext-port: eth5

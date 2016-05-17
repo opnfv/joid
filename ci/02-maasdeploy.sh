@@ -9,7 +9,9 @@ cp ../labconfig/intel/pod6/labconfig.yaml ./
 
 case "$1" in
     'intelpod5' )
-        cp maas/intel/pod5/deployment.yaml ./deployment.yaml
+        cp ../labconfig/intel/pod5/labconfig.yaml ./
+        #to be removed later once converted for all labs.
+        python deploy.py
         ;;
     'intelpod6' )
         cp ../labconfig/intel/pod6/labconfig.yaml ./

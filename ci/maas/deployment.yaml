@@ -29,7 +29,7 @@ demo-maas:
     - bridge=brAdm,model=virtio
     ip_address: 
     memory: 4096
-    name: opnfv-intelpod6
+    name: 
     network_config: 
     node_group_ifaces:
     - broadcast_ip: 
@@ -54,31 +54,7 @@ demo-maas:
         high: 
         low: 
     nodes:
-    - architecture: 
-      mac_addresses:
-      - 
-      power:
-        address: 
-    - architecture: 
-      mac_addresses:
-      - 
-      power:
-        address: 
-    - architecture: 
-      mac_addresses:
-      - 
-      power:
-        address: 
-    - architecture: 
-      mac_addresses:
-      - 
-      power:
-        address: 
-    - architecture: 
-      mac_addresses:
-      - 
-      power:
-        address: 
+    - name: 
     password: ubuntu
     pool: default
     release: trusty
