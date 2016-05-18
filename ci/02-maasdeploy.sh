@@ -3,6 +3,7 @@
 set -ex
 
 virtinstall=0
+labname = $1
 
 #install the packages needed
 sudo apt-add-repository ppa:maas-deployers/stable -y
@@ -36,52 +37,50 @@ if [ "$1" == "custom" ]; then
 
     if [ ! -e ./labconfig.yaml ]; then
         virtinstall=1
+        cp ../labconfig/default/deployment.yaml ./
         cp ../labconfig/default/labconfig.yaml ./
-        python deploy.py
     fi
+    labname=`grep "lab_location" labconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+else
+    case "$1" in
+        'intelpod5' )
+            cp ../labconfig/intel/pod5/labconfig.yaml ./
+            #to be removed later once converted for all labs.
+            python deploy.py
+            ;;
+        'intelpod6' )
+            cp ../labconfig/intel/pod6/labconfig.yaml ./
+            #to be removed later once converted for all labs.
+            python deploy.py
+            ;;
+        'intelpod9' )
+            cp ../labconfig/intel/pod6/labconfig.yaml ./
+            #to be removed later once converted for all labs.
+            python deploy.py
+            ;;
+        'orangepod1' )
+            cp maas/orange/pod1/deployment.yaml ./deployment.yaml
+            ;;
+        'orangepod2' )
+            cp maas/orange/pod2/deployment.yaml ./deployment.yaml
+            ;;
+        'attvirpod1' )
+            cp maas/att/virpod1/deployment.yaml ./deployment.yaml
+            ;;
+        'juniperpod1' )
+            cp maas/juniper/pod1/deployment.yaml ./deployment.yaml
+            ;;
+        'cengnlynxpod1' )
+            cp maas/cengn_lynx/pod1/deployment.yaml ./deployment.yaml
+            ;;
+        * )
+            virtinstall=1
+            labname = "default"
+            ./cleanvm.sh
+            cp ../labconfig/default/deployment.yaml ./
+            ;;
+    esac
 fi
-
-case "$1" in
-    'intelpod5' )
-        cp ../labconfig/intel/pod5/labconfig.yaml ./
-        #to be removed later once converted for all labs.
-        python deploy.py
-        ;;
-    'intelpod6' )
-        cp ../labconfig/intel/pod6/labconfig.yaml ./
-        #to be removed later once converted for all labs.
-        python deploy.py
-        ;;
-    'intelpod9' )
-        cp ../labconfig/intel/pod6/labconfig.yaml ./
-        #to be removed later once converted for all labs.
-        python deploy.py
-        ;;
-    'orangepod1' )
-        cp maas/orange/pod1/deployment.yaml ./deployment.yaml
-        ;;
-    'orangepod2' )
-        cp maas/orange/pod2/deployment.yaml ./deployment.yaml
-        ;;
-    'attvirpod1' )
-        cp maas/att/virpod1/deployment.yaml ./deployment.yaml
-        ;;
-    'juniperpod1' )
-        cp maas/juniper/pod1/deployment.yaml ./deployment.yaml
-        ;;
-    'cengnlynxpod1' )
-        cp maas/cengn_lynx/pod1/deployment.yaml ./deployment.yaml
-        ;;
-    'custom' )
-        cp maas/custom/deployment.yaml ./deployment.yaml
-        ;;
-    * )
-        virtinstall=1
-        ./cleanvm.sh
-        cp maas/default/deployment.yaml ./deployment.yaml
-        ;;
-esac
-
 
 #make sure no password asked during the deployment.
 
@@ -232,7 +231,7 @@ if [ "$virtinstall" -eq 1 ]; then
 fi
 
 # Enable vlan interfaces with maas
-case "$1" in
+case "$labname" in
     'intelpod5' )
         maas refresh
         enableautomodebyname eth4 AUTO "10.5.12.0/24" compute || true

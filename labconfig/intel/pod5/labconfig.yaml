@@ -24,7 +24,7 @@ labconfig:
         - type: control
           architecture: x86_64 
           pxe_mac_address:
-              - "00:1e:67:d8:ba:46"
+              - "00:1e:67:cf:bb:54"
           power:
               type: ipmi
               address: 10.2.117.81
@@ -33,7 +33,7 @@ labconfig:
         - type: control
           architecture: x86_64 
           pxe_mac_address:
-              - "00:1e:67:e0:0b:72"
+              - "00:1e:67:cf:b8:93"
           power:
               type: ipmi
               address: 10.2.117.82
