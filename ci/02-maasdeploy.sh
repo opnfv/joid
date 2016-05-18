@@ -41,8 +41,6 @@ if [ "$1" == "custom" ]; then
     fi
 fi
 
-exit 1
-
 case "$1" in
     'intelpod5' )
         cp ../labconfig/intel/pod5/labconfig.yaml ./
