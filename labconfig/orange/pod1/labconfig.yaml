@@ -1,0 +1,76 @@
+labconfig:
+    lab_location: orangepod1
+    bridges:
+        - type: admin
+          bridge: brAdm
+          cidr: 192.168.1.0/24
+          gateway: 192.168.1.1
+        - type: data
+          bridge: brData
+          cidr: 192.168.11.0/24
+          gateway:
+        - type: storage
+          bridge: brStorage
+          cidr: 192.168.21.0/24
+          gateway:
+    labsettings:
+        upstream_dns: 192.168.1.1
+    nodes:
+        - type: compute
+          architecture: x86_64
+          pxe_mac_address:
+              - "68:b5:99:74:e3:a8"
+          power:
+              type: ipmi
+              address: 192.168.1.11
+              user: Administrator
+              pass: pod1Admin
+        - type: compute
+          architecture: x86_64
+          pxe_mac_address:
+              - "68:b5:99:75:05:5e"
+          power:
+              type: ipmi
+              address: 192.168.1.12
+              user: Administrator
+              pass: pod1Admin
+        - type: control
+          architecture: x86_64
+          pxe_mac_address:
+              - "94:57:a5:52:53:7c"
+          power:
+              type: ipmi
+              address: 192.168.1.13
+              user: Administrator
+              pass: pod1Admin
+        - type: control
+          architecture: x86_64
+          pxe_mac_address:
+              - "94:57:a5:52:c1:54"
+          power:
+              type: ipmi
+              address: 192.168.1.14
+              user: Administrator
+              pass: pod1Admin
+        - type: control
+          architecture: x86_64
+          pxe_mac_address:
+              - "94:57:a5:52:c1:d8"
+          power:
+              type: ipmi
+              address: 192.168.1.15
+              user: Administrator
+              pass: pod1Admin
+opnfv:
+    release: c
+    distro: trusty
+    type: nonha
+    openstack: liberty
+    sdncontroller:
+        - type: nosdn
+    storage:
+        - type: ceph
+          disk: /srv/osd
+    floating-ip-range:
+    feature: odl_l2
+    ext-port: eth5
