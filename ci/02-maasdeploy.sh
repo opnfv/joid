@@ -3,7 +3,7 @@
 set -ex
 
 virtinstall=0
-labname = $1
+labname=$1
 
 #install the packages needed
 sudo apt-add-repository ppa:maas-deployers/stable -y
