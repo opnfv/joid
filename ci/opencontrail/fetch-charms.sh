@@ -1,30 +1,33 @@
 #!/bin/sh -ex
 
-distro=$distro
+distro=$1
+mkdir precise
 mkdir -p $distro
 
 # openstack
-bzr branch lp:~openstack-charmers/charms/$distro/ceilometer/next $distro/ceilometer
-bzr branch lp:~openstack-charmers/charms/$distro/ceilometer-agent/next $distro/ceilometer-agent
-bzr branch lp:~openstack-charmers/charms/$distro/ceph/next $distro/ceph
-bzr branch lp:~openstack-charmers/charms/$distro/ceph-osd/next $distro/ceph-osd
-bzr branch lp:~openstack-charmers/charms/$distro/ceph-radosgw/next $distro/ceph-radosgw
-bzr branch lp:~openstack-charmers/charms/$distro/cinder/next $distro/cinder
-bzr branch lp:~openstack-charmers/charms/$distro/cinder-ceph/next $distro/cinder-ceph
-bzr branch lp:~openstack-charmers/charms/$distro/glance/next $distro/glance
-bzr branch lp:~narindergupta/charms/$distro/promise/trunk $distro/promise
-bzr branch lp:~openstack-charmers/charms/$distro/keystone/next $distro/keystone
-bzr branch lp:~openstack-charmers/charms/$distro/percona-cluster/next $distro/percona-cluster
-bzr branch lp:~openstack-charmers/charms/$distro/neutron-api/next $distro/neutron-api
-bzr branch lp:~openstack-charmers/charms/$distro/neutron-gateway/next $distro/neutron-gateway
-bzr branch lp:~openstack-charmers/charms/$distro/neutron-openvswitch/next $distro/neutron-openvswitch
-bzr branch lp:~openstack-charmers/charms/$distro/nova-cloud-controller/next $distro/nova-cloud-controller
-bzr branch lp:~openstack-charmers/charms/$distro/nova-compute/next $distro/nova-compute
-bzr branch lp:~openstack-charmers/charms/$distro/openstack-dashboard/next $distro/openstack-dashboard
-bzr branch lp:~openstack-charmers/charms/$distro/rabbitmq-server/next $distro/rabbitmq-server
-bzr branch lp:~openstack-charmers/charms/$distro/hacluster/next $distro/hacluster
-bzr branch lp:~openstack-charmers/charms/$distro/heat/next $distro/heat
-bzr branch lp:~opnfv-team/charms/$distro/haproxy/trunk $distro/haproxy
+bzr branch lp:~narindergupta/charms/trusty/promise/trunk $distro/promise
+bzr branch lp:~billy-olsen/charms/xenial/mongodb/trunk $distro/mongodb
+bzr branch lp:~narindergupta/opnfv/ntp $distro/ntp
+bzr branch lp:~openstack-charmers/charms/trusty/hacluster/next $distro/hacluster
+bzr branch lp:~opnfv-team/charms/trusty/haproxy/trunk $distro/haproxy
+git clone https://github.com/openstack/charm-ceilometer.git $distro/ceilometer
+git clone https://github.com/openstack/charm-ceilometer-agent.git $distro/ceilometer-agent
+git clone https://github.com/openstack/charm-ceph.git $distro/ceph
+git clone https://github.com/openstack/charm-ceph-osd.git $distro/ceph-osd
+git clone https://github.com/openstack/charm-ceph-radosgw.git $distro/ceph-radosgw
+git clone https://github.com/openstack/charm-cinder.git $distro/cinder
+git clone https://github.com/openstack/charm-cinder-ceph.git $distro/cinder-ceph
+git clone https://github.com/openstack/charm-glance.git $distro/glance
+git clone https://github.com/openstack/charm-keystone.git $distro/keystone
+git clone https://github.com/openstack/charm-percona-cluster.git $distro/percona-cluster
+git clone https://github.com/openstack/charm-neutron-api.git $distro/neutron-api
+git clone https://github.com/openstack/charm-neutron-gateway.git $distro/neutron-gateway
+git clone https://github.com/openstack/charm-neutron-openvswitch.git $distro/neutron-openvswitch
+git clone https://github.com/openstack/charm-nova-cloud-controller.git $distro/nova-cloud-controller
+git clone https://github.com/openstack/charm-nova-compute.git $distro/nova-compute
+git clone https://github.com/openstack/charm-openstack-dashboard.git $distro/openstack-dashboard
+git clone https://github.com/openstack/charm-rabbitmq-server.git $distro/rabbitmq-server
+git clone https://github.com/openstack/charm-heat.git $distro/heat
 
 # Controller specific charm
 bzr branch lp:~sdn-charmers/charms/$distro/keepalived/trunk $distro/keepalived
@@ -33,7 +36,6 @@ bzr branch lp:~sdn-charmers/charms/$distro/contrail-analytics/trunk $distro/cont
 bzr branch lp:~sdn-charmers/charms/$distro/contrail-configuration/trunk $distro/contrail-configuration
 bzr branch lp:~sdn-charmers/charms/$distro/contrail-control/trunk $distro/contrail-control
 bzr branch lp:~sdn-charmers/charms/$distro/contrail-webui/trunk $distro/contrail-webui
-bzr branch lp:~charmers/charms/precise/zookeeper/trunk src/charms/precise/zookeeper
+bzr branch lp:~charmers/charms/precise/zookeeper/trunk precise/zookeeper
 bzr branch lp:~opnfv-team/charms/$distro/neutron-api-contrail/trunk $distro/neutron-api-contrail
 bzr branch lp:~opnfv-team/charms/$distro/neutron-contrail/trunk $distro/neutron-contrail
-
