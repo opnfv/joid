@@ -4,25 +4,25 @@ distro=$1
 mkdir -p $distro
 
 # openstack
-bzr branch lp:~openstack-charmers/charms/trusty/ceilometer/next $distro/ceilometer
-bzr branch lp:~openstack-charmers/charms/trusty/ceilometer-agent/next $distro/ceilometer-agent
-bzr branch lp:~openstack-charmers/charms/trusty/ceph/next $distro/ceph
-bzr branch lp:~openstack-charmers/charms/trusty/ceph-osd/next $distro/ceph-osd
-bzr branch lp:~openstack-charmers/charms/trusty/ceph-radosgw/next $distro/ceph-radosgw
-bzr branch lp:~openstack-charmers/charms/trusty/cinder/next $distro/cinder
-bzr branch lp:~openstack-charmers/charms/trusty/cinder-ceph/next $distro/cinder-ceph
-bzr branch lp:~openstack-charmers/charms/trusty/glance/next $distro/glance
 bzr branch lp:~narindergupta/charms/trusty/promise/trunk $distro/promise
-bzr branch lp:~openstack-charmers/charms/trusty/keystone/next $distro/keystone
-bzr branch lp:~openstack-charmers/charms/trusty/percona-cluster/next $distro/percona-cluster
-bzr branch lp:~openstack-charmers/charms/trusty/neutron-api/next $distro/neutron-api
-bzr branch lp:~openstack-charmers/charms/trusty/neutron-gateway/next $distro/neutron-gateway
-bzr branch lp:~openstack-charmers/charms/trusty/neutron-openvswitch/next $distro/neutron-openvswitch
-bzr branch lp:~openstack-charmers/charms/trusty/nova-cloud-controller/next $distro/nova-cloud-controller
-bzr branch lp:~openstack-charmers/charms/trusty/nova-compute/next $distro/nova-compute
-bzr branch lp:~openstack-charmers/charms/trusty/openstack-dashboard/next $distro/openstack-dashboard
-bzr branch lp:~openstack-charmers/charms/trusty/rabbitmq-server/next $distro/rabbitmq-server
-bzr branch lp:~openstack-charmers/charms/trusty/hacluster/next $distro/hacluster
-bzr branch lp:~openstack-charmers/charms/trusty/heat/next $distro/heat
 bzr branch lp:~billy-olsen/charms/xenial/mongodb/trunk $distro/mongodb
 bzr branch lp:~narindergupta/opnfv/ntp $distro/ntp
+bzr branch lp:~openstack-charmers/charms/trusty/hacluster/next $distro/hacluster
+git clone https://github.com/openstack/charm-ceilometer.git $distro/ceilometer
+git clone https://github.com/openstack/charm-ceilometer-agent.git $distro/ceilometer-agent
+git clone https://github.com/openstack/charm-ceph.git $distro/ceph
+git clone https://github.com/openstack/charm-ceph-osd.git $distro/ceph-osd
+git clone https://github.com/openstack/charm-ceph-radosgw.git $distro/ceph-radosgw
+git clone https://github.com/openstack/charm-cinder.git $distro/cinder
+git clone https://github.com/openstack/charm-cinder-ceph.git $distro/cinder-ceph
+git clone https://github.com/openstack/charm-glance.git $distro/glance
+git clone https://github.com/openstack/charm-keystone.git $distro/keystone
+git clone https://github.com/openstack/charm-percona-cluster.git $distro/percona-cluster
+git clone https://github.com/openstack/charm-neutron-api.git $distro/neutron-api
+git clone https://github.com/openstack/charm-neutron-gateway.git $distro/neutron-gateway
+git clone https://github.com/openstack/charm-neutron-openvswitch.git $distro/neutron-openvswitch
+git clone https://github.com/openstack/charm-nova-cloud-controller.git $distro/nova-cloud-controller
+git clone https://github.com/openstack/charm-nova-compute.git $distro/nova-compute
+git clone https://github.com/openstack/charm-openstack-dashboard.git $distro/openstack-dashboard
+git clone https://github.com/openstack/charm-rabbitmq-server.git $distro/rabbitmq-server
+git clone https://github.com/openstack/charm-heat.git $distro/heat
