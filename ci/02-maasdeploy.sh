@@ -59,10 +59,14 @@ else
             python deploy.py
             ;;
         'orangepod1' )
-            cp maas/orange/pod1/deployment.yaml ./deployment.yaml
+            cp ../labconfig/orange/pod1/labconfig.yaml ./
+            #to be removed later once converted for all labs.
+            python deploy.py
             ;;
         'orangepod2' )
-            cp maas/orange/pod2/deployment.yaml ./deployment.yaml
+            cp ../labconfig/orange/pod1/labconfig.yaml ./
+            #to be removed later once converted for all labs.
+            python deploy.py
             ;;
         'attvirpod1' )
             cp maas/att/virpod1/deployment.yaml ./deployment.yaml
@@ -75,7 +79,7 @@ else
             ;;
         * )
             virtinstall=1
-            labname = "default"
+            labname="default"
             ./cleanvm.sh
             cp ../labconfig/default/deployment.yaml ./
             ;;
