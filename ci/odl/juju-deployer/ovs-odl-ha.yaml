@@ -2,21 +2,14 @@
 openstack-phase1:
   series: trusty
   services:
-    nodes-api:
+    nodes:
       charm: "cs:trusty/ubuntu"
-      num_units: 3
-      constraints: tags=control
-    nodes-compute:
-      charm: "cs:trusty/ubuntu"
-      num_units: 2
-      constraints: tags=compute
+      num_units: 5
     ntp:
       charm: "local:trusty/ntp"
   relations:
     - - "ntp:juju-info"
-      - "nodes-api:juju-info"
-    - - "ntp:juju-info"
-      - "nodes-compute:juju-info"
+      - "nodes:juju-info"
 openstack-phase2:
   inherits: openstack-phase1
   services:
@@ -31,9 +24,9 @@ openstack-phase2:
         sst-password: 127rc14t51
         vip: 10.4.1.15
       to:
-        - "lxc:nodes-api=1"
-        - "lxc:nodes-api=0"
-        - "lxc:nodes-api=2"
+        - "lxc:nodes=0"
+        - "lxc:nodes=1"
+        - "lxc:nodes=2"
     hacluster-keystone:
       charm: "local:trusty/hacluster"
       options:
@@ -86,16 +79,15 @@ openstack-phase2:
         vip: 10.4.1.14
         #os-public-hostname: api.public-fqdn
       to:
-        - "lxc:nodes-api=2"
-        - "lxc:nodes-api=0"
-        - "lxc:nodes-api=1"
+        - "lxc:nodes=1"
+        - "lxc:nodes=2"
+        - "lxc:nodes=3"
     ceilometer-agent:
       charm: "local:trusty/ceilometer-agent"
     mongodb:
       charm: "local:trusty/mongodb"
-      num_units: 1
       to:
-        - "lxc:nodes-api=0"
+        - "lxc:nodes=0"
     heat:
       charm: "local:trusty/heat"
       num_units: 3
@@ -103,9 +95,9 @@ openstack-phase2:
         vip: 10.4.1.18
         #os-public-hostname: api.public-fqdn
       to:
-        - "lxc:nodes-api=0"
-        - "lxc:nodes-api=1"
-        - "lxc:nodes-api=2"
+        - "lxc:nodes=2"
+        - "lxc:nodes=3"
+        - "lxc:nodes=4"
     ceph:
       charm: local:trusty/ceph
       num_units: 3
@@ -118,31 +110,31 @@ openstack-phase2:
 #        ceph-cluster-network: 192.168.0.0/24
 #        ceph-public-network: 192.168.0.0/24
       to:
-        - "lxc:nodes-api=0"
-        - "lxc:nodes-api=1"
-        - "lxc:nodes-api=2"
+        - "lxc:nodes=3"
+        - "lxc:nodes=4"
+        - "lxc:nodes=0"
     ceph-osd:
       charm: local:trusty/ceph-osd
-      num_units: 2
+      num_units: 3
       options:
         osd-devices: /srv
         osd-reformat: 'yes'
       to:
-        - "nodes-compute=0"
-        - "nodes-compute=1"
-#        - "nodes-api=0"
+        - "nodes=2"
+        - "nodes=3"
+        - "nodes=4"
+#        - "nodes=0"
     ceph-radosgw:
       charm: local:trusty/ceph-radosgw
-      num_units: 1
 #      vip: 10.4.1.10
       #os-public-hostname: api.public-fqdn
       options:
         use-embedded-webserver: true
         operator-roles: "Member,admin"
       to:
-        - "lxc:nodes-api=0"
-#        - "lxc:nodes-api=1"
-#        - "lxc:nodes-api=2"
+        - "lxc:nodes=0"
+#        - "lxc:nodes=1"
+#        - "lxc:nodes=2"
     cinder:
       charm: local:trusty/cinder
       num_units: 3
@@ -153,18 +145,18 @@ openstack-phase2:
         #os-public-hostname: api.public-fqdn
 #        ha-mcastport: 5401
       to:
-        - "lxc:nodes-api=1"
-        - "lxc:nodes-api=0"
-        - "lxc:nodes-api=2"
+        - "lxc:nodes=4"
+        - "lxc:nodes=0"
+        - "lxc:nodes=1"
     cinder-ceph:
       charm: local:trusty/cinder-ceph
     rabbitmq-server:
       charm: local:trusty/rabbitmq-server
       num_units: 3
       to:
-        - "lxc:nodes-api=2"
-        - "lxc:nodes-api=0"
-        - "lxc:nodes-api=1"
+        - "lxc:nodes=0"
+        - "lxc:nodes=1"
+        - "lxc:nodes=2"
     keystone:
       charm: local:trusty/keystone
       num_units: 3
@@ -175,9 +167,9 @@ openstack-phase2:
         vip: 10.4.1.13
         #os-public-hostname: api.public-fqdn
       to:
-        - "lxc:nodes-api=0"
-        - "lxc:nodes-api=1"
-        - "lxc:nodes-api=2"
+        - "lxc:nodes=1"
+        - "lxc:nodes=2"
+        - "lxc:nodes=3"
     openstack-dashboard:
       charm: local:trusty/openstack-dashboard
       num_units: 3
@@ -186,23 +178,22 @@ openstack-phase2:
         vip: 10.4.1.11
         webroot: /
       to:
-        - "lxc:nodes-api=1"
-        - "lxc:nodes-api=0"
-        - "lxc:nodes-api=2"
+        - "lxc:nodes=2"
+        - "lxc:nodes=3"
+        - "lxc:nodes=4"
     nova-compute:
       charm: local:trusty/nova-compute
-      num_units: 2
+      num_units: 4
       options:
         enable-live-migration: true
         enable-resize: true
         manage-neutron-plugin-legacy-mode: false
         migration-auth-type: ssh
       to:
-        - "nodes-compute=0"
-        - "nodes-compute=1"
-#        - "nodes-api=0"
-#        - "nodes-api=1"
-#        - "nodes-api=2"
+        - "nodes=1"
+        - "nodes=2"
+        - "nodes=3"
+        - "nodes=4"
     nova-cloud-controller:
       charm: local:trusty/nova-cloud-controller
       num_units: 3
@@ -214,9 +205,9 @@ openstack-phase2:
         vip: 10.4.1.16
         #os-public-hostname: api.public-fqdn
       to:
-        - "lxc:nodes-api=2"
-        - "lxc:nodes-api=0"
-        - "lxc:nodes-api=1"
+        - "lxc:nodes=3"
+        - "lxc:nodes=4"
+        - "lxc:nodes=0"
     neutron-api:
       charm: local:trusty/neutron-api
       num_units: 3
@@ -226,9 +217,9 @@ openstack-phase2:
         vip: 10.4.1.17
         #os-public-hostname: api.public-fqdn
       to:
-        - "lxc:nodes-api=0"
-        - "lxc:nodes-api=1"
-        - "lxc:nodes-api=2"
+        - "lxc:nodes=4"
+        - "lxc:nodes=0"
+        - "lxc:nodes=1"
     neutron-gateway:
       charm: local:trusty/neutron-gateway
       options:
@@ -236,7 +227,7 @@ openstack-phase2:
         plugin: ovs-odl
         instance-mtu: 1400
       to:
-        - "nodes-api=0"
+        - "nodes=0"
     odl-controller:
       charm: local:trusty/odl-controller
       options:
@@ -245,7 +236,7 @@ openstack-phase2:
         http-proxy: "http://squid.internal:3128"
         https-proxy: "http://squid.internal:3128"
       to:
-        - "lxc:nodes-api=1"
+        - "lxc:nodes=0"
     glance:
       charm: local:trusty/glance
       num_units: 3
@@ -254,13 +245,13 @@ openstack-phase2:
         #os-public-hostname: api.public-fqdn
 #        ha-mcastport: 5402
       to:
-        - "lxc:nodes-api=1"
-        - "lxc:nodes-api=0"
-        - "lxc:nodes-api=2"
+        - "lxc:nodes=0"
+        - "lxc:nodes=1"
+        - "lxc:nodes=2"
     opnfv-promise:
       branch: lp:~narindergupta/charms/trusty/promise/trunk
       to:
-        - "lxc:nodes-api=2"
+        - "lxc:nodes=0"
     neutron-api-odl:
       charm: local:trusty/neutron-api-odl
       options:
@@ -397,6 +388,6 @@ trusty-mitaka:
     #source: "cloud:trusty-mitaka"
     openstack-origin: "cloud:trusty-mitaka"
     series: trusty
-    ceph-osd-replication-count: 2
+    #ceph-osd-replication-count: 2
     admin-role: admin
     keystone-admin-role: admin
