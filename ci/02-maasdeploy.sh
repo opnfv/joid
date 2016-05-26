@@ -238,13 +238,11 @@ fi
 case "$labname" in
     'intelpod5' )
         maas refresh
-        enableautomodebyname eth4 AUTO "10.5.12.0/24" compute || true
-        enableautomodebyname eth4 AUTO "10.5.12.0/24" control || true
+        enableautomode eth4 AUTO "10.5.12.0/24" || true
         ;;
     'intelpod6' )
         maas refresh
-        enableautomodebyname eth4 AUTO "10.6.12.0/24" compute || true
-        enableautomodebyname eth4 AUTO "10.6.12.0/24" control || true
+        enableautomode eth4 AUTO "10.6.12.0/24" || true
         ;;
     'intelpod9' )
         maas refresh
