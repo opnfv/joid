@@ -17,54 +17,75 @@ def get_ip_address(ifname):
 with open('labconfig.yaml', 'r') as labf:
     labcfg = yaml.load(labf)
 
-with open('deployment.yaml', 'r') as opnfvf:
-    opnfvcfg = yaml.load(opnfvf)
-
-def setInDict(dataDict, mapList, value):
-    getFromDict(dataDict, mapList[:-1])[mapList[-1]] = value
+opnfvcfg={}
 
 def getFromDict(dataDict, mapList):
     return reduce(lambda d, k: d[k], mapList, dataDict)
 
+#lets define the bootstrap section
+opnfvcfg['demo-maas']={'juju-bootstrap':{'memory': 4096,'name': "bootstrap",\
+                                         'pool': "default", 'vcpus': 4,\
+                                         'disk_size': "60G", 'arch': "amd64",\
+                                         'interfaces':[]},\
+                       'maas':{'memory': 4096,'pool': "default", 'vcpus': 4,\
+                               'disk_size': "160G", 'arch': "amd64", 'interfaces':[],\
+                               'name':"",'network_config':[],'node_group_ifaces':[],\
+                               'nodes':[],'password': 'ubuntu', 'user':'ubuntu',\
+                               'release': 'trusty', 'apt_sources':[],'ip_address':'',\
+                               'boot_source':{'keyring_filename':\
+                                                "/usr/share/keyrings/ubuntu-cloudimage-keyring.gpg",\
+                                             'url': \
+                                             "http://maas.ubuntu.com/images/ephemeral-v2/releases/",\
+                                             'selections':{'1':{'arches':'amd64','labels':'release',\
+                                                                'os':'ubuntu','release':'xenial',\
+                                                                'subarches':'*'
+                                                               }\
+                                                          }\
+                                             },\
+                              'settings':{'maas_name':'','upstream_dns':'',\
+                                          'main_archive':"http://us.archive.ubuntu.com/ubuntu"\
+                                         },\
+                              'virsh':{'rsa_priv_key':'/home/ubuntu/.ssh/id_rsa',
+                                       'rsa_pub_key':'/home/ubuntu/.ssh/id_rsa.pub',
+                                       'uri':''
+                                      }\
+                              }\
+                      }
+
+
+opnfvcfg['demo-maas']['maas']['apt_sources'].append("ppa:maas/stable") 
+opnfvcfg['demo-maas']['maas']['apt_sources'].append("ppa:juju/stable") 
 
 # lets modify the maas general settings:
 
 updns = getFromDict(labcfg, ["labconfig","labsettings","upstream_dns"])
-setInDict(opnfvcfg, ["demo-maas", "maas", "settings", "upstream_dns"], updns)
-value = getFromDict(labcfg, ["labconfig","lab_location"])
-setInDict(opnfvcfg, ["demo-maas", "maas", "settings", "maas_name"], value)
-setInDict(opnfvcfg, ["demo-maas", "maas", "name"], "opnfv-"+value)
+opnfvcfg["demo-maas"]["maas"]["settings"]["upstream_dns"]=updns
 
-#lets figure out the interfaces data
+value = getFromDict(labcfg, ["labconfig","lab_location"])
+opnfvcfg["demo-maas"]["maas"]["settings"]["maas_name"]=value
+opnfvcfg["demo-maas"]["maas"]["name"]="opnfv-"+value
 
 ethbrAdm=""
 ethbrAdmin=""
 
 c=0
 y=0
-z=0
+#z=0
 
 while c < len(labcfg["labconfig"]["bridges"]):
     brtype = getFromDict(labcfg, ["labconfig","bridges",c,"type"])
     brname = getFromDict(labcfg, ["labconfig","bridges",c,"bridge"])
     brcidr = getFromDict(labcfg, ["labconfig","bridges",c,"cidr"])
+#
     if brtype == "admin":
-        if c > 0:
-            opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"].append({})
         ethbrAdmin = getFromDict(labcfg, ["labconfig","bridges",c,"bridge"])
         brgway = getFromDict(labcfg, ["labconfig","bridges",c,"gateway"])
         tmpcidr = brcidr[:-4]
-        setInDict(opnfvcfg, ["demo-maas", "maas", "ip_address"], tmpcidr+"5")
-        opnfvcfg["demo-maas"]["maas"]["interfaces"][y] = "bridge="+brname+",model=virtio" 
 
         nodegroup={"device": "eth"+str(y), "ip": tmpcidr+"5","subnet_mask": "255.255.255.0", \
                    "broadcast_ip": tmpcidr+"255", "router_ip": brgway,\
                    "static_range":{"high":tmpcidr+"80","low":tmpcidr+"50"},\
                    "dynamic_range":{"high":tmpcidr+"250","low":tmpcidr+"81"}}
-
-        opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y] = nodegroup
-
-        opnfvcfg["demo-maas"]["juju-bootstrap"]["interfaces"][z] = "bridge="+brname+",model=virtio" 
 
         ethbrAdm = ('auto lo\n'
                     '    iface lo inet loopback\n\n'
@@ -74,14 +95,16 @@ while c < len(labcfg["labconfig"]["bridges"]):
                     '    netmask 255.255.255.0\n'
                     '    gateway '+brgway+'\n'
                     '    dns-nameservers '+updns+' '+tmpcidr+'5 127.0.0.1\n')
-        z=z+1
+
+        opnfvcfg['demo-maas']['maas']['ip_address']=tmpcidr+"5"
+        opnfvcfg['demo-maas']['maas']['interfaces'].append("bridge="+brname+",model=virtio") 
+        opnfvcfg['demo-maas']['juju-bootstrap']['interfaces'].append("bridge="+brname+",model=virtio") 
+        opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"].append(nodegroup)
         y=y+1
     elif brtype:
         opnfvcfg["demo-maas"]["maas"]["interfaces"].append("bridge="+brname+",model=virtio")
         brgway = getFromDict(labcfg, ["labconfig","bridges",c,"gateway"])
         if brtype != "external":
-            if c > 0:
-                opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"].append({})
             tmpcidr = brcidr[:-4]
             if brgway:
                 nodegroup={"device": "eth"+str(y), "ip": tmpcidr+"5","subnet_mask": "255.255.255.0", \
@@ -93,16 +116,15 @@ while c < len(labcfg["labconfig"]["bridges"]):
                            "broadcast_ip": tmpcidr+"255", "management": 1, \
                            "static_range":{"high":tmpcidr+"80","low":tmpcidr+"50"},\
                            "dynamic_range":{"high":tmpcidr+"250","low":tmpcidr+"81"}}
-
-            opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"][y] = nodegroup
+            opnfvcfg["demo-maas"]["maas"]["node_group_ifaces"].append(nodegroup)
             ethbrAdm  = (ethbrAdm+'\n'
                         'auto eth'+str(y)+'\n'
                         '    iface eth'+str(y)+' inet static\n'
                         '    address '+tmpcidr+'5\n'
                         '    netmask 255.255.255.0\n')
+            y=y+1
         if brtype == "public":
             opnfvcfg["demo-maas"]["juju-bootstrap"]["interfaces"].append("bridge="+brname+",model=virtio")
-            z=z+1
         if brtype == "external":
             ipaddress = getFromDict(labcfg, ["labconfig","bridges",c,"ipaddress"])
             ethbrAdm  = (ethbrAdm+'\n'
@@ -111,18 +133,14 @@ while c < len(labcfg["labconfig"]["bridges"]):
                         '    address '+ipaddress+'\n'
                         '    netmask 255.255.255.0\n')
             opnfvcfg["demo-maas"]["juju-bootstrap"]["interfaces"].append("bridge="+brname+",model=virtio")
-            z=z+1
-        y=y+1
-
 
     c=c+1
-
-setInDict(opnfvcfg, ["demo-maas", "maas", "network_config"], ethbrAdm)
 
 # lets modify the maas general settings:
 value = get_ip_address(ethbrAdmin) 
 value = "qemu+ssh://"+getpass.getuser()+"@"+value+"/system"
-setInDict(opnfvcfg, ["demo-maas", "maas", "virsh", "uri"], value)
+opnfvcfg['demo-maas']['maas']['virsh']['uri']=value
+opnfvcfg['demo-maas']['maas']['network_config']=ethbrAdm
 
 if len(labcfg["labconfig"]["nodes"]) < 1:
     print("looks like virtual deployment where nodes were not defined")
@@ -131,43 +149,35 @@ if len(labcfg["labconfig"]["nodes"]) < 1:
 
 #lets insert the node details here:
 c=0
-
+#
 while c < len(labcfg["labconfig"]["nodes"]):
     # setup value of name and tags accordigly
     value = getFromDict(labcfg, ["labconfig","nodes",c, "type"])
+    valuemac = getFromDict(labcfg, ["labconfig","nodes",c, "pxe_mac_address"])
+    valuetype = getFromDict(labcfg, ["labconfig","nodes",c, "power", "type"])
     namevalue = "node" + str(c+1) + "-" + value 
-    if c > 0:
-        opnfvcfg["demo-maas"]["maas"]["nodes"].append({})
-
-    opnfvcfg["demo-maas"]["maas"]["nodes"][c]["name"] = namevalue
-    opnfvcfg["demo-maas"]["maas"]["nodes"][c]["tags"] = value
-
-    # setup value of architecture
     value = getFromDict(labcfg, ["labconfig","nodes",c, "architecture"])
+    # setup value of architecture
     if value == "x86_64":
         value="amd64/generic"
-    opnfvcfg["demo-maas"]["maas"]["nodes"][c]["architecture"] = value
-    
-    # setup mac_addresses
-    value = getFromDict(labcfg, ["labconfig","nodes",c, "pxe_mac_address"])
-    opnfvcfg["demo-maas"]["maas"]["nodes"][c]["mac_addresses"] = value
-    valuetype = getFromDict(labcfg, ["labconfig","nodes",c, "power", "type"])
 
     if valuetype == "wakeonlan":
         macvalue = getFromDict(labcfg, ["labconfig","nodes",c, "power", "mac_address"])
         power={"type": "ether_wake", "mac_address": macvalue}
-        opnfvcfg["demo-maas"]["maas"]["nodes"][c]["power"] = power
     if valuetype == "ipmi":
         valueaddr = getFromDict(labcfg, ["labconfig","nodes",c, "power", "address"])
         valueuser = getFromDict(labcfg, ["labconfig","nodes",c, "power", "user"])
         valuepass = getFromDict(labcfg, ["labconfig","nodes",c, "power", "pass"])
         valuedriver = "LAN_2_0"
         power={"type": valuetype, "address": valueaddr,"user": valueuser, "pass": valuepass, "driver": valuedriver}
-        opnfvcfg["demo-maas"]["maas"]["nodes"][c]["power"] = power
 
+    opnfvcfg["demo-maas"]["maas"]["nodes"].append({"name": namevalue, "architecture":value,"mac_addresses":[],"power":power})
+
+    if valuemac:
+       opnfvcfg["demo-maas"]["maas"]["nodes"][c]['mac_addresses']=valuemac
 
     c=c+1
 
-with open('deployment.yaml', 'w') as opnfvf:
+with open('deployment.yaml', 'wa') as opnfvf:
    yaml.dump(opnfvcfg, opnfvf, default_flow_style=False)
 
