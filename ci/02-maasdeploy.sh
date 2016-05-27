@@ -257,17 +257,15 @@ case "$labname" in
         ;;
     'orangepod1' )
         maas refresh
-        enableautomodebyname eth2 DHCP "192.168.21.0/24" compute || true
-        enableautomodebyname eth3 AUTO "192.168.11.0/24" compute || true
-        enableautomodebyname eth2 DHCP "192.168.21.0/24" control || true
-        enableautomodebyname eth3 AUTO "192.168.11.0/24" control || true
+        enableautomode eth2 DHCP "192.168.21.0/24" || true
+        enableautomode eth3 AUTO "192.168.11.0/24" || true
         ;;
     'orangepod2' )
         maas refresh
-        enableautomodebyname eth4 DHCP "192.168.22.0/24" compute || true
-        enableautomodebyname eth5 AUTO "192.168.12.0/24" compute || true
-        enableautomodebyname eth2 DHCP "192.168.22.0/24" control || true
-        enableautomodebyname eth3 AUTO "192.168.12.0/24" control || true
+        enableautomode eth4 DHCP "192.168.22.0/24" || true
+        enableautomode eth2 DHCP "192.168.22.0/24" || true
+        enableautomode eth5 AUTO "192.168.12.0/24" || true
+        enableautomode eth3 AUTO "192.168.12.0/24" || true
         ;;
     'attvirpod1' )
         enableautomodebyname eth1 AUTO "192.168.10.0/24" control || true

@@ -1,48 +1,57 @@
 labconfig:
     lab_location: intelpod9
-    bridges:
-        - type: admin
-          bridge: brAdm
-          cidr: 10.9.1.0/24
-          gateway: 10.9.1.1
-        - type: data
-          bridge: brData
-          cidr: 10.9.12.0/24
-          gateway:
-        - type: public
-          bridge: brPublic
-          cidr: 10.9.15.0/24
-          gateway: 10.9.15.254
-        - type: external
-          bridge: brExt
-          cidr:
-          gateway:
-          ipaddress: 10.2.117.143
     labsettings:
         upstream_dns: 8.8.8.8
     nodes:
-        - type: control
-          architecture: x86_64 
-          pxe_mac_address:
-              - "00:1E:67:D4:30:38"
+        - name: rack-9-m1
+          architecture: x86_64
+          roles: [compute,network,storage]
+          nics:
+              - ifname: eth3
+                spaces: [admin]
+                mac: ["00:1E:67:D4:30:38"]
+              - ifname: eth0
+                spaces: [data]
+                mac: ["00:1E:67:C5:5B:08"]
+              - ifname: eth1
+                spaces: [public]
+                mac: ["00:1E:67:C5:5B:09"]
           power:
               type: ipmi
               address: 10.2.117.142
               user: root
               pass: root
-        - type: compute
-          architecture: x86_64 
-          pxe_mac_address:
-              - "00:1E:67:D4:33:A3"
+        - name: rack-9-m2
+          architecture: x86_64
+          roles: [compute,network,storage]
+          nics:
+              - ifname: eth3
+                spaces: [admin]
+                mac: ["00:1E:67:D4:33:A2"]
+              - ifname: eth0
+                spaces: [data]
+                mac: ["00:1E:67:E2:6C:74"]
+              - ifname: eth1
+                spaces: [public]
+                mac: ["00:1E:67:E2:6C:75"]
           power:
               type: ipmi
               address: 10.2.117.144
               user: root
               pass: root
-        - type: compute
-          architecture: x86_64 
-          pxe_mac_address:
-              - "00:1E:67:D4:2F:BA"
+        - name: rack-9-m3
+          architecture: x86_64
+          roles: [compute,network,storage]
+          nics:
+              - ifname: eth3
+                spaces: [admin]
+                mac: ["00:1E:67:D4:2F:BA"]
+              - ifname: eth0
+                spaces: [data]
+                mac: ["00:1E:67:C5:5B:00"]
+              - ifname: eth1
+                spaces: [public]
+                mac: ["00:1E:67:C5:5B:01"]
           power:
               type: ipmi
               address: 10.2.117.146
@@ -53,11 +62,33 @@ opnfv:
     distro: trusty
     type: nonha
     openstack: liberty
-    sdncontroller: 
-        - type: nosdn
-    storage: 
-        - type: ceph
-          disk: sda,sdb
-    floating-ip-range: 
-    feature: odl_l2 
-    ext-port: eth0
+    sdncontroller:
+    - type: nosdn
+    storage:
+    - type: ceph
+      disk: /srv
+    floating-ip-range:
+    feature: odl_l2
+    ext-port: eth5
+    spaces:
+    - type: admin
+      bridge: brAdm
+      cidr: 10.9.1.0/24
+      gateway: 10.9.1.1
+      vlan: 901
+    - type: data
+      bridge: brData
+      cidr: 10.9.12.0/24
+      gateway:
+      vlan: 902
+    - type: public
+      bridge: brPublic
+      cidr: 10.9.15.0/24
+      gateway: 10.9.15.254
+      vlan: 905
+    - type: external
+      bridge: brExt
+      cidr:
+      gateway:
+      ipaddress: 10.2.117.143
+      vlan:

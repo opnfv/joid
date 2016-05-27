@@ -112,14 +112,12 @@ openstack-phase2:
         - "lxc:nodes=1"
     nova-compute:
       charm: "local:trusty/nova-compute"
-      num_units: 2
       options:
         enable-live-migration: true
         enable-resize: true
         manage-neutron-plugin-legacy-mode: false
         migration-auth-type: ssh
       to:
-        - "nodes=0"
         - "nodes=1"
     openstack-dashboard:
       charm: "local:trusty/openstack-dashboard"

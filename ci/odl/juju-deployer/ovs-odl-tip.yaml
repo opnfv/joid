@@ -98,7 +98,6 @@ openstack-phase2:
         - "lxc:nodes=0"
     nova-compute:
       charm: local:trusty/nova-compute
-      num_units: 2
       options:
         openstack-origin-git: include-file://nova-master.yaml
         enable-live-migration: true
@@ -106,7 +105,6 @@ openstack-phase2:
         manage-neutron-plugin-legacy-mode: false
         migration-auth-type: ssh
       to:
-        - "nodes=0"
         - "nodes=1"
     nova-cloud-controller:
       charm: local:trusty/nova-cloud-controller

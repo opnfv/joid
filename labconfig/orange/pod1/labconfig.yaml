@@ -1,76 +1,123 @@
 labconfig:
     lab_location: orangepod1
-    bridges:
-        - type: admin
-          bridge: brAdm
-          cidr: 192.168.1.0/24
-          gateway: 192.168.1.1
-        - type: data
-          bridge: brData
-          cidr: 192.168.11.0/24
-          gateway:
-        - type: storage
-          bridge: brStorage
-          cidr: 192.168.21.0/24
-          gateway:
     labsettings:
         upstream_dns: 192.168.1.1
     nodes:
-        - type: compute
+        - name: rack-1-m1
           architecture: x86_64
-          pxe_mac_address:
-              - "68:b5:99:74:e3:a8"
+          roles: [compute,storage]
+          nics:
+              - ifname: eth0
+                spaces: [admin]
+                mac: ["68:b5:99:74:e3:a8"]
+              - ifname: eth2
+                spaces: [data]
+                mac: ["68:b5:99:74:e3:ae"]
+              - ifname: eth3
+                spaces: [storage]
+                mac: ["68:b5:99:74:e3:ac"]
           power:
               type: ipmi
               address: 192.168.1.11
               user: Administrator
-              pass: pod1Admin
-        - type: compute
+              pass: pod2Admin
+        - name: rack-1-m2
           architecture: x86_64
-          pxe_mac_address:
-              - "68:b5:99:75:05:5e"
+          roles: [compute,storage]
+          nics:
+              - ifname: eth0
+                spaces: [admin]
+                mac: ["68:b5:99:75:05:5e"]
+              - ifname: eth2
+                spaces: [data]
+                mac: ["68:b5:99:75:05:64"]
+              - ifname: eth3
+                spaces: [storage]
+                mac: ["68:b5:99:75:05:62"]
           power:
               type: ipmi
               address: 192.168.1.12
               user: Administrator
-              pass: pod1Admin
-        - type: control
+              pass: pod2Admin:
+        - name: rack-1-m3
           architecture: x86_64
-          pxe_mac_address:
-              - "94:57:a5:52:53:7c"
+          roles: [compute,storage]
+          nics:
+              - ifname: eth0
+                spaces: [admin]
+                mac: ["94:57:a5:52:53:7c"]
+              - ifname: eth3
+                spaces: [data]
+                mac: ["94:57:a5:52:53:7f"]
+              - ifname: eth2
+                spaces: [storage]
+                mac: ["94:57:a5:52:53:7e"]
           power:
               type: ipmi
               address: 192.168.1.13
               user: Administrator
-              pass: pod1Admin
-        - type: control
+              pass: pod2Admin
+        - name: rack-1-m4
           architecture: x86_64
-          pxe_mac_address:
-              - "94:57:a5:52:c1:54"
+          roles: [compute,storage]
+          nics:
+              - ifname: eth0
+                spaces: [admin]
+                mac: ["94:57:a5:52:c1:54"]
+              - ifname: eth3
+                spaces: [data]
+                mac: ["94:57:a5:52:c1:57"]
+              - ifname: eth2
+                spaces: [storage]
+                mac: ["94:57:a5:52:c1:56"]
           power:
               type: ipmi
               address: 192.168.1.14
               user: Administrator
-              pass: pod1Admin
-        - type: control
+              pass: pod2Admin
+        - name: rack-1-m5
           architecture: x86_64
-          pxe_mac_address:
-              - "94:57:a5:52:c1:d8"
+          roles: [network]
+          nics:
+              - ifname: eth0
+                spaces: [admin]
+                mac: ["94:57:a5:52:c1:d8"]
+              - ifname: eth3
+                spaces: [data]
+                mac: ["94:57:a5:52:c1:db"]
+              - ifname: eth2
+                spaces: [storage]
+                mac: ["94:57:a5:52:c1:da"]
           power:
               type: ipmi
               address: 192.168.1.15
               user: Administrator
-              pass: pod1Admin
+              pass: pod2Admin
 opnfv:
     release: c
     distro: trusty
     type: nonha
     openstack: liberty
     sdncontroller:
-        - type: nosdn
+    - type: nosdn
     storage:
-        - type: ceph
-          disk: /srv/osd
+    - type: ceph
+      disk: /dev/sdb /dev/sdc
     floating-ip-range:
     feature: odl_l2
-    ext-port: eth5
+    ext-port: eth1
+    spaces:
+    - type: admin
+      bridge: brAdm
+      cidr: 192.168.1.0/24
+      gateway: 192.168.1.1
+      vlan:
+    - type: data
+      bridge: brData
+      cidr: 192.168.11.0/24
+      gateway:
+      vlan:
+    - type: storage
+      bridge: brStorage
+      cidr: 192.168.21.0/24
+      gateway:

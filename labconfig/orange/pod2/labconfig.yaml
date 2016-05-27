@@ -1,95 +1,159 @@
 labconfig:
-    lab_location: orangepod1
-    bridges:
-        - type: admin
-          bridge: brAdm
-          cidr: 192.168.2.0/24
-          gateway: 192.168.2.1
-        - type: data
-          bridge: brData
-          cidr: 192.168.12.0/24
-          gateway:
-        - type: storage
-          bridge: brStorage
-          cidr: 192.168.22.0/24
-          gateway:
+    lab_location: orangepod2
     labsettings:
         upstream_dns: 192.168.2.1
     nodes:
-        - type: compute
+        - name: rack-2-m1
           architecture: x86_64
-          pxe_mac_address:
-              - "38:63:bb:3f:bc:c8"
+          roles: [compute,storage]
+          nics:
+              - ifname: eth0
+                spaces: [admin]
+                mac: ["38:63:bb:3f:bc:c8"]
+              - ifname: eth5
+                spaces: [data]
+                mac: ["a0:36:9f:4e:88:5e"]
+              - ifname: eth4
+                spaces: [storage]
+                mac: ["a0:36:9f:4e:88:5c"]
           power:
               type: ipmi
               address: 192.168.2.11
               user: Administrator
               pass: pod2Admin
-        - type: compute
+        - name: rack-2-m2
           architecture: x86_64
-          pxe_mac_address:
-              - "38:63:bb:44:34:84"
+          roles: [compute,storage]
+          nics:
+              - ifname: eth0
+                spaces: [admin]
+                mac: ["38:63:bb:44:34:84"]
+              - ifname: eth5
+                spaces: [data]
+                mac: ["a0:36:9f:4e:8b:0e"]
+              - ifname: eth4
+                spaces: [storage]
+                mac: ["a0:36:9f:4e:8b:0c"]
           power:
               type: ipmi
               address: 192.168.2.12
               user: Administrator
-              pass: po2Admin
-        - type: compute
+              pass: pod2Admin
+        - name: rack-2-m3
           architecture: x86_64
-          pxe_mac_address:
-              - "38:63:bb:3f:1d:8c"
+          roles: [compute,storage]
+          nics:
+              - ifname: eth0
+                spaces: [admin]
+                mac: ["38:63:bb:3f:1d:8c"]
+              - ifname: eth5
+                spaces: [data]
+                mac: ["a0:36:9f:4e:88:3a"]
+              - ifname: eth4
+                spaces: [storage]
+                mac: ["a0:36:9f:4e:88:38"]
           power:
               type: ipmi
               address: 192.168.2.13
               user: Administrator
               pass: pod2Admin
-        - type: compute
+        - name: rack-2-m4
           architecture: x86_64
-          pxe_mac_address:
-              - "38:63:bb:3f:2d:a8"
+          roles: [compute,storage]
+          nics:
+              - ifname: eth0
+                spaces: [admin]
+                mac: ["38:63:bb:3f:2d:a8"]
+              - ifname: eth5
+                spaces: [data]
+                mac: ["a0:36:9f:4e:8b:18"]
+              - ifname: eth4
+                spaces: [storage]
+                mac: ["a0:36:9f:4e:8b:1a"]
           power:
               type: ipmi
               address: 192.168.2.14
               user: Administrator
               pass: pod2Admin
-        - type: control
+        - name: rack-2-m5
           architecture: x86_64
-          pxe_mac_address:
-              - "94:57:a5:52:c9:48"
+          roles: [network]
+          nics:
+              - ifname: eth0
+                spaces: [admin]
+                mac: ["94:57:a5:52:c9:48"]
+              - ifname: eth3
+                spaces: [data]
+                mac: ["94:57:a5:52:c9:4b"]
+              - ifname: eth2
+                spaces: [storage]
+                mac: ["94:57:a5:52:c9:4a"]
           power:
               type: ipmi
               address: 192.168.2.15
               user: Administrator
               pass: pod2Admin
-        - type: control
+        - name: rack-2-m6
           architecture: x86_64
-          pxe_mac_address:
-              - "94:57:a5:52:63:b0"
+          roles: [network]
+          nics:
+              - ifname: eth0
+                spaces: [admin]
+                mac: ["94:57:a5:52:63:b0"]
+              - ifname: eth3
+                spaces: [data]
+                mac: ["94:57:a5:52:63:b3"]
+              - ifname: eth2
+                spaces: [storage]
+                mac: ["94:57:a5:52:63:b2"]
           power:
               type: ipmi
               address: 192.168.2.16
               user: Administrator
               pass: pod2Admin
-        - type: control
+        - name: rack-2-m7
           architecture: x86_64
-          pxe_mac_address:
-              - "94:57:a5:52:f1:80"
+          roles: [network]
+          nics:
+              - ifname: eth0
+                spaces: [admin]
+                mac: ["94:57:a5:52:f1:80"]
+              - ifname: eth3
+                spaces: [data]
+                mac: ["94:57:a5:52:f1:83"]
+              - ifname: eth2
+                spaces: [storage]
+                mac: ["94:57:a5:52:f1:82"]
           power:
               type: ipmi
               address: 192.168.2.17
               user: Administrator
               pass: pod2Admin
-
 opnfv:
     release: c
     distro: trusty
     type: nonha
     openstack: liberty
     sdncontroller:
-        - type: nosdn
+    - type: nosdn
     storage:
-        - type: ceph
-          disk: /srv/osd
+    - type: ceph
+      disk: /dev/sdb /dev/sdc
     floating-ip-range:
     feature: odl_l2
-    ext-port: eth5
+    ext-port: eth1
+    spaces:
+    - type: admin
+      bridge: brAdm
+      cidr: 192.168.2.0/24
+      gateway: 192.168.2.1
+      vlan:
+    - type: data
+      bridge: brData
+      cidr: 192.168.12.0/24
+      gateway:
+      vlan:
+    - type: storage
+      bridge: brStorage
+      cidr: 192.168.22.0/24
+      gateway:
