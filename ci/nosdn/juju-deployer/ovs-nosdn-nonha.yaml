@@ -104,6 +104,12 @@ openstack-phase2:
         - "nodes=0"
     neutron-openvswitch:
       charm: "local:trusty/neutron-openvswitch"
+      options:
+        #enable-dpdk: true
+        #data-port: ""
+        #default-socket-memory: 1024
+        #defualt-socket-cores: 1
+        #dpdk-driver: uio_pci_generic
     nova-cloud-controller:
       charm: "local:trusty/nova-cloud-controller"
       options:
@@ -117,6 +123,7 @@ openstack-phase2:
         enable-resize: true
         manage-neutron-plugin-legacy-mode: false
         migration-auth-type: ssh
+        #hugepages: '50%'
       to:
         - "nodes=1"
     openstack-dashboard:
