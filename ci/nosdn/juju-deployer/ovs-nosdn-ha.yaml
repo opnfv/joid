@@ -136,6 +136,8 @@ openstack-phase2:
       - keystone:identity-service
     - - heat:amqp
       - rabbitmq-server:amqp
+    #- - nova-compute:lxd
+    #  - lxd:lxd
 
   services:
     hacluster-keystone:
@@ -306,6 +308,7 @@ openstack-phase2:
         manage-neutron-plugin-legacy-mode: false
         migration-auth-type: ssh
         #hugepages: '50%'
+        #virt-type: lxd
       to:
         - "nodes=1"
         - "nodes=2"

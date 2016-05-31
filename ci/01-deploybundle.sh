@@ -28,19 +28,6 @@ case "$1" in
         ;;
 esac
 
-#changing the target to the openstack release we want to deploy. 
-sed -i -- "s|mitaka|$2|g" ./bundles.yaml
-
-#update source if trusty is target distribution
-case "$6" in
-    'trusty' )
-        sed -i -- "s|#source|source|g" ./bundles.yaml
-        ;;
-    'xenial' )
-        #changing the target to the ubuntu distro we want to deploy. 
-        sed -i -- "s|trusty|$6|g" ./bundles.yaml
-        ;;
-esac
 
 case "$3" in
     'orangepod1' )
@@ -126,26 +113,49 @@ case "$3" in
         ;;
 esac
 
-case "$5" in
-    'ipv6' )
-         sed -i -- 's/#prefer-ipv6: true/prefer-ipv6: true/g' ./bundles.yaml
+for feature in $5; do
+    case "$feature" in
+        'ipv6' )
+             sed -i -- 's/#prefer-ipv6: true/prefer-ipv6: true/g' ./bundles.yaml
+            ;;
+        'dvr' )
+             sed -i -- 's/#enable-dvr: true/enable-dvr: true/g' ./bundles.yaml
+             sed -i -- 's/#l2-population: true/l2-population: true/g' ./bundles.yaml
+            ;;
+        'sfc' )
+             sed -i -- 's/profile: "openvswitch-odl-Be"/profile: "openvswitch-odl-beryllium-sfc"/g' ./bundles.yaml
+            ;;
+        'vpn' )
+             sed -i -- 's/profile: "openvswitch-odl-Be"/profile: "openvswitch-odl-beryllium-vpn"/g' ./bundles.yaml
+            ;;
+        'odl_l3' )
+             sed -i -- 's/profile: "openvswitch-odl-Be"/profile: "openvswitch-odl-beryllium-l3"/g' ./bundles.yaml
+            ;;
+        'dpdk' )
+             sed -i -- 's/#dpdk_enable: true/dpdk_enable: true/g' ./bundles.yaml
+             sed -i -- 's/#hugepages: '50%'/hugepages: '50%'/g' ./bundles.yaml
+        'lxd' )
+             sed -i -- 's/#- - nova-compute:lxd/- - nova-compute:lxd/g' ./bundles.yaml
+             sed -i -- 's/#- - lxd:lxd/- - lxd:lxd/g' ./bundles.yaml
+             sed -i -- 's/#virt-type: lxd/virt-type: lxd/g' ./bundles.yaml
+             # adding the lxd subordinate charm
+             echo "    lxd:" >> ./bundles.yaml
+             echo "      charm: local:xenial/lxd" >> ./bundles.yaml
+            ;;
+    esac
+done
+
+#changing the target to the openstack release we want to deploy.
+sed -i -- "s|mitaka|$2|g" ./bundles.yaml
+
+#update source if trusty is target distribution
+case "$6" in
+    'trusty' )
+        sed -i -- "s|#source|source|g" ./bundles.yaml
         ;;
-    'dvr' )
-         sed -i -- 's/#enable-dvr: true/enable-dvr: true/g' ./bundles.yaml
-         sed -i -- 's/#l2-population: true/l2-population: true/g' ./bundles.yaml
-        ;;
-    'sfc' )
-         sed -i -- 's/profile: "openvswitch-odl-Be"/profile: "openvswitch-odl-beryllium-sfc"/g' ./bundles.yaml
-        ;;
-    'vpn' )
-         sed -i -- 's/profile: "openvswitch-odl-Be"/profile: "openvswitch-odl-beryllium-vpn"/g' ./bundles.yaml
-        ;;
-    'odl_l3' )
-         sed -i -- 's/profile: "openvswitch-odl-Be"/profile: "openvswitch-odl-beryllium-l3"/g' ./bundles.yaml
-        ;;
-    'dpdk' )
-         sed -i -- 's/#dpdk_enable: true/dpdk_enable: true/g' ./bundles.yaml
-         sed -i -- 's/#hugepages: '50%'/hugepages: '50%'/g' ./bundles.yaml
+    'xenial' )
+        #changing the target to the ubuntu distro we want to deploy.
+        sed -i -- "s|trusty|$6|g" ./bundles.yaml
         ;;
 esac
 
