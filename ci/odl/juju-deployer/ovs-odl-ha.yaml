@@ -1,4 +1,27 @@
 # vim: set ts=2 et:
+trusty-mitaka-nodes:
+  inherits: openstack-phase1
+  overrides:
+    series: trusty
+
+trusty-mitaka:
+  inherits: openstack-phase2
+  overrides:
+#    cluster_count: 3
+    #os-data-network: 10.4.8.0/21
+    #ceph-cluster-network: 10.4.0.0/21
+    #prefer-ipv6: true
+    #enable-dvr: true
+    #l2-population: true
+    #ext-port: "eth1"
+    region: Canonical
+    #source: "cloud:trusty-mitaka"
+    openstack-origin: "cloud:trusty-mitaka"
+    series: trusty
+    #ceph-osd-replication-count: 2
+    admin-role: admin
+    keystone-admin-role: admin
+
 openstack-phase1:
   series: trusty
   services:
@@ -10,23 +33,119 @@ openstack-phase1:
   relations:
     - - "ntp:juju-info"
       - "nodes:juju-info"
+
 openstack-phase2:
   inherits: openstack-phase1
+  relations:
+    - - "glance:ha"
+      - "hacluster-glance:ha"
+    - - "keystone:ha"
+      - "hacluster-keystone:ha"
+    - - "neutron-api:ha"
+      - "hacluster-neutron:ha"
+    - - "nova-cloud-controller:ha"
+      - "hacluster-nova:ha"
+    - - "openstack-dashboard:ha"
+      - "hacluster-horizon:ha"
+    - - "ceilometer:ha"
+      - "hacluster-ceilometer:ha"
+    - - "cinder:ha"
+      - "hacluster-cinder:ha"
+    - - "heat:ha"
+      - "hacluster-heat:ha"
+#    - - "ceph-radosgw:ha"
+#      - "hacluster-ceph-radosgw:ha"
+    - - "neutron-api:neutron-plugin-api-subordinate"
+      - "neutron-api-odl:neutron-plugin-api-subordinate"
+    - - "nova-compute:neutron-plugin"
+      - "openvswitch-odl:neutron-plugin"
+    - - "neutron-gateway"
+      - "openvswitch-odl"
+    - - "openvswitch-odl:ovsdb-manager"
+      - "odl-controller:ovsdb-manager"
+    - - "neutron-api-odl:odl-controller"
+      - "odl-controller:controller-api"
+    - - "keystone:shared-db"
+      - "percona-cluster:shared-db"
+    - - "nova-cloud-controller:shared-db"
+      - "percona-cluster:shared-db"
+    - - "nova-cloud-controller:amqp"
+      - "rabbitmq-server:amqp"
+    - - "nova-cloud-controller:image-service"
+      - "glance:image-service"
+    - - "nova-cloud-controller:identity-service"
+      - "keystone:identity-service"
+    - - "nova-cloud-controller:cloud-compute"
+      - "nova-compute:cloud-compute"
+    - - "nova-compute:amqp"
+      - "rabbitmq-server:amqp"
+    - - "nova-compute:image-service"
+      - "glance:image-service"
+    - - "glance:shared-db"
+      - "percona-cluster:shared-db"
+    - - "glance:identity-service"
+      - "keystone:identity-service"
+    - - "glance:amqp"
+      - "rabbitmq-server:amqp"
+    - - "openstack-dashboard:identity-service"
+      - "keystone:identity-service"
+    - - "neutron-api:shared-db"
+      - "percona-cluster:shared-db"
+    - - "neutron-api:amqp"
+      - "rabbitmq-server:amqp"
+    - - "nova-cloud-controller:neutron-api"
+      - "neutron-api:neutron-api"
+    - - "neutron-api:identity-service"
+      - "keystone:identity-service"
+    - - "neutron-gateway:amqp"
+      - "rabbitmq-server:amqp"
+    - - "neutron-gateway:neutron-plugin-api"
+      - "neutron-api:neutron-plugin-api"
+    - - "nova-cloud-controller:quantum-network-service"
+      - "neutron-gateway:quantum-network-service"
+    - - "ceilometer:amqp"
+      - "rabbitmq-server:amqp"
+    - - "ceilometer-agent:ceilometer-service"
+      - "ceilometer:ceilometer-service"
+    - - "ceilometer:identity-service"
+      - "keystone:identity-service"
+    - - "ceilometer:identity-notifications"
+      - "keystone:identity-notifications"
+    - - "ceilometer-agent:nova-ceilometer"
+      - "nova-compute:nova-ceilometer"
+    - - "ceilometer:shared-db"
+      - "mongodb:database"
+    - - "heat:shared-db"
+      - "percona-cluster:shared-db"
+    - - "heat:identity-service"
+      - "keystone:identity-service"
+    - - "heat:amqp"
+      - "rabbitmq-server:amqp"
+    - - "cinder:image-service"
+      - "glance:image-service"
+    - - "cinder:amqp"
+      - "rabbitmq-server:amqp"
+    - - "cinder:identity-service"
+      - "keystone:identity-service"
+    - - "cinder:cinder-volume-service"
+      - "nova-cloud-controller:cinder-volume-service"
+    - - "cinder-ceph:storage-backend"
+      - "cinder:storage-backend"
+    - - "ceph:client"
+      - "nova-compute:ceph"
+    - - "cinder:shared-db"
+      - "percona-cluster:shared-db"
+    - - "ceph:client"
+      - "cinder-ceph:ceph"
+    - - "ceph:client"
+      - "glance:ceph"
+    - - "ceph-osd:mon"
+      - "ceph:osd"
+    - - "ceph-radosgw:mon"
+      - "ceph:radosgw"
+    - - "ceph-radosgw:identity-service"
+      - "keystone:identity-service"
   services:
-    percona-cluster:
-      charm: "local:trusty/percona-cluster"
-      num_units: 3
-      options:
-        dataset-size: 2G
-        lp1366997-workaround: true
-        max-connections: 10000
-        root-password: 293rhc395m
-        sst-password: 127rc14t51
-        vip: 10.4.1.15
-      to:
-        - "lxc:nodes=0"
-        - "lxc:nodes=1"
-        - "lxc:nodes=2"
     hacluster-keystone:
       charm: "local:trusty/hacluster"
       options:
@@ -72,6 +191,20 @@ openstack-phase2:
 #      options:
 #        corosync_key: |
 #          'tk8U/FkH1+dNsvj6IU0C8AST7i/9ylIoCD8kWpPjB+UE2AYR7tkgkjnc4m5dzIYPYTceY7Hnb9xLJ0nlcQLYYFBRAJOg3drNTcVrfh63y9g9La1J1r51YSbOqXq1Q6RUhxP4OQBtDGE6/4NtZwuRPvPGLcI2ENiVm78l8JFkXRw='
+    percona-cluster:
+      charm: "local:trusty/percona-cluster"
+      num_units: 3
+      options:
+        dataset-size: 2G
+        lp1366997-workaround: true
+        max-connections: 10000
+        root-password: 293rhc395m
+        sst-password: 127rc14t51
+        vip: 10.4.1.15
+      to:
+        - "lxc:nodes=0"
+        - "lxc:nodes=1"
+        - "lxc:nodes=2"
     ceilometer:
       charm: "local:trusty/ceilometer"
       num_units: 3
@@ -259,135 +392,3 @@ openstack-phase2:
         security-groups: True
     openvswitch-odl:
       charm: local:trusty/openvswitch-odl
-  relations:
-    - - "glance:ha"
-      - "hacluster-glance:ha"
-    - - "keystone:ha"
-      - "hacluster-keystone:ha"
-    - - "neutron-api:ha"
-      - "hacluster-neutron:ha"
-    - - "nova-cloud-controller:ha"
-      - "hacluster-nova:ha"
-    - - "openstack-dashboard:ha"
-      - "hacluster-horizon:ha"
-    - - "ceilometer:ha"
-      - "hacluster-ceilometer:ha"
-    - - "cinder:ha"
-      - "hacluster-cinder:ha"
-    - - "heat:ha"
-      - "hacluster-heat:ha"
-#    - - "ceph-radosgw:ha"
-#      - "hacluster-ceph-radosgw:ha"
-    - - "neutron-api:neutron-plugin-api-subordinate"
-      - "neutron-api-odl:neutron-plugin-api-subordinate"
-    - - "nova-compute:neutron-plugin"
-      - "openvswitch-odl:neutron-plugin"
-    - - "neutron-gateway"
-      - "openvswitch-odl"
-    - - "openvswitch-odl:ovsdb-manager"
-      - "odl-controller:ovsdb-manager"
-    - - "neutron-api-odl:odl-controller"
-      - "odl-controller:controller-api"
-    - - "keystone:shared-db"
-      - "percona-cluster:shared-db"
-    - - "nova-cloud-controller:shared-db"
-      - "percona-cluster:shared-db"
-    - - "nova-cloud-controller:amqp"
-      - "rabbitmq-server:amqp"
-    - - "nova-cloud-controller:image-service"
-      - "glance:image-service"
-    - - "nova-cloud-controller:identity-service"
-      - "keystone:identity-service"
-    - - "nova-cloud-controller:cloud-compute"
-      - "nova-compute:cloud-compute"
-    - - "nova-compute:amqp"
-      - "rabbitmq-server:amqp"
-    - - "nova-compute:image-service"
-      - "glance:image-service"
-    - - "glance:shared-db"
-      - "percona-cluster:shared-db"
-    - - "glance:identity-service"
-      - "keystone:identity-service"
-    - - "glance:amqp"
-      - "rabbitmq-server:amqp"
-    - - "openstack-dashboard:identity-service"
-      - "keystone:identity-service"
-    - - "neutron-api:shared-db"
-      - "percona-cluster:shared-db"
-    - - "neutron-api:amqp"
-      - "rabbitmq-server:amqp"
-    - - "nova-cloud-controller:neutron-api"
-      - "neutron-api:neutron-api"
-    - - "neutron-api:identity-service"
-      - "keystone:identity-service"
-    - - "neutron-gateway:amqp"
-      - "rabbitmq-server:amqp"
-    - - "neutron-gateway:neutron-plugin-api"
-      - "neutron-api:neutron-plugin-api"
-    - - "nova-cloud-controller:quantum-network-service"
-      - "neutron-gateway:quantum-network-service"
-    - - "ceilometer:amqp"
-      - "rabbitmq-server:amqp"
-    - - "ceilometer-agent:ceilometer-service"
-      - "ceilometer:ceilometer-service"
-    - - "ceilometer:identity-service"
-      - "keystone:identity-service"
-    - - "ceilometer:identity-notifications"
-      - "keystone:identity-notifications"
-    - - "ceilometer-agent:nova-ceilometer"
-      - "nova-compute:nova-ceilometer"
-    - - "ceilometer:shared-db"
-      - "mongodb:database"
-    - - "heat:shared-db"
-      - "percona-cluster:shared-db"
-    - - "heat:identity-service"
-      - "keystone:identity-service"
-    - - "heat:amqp"
-      - "rabbitmq-server:amqp"
-    - - "cinder:image-service"
-      - "glance:image-service"
-    - - "cinder:amqp"
-      - "rabbitmq-server:amqp"
-    - - "cinder:identity-service"
-      - "keystone:identity-service"
-    - - "cinder:cinder-volume-service"
-      - "nova-cloud-controller:cinder-volume-service"
-    - - "cinder-ceph:storage-backend"
-      - "cinder:storage-backend"
-    - - "ceph:client"
-      - "nova-compute:ceph"
-    - - "cinder:shared-db"
-      - "percona-cluster:shared-db"
-    - - "ceph:client"
-      - "cinder-ceph:ceph"
-    - - "ceph:client"
-      - "glance:ceph"
-    - - "ceph-osd:mon"
-      - "ceph:osd"
-    - - "ceph-radosgw:mon"
-      - "ceph:radosgw"
-    - - "ceph-radosgw:identity-service"
-      - "keystone:identity-service"
-
-trusty-mitaka-nodes:
-  inherits: openstack-phase1
-  overrides:
-    series: trusty
-
-trusty-mitaka:
-  inherits: openstack-phase2
-  overrides:
-#    cluster_count: 3
-    #os-data-network: 10.4.8.0/21
-    #ceph-cluster-network: 10.4.0.0/21
-    #prefer-ipv6: true
-    #enable-dvr: true
-    #l2-population: true
-    #ext-port: "eth1"
-    region: Canonical
-    #source: "cloud:trusty-mitaka"
-    openstack-origin: "cloud:trusty-mitaka"
-    series: trusty
-    #ceph-osd-replication-count: 2
-    admin-role: admin
-    keystone-admin-role: admin
