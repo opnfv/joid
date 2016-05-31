@@ -26,3 +26,4 @@ git clone https://github.com/openstack/charm-nova-compute.git $distro/nova-compu
 git clone https://github.com/openstack/charm-openstack-dashboard.git $distro/openstack-dashboard
 git clone https://github.com/openstack/charm-rabbitmq-server.git $distro/rabbitmq-server
 git clone https://github.com/openstack/charm-heat.git $distro/heat
+git clone https://github.com/openstack/charm-lxd.git xenial/lxd

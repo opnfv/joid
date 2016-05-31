@@ -132,11 +132,12 @@ for feature in $5; do
              sed -i -- 's/profile: "openvswitch-odl-Be"/profile: "openvswitch-odl-beryllium-l3"/g' ./bundles.yaml
             ;;
         'dpdk' )
-             sed -i -- 's/#dpdk_enable: true/dpdk_enable: true/g' ./bundles.yaml
-             sed -i -- 's/#hugepages: '50%'/hugepages: '50%'/g' ./bundles.yaml
+             sed -i -- 's/#enable-dpdk: true/enable-dpdk: true/g' ./bundles.yaml
+             sed -i -- 's/#hugepages: "50%"/hugepages: "50%"/g' ./bundles.yaml
+            ;;
         'lxd' )
              sed -i -- 's/#- - nova-compute:lxd/- - nova-compute:lxd/g' ./bundles.yaml
-             sed -i -- 's/#- - lxd:lxd/- - lxd:lxd/g' ./bundles.yaml
+             sed -i -- 's/#- lxd:lxd/- lxd:lxd/g' ./bundles.yaml
              sed -i -- 's/#virt-type: lxd/virt-type: lxd/g' ./bundles.yaml
              # adding the lxd subordinate charm
              echo "    lxd:" >> ./bundles.yaml
