@@ -143,7 +143,7 @@ case "$5" in
     'odl_l3' )
          sed -i -- 's/profile: "openvswitch-odl-Be"/profile: "openvswitch-odl-beryllium-l3"/g' ./bundles.yaml
         ;;
-    'dpdk; )
+    'dpdk' )
          sed -i -- 's/#dpdk_enable: true/dpdk_enable: true/g' ./bundles.yaml
          sed -i -- 's/#hugepages: '50%'/hugepages: '50%'/g' ./bundles.yaml
         ;;
