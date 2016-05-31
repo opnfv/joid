@@ -113,6 +113,9 @@ case "$3" in
         ;;
 esac
 
+# lets put the if seperateor as "," as this will save me from world.
+IFS=","
+
 for feature in $5; do
     case "$feature" in
         'ipv6' )

@@ -26,7 +26,7 @@ usage() { echo "Usage: $0 [-s <nosdn|odl|opencontrail>]
                          [-t <nonha|ha|tip>] 
                          [-o <juno|liberty>]
                          [-l <default|intelpod5>]
-                         [-f <ipv6|l2|l3|dvr>]
+                         [-f <ipv6|dpdk|lxd|dvr>]
                          [-d <trusty|xenial>]
                          [-a <amd64>]
                          [-r <a|b>]" 1>&2 exit 1; } 

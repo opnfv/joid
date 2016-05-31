@@ -126,6 +126,8 @@ openstack-phase2:
       - "ceph:radosgw"
     - - "ceph-radosgw:identity-service"
       - "keystone:identity-service"
+    #- - nova-compute:lxd
+      #- lxd:lxd
   services:
     mysql:
       charm: "local:trusty/percona-cluster"
@@ -214,6 +216,8 @@ openstack-phase2:
         enable-resize: true
         manage-neutron-plugin-legacy-mode: false
         migration-auth-type: ssh
+        #virt-type: lxd
+        #hugepages: "50%"
       to:
         - "nodes=1"
     nova-cloud-controller:
