@@ -1,83 +1,86 @@
-labconfig:
-    lab_location: intelpod5
-    labsettings:
-        upstream_dns: 8.8.8.8
+lab:
+  location: intel
+  racks:
+  - rack: pod5
     nodes:
-        - name: rack-5-m1
-          architecture: x86_64
-          roles: [compute,network,storage]
-          nics:
-              - ifname: eth1
-                spaces: [admin]
-                mac: ["00:1E:67:CF:BB:54"]
-              - ifname: eth4
-                spaces: [data]
-                mac: ["90:E2:BA:85:4E:2C"]
-          power:
-              type: ipmi
-              address: 10.2.117.81
-              user: root
-              pass: root
-        - name: rack-5-m2
-          architecture: x86_64
-          roles: [compute,network,storage]
-          nics:
-              - ifname: eth1
-                spaces: [admin]
-                mac: ["00:1E:67:CF:B8:93"]
-              - ifname: eth4
-                spaces: [data]
-                mac: ["90:E2:BA:84:08:B8"]
-          power:
-              type: ipmi
-              address: 10.2.117.82
-              user: root
-              pass: root
-        - name: rack-5-m3
-          architecture: x86_64
-          roles: [compute,network,storage]
-          nics:
-              - ifname: eth1
-                spaces: [admin]
-                mac: ["00:1E:67:E0:08:7F"]
-              - ifname: eth4
-                spaces: [data]
-                mac: ["90:E2:BA:84:07:0D"]
-          power:
-              type: ipmi
-              address: 10.2.117.83
-              user: root
-              pass: root
-        - name: rack-5-m4
-          architecture: x86_64
-          roles: [compute,network,storage]
-          nics:
-              - ifname: eth1
-                spaces: [admin]
-                mac: ["00:1E:67:E0:08:B1"]
-              - ifname: eth4
-                spaces: [data]
-                mac: ["90:E2:BA:83:FD:80"]
-          power:
-              type: ipmi
-              address: 10.2.117.84
-              user: root
-              pass: root
-        - name: rack-5-m5
-          architecture: x86_64
-          roles: [compute,network,storage]
-          nics:
-              - ifname: eth1
-                spaces: [admin]
-                mac: ["00:1E:67:E0:0A:4B"]
-              - ifname: eth4
-                spaces: [data]
-                mac: ["90:E2:BA:75:22:74"]
-          power:
-              type: ipmi
-              address: 10.2.117.85
-              user: root
-              pass: root
+    - name: rack-5-m1
+      architecture: x86_64
+      roles: [network,control]
+      nics:
+      - ifname: eth1
+        spaces: [admin]
+        mac: ["00:1E:67:CF:BB:54"]
+      - ifname: eth4
+        spaces: [data]
+        mac: ["90:E2:BA:85:4E:2C"]
+      power:
+        type: ipmi
+        address: 10.2.117.81
+        user: root
+        pass: root
+    - name: rack-5-m2
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: eth1
+        spaces: [admin]
+        mac: ["00:1E:67:CF:B8:93"]
+      - ifname: eth4
+         spaces: [data]
+         mac: ["90:E2:BA:84:08:B8"]
+      power:
+        type: ipmi
+        address: 10.2.117.82
+        user: root
+        pass: root
+    - name: rack-5-m3
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: eth1
+        spaces: [admin]
+        mac: ["00:1E:67:E0:08:7F"]
+      - ifname: eth4
+        spaces: [data]
+        mac: ["90:E2:BA:84:07:0D"]
+      power:
+        type: ipmi
+        address: 10.2.117.83
+        user: root
+        pass: root
+    - name: rack-5-m4
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: eth1
+        spaces: [admin]
+        mac: ["00:1E:67:E0:08:B1"]
+      - ifname: eth4
+        spaces: [data]
+        mac: ["90:E2:BA:83:FD:80"]
+      power:
+        type: ipmi
+        address: 10.2.117.84
+        user: root
+        pass: root
+    - name: rack-5-m5
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: eth1
+        spaces: [admin]
+        mac: ["00:1E:67:E0:0A:4B"]
+      - ifname: eth4
+        spaces: [data]
+        mac: ["90:E2:BA:75:22:74"]
+      power:
+        type: ipmi
+        address: 10.2.117.85
+        user: root
+        pass: root
+    floating-ip-range: 10.5.15.6,10.5.15.250,10.5.15.254,10.5.15.0/24
+    ext-port: "90:E2:BA:85:4E:2D"
+    dns: 8.8.8.8
 opnfv:
     release: c
     distro: trusty
@@ -88,9 +91,7 @@ opnfv:
     storage:
     - type: ceph
       disk: /srv
-    floating-ip-range:
     feature: odl_l2
-    ext-port: eth5
     spaces:
     - type: admin
       bridge: brAdm

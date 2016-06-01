@@ -58,10 +58,13 @@ opnfvcfg['demo-maas']['maas']['apt_sources'].append("ppa:juju/stable")
 
 # lets modify the maas general settings:
 
-updns = getFromDict(labcfg, ["labconfig","labsettings","upstream_dns"])
+updns = getFromDict(labcfg, ["lab","racks",0,"dns"])
 opnfvcfg["demo-maas"]["maas"]["settings"]["upstream_dns"]=updns
 
-value = getFromDict(labcfg, ["labconfig","lab_location"])
+location = getFromDict(labcfg, ["lab","location"])
+rack = getFromDict(labcfg, ["lab","racks",0,"rack"])
+value=location+rack
+
 opnfvcfg["demo-maas"]["maas"]["settings"]["maas_name"]=value
 opnfvcfg["demo-maas"]["maas"]["name"]="opnfv-"+value
 
@@ -142,7 +145,7 @@ value = "qemu+ssh://"+getpass.getuser()+"@"+value+"/system"
 opnfvcfg['demo-maas']['maas']['virsh']['uri']=value
 opnfvcfg['demo-maas']['maas']['network_config']=ethbrAdm
 
-if len(labcfg["labconfig"]["nodes"]) < 1:
+if len(labcfg["lab"]["racks"][0]["nodes"]) < 1:
     print("looks like virtual deployment where nodes were not defined")
     opnfvcfg["demo-maas"]["maas"]["nodes"].remove()
     exit()
@@ -150,27 +153,27 @@ if len(labcfg["labconfig"]["nodes"]) < 1:
 #lets insert the node details here:
 c=0
 #
-while c < len(labcfg["labconfig"]["nodes"]):
+while c < len(labcfg["lab"]["racks"][0]["nodes"]):
     valuemac=[]
     y = 0
     # setup value of name and tags accordigly
-    noderoleslist = labcfg["labconfig"]["nodes"][c]["roles"]
+    noderoleslist = labcfg["lab"]["racks"][0]["nodes"][c]["roles"]
     noderoles = " ".join(noderoleslist)
 
-    valuetype = getFromDict(labcfg, ["labconfig","nodes",c, "power", "type"])
-    namevalue = labcfg["labconfig"]["nodes"][c]["name"]
-    valuearc = getFromDict(labcfg, ["labconfig","nodes",c, "architecture"])
+    valuetype = getFromDict(labcfg, ["lab","racks",0,"nodes",c, "power", "type"])
+    namevalue = labcfg["lab"]["racks"][0]["nodes"][c]["name"]
+    valuearc = getFromDict(labcfg, ["lab","racks",0,"nodes",c, "architecture"])
     # setup value of architecture
     if valuearc == "x86_64":
         valuearc="amd64/generic"
 
     if valuetype == "wakeonlan":
-        macvalue = getFromDict(labcfg, ["labconfig","nodes",c, "power", "mac_address"])
+        macvalue = getFromDict(labcfg, ["lab","racks",0,"nodes",c, "power", "mac_address"])
         power={"type": "ether_wake", "mac_address": macvalue}
     if valuetype == "ipmi":
-        valueaddr = getFromDict(labcfg, ["labconfig","nodes",c, "power", "address"])
-        valueuser = getFromDict(labcfg, ["labconfig","nodes",c, "power", "user"])
-        valuepass = getFromDict(labcfg, ["labconfig","nodes",c, "power", "pass"])
+        valueaddr = getFromDict(labcfg, ["lab","racks",0,"nodes",c, "power", "address"])
+        valueuser = getFromDict(labcfg, ["lab","racks",0,"nodes",c, "power", "user"])
+        valuepass = getFromDict(labcfg, ["lab","racks",0,"nodes",c, "power", "pass"])
         valuedriver = "LAN_2_0"
         power={"type": valuetype, "address": valueaddr,"user": valueuser,\
                "pass": valuepass, "driver": valuedriver}
@@ -179,10 +182,10 @@ while c < len(labcfg["labconfig"]["nodes"]):
              "architecture":valuearc,"interfaces":[],"mac_addresses":[],\
              "power":power,'tags':noderoles})
     y = 0
-    while y < len(labcfg["labconfig"]["nodes"][c]["nics"]):
-        valueifname = labcfg["labconfig"]["nodes"][c]["nics"][y]["ifname"]
-        valueifmac = labcfg["labconfig"]["nodes"][c]["nics"][y]["mac"][0]
-        valuemac += labcfg["labconfig"]["nodes"][c]["nics"][y]["mac"]
+    while y < len(labcfg["lab"]["racks"][0]["nodes"][c]["nics"]):
+        valueifname = labcfg["lab"]["racks"][0]["nodes"][c]["nics"][y]["ifname"]
+        valueifmac = labcfg["lab"]["racks"][0]["nodes"][c]["nics"][y]["mac"][0]
+        valuemac += labcfg["lab"]["racks"][0]["nodes"][c]["nics"][y]["mac"]
         opnfvcfg["demo-maas"]["maas"]["nodes"][c]["interfaces"]\
                  .append({"name":valueifname,"mac_address":valueifmac,"mode": "auto"})
 
