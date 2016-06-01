@@ -20,7 +20,7 @@ lab:
         type: ipmi
         address: 192.168.1.11
         user: Administrator
-        pass: pod2Admin
+        pass: pod1Admin
     - name: rack-1-m2
       architecture: x86_64
       roles: [control,network]
@@ -38,7 +38,7 @@ lab:
         type: ipmi
         address: 192.168.1.12
         user: Administrator
-        pass: pod2Admin:
+        pass: pod1Admin:
     - name: rack-1-m3
       architecture: x86_64
       roles: [compute,control,storage]
@@ -56,7 +56,7 @@ lab:
         type: ipmi
         address: 192.168.1.13
         user: Administrator
-        pass: pod2Admin
+        pass: pod1Admin
     - name: rack-1-m4
       architecture: x86_64
       roles: [compute,storage]
@@ -74,7 +74,7 @@ lab:
         type: ipmi
         address: 192.168.1.14
         user: Administrator
-        pass: pod2Admin
+        pass: pod1Admin
     - name: rack-1-m5
       architecture: x86_64
       roles: [network]
@@ -92,7 +92,7 @@ lab:
         type: ipmi
         address: 192.168.1.15
         user: Administrator
-        pass: pod2Admin
+        pass: pod1Admin
     floating-ip-range: 161.105.231.2,161.105.231.62,161.105.231.1,161.105.231.0/26
     ext-port: "68:b5:99:75:05:60"
     dns: 192.168.1.1
