@@ -112,5 +112,5 @@ opnfv:
       bridge: brExt
       cidr:
       gateway:
-      ipaddress: 10.2.117.86
+      ipaddress: 10.2.117.92
       vlan:
