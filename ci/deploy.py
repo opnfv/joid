@@ -52,9 +52,10 @@ opnfvcfg['demo-maas']={'juju-bootstrap':{'memory': 4096,'name': "bootstrap",\
                               }\
                       }
 
+opnfvcfg['opnfv']={'ext-port':'','floating-ip-range':'','dataNetwork':''}
 
-opnfvcfg['demo-maas']['maas']['apt_sources'].append("ppa:maas/stable") 
-opnfvcfg['demo-maas']['maas']['apt_sources'].append("ppa:juju/stable") 
+opnfvcfg['demo-maas']['maas']['apt_sources'].append("ppa:maas/stable")
+opnfvcfg['demo-maas']['maas']['apt_sources'].append("ppa:juju/stable")
 
 # lets modify the maas general settings:
 
@@ -84,6 +85,7 @@ while c < len(labcfg["opnfv"]["spaces"]):
         ethbrAdmin = getFromDict(labcfg, ["opnfv","spaces",c,"bridge"])
         brgway = getFromDict(labcfg, ["opnfv","spaces",c,"gateway"])
         tmpcidr = brcidr[:-4]
+        opnfvcfg["opnfv"]["admNetwork"]=tmpcidr+"2"
 
         nodegroup={"device": "eth"+str(y), "ip": tmpcidr+"5","subnet_mask": "255.255.255.0", \
                    "broadcast_ip": tmpcidr+"255", "router_ip": brgway,\
@@ -136,6 +138,8 @@ while c < len(labcfg["opnfv"]["spaces"]):
                         '    address '+ipaddress+'\n'
                         '    netmask 255.255.255.0\n')
             opnfvcfg["demo-maas"]["juju-bootstrap"]["interfaces"].append("bridge="+brname+",model=virtio")
+        if brtype == "data":
+            opnfvcfg["opnfv"]["dataNetwork"]=brcidr
 
     c=c+1
 
@@ -195,6 +199,9 @@ while c < len(labcfg["lab"]["racks"][0]["nodes"]):
        opnfvcfg["demo-maas"]["maas"]["nodes"][c]['mac_addresses']=valuemac
 
     c=c+1
+
+opnfvcfg["opnfv"]["floating-ip-range"]=labcfg["lab"]["racks"][0]["floating-ip-range"]
+opnfvcfg["opnfv"]["ext-port"]=labcfg["lab"]["racks"][0]["ext-port"]
 
 with open('deployment.yaml', 'wa') as opnfvf:
    yaml.dump(opnfvcfg, opnfvf, default_flow_style=False)

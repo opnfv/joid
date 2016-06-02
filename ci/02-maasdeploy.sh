@@ -14,8 +14,6 @@ sudo apt-get update -y
 sudo apt-get dist-upgrade -y
 sudo apt-get install openssh-server git maas-deployer juju juju-deployer maas-cli python-pip python-openstackclient gsutil -y
 
-cp maas/deployment.yaml ./deployment.yaml
-
 #first parameter should be custom and second should be either 
 # absolute location of file (including file name) or url of the 
 # file to download.
@@ -40,7 +38,7 @@ if [ "$1" == "custom" ]; then
         cp ../labconfig/default/deployment.yaml ./
         cp ../labconfig/default/labconfig.yaml ./
     fi
-    labname=`grep "lab_location" labconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+    labname=`grep "maas_name" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
 else
     case "$1" in
         'intelpod5' )
@@ -180,12 +178,11 @@ crnodevlanint() {
      done
  }
 
-#convert labconfig file to deployment.yaml to consume by MAAS.
-#python deploy.py
-
 #just make sure the ssh keys added into maas for the current user
 sed --i "s@/home/ubuntu@$HOME@g" ./deployment.yaml
 sed --i "s@qemu+ssh://ubuntu@qemu+ssh://$USER@g" ./deployment.yaml
+
+cp ./deployment.yaml ~/.juju/
 
 sudo maas-deployer -c deployment.yaml -d --force
 
