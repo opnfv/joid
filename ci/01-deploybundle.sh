@@ -33,23 +33,18 @@ esac
 if [ -e ~/.juju/deployment.yaml ]; then
    extport=`grep "ext-port" deployment.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
    sed --i "s@#ext-port: \"eth1\"@ext-port: \"$extport\"@g" ./bundles.yaml
+
    datanet=`grep "dataNetwork" deployment.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
    sed --i "s@#os-data-network: 10.4.8.0/21@os-data-network: $datanet@g" ./bundles.yaml
+
    admnet=`grep "admNetwork" deployment.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
    sed --i "s@10.4.1.1@$admnet@g" ./bundles.yaml
+
+   cephdisk=`grep "disk" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+   sed --i "s@osd-devices: /srv@osd-devices: $cephdisk@g" ./bundles.yaml
 fi
 
 case "$3" in
-     'intelpod9' )
-        # As per your lab vip address list be deafult uses 10.9.1.11 - 10.9.1.20
-         sed -i -- 's/10.4.1.1/10.9.1.2/g' ./bundles.yaml
-        # choose the correct interface to use for data network
-         sed -i -- 's/#os-data-network: 10.4.8.0\/21/os-data-network: 10.9.12.0\/24/g' ./bundles.yaml
-        # Choose the external port to go out from gateway to use.
-         sed -i -- 's/#ext-port: "eth1"/ext-port: "eth1.905"/g' ./bundles.yaml
-        # Provide the gateway MAC to route the traffic externally.
-         sed -i -- 's/#gateway-mac: "default"/gateway-mac: "default"/g' ./bundles.yaml
-         ;;
      'attvirpod1' )
         # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
          sed -i -- 's/10.4.1.1/192.168.10.1/g' ./bundles.yaml
@@ -72,10 +67,6 @@ case "$3" in
          ;;
      'ravellodemopod' )
          sed -i -- 's/#ext-port: "eth1"/ext-port: "eth2"/g' ./bundles.yaml
-        ;;
-     'custom' )
-         sed -i -- 's/10.4.1.1/192.168.122.1/g' ./bundles.yaml
-         sed -i -- 's/#ext-port: "eth1"/ext-port: "eth1"/g' ./bundles.yaml
         ;;
      'default' )
          sed -i -- 's/10.4.1.1/192.168.122.1/g' ./bundles.yaml

@@ -64,7 +64,7 @@ opnfv:
     release: c
     distro: trusty
     type: nonha
-    openstack: liberty
+    openstack: mitaka
     sdncontroller:
     - type: nosdn
     storage:

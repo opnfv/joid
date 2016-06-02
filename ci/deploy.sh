@@ -7,9 +7,9 @@ set -ex
 
 opnfvsdn=nosdn
 opnfvtype=nonha
-openstack=liberty
+openstack=mitaka
 opnfvlab=default
-opnfvrel=b
+opnfvrel=c
 opnfvfeature=odl_l2
 opnfvdistro=trusty
 opnfvarch=amd64
@@ -26,7 +26,7 @@ usage() { echo "Usage: $0 [-s <nosdn|odl|opencontrail>]
                          [-t <nonha|ha|tip>] 
                          [-o <juno|liberty>]
                          [-l <default|intelpod5>]
-                         [-f <ipv6|dpdk|lxd|dvr>]
+                         [-f <ipv6,dpdk,lxd,dvr>]
                          [-d <trusty|xenial>]
                          [-a <amd64>]
                          [-r <a|b>]" 1>&2 exit 1; } 

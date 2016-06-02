@@ -52,7 +52,7 @@ opnfvcfg['demo-maas']={'juju-bootstrap':{'memory': 4096,'name': "bootstrap",\
                               }\
                       }
 
-opnfvcfg['opnfv']={'ext-port':'','floating-ip-range':'','dataNetwork':''}
+opnfvcfg['opnfv']={'ext-port':'','floating-ip-range':'','dataNetwork':'','ceph-disk':'/srv/'}
 
 opnfvcfg['demo-maas']['maas']['apt_sources'].append("ppa:maas/stable")
 opnfvcfg['demo-maas']['maas']['apt_sources'].append("ppa:juju/stable")
@@ -202,6 +202,7 @@ while c < len(labcfg["lab"]["racks"][0]["nodes"]):
 
 opnfvcfg["opnfv"]["floating-ip-range"]=labcfg["lab"]["racks"][0]["floating-ip-range"]
 opnfvcfg["opnfv"]["ext-port"]=labcfg["lab"]["racks"][0]["ext-port"]
+opnfvcfg["opnfv"]["ceph-disk"]=labcfg["opnfv"]["storage"][0]["disk"]
 
 with open('deployment.yaml', 'wa') as opnfvf:
    yaml.dump(opnfvcfg, opnfvf, default_flow_style=False)
