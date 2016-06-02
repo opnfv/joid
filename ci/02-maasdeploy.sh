@@ -183,6 +183,7 @@ sed --i "s@/home/ubuntu@$HOME@g" ./deployment.yaml
 sed --i "s@qemu+ssh://ubuntu@qemu+ssh://$USER@g" ./deployment.yaml
 
 cp ./deployment.yaml ~/.juju/
+cp ./deployconfig.yaml ~/.juju/
 
 sudo maas-deployer -c deployment.yaml -d --force
 

@@ -31,16 +31,20 @@ esac
 
 #read the value from deployment.yaml
 if [ -e ~/.juju/deployment.yaml ]; then
-   extport=`grep "ext-port" deployment.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+
+   cp ~/.juju/deployment.yaml ./deployment.yaml
+   cp ~/.juju/deployconfig.yaml ./deployconfig.yaml
+
+   extport=`grep "ext-port" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
    sed --i "s@#ext-port: \"eth1\"@ext-port: \"$extport\"@g" ./bundles.yaml
 
-   datanet=`grep "dataNetwork" deployment.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+   datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
    sed --i "s@#os-data-network: 10.4.8.0/21@os-data-network: $datanet@g" ./bundles.yaml
 
-   admnet=`grep "admNetwork" deployment.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+   admnet=`grep "admNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
    sed --i "s@10.4.1.1@$admnet@g" ./bundles.yaml
 
-   cephdisk=`grep "disk" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+   cephdisk=`grep "disk" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
    sed --i "s@osd-devices: /srv@osd-devices: $cephdisk@g" ./bundles.yaml
 fi
 

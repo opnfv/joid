@@ -26,8 +26,8 @@ lab:
         spaces: [admin]
         mac: ["00:1E:67:CF:B8:93"]
       - ifname: eth4
-         spaces: [data]
-         mac: ["90:E2:BA:84:08:B8"]
+        spaces: [data]
+        mac: ["90:E2:BA:84:08:B8"]
       power:
         type: ipmi
         address: 10.2.117.82

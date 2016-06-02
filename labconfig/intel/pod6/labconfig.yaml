@@ -90,7 +90,7 @@ opnfv:
   - type: nosdn
   storage:
   - type: ceph
-  disk: /srv
+    disk: /srv
   feature: odl_l2
   spaces:
   - type: admin
