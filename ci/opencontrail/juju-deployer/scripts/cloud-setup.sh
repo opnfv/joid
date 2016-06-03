@@ -27,3 +27,7 @@ neutron security-group-rule-create --direction ingress --ethertype IPv4 --protoc
 
 # import key pair
 nova keypair-add --pub-key id_rsa.pub ubuntu-keypair
+
+#http://docs.openstack.org/juno/install-guide/install/apt/content/launch-instance-neutron.html
+# nova boot --flavor m1.small --image cirros-0.3.3-x86_64 --nic net-id=b65479a4-3638-4595-9245-6e41ccd8bfd8 --security-group default --key-name ubuntu-keypair demo-instance1
+# nova floating-ip-associate demo-instance1 10.5.8.35

@@ -61,7 +61,7 @@ demo-maas:
 
         # Defines the IP Address that the configuration script will use to
         # to access the MAAS controller via SSH.
-        ip_address: 192.168.122.2
+        ip_address: 192.168.122.5
 
         # This section allows the user to set a series of options on the
         # MAAS server itself. The list of config options can be found in
@@ -91,7 +91,7 @@ demo-maas:
 
             auto eth0
             iface eth0 inet static
-              address 192.168.122.2
+              address 192.168.122.5
               netmask 255.255.255.0
               network 192.168.122.0
               broadcast 192.168.122.255
@@ -120,11 +120,11 @@ demo-maas:
               broadcast_ip: 192.168.122.255
               router_ip: 192.168.122.1
               static_range:
-                  low: 192.168.122.101
-                  high: 192.168.122.200
+                  low: 192.168.122.50
+                  high: 192.168.122.80
               dynamic_range:
-                  low: 192.168.122.25
-                  high: 192.168.122.100
+                  low: 192.168.122.81
+                  high: 192.168.122.250
 
         # Physical nodes to be added to the MAAS cluster. Nodes will be
         # configured, commissioned and put into the Ready state so

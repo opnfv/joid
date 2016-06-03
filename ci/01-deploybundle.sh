@@ -33,19 +33,22 @@ esac
 if [ -e ~/.juju/deployment.yaml ]; then
 
    cp ~/.juju/deployment.yaml ./deployment.yaml
-   cp ~/.juju/deployconfig.yaml ./deployconfig.yaml
 
-   extport=`grep "ext-port" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-   sed --i "s@#ext-port: \"eth1\"@ext-port: \"$extport\"@g" ./bundles.yaml
+   if [ -e ~/.juju/deployment.yaml ]; then
+      cp ~/.juju/deployconfig.yaml ./deployconfig.yaml
 
-   datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-   sed --i "s@#os-data-network: 10.4.8.0/21@os-data-network: $datanet@g" ./bundles.yaml
+      extport=`grep "ext-port" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+      sed --i "s@#ext-port: \"eth1\"@ext-port: \"$extport\"@g" ./bundles.yaml
 
-   admnet=`grep "admNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-   sed --i "s@10.4.1.1@$admnet@g" ./bundles.yaml
+      datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+      sed --i "s@#os-data-network: 10.4.8.0/21@os-data-network: $datanet@g" ./bundles.yaml
 
-   cephdisk=`grep "disk" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
-   sed --i "s@osd-devices: /srv@osd-devices: $cephdisk@g" ./bundles.yaml
+      admnet=`grep "admNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+      sed --i "s@10.4.1.1@$admnet@g" ./bundles.yaml
+
+      cephdisk=`grep "disk" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+      sed --i "s@osd-devices: /srv@osd-devices: $cephdisk@g" ./bundles.yaml
+   fi
 fi
 
 case "$3" in
