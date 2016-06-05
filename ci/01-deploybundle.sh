@@ -37,7 +37,7 @@ if [ -e ~/.juju/deployment.yaml ]; then
    if [ -e ~/.juju/deployment.yaml ]; then
       cp ~/.juju/deployconfig.yaml ./deployconfig.yaml
 
-      extport=`grep "ext-port" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+      extport=`grep "ext-port" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
       sed --i "s@#ext-port: \"eth1\"@ext-port: \"$extport\"@g" ./bundles.yaml
 
       datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
