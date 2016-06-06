@@ -67,7 +67,9 @@ else
             python deploy.py
             ;;
         'attvirpod1' )
-            cp maas/att/virpod1/deployment.yaml ./deployment.yaml
+            cp ../labconfig/att/virpod1/labconfig.yaml ./
+            #to be removed later once converted for all labs.
+            python deploy.py
             ;;
         'juniperpod1' )
             cp maas/juniper/pod1/deployment.yaml ./deployment.yaml
@@ -269,7 +271,7 @@ case "$labname" in
         enableautomode eth3 AUTO "192.168.12.0/24" || true
         ;;
     'attvirpod1' )
-        enableautomodebyname eth1 AUTO "192.168.10.0/24" control || true
+        enableautomode eth1 AUTO "192.168.10.0/24" || true
         ;;
     'juniperpod1' )
         ;;

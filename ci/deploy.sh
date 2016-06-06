@@ -189,6 +189,10 @@ echo "...... deployment started ......"
 #deploy_dep
 deploy
 check_status
+
+#create the basic dayta for verification of stack.
+./openstack.sh
+
 echo "...... deployment finished  ......."
 
 echo "...... creating OpenRc file for consuming by various user ......."

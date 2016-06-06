@@ -13,7 +13,6 @@ trusty-mitaka:
     #prefer-ipv6: true
     #enable-dvr: true
     #l2-population: true
-    #ext-port: "eth1"
     region: Canonical
     #source: "cloud:trusty-mitaka"
     openstack-origin: "cloud:trusty-mitaka"

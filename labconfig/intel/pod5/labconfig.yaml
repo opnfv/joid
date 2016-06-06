@@ -79,7 +79,7 @@ lab:
         user: root
         pass: root
     floating-ip-range: 10.5.15.6,10.5.15.250,10.5.15.254,10.5.15.0/24
-    ext-port: "90:E2:BA:85:4E:2D,90:E2:BA:84:08:B9,90:E2:BA:84:07:0E,90:E2:BA:83:FD:81,90:E2:BA:75:22:75"
+    ext-port: "eth5"
     dns: 8.8.8.8
 opnfv:
     release: c

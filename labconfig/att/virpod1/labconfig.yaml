@@ -1,0 +1,45 @@
+lab:
+  location: att
+  racks:
+  - rack: virpod1
+    nodes:
+    - name: rack-1-m1
+      architecture: x86_64
+      roles: [network,control]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["00:1e:67:d8:ba:46"]
+      power:
+        type: wakeonlan
+        mac_address: 00:1e:67:d8:ba:46
+    - name: rack-1-m2
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["00:1e:67:e0:0b:72"]
+      power:
+        type: wakeonlan
+        mac_address: 00:1e:67:e0:0b:72
+    floating-ip-range: 192.168.10.6,192.168.10.49,192.168.10.1,192.168.10.0/24
+    ext-port: "90:E2:BA:83:FD:21,90:E2:BA:75:30:F5"
+    dns: 8.8.8.8
+opnfv:
+  release: c
+  distro: trusty
+  type: nonha
+  openstack: mitaka
+  sdncontroller:
+  - type: nosdn
+  storage:
+  - type: ceph
+    disk: /srv
+  feature: odl_l2
+  spaces:
+  - type: admin
+    bridge: brAdm
+    cidr: 192.168.10.0/24
+    gateway: 192.168.10.1
+    vlan:

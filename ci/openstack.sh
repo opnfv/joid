@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/bash -ex
 
 ##############################################################################
 # All rights reserved. This program and the accompanying materials
@@ -63,15 +63,17 @@ keystone user-create --name demo --tenant demo --pass demo --email demo@demo.dem
 nova keypair-add --pub-key ~/.ssh/id_rsa.pub ubuntu-keypair
 
 # configure external network
-neutron net-create ext-net --router:external --provider:physical_network external --provider:network_type flat
+neutron net-create ext-net --shared --router:external --provider:physical_network external --provider:network_type flat
 
 ##
 ## Parse Network config
 ##
 
 EXTERNAL_NETWORK=`grep floating-ip-range deployconfig.yaml | cut -d ' ' -f 4 `
+
 # split EXTERNAL_NETWORK=first ip;last ip; gateway;network
-IFS=',' read -r -a EXTNET <<< "$EXTERNAL_NETWORK"
+
+EXTNET=(${EXTERNAL_NETWORK//,/ })
 
 EXTNET_FIP=${EXTNET[0]}
 EXTNET_LIP=${EXTNET[1]}
@@ -94,7 +96,7 @@ neutron router-gateway-set demo-router ext-net
 
 # create pool of floating ips
 i=0
-while [ $i -ne 10 ]; do
+while [ $i -ne 5 ]; do
 	neutron floatingip-create ext-net
 	i=$((i + 1))
 done

@@ -41,7 +41,9 @@ if [ -e ~/.juju/deployment.yaml ]; then
       sed --i "s@#ext-port: \"eth1\"@ext-port: \"$extport\"@g" ./bundles.yaml
 
       datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-      sed --i "s@#os-data-network: 10.4.8.0/21@os-data-network: $datanet@g" ./bundles.yaml
+      if [ -z "$datanet" ]
+          sed --i "s@#os-data-network: 10.4.8.0/21@os-data-network: $datanet@g" ./bundles.yaml
+      fi
 
       admnet=`grep "admNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
       sed --i "s@10.4.1.1@$admnet@g" ./bundles.yaml
@@ -52,12 +54,6 @@ if [ -e ~/.juju/deployment.yaml ]; then
 fi
 
 case "$3" in
-     'attvirpod1' )
-        # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
-         sed -i -- 's/10.4.1.1/192.168.10.1/g' ./bundles.yaml
-        # Choose the external port to go out from gateway to use.
-         sed -i -- 's/#ext-port: "eth1"/ext-port: "eth1"/g' ./bundles.yaml
-        ;;
      'cengnlynxpod1' )
         # Chose the hard drive(s) to use for CEPH OSD
          sed -i -- 's|osd-devices: /srv|osd-devices: /dev/sdb|g' ./bundles.yaml
@@ -134,4 +130,3 @@ esac
 echo "... Deployment Started ...."
     juju-deployer -vW -d -t 3600 -c bundles.yaml $6-"$2"-nodes
     juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $6-"$2"
-
