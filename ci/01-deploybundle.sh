@@ -42,8 +42,8 @@ if [ -e ~/.juju/deployment.yaml ]; then
 
       datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
 
-      if [ -z "$datanet" ]; then
-          sed --i "s@#os-data-network: 10.4.8.0/21@os-data-network: $datanet@g" ./bundles.yaml
+      if [ "$datanet" != "''" ]; then
+          sed -i -- "s@#os-data-network: 10.4.8.0/21@os-data-network: $datanet@g" ./bundles.yaml
       fi
 
       admnet=`grep "admNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`

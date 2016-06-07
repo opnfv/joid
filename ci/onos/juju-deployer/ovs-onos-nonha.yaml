@@ -1,173 +1,39 @@
 # vim: set ts=2 et:
+trusty-mitaka-nodes:
+  inherits: openstack-phase1
+  overrides:
+    series: trusty
+ 
+trusty-mitaka:
+  inherits: openstack-phase2
+  overrides:
+     #os-data-network: 10.4.8.0/21
+     #ceph-cluster-network: 10.4.0.0/21
+     #prefer-ipv6: true
+     #enable-dvr: true
+     #l2-population: true
+     region: Canonical
+     #source: "cloud:trusty-mitaka"
+     openstack-origin: "cloud:trusty-mitaka"
+     series: trusty
+     ceph-osd-replication-count: 2
+     admin-role: admin
+     keystone-admin-role: admin
+
 openstack-phase1:
   series: trusty
   services:
-    nodes-api:
-      charm: "cs:trusty/ubuntu"
-      num_units: 1
-      constraints: tags=control
-    nodes-compute:
-      charm: "cs:trusty/ubuntu"
-      num_units: 1
-      constraints: tags=compute
-    ntp:
-      charm: "cs:trusty/ntp"
+  nodes:
+    charm: "cs:trusty/ubuntu"
+    num_units: 2
+  ntp:
+    charm: "local:trusty/ntp"
   relations:
-    - - "ntp:juju-info"
-      - "nodes-api:juju-info"
-    - - "ntp:juju-info"
-      - "nodes-compute:juju-info"
+  - - "ntp:juju-info"
+    - "nodes:juju-info"
+
 openstack-phase2:
   inherits: openstack-phase1
-  services:
-    mysql:
-      branch: "lp:~openstack-charmers/charms/trusty/percona-cluster/next"
-      num_units: 1
-      options: 
-        dataset-size: 2G
-        max-connections: 10000
-      to:
-        - "lxc:nodes-api=0"
-    ceilometer:
-      branch: "lp:~openstack-charmers/charms/trusty/ceilometer/next"
-      num_units: 1
-      to:
-        - "lxc:nodes-api=0"
-    ceilometer-agent:
-      branch: "lp:~openstack-charmers/charms/trusty/ceilometer-agent/next"
-    mongodb:
-      charm: "cs:trusty/mongodb"
-      num_units: 1
-      to:
-        - "lxc:nodes-api=0"
-    heat:
-      branch: "lp:~openstack-charmers/charms/trusty/heat/next"
-      to:
-        - "lxc:nodes-api=0"
-    ceph:
-      branch: "lp:~openstack-charmers/charms/trusty/ceph/next"
-      num_units: 1
-      options:
-        fsid: 5a791d94-980b-11e4-b6f6-3c970e8b1cf7
-        monitor-secret: AQAi5a9UeJXUExAA+By9u+GPhl8/XiUQ4nwI3A==
-        osd-devices: ""
-        monitor-count: 1        
-#        osd-reformat: 'no'
-#        ceph-cluster-network: 192.168.0.0/24
-#        ceph-public-network: 192.168.0.0/24
-      to:
-        - "lxc:nodes-api=0"
-    ceph-osd:
-      branch: "lp:~openstack-charmers/charms/trusty/ceph-osd/next"
-      num_units: 1
-      options:
-        osd-devices: /srv
-        osd-reformat: 'yes'
-      to:
-        - "nodes-compute=0"
-    ceph-radosgw:
-      branch: "lp:~openstack-charmers/charms/trusty/ceph-radosgw/next"
-      num_units: 1
-      options:
-        use-embedded-webserver: true
-        operator-roles: "Member,admin"
-      to:
-        - "lxc:nodes-api=0"
-    cinder:
-      branch: "lp:~openstack-charmers/charms/trusty/cinder/next"
-      num_units: 1
-      options:
-        block-device: None
-        glance-api-version: 2
-#        ha-mcastport: 5401
-      to:
-        - "lxc:nodes-api=0"
-    cinder-ceph:
-      branch: "lp:~openstack-charmers/charms/trusty/cinder-ceph/next"
-    rabbitmq-server:
-      branch: "lp:~openstack-charmers/charms/trusty/rabbitmq-server/next"
-      num_units: 1
-      to:
-        - "lxc:nodes-api=0"
-    keystone:
-      branch: "lp:~openstack-charmers/charms/trusty/keystone/next"
-      num_units: 1
-      options:
-#        ha-mcastport: 5402
-        admin-password: openstack
-        admin-token: admin
-      to:
-        - "lxc:nodes-api=0"
-    openstack-dashboard:
-      branch: "lp:~openstack-charmers/charms/trusty/openstack-dashboard/next"
-      num_units: 1
-      options: 
-        secret: admin
-        webroot: /
-      to:
-        - "lxc:nodes-api=0"
-    nova-compute:
-      branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
-      num_units: 1
-      options:
-        enable-live-migration: true
-        enable-resize: true
-        manage-neutron-plugin-legacy-mode: false
-        migration-auth-type: ssh
-      to:
-        - "nodes-compute=0"
-#        - "nodes-compute=1"
-#        - "nodes-api=0"
-#        - "nodes-api=1"
-#        - "nodes-api=2"
-    nova-cloud-controller:
-      branch: "lp:~openstack-charmers/charms/trusty/nova-cloud-controller/next"
-      num_units: 1
-      options:
-        console-access-protocol: novnc
-        network-manager: Neutron
-      to:
-        - "lxc:nodes-api=0"
-    neutron-api:
-      branch: lp:~openstack-charmers/charms/trusty/neutron-api/next
-      num_units: 1
-      options:
-        neutron-security-groups: True
-        manage-neutron-plugin-legacy-mode: False
-      to:
-        - "lxc:nodes-api=0"
-    neutron-gateway:
-      branch: "lp:~wuwenbin2/onosfw/neutron-gateway"
-      options:
-        #ext-port: "eth1"
-        plugin: onos
-        instance-mtu: 1400
-      to:
-        - "nodes-api=0"
-    onos-controller:
-      branch: "lp:~wuwenbin2/onosfw/onos-controller"
-      options:
-        #ext-port: "eth1"
-        #gateway-mac: "default"
-      to:
-        - "lxc:nodes-api=0"
-    glance:
-      branch: lp:~openstack-charmers/charms/trusty/glance/next
-      num_units: 1
-      to:
-        - "lxc:nodes-api=0"
-    opnfv-promise:
-      branch: lp:~narindergupta/charms/trusty/promise/trunk
-      num_units: 1
-      to:
-        - "lxc:nodes-api=0"
-    neutron-api-onos:
-      branch: "lp:~wuwenbin2/onosfw/neutron-api-onos"
-      options:
-        overlay-network-type: 'vxlan'
-        security-groups: True
-    openvswitch-onos:
-      branch: "lp:~wuwenbin2/onosfw/openvswitch-onos"
   relations:
     - - "neutron-api:neutron-plugin-api-subordinate"
       - "neutron-api-onos:neutron-plugin-api-subordinate"
@@ -259,60 +125,139 @@ openstack-phase2:
       - "ceph:radosgw"
     - - "ceph-radosgw:identity-service"
       - "keystone:identity-service"
-trusty-liberty-nodes:
-  inherits: openstack-phase1
-  overrides:
-    series: trusty
-
-trusty-liberty:
-  inherits: openstack-phase2
-  overrides:
-    #os-data-network: 10.4.8.0/21
-    #ceph-cluster-network: 10.4.0.0/21
-    #prefer-ipv6: true
-    region: Canonical
-    source: "cloud:trusty-liberty"
-    openstack-origin: "cloud:trusty-liberty"
-    series: trusty
-    ceph-osd-replication-count: 1
-    admin-role: admin
-    keystone-admin-role: admin
-
-trusty-kilo-nodes:
-  inherits: openstack-phase1
-  overrides:
-    series: trusty
-
-trusty-kilo:
-  inherits: openstack-phase2
-  overrides:
-    #os-data-network: 10.4.8.0/21
-    #ceph-cluster-network: 10.4.0.0/21
-    #prefer-ipv6: true
-    region: Canonical
-    source: "cloud:trusty-kilo"
-    openstack-origin: "cloud:trusty-kilo"
-    series: trusty
-    ceph-osd-replication-count: 1
-    admin-role: admin
-    keystone-admin-role: admin
-
-trusty-juno-nodes:
-  inherits: openstack-phase1
-  overrides:
-    series: trusty
-
-trusty-juno:
-  inherits: openstack-phase2
-  overrides:
-    #os-data-network: 10.4.8.0/21
-    #ceph-cluster-network: 10.4.0.0/21
-    #prefer-ipv6: true
-    region: Canonical
-    source: "cloud:trusty-juno"
-    openstack-origin: "cloud:trusty-juno"
-    series: trusty
-    ceph-osd-replication-count: 1
-    admin-role: admin
-    keystone-admin-role: admin
-
+    #- - nova-compute:lxd
+      #- lxd:lxd
+  services:
+    mysql:
+      charm: "local:trusty/percona-cluster"
+      options:
+        dataset-size: 2G
+        max-connections: 10000
+      to:
+        - "lxc:nodes=0"
+    ceilometer:
+      charm: "local:trusty/ceilometer"
+      to:
+        - "lxc:nodes=1"
+    ceilometer-agent:
+      charm: "local:trusty/ceilometer-agent"
+    mongodb:
+      charm: "cs:trusty/mongodb"
+      to:
+        - "lxc:nodes=0"
+    heat:
+      charm: "local:trusty/heat"
+      to:
+        - "lxc:nodes=1"
+    ceph:
+      charm: "local:trusty/ceph"
+      num_units: 2
+      options:
+        fsid: 5a791d94-980b-11e4-b6f6-3c970e8b1cf7
+        monitor-secret: AQAi5a9UeJXUExAA+By9u+GPhl8/XiUQ4nwI3A==
+        osd-devices: ""
+        monitor-count: 2
+#        osd-reformat: 'no'
+#        ceph-cluster-network: 192.168.0.0/24
+#        ceph-public-network: 192.168.0.0/24
+      to:
+        - "lxc:nodes=1"
+        - "lxc:nodes=0"
+    ceph-osd:
+      charm: "local:trusty/ceph-osd"
+      num_units: 2
+      options:
+        osd-devices: /srv
+        osd-reformat: 'yes'
+      to:
+        - "nodes=0"
+        - "nodes=1"
+    ceph-radosgw:
+      charm: "local:trusty/ceph-radosgw"
+      options:
+        use-embedded-webserver: true
+        operator-roles: "Member,admin"
+      to:
+        - "lxc:nodes=0"
+    cinder:
+      charm: "local:trusty/cinder"
+      options:
+        block-device: None
+        glance-api-version: 2
+#        ha-mcastport: 5401
+      to:
+        - "lxc:nodes=1"
+    cinder-ceph:
+      charm: "local:trusty/cinder-ceph"
+    rabbitmq-server:
+      charm: "local:trusty/rabbitmq-server"
+      to:
+        - "lxc:nodes=0"
+    keystone:
+      charm: "local:trusty/keystone"
+      options:
+#        ha-mcastport: 5402
+        admin-password: openstack
+        admin-token: admin
+      to:
+        - "lxc:nodes=1"
+    openstack-dashboard:
+      charm: "local:trusty/openstack-dashboard"
+      options:
+        secret: admin
+        webroot: /
+      to:
+        - "lxc:nodes=0"
+    nova-compute:
+      charm: local:trusty/nova-compute
+      options:
+        enable-live-migration: true
+        enable-resize: true
+        manage-neutron-plugin-legacy-mode: false
+        migration-auth-type: ssh
+      to:
+        - "nodes=1"
+    nova-cloud-controller:
+      charm: "local:trusty/nova-cloud-controller"
+      options:
+        console-access-protocol: novnc
+        network-manager: Neutron
+      to:
+        - "lxc:nodes=1"
+    neutron-api:
+      charm: local:trusty/neutron-api
+      options:
+        neutron-security-groups: True
+        manage-neutron-plugin-legacy-mode: False
+      to:
+        - "lxc:nodes=0"
+    neutron-gateway:
+      charm: "local:trusty/neutron-gateway"
+      options:
+        #ext-port: "eth1"
+        plugin: onos
+        instance-mtu: 1400
+      to:
+        - "nodes=0"
+    onos-controller:
+      charm: "local:trusty/onos-controller"
+      options:
+        #ext-port: "eth1"
+        #gateway-mac: "default"
+      to:
+        - "lxc:nodes=1"
+    glance:
+      charm: local:trusty/glance
+      to:
+        - "lxc:nodes=0"
+    opnfv-promise:
+      charm: local:trusty/promise
+      to:
+        - "lxc:nodes=1"
+    neutron-api-onos:
+      charm: "local:trusty/neutron-api-onos"
+      options:
+        overlay-network-type: 'vxlan'
+        security-groups: True
+    openvswitch-onos:
+      charm: "local:trusty/openvswitch-onos"
