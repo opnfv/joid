@@ -41,7 +41,8 @@ if [ -e ~/.juju/deployment.yaml ]; then
       sed --i "s@#ext-port: \"eth1\"@ext-port: \"$extport\"@g" ./bundles.yaml
 
       datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-      if [ -z "$datanet" ]
+
+      if [ -z "$datanet" ]; then
           sed --i "s@#os-data-network: 10.4.8.0/21@os-data-network: $datanet@g" ./bundles.yaml
       fi
 
