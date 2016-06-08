@@ -37,13 +37,13 @@ openstack-phase1:
       - "nodes-api:juju-info"
     - - "ntp:juju-info"
       - "nodes-compute:juju-info"
-openstack-phase2: 
+openstack-phase2:
   inherits: openstack-phase1
-  services: 
-    percona-cluster: 
+  services:
+    percona-cluster:
       branch: "lp:~openstack-charmers/charms/trusty/percona-cluster/next"
       num_units: 3
-      options: 
+      options:
         dataset-size: 2G
         lp1366997-workaround: true
         max-connections: 10000
@@ -179,10 +179,10 @@ openstack-phase2:
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
         - "lxc:nodes-api=2"
-    nova-compute: 
+    nova-compute:
       branch: lp:~openstack-charmers/charms/trusty/nova-compute/next
       num_units: 2
-      options: 
+      options:
         enable-live-migration: False
         manage-neutron-plugin-legacy-mode: False
       to:
@@ -191,34 +191,33 @@ openstack-phase2:
 #        - "nodes-api=0"
 #        - "nodes-api=1"
 #        - "nodes-api=2"
-    nova-cloud-controller: 
+    nova-cloud-controller:
       branch: lp:~openstack-charmers/charms/trusty/nova-cloud-controller/next
       num_units: 3
-      options: 
+      options:
         console-access-protocol: novnc
         network-manager: Neutron
         service-guard: true
-        neutron-external-network: ext_net
         vip: 10.4.1.16
       to:
         - "lxc:nodes-api=1"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=2"
-    neutron-api: 
+    neutron-api:
       branch: lp:~opnfv-team/charms/trusty/neutron-api/next
       num_units: 3
       options:
         neutron-security-groups: True
         manage-neutron-plugin-legacy-mode: False
         vip: 10.4.1.17
-      to: 
+      to:
         - "lxc:nodes-api=2"
         - "lxc:nodes-api=0"
         - "lxc:nodes-api=1"
-    glance: 
+    glance:
       branch: lp:~openstack-charmers/charms/trusty/glance/next
       num_units: 3
-      options: 
+      options:
         vip: 10.4.1.12
       to:
         - "lxc:nodes-api=1"

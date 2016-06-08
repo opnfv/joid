@@ -269,7 +269,7 @@ openstack-phase2:
     neutron-api-odl:
       charm: local:trusty/neutron-api-odl
       options:
-        overlay-network-type: 'vxlan gre'
+        overlay-network-type: 'vxlan'
         security-groups: True
     openvswitch-odl:
       charm: local:trusty/openvswitch-odl

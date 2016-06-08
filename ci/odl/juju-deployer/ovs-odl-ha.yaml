@@ -7,7 +7,6 @@ trusty-mitaka-nodes:
 trusty-mitaka:
   inherits: openstack-phase2
   overrides:
-#    cluster_count: 3
     #os-data-network: 10.4.8.0/21
     #ceph-cluster-network: 10.4.0.0/21
     #prefer-ipv6: true
@@ -337,7 +336,6 @@ openstack-phase2:
         console-access-protocol: novnc
         network-manager: Neutron
         service-guard: true
-        neutron-external-network: ext_net
         vip: 10.4.1.16
         #os-public-hostname: api.public-fqdn
       to:
@@ -391,7 +389,7 @@ openstack-phase2:
     neutron-api-odl:
       charm: local:trusty/neutron-api-odl
       options:
-        overlay-network-type: 'vxlan gre'
+        overlay-network-type: 'vxlan'
         security-groups: True
     openvswitch-odl:
       charm: local:trusty/openvswitch-odl

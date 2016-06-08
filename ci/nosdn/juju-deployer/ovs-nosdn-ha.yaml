@@ -291,6 +291,7 @@ openstack-phase2:
       charm: "local:trusty/nova-cloud-controller"
       num_units: 3
       options:
+        console-access-protocol: novnc
         network-manager: Neutron
         service-guard: true
         vip: 10.4.1.16

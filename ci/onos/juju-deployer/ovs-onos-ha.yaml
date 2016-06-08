@@ -24,7 +24,7 @@ openstack-phase1:
   series: trusty
   services:
     nodes:
-      charm: "local:trusty/ubuntu"
+      charm: "cs:trusty/ubuntu"
       num_units: 5
     ntp:
       charm: "local:trusty/ntp"
