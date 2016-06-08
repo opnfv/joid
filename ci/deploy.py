@@ -53,7 +53,8 @@ opnfvcfg['demo-maas']={'juju-bootstrap':{'memory': 4096,'name': "bootstrap",\
                               }\
                       }
 
-opnfvlabcfg['opnfv']={'ext-port':'','floating-ip-range':'','dataNetwork':'','ceph-disk':'/srv/'}
+opnfvlabcfg['opnfv']={'ext-port':'','floating-ip-range':'','dataNetwork':'','ceph-disk':'/srv/',\
+                      'storageNetwork':'','interface-enable':""}
 
 opnfvcfg['demo-maas']['maas']['apt_sources'].append("ppa:maas/stable")
 opnfvcfg['demo-maas']['maas']['apt_sources'].append("ppa:juju/stable")
@@ -141,6 +142,8 @@ while c < len(labcfg["opnfv"]["spaces"]):
             opnfvcfg["demo-maas"]["juju-bootstrap"]["interfaces"].append("bridge="+brname+",model=virtio")
         if brtype == "data":
             opnfvlabcfg["opnfv"]["dataNetwork"]=brcidr
+        if brtype == "storage":
+            opnfvlabcfg["opnfv"]["storageNetwork"]=brcidr
 
     c=c+1
 
@@ -157,6 +160,7 @@ if len(labcfg["lab"]["racks"][0]["nodes"]) < 1:
 
 #lets insert the node details here:
 c=0
+ifnamelist=[]
 #
 while c < len(labcfg["lab"]["racks"][0]["nodes"]):
     valuemac=[]
@@ -188,7 +192,10 @@ while c < len(labcfg["lab"]["racks"][0]["nodes"]):
              "power":power,'tags':noderoles})
     y = 0
     while y < len(labcfg["lab"]["racks"][0]["nodes"][c]["nics"]):
+        valuespaces = labcfg["lab"]["racks"][0]["nodes"][c]["nics"][y]["spaces"]
         valueifname = labcfg["lab"]["racks"][0]["nodes"][c]["nics"][y]["ifname"]
+        if "admin" not in valuespaces:
+            ifnamelist += [valueifname]
         valueifmac = labcfg["lab"]["racks"][0]["nodes"][c]["nics"][y]["mac"][0]
         valuemac += labcfg["lab"]["racks"][0]["nodes"][c]["nics"][y]["mac"]
         opnfvcfg["demo-maas"]["maas"]["nodes"][c]["interfaces"]\
@@ -204,6 +211,7 @@ while c < len(labcfg["lab"]["racks"][0]["nodes"]):
 opnfvlabcfg["opnfv"]["floating-ip-range"]=labcfg["lab"]["racks"][0]["floating-ip-range"]
 opnfvlabcfg["opnfv"]["ext-port"]=labcfg["lab"]["racks"][0]["ext-port"]
 opnfvlabcfg["opnfv"]["ceph-disk"]=labcfg["opnfv"]["storage"][0]["disk"]
+opnfvlabcfg["opnfv"]["interface-enable"]=",".join(list(set(ifnamelist)))
 
 with open('deployment.yaml', 'wa') as opnfvf:
    yaml.dump(opnfvcfg, opnfvf, default_flow_style=False)

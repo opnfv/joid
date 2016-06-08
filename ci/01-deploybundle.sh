@@ -8,8 +8,7 @@ set -ex
     cp $4/fetch-charms.sh ./fetch-charms.sh
     #modify the ubuntu series wants to deploy
     sed -i -- "s|distro=trusty|distro=$6|g" ./fetch-charms.sh
-    sh ./fetch-charms.sh $6
-
+    ./fetch-charms.sh $6
 
 case "$1" in
     'nonha' )
@@ -31,24 +30,17 @@ esac
 
 #read the value from deployment.yaml
 if [ -e ~/.juju/deployment.yaml ]; then
-
    cp ~/.juju/deployment.yaml ./deployment.yaml
-
-   if [ -e ~/.juju/deployment.yaml ]; then
+   if [ -e ~/.juju/deployconfig.yaml ]; then
       cp ~/.juju/deployconfig.yaml ./deployconfig.yaml
-
       extport=`grep "ext-port" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
       sed --i "s@#ext-port: \"eth1\"@ext-port: \"$extport\"@g" ./bundles.yaml
-
       datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-
       if [ "$datanet" != "''" ]; then
           sed -i -- "s@#os-data-network: 10.4.8.0/21@os-data-network: $datanet@g" ./bundles.yaml
       fi
-
       admnet=`grep "admNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
       sed --i "s@10.4.1.1@$admnet@g" ./bundles.yaml
-
       cephdisk=`grep "disk" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
       sed --i "s@osd-devices: /srv@osd-devices: $cephdisk@g" ./bundles.yaml
    fi

@@ -9,7 +9,7 @@ labname=$1
 sudo apt-add-repository ppa:maas-deployers/stable -y
 sudo apt-add-repository ppa:juju/stable -y
 sudo apt-add-repository ppa:maas/stable -y
-sudo apt-add-repository cloud-archive:liberty -y
+sudo apt-add-repository cloud-archive:mitaka -y
 sudo apt-get update -y
 sudo apt-get dist-upgrade -y
 sudo apt-get install openssh-server git maas-deployer juju juju-deployer maas-cli python-pip python-openstackclient gsutil -y
@@ -237,16 +237,40 @@ if [ "$virtinstall" -eq 1 ]; then
     maas maas tag update-nodes compute add=$computenodeid
 fi
 
+#read interface needed in Auto mode and enable it. Will be rmeoved once auto enablement will be implemented in the maas-deployer.
+enable_if(){
+   if [ -e ~/.juju/deployconfig.yaml ]; then
+      cp ~/.juju/deployconfig.yaml ./deployconfig.yaml
+
+      enableiflist=`grep "interface-enable" deployconfig.yaml | cut -d ' ' -f 4 `
+      datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+      stornet=`grep "storageNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+
+      # split EXTERNAL_NETWORK=first ip;last ip; gateway;network
+
+      if [ "$datanet" != "''" ]; then
+          EXTNET=(${enableiflist//,/ })
+          i="0"
+          while [ ! -z "${EXTNET[i]}" ];
+          do
+              enableautomode ${EXTNET[i]} AUTO $datanet || true
+              i=$[$i+1]
+          done
+      fi
+      if [ "$stornet" != "''" ]; then
+          EXTNET=(${enableiflist//,/ })
+          i="0"
+          while [ ! -z "${EXTNET[i]}" ];
+          do
+              echo enableautomode ${EXTNET[i]} AUTO $stornet || true
+              i=$[$i+1]
+          done
+      fi
+   fi
+}
+
 # Enable vlan interfaces with maas
 case "$labname" in
-    'intelpod5' )
-        maas refresh
-        enableautomode eth4 AUTO "10.5.12.0/24" || true
-        ;;
-    'intelpod6' )
-        maas refresh
-        enableautomode eth4 AUTO "10.6.12.0/24" || true
-        ;;
     'intelpod9' )
         maas refresh
         crvlanupdsubnet vlan902 1 "DataNetwork" 902 2 || true
@@ -257,21 +281,6 @@ case "$labname" in
         enableautomodebyname eth1.905 AUTO "10.9.15.0/24" compute || true
         enableautomodebyname eth0.902 AUTO "10.9.12.0/24" control || true
         enableautomodebyname eth1.905 AUTO "10.9.15.0/24" control || true
-        ;;
-    'orangepod1' )
-        maas refresh
-        enableautomode eth2 DHCP "192.168.21.0/24" || true
-        enableautomode eth3 AUTO "192.168.11.0/24" || true
-        ;;
-    'orangepod2' )
-        maas refresh
-        enableautomode eth4 DHCP "192.168.22.0/24" || true
-        enableautomode eth2 DHCP "192.168.22.0/24" || true
-        enableautomode eth5 AUTO "192.168.12.0/24" || true
-        enableautomode eth3 AUTO "192.168.12.0/24" || true
-        ;;
-    'attvirpod1' )
-        enableautomode eth1 AUTO "192.168.10.0/24" || true
         ;;
     'juniperpod1' )
         ;;
@@ -286,7 +295,6 @@ case "$labname" in
         ;;
 esac
 
-echo " .... MAAS deployment finished successfully ...."
+enable_if
 
-#echo "... Deployment of opnfv release Started ...."
-#python deploy.py $maas_ip
+echo " .... MAAS deployment finished successfully ...."

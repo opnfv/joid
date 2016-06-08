@@ -127,6 +127,12 @@ openstack-phase2:
       - rabbitmq-server:amqp
     #- - nova-compute:lxd
       #- lxd:lxd
+    - - congress:shared-db
+      - mysql:shared-db
+    - - congress:identity-service
+      - keystone:identity-service
+    - - congress:amqp
+      - rabbitmq-server:amqp
   services:
     ceilometer:
       charm: "local:trusty/ceilometer"
@@ -257,3 +263,9 @@ openstack-phase2:
       charm: "local:trusty/heat"
       to:
         - "lxc:nodes=0"
+    congress:
+      charm: local:trusty/congress
+      options:
+        source-branch: stable/liberty
+      to:
+        - "lxc:nodes=1"
