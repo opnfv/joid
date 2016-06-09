@@ -77,6 +77,11 @@ else
         'cengnlynxpod1' )
             cp maas/cengn_lynx/pod1/deployment.yaml ./deployment.yaml
             ;;
+        'cengnpod1' )
+            cp ../labconfig/cengn/pod1/labconfig.yaml ./
+            #to be removed later once converted for all labs.
+            python deploy.py
+            ;;
         * )
             virtinstall=1
             labname="default"
@@ -292,6 +297,10 @@ case "$labname" in
         crnodevlanint $vlan1202 eth1 || true
         enableautomode eth1.1201 AUTO "172.16.121.3/24" compute || true
         enableautomode eth1.1201 AUTO "172.16.121.3/24" control || true
+        ;;
+    'cengnpod1' )
+        maas refresh
+        enableautomode eth2 AUTO "172.16.20.0/24" || true
         ;;
 esac
 
