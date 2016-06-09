@@ -87,6 +87,7 @@ else
             labname="default"
             ./cleanvm.sh
             cp ../labconfig/default/deployment.yaml ./
+            cp ../labconfig/default/deployconfig.yaml ./
             ;;
     esac
 fi
@@ -297,10 +298,6 @@ case "$labname" in
         crnodevlanint $vlan1202 eth1 || true
         enableautomode eth1.1201 AUTO "172.16.121.3/24" compute || true
         enableautomode eth1.1201 AUTO "172.16.121.3/24" control || true
-        ;;
-    'cengnpod1' )
-        maas refresh
-        enableautomode eth2 AUTO "172.16.20.0/24" || true
         ;;
 esac
 

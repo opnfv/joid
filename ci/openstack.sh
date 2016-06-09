@@ -69,20 +69,22 @@ neutron net-create ext-net --shared --router:external --provider:physical_networ
 ## Parse Network config
 ##
 
-EXTERNAL_NETWORK=`grep floating-ip-range deployconfig.yaml | cut -d ' ' -f 4 `
+if [ -f ./deployconfig.yaml ];then
+    EXTERNAL_NETWORK=`grep floating-ip-range deployconfig.yaml | cut -d ' ' -f 4 `
 
-# split EXTERNAL_NETWORK=first ip;last ip; gateway;network
+    # split EXTERNAL_NETWORK=first ip;last ip; gateway;network
 
-EXTNET=(${EXTERNAL_NETWORK//,/ })
+    EXTNET=(${EXTERNAL_NETWORK//,/ })
 
-EXTNET_FIP=${EXTNET[0]}
-EXTNET_LIP=${EXTNET[1]}
-EXTNET_GW=${EXTNET[2]}
-EXTNET_NET=${EXTNET[3]}
+    EXTNET_FIP=${EXTNET[0]}
+    EXTNET_LIP=${EXTNET[1]}
+    EXTNET_GW=${EXTNET[2]}
+    EXTNET_NET=${EXTNET[3]}
 
-neutron subnet-create ext-net --name ext-subnet \
-   --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
-      --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
+    neutron subnet-create ext-net --name ext-subnet \
+       --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
+          --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
+fi
 
 # create vm network
 neutron net-create demo-net

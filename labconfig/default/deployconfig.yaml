@@ -1,0 +1,8 @@
+opnfv:
+  admNetwork: 192.168.122.1
+  ceph-disk: /srv
+  dataNetwork: ''
+  ext-port: eth1
+  floating-ip-range: 192.168.122.30,192.168.122.49,192.168.122.1,192.168.122.0/24
+  interface-enable: ''
+  storageNetwork: ''

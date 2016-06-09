@@ -10,6 +10,9 @@ lab:
       - ifname: eth0
         spaces: [admin]
         mac: ["00:a0:a5:90:89:a8"]
+      - ifname: eth3
+        spaces: [data]
+        mac: ["00:a0:a5:90:89:a7"]
       power:
         type: ipmi
         address: 10.21.5.12
@@ -22,6 +25,9 @@ lab:
       - ifname: eth0
         spaces: [admin]
         mac: ["00:a0:a5:90:89:28"]
+      - ifname: eth3
+        spaces: [data]
+        mac: ["00:a0:a5:90:89:27"]
       power:
         type: ipmi
         address: 10.21.5.13
@@ -34,6 +40,9 @@ lab:
       - ifname: eth0
         spaces: [admin]
         mac: ["00:a0:a5:89:30:c6"]
+      - ifname: eth3
+        spaces: [data]
+        mac: ["00:a0:a5:89:30:c5"]
       power:
         type: ipmi
         address: 10.21.5.14
@@ -46,6 +55,9 @@ lab:
       - ifname: eth0
         spaces: [admin]
         mac: ["00:a0:a5:90:89:94"]
+      - ifname: eth3
+        spaces: [data]
+        mac: ["00:a0:a5:90:89:93"]
       power:
         type: ipmi
         address: 10.21.5.15
@@ -58,6 +70,9 @@ lab:
       - ifname: eth0
         spaces: [admin]
         mac: ["00:a0:a5:90:89:0e"]
+      - ifname: eth3
+        spaces: [data]
+        mac: ["00:a0:a5:90:89:0d"]
       power:
         type: ipmi
         address: 10.21.5.16
