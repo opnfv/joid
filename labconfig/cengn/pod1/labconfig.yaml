@@ -1,0 +1,95 @@
+lab:
+  location: cengn
+  racks:
+  - rack: pod1
+    nodes:
+    - name: rack-1-m1
+      architecture: x86_64
+      roles: [network,control]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["00:a0:a5:90:89:a8"]
+      power:
+        type: ipmi
+        address: 10.21.5.12
+        user: admin
+        pass: admin
+    - name: rack-1-m2
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["00:a0:a5:90:89:28"]
+      power:
+        type: ipmi
+        address: 10.21.5.13
+        user: admin
+        pass: admin
+    - name: rack-1-m3
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["00:a0:a5:89:30:c6"]
+      power:
+        type: ipmi
+        address: 10.21.5.14
+        user: admin
+        pass: admin
+    - name: rack-1-m4
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["00:a0:a5:90:89:94"]
+      power:
+        type: ipmi
+        address: 10.21.5.15
+        user: admin
+        pass: admin
+    - name: rack-1-m5
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["00:a0:a5:90:89:0e"]
+      power:
+        type: ipmi
+        address: 10.21.5.16
+        user: admin
+        pass: admin
+    floating-ip-range: 10.21.6.6,10.21.6.250,10.21.6.254,10.21.6.0/24
+    ext-port: "eth1"
+    dns: 8.8.8.8
+opnfv:
+  release: c
+  distro: trusty
+  type: nonha
+  openstack: mitaka
+  sdncontroller:
+  - type: nosdn
+  storage:
+  - type: ceph
+    disk: /srv
+  feature: odl_l2
+  spaces:
+  - type: admin
+    bridge: brAdm
+    cidr: 10.21.0.0/24
+    gateway: 10.21.0.254
+    vlan:
+  - type: public
+    bridge: brPublic
+    cidr: 10.21.6.0/24
+    gateway:
+    vlan:
+  - type: data
+    bridge: brData
+    cidr: 172.16.20.0/24
+    gateway:
+    vlan:
