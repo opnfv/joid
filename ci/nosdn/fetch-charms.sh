@@ -4,7 +4,7 @@ distro=$1
 mkdir -p $distro
 
 function build {
-    sudo apt-get install charm-tools
+    sudo apt-get install charm-tools -y
     (cd $distro/charm-congress; charm build -s $distro  -obuild src)
     mv $distro/charm-congress/build/$distro/congress $distro
 }
