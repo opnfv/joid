@@ -3,6 +3,12 @@
 distro=$1
 mkdir -p $distro
 
+function build {
+    sudo apt-get install charm-tools -y
+    (cd $distro/charm-congress; charm build -s $distro  -obuild src)
+    mv $distro/charm-congress/build/$distro/congress $distro
+}
+
 # openstack
 bzr branch lp:~narindergupta/charms/trusty/promise/trunk $distro/promise
 bzr branch lp:~billy-olsen/charms/xenial/mongodb/trunk $distro/mongodb
@@ -26,9 +32,10 @@ git clone https://github.com/openstack/charm-nova-compute.git $distro/nova-compu
 git clone https://github.com/openstack/charm-openstack-dashboard.git $distro/openstack-dashboard
 git clone https://github.com/openstack/charm-rabbitmq-server.git $distro/rabbitmq-server
 git clone https://github.com/openstack/charm-heat.git $distro/heat
+git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
+build
 
 #controller specific charm
 git clone https://github.com/openstack/charm-odl-controller.git $distro/odl-controller
 git clone https://github.com/openstack/charm-neutron-api-odl.git $distro/neutron-api-odl
 git clone https://github.com/openstack/charm-openvswitch-odl.git $distro/openvswitch-odl
-
