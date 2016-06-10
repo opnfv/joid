@@ -149,56 +149,18 @@ check_status() {
     echo "...... deployment finishing ......."
 }
 
-#create config RC file to consume by various tests.
-configOpenrc()
-{
-    echo  "  " > ./cloud/admin-openrc
-    echo  "export OS_USERNAME=$1" >> ./cloud/admin-openrc 
-    echo  "export OS_PASSWORD=$2" >> ./cloud/admin-openrc
-    echo  "export OS_TENANT_NAME=$3" >> ./cloud/admin-openrc
-    echo  "export OS_AUTH_URL=$4" >> ./cloud/admin-openrc
-    echo  "export OS_REGION_NAME=$5" >> ./cloud/admin-openrc
- }
-
-#to get the address of a service using juju
-unitAddress()
-{
-    juju status | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"services\"][\"$1\"][\"units\"][\"$1/$2\"][\"public-address\"]" 2> /dev/null
-}
-
-createopenrc()
-{
-    if [ "$opnfvsdn" == "onos" ]; then
-        sh onos/juju_test_prepare.sh "$opnfvlab"
-        check_status
-    fi
-
-    mkdir -m 0700 -p cloud
-
-    controller_address=$(unitAddress keystone 0)
-    configOpenrc admin openstack admin http://$controller_address:5000/v2.0 Canonical 
-    chmod 0600 cloud/admin-openrc
-}
-
-if [ "$#" -eq 0 ]; then
-  echo "This installtion will use default options" 
-  #read_config
-fi
-
 echo "...... deployment started ......"
 #deploy_dep
 deploy
 check_status
-
-#create the basic dayta for verification of stack.
-./openstack.sh
-
 echo "...... deployment finished  ......."
 
-echo "...... creating OpenRc file for consuming by various user ......."
-
-createopenrc
+if [ "$opnfvsdn" == "onos" ]; then
+    ./openstack.sh "$opnfvlab"
+    check_status
+else
+    #create the basic data for verification of stack.
+    ./openstack.sh
+fi
 
 echo "...... finished  ......."
-
-
