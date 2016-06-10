@@ -64,9 +64,9 @@ openstack-phase2:
     - - "neutron-api-odl:odl-controller"
       - "odl-controller:controller-api"
     - - "keystone:shared-db"
-      - "percona-cluster:shared-db"
+      - "mysql:shared-db"
     - - "nova-cloud-controller:shared-db"
-      - "percona-cluster:shared-db"
+      - "mysql:shared-db"
     - - "nova-cloud-controller:amqp"
       - "rabbitmq-server:amqp"
     - - "nova-cloud-controller:image-service"
@@ -80,7 +80,7 @@ openstack-phase2:
     - - "nova-compute:image-service"
       - "glance:image-service"
     - - "glance:shared-db"
-      - "percona-cluster:shared-db"
+      - "mysql:shared-db"
     - - "glance:identity-service"
       - "keystone:identity-service"
     - - "glance:amqp"
@@ -88,7 +88,7 @@ openstack-phase2:
     - - "openstack-dashboard:identity-service"
       - "keystone:identity-service"
     - - "neutron-api:shared-db"
-      - "percona-cluster:shared-db"
+      - "mysql:shared-db"
     - - "neutron-api:amqp"
       - "rabbitmq-server:amqp"
     - - "nova-cloud-controller:neutron-api"
@@ -114,7 +114,7 @@ openstack-phase2:
     - - "ceilometer:shared-db"
       - "mongodb:database"
     - - "heat:shared-db"
-      - "percona-cluster:shared-db"
+      - "mysql:shared-db"
     - - "heat:identity-service"
       - "keystone:identity-service"
     - - "heat:amqp"
@@ -132,7 +132,7 @@ openstack-phase2:
     - - "ceph:client"
       - "nova-compute:ceph"
     - - "cinder:shared-db"
-      - "percona-cluster:shared-db"
+      - "mysql:shared-db"
     - - "ceph:client"
       - "cinder-ceph:ceph"
     - - "ceph:client"
@@ -197,7 +197,7 @@ openstack-phase2:
 #      options:
 #        corosync_key: |
 #          'tk8U/FkH1+dNsvj6IU0C8AST7i/9ylIoCD8kWpPjB+UE2AYR7tkgkjnc4m5dzIYPYTceY7Hnb9xLJ0nlcQLYYFBRAJOg3drNTcVrfh63y9g9La1J1r51YSbOqXq1Q6RUhxP4OQBtDGE6/4NtZwuRPvPGLcI2ENiVm78l8JFkXRw='
-    percona-cluster:
+    mysql:
       charm: "local:trusty/percona-cluster"
       num_units: 3
       options:
