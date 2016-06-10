@@ -51,7 +51,10 @@ unitMachine() {
 # create external network and subnet in openstack
 create_openrc() {
     mkdir -m 0700 -p cloud
-    keystoneIp=$(unitAddress keystone 0)
+    keystoneIp=$(juju get keystone | grep vip: -A 7 | grep value | awk '{print $2}')
+    if [ -z "$keystoneIp" ]; then
+        keystoneIp=$(unitAddress keystone 0)
+    fi
     adminPasswd=$(juju get keystone | grep admin-password -A 5 | grep value | awk '{print $2}')
     configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v2.0 Canonical > cloud/admin-openrc
     chmod 0600 cloud/admin-openrc
@@ -79,12 +82,9 @@ glance image-create --name "cirros-0.3.3-x86_64" --file /tmp/images/cirros-0.3.3
 rm -rf /tmp/images
 
 # adjust tiny image
-nova flavor-delete m1.tiny
-nova flavor-create m1.tiny 1 512 8 1
+#nova flavor-delete m1.tiny
+#nova flavor-create m1.tiny 1 512 8 1
 
-# configure security groups
-neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
-neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
 
 # import key pair
 keystone tenant-create --name demo --description "Demo Tenant"
@@ -107,7 +107,11 @@ else
     neutron subnet-create ext-net --name ext-subnet \
        --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
           --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
+    # configure security groups
+    neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
+    neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
 fi
+
 
 # create vm network
 neutron net-create demo-net
