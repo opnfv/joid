@@ -123,6 +123,12 @@ openstack-phase2:
       - "keystone:identity-service"
     #- - nova-compute:lxd
       #- lxd:lxd
+    - - congress:shared-db
+      - mysql:shared-db
+    - - congress:identity-service
+      - keystone:identity-service
+    - - congress:amqp
+      - rabbitmq-server:amqp
   services:
     mysql:
       charm: "local:trusty/percona-cluster"
@@ -259,3 +265,9 @@ openstack-phase2:
         #default-socket-memory: 1024
         #defualt-socket-cores: 1
         #dpdk-driver: uio_pci_generic
+    congress:
+      charm: local:trusty/congress
+      options:
+        source-branch: stable/mitaka
+      to:
+        - "lxc:nodes=1"

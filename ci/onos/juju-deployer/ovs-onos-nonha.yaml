@@ -127,6 +127,12 @@ openstack-phase2:
       - "keystone:identity-service"
     #- - nova-compute:lxd
       #- lxd:lxd
+    - - congress:shared-db
+      - mysql:shared-db
+    - - congress:identity-service
+      - keystone:identity-service
+    - - congress:amqp
+      - rabbitmq-server:amqp
   services:
     mysql:
       charm: "local:trusty/percona-cluster"
@@ -261,3 +267,9 @@ openstack-phase2:
         security-groups: True
     openvswitch-onos:
       charm: "local:trusty/openvswitch-onos"
+    congress:
+      charm: local:trusty/congress
+      options:
+        source-branch: stable/mitaka
+      to:
+        - "lxc:nodes=0"

@@ -153,6 +153,12 @@ openstack-phase2:
       num_units: 1
       to:
         - "lxc:nodes-api=0"
+    congress:
+      charm: local:trusty/congress
+      options:
+        source-branch: stable/mitaka
+      to:
+        - "lxc:nodes-api=0"
   relations:
     - [ keystone, mysql ]
     - [ nova-cloud-controller, mysql ]
@@ -192,6 +198,12 @@ openstack-phase2:
     - [ "ceph-osd:mon", "ceph:osd" ]
     - [ "ceph-radosgw:mon", "ceph:radosgw" ]
     - [ "ceph-radosgw:identity-service", "keystone:identity-service"]
+    - - congress:shared-db
+      - mysql:shared-db
+    - - congress:identity-service
+      - keystone:identity-service
+    - - congress:amqp
+      - rabbitmq-server:amqp
 contrail:
   inherits: openstack-phase2
   services:

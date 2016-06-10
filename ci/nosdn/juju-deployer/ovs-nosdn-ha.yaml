@@ -137,6 +137,12 @@ openstack-phase2:
       - rabbitmq-server:amqp
     #- - nova-compute:lxd
       #- lxd:lxd
+    - - congress:shared-db
+      - mysql:shared-db
+    - - congress:identity-service
+      - keystone:identity-service
+    - - congress:amqp
+      - rabbitmq-server:amqp
 
   services:
     hacluster-keystone:
@@ -334,5 +340,11 @@ openstack-phase2:
         - "lxc:nodes=1"
     heat:
       charm: "local:trusty/heat"
+      to:
+        - "lxc:nodes=0"
+    congress:
+      charm: local:trusty/congress
+      options:
+        source-branch: stable/mitaka
       to:
         - "lxc:nodes=0"
