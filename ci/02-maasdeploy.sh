@@ -251,6 +251,7 @@ enable_if(){
       enableiflist=`grep "interface-enable" deployconfig.yaml | cut -d ' ' -f 4 `
       datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
       stornet=`grep "storageNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+      pubnet=`grep "publicNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
 
       # split EXTERNAL_NETWORK=first ip;last ip; gateway;network
 
@@ -269,6 +270,15 @@ enable_if(){
           while [ ! -z "${EXTNET[i]}" ];
           do
               echo enableautomode ${EXTNET[i]} AUTO $stornet || true
+              i=$[$i+1]
+          done
+      fi
+      if [ "$pubnet" != "''" ]; then
+          EXTNET=(${enableiflist//,/ })
+          i="0"
+          while [ ! -z "${EXTNET[i]}" ];
+          do
+              echo enableautomode ${EXTNET[i]} AUTO $pubnet || true
               i=$[$i+1]
           done
       fi

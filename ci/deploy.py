@@ -54,7 +54,7 @@ opnfvcfg['demo-maas']={'juju-bootstrap':{'memory': 4096,'name': "bootstrap",\
                       }
 
 opnfvlabcfg['opnfv']={'ext-port':'','floating-ip-range':'','dataNetwork':'','ceph-disk':'/srv/',\
-                      'storageNetwork':'','interface-enable':""}
+                      'storageNetwork':'','interface-enable':'','publicNetwork':''}
 
 opnfvcfg['demo-maas']['maas']['apt_sources'].append("ppa:maas/stable")
 opnfvcfg['demo-maas']['maas']['apt_sources'].append("ppa:juju/stable")
@@ -88,6 +88,7 @@ while c < len(labcfg["opnfv"]["spaces"]):
         brgway = getFromDict(labcfg, ["opnfv","spaces",c,"gateway"])
         tmpcidr = brcidr[:-4]
         opnfvlabcfg["opnfv"]["admNetwork"]=tmpcidr+"2"
+        opnfvlabcfg["opnfv"]["admNetworkgway"]=brgway
 
         nodegroup={"device": "eth"+str(y), "ip": tmpcidr+"5","subnet_mask": "255.255.255.0", \
                    "broadcast_ip": tmpcidr+"255", "router_ip": brgway,\
@@ -132,6 +133,7 @@ while c < len(labcfg["opnfv"]["spaces"]):
             y=y+1
         if brtype == "public":
             opnfvcfg["demo-maas"]["juju-bootstrap"]["interfaces"].append("bridge="+brname+",model=virtio")
+            opnfvlabcfg["opnfv"]["pubicNetwork"]=brcidr
         if brtype == "external":
             ipaddress = getFromDict(labcfg, ["opnfv","spaces",c,"ipaddress"])
             ethbrAdm  = (ethbrAdm+'\n'
