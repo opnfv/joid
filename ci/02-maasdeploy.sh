@@ -269,7 +269,7 @@ enable_if(){
           i="0"
           while [ ! -z "${EXTNET[i]}" ];
           do
-              echo enableautomode ${EXTNET[i]} AUTO $stornet || true
+              enableautomode ${EXTNET[i]} AUTO $stornet || true
               i=$[$i+1]
           done
       fi
@@ -278,7 +278,7 @@ enable_if(){
           i="0"
           while [ ! -z "${EXTNET[i]}" ];
           do
-              echo enableautomode ${EXTNET[i]} AUTO $pubnet || true
+              enableautomode ${EXTNET[i]} AUTO $pubnet || true
               i=$[$i+1]
           done
       fi

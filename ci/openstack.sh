@@ -19,7 +19,7 @@ if [ -f ./deployconfig.yaml ];then
     EXTNET_GW=${EXTNET[2]}
     EXTNET_NET=${EXTNET[3]}
     EXTNET_PORT=`grep "ext-port" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
-    ADMNET_GW=`grep "admNetworkgway" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
+    ADMNET_GW=`grep "admNetgway" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
 
 fi
 

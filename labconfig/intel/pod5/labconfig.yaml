@@ -13,6 +13,9 @@ lab:
       - ifname: eth4
         spaces: [data]
         mac: ["90:E2:BA:85:4E:2C"]
+      - ifname: eth5
+        spaces: [public]
+        mac: ["90:E2:BA:85:4E:2D"]
       power:
         type: ipmi
         address: 10.2.117.81
@@ -28,6 +31,9 @@ lab:
       - ifname: eth4
         spaces: [data]
         mac: ["90:E2:BA:84:08:B8"]
+      - ifname: eth5
+        spaces: [public]
+        mac: ["90:E2:BA:84:08:B9"]
       power:
         type: ipmi
         address: 10.2.117.82
@@ -43,6 +49,9 @@ lab:
       - ifname: eth4
         spaces: [data]
         mac: ["90:E2:BA:84:07:0D"]
+      - ifname: eth5
+        spaces: [public]
+        mac: ["90:E2:BA:84:07:0E"]
       power:
         type: ipmi
         address: 10.2.117.83
@@ -58,6 +67,9 @@ lab:
       - ifname: eth4
         spaces: [data]
         mac: ["90:E2:BA:83:FD:80"]
+      - ifname: eth5
+        spaces: [public]
+        mac: ["90:E2:BA:83:FD:81"]
       power:
         type: ipmi
         address: 10.2.117.84
@@ -73,6 +85,9 @@ lab:
       - ifname: eth4
         spaces: [data]
         mac: ["90:E2:BA:75:22:74"]
+      - ifname: eth5
+        spaces: [public]
+        mac: ["90:E2:BA:75:22:75"]
       power:
         type: ipmi
         address: 10.2.117.85
