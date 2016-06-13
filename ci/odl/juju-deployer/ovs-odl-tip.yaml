@@ -282,6 +282,6 @@ openstack-phase2:
     congress:
       charm: local:trusty/congress
       options:
-        source-branch: stable/liberty
+        source-branch: stable/mitaka
       to:
         - "lxc:nodes=0"
