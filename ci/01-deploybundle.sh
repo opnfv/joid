@@ -113,11 +113,11 @@ sed -i -- "s|mitaka|$2|g" ./bundles.yaml
 case "$6" in
     'trusty' )
         sed -i -- "s|#source|source|g" ./bundles.yaml
+        sed -i -- "s|#source-branch:|source-branch:|g" ./bundles.yaml
         ;;
     'xenial' )
         #changing the target to the ubuntu distro we want to deploy.
         sed -i -- "s|trusty|$6|g" ./bundles.yaml
-        sed -i -- "s|source-branch:|#source-branch:|g" ./bundles.yaml
         ;;
 esac
 
