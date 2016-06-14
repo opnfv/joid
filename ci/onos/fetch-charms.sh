@@ -16,7 +16,7 @@ bzr branch lp:~narindergupta/opnfv/ntp $distro/ntp
 bzr branch lp:~openstack-charmers/charms/trusty/hacluster/next $distro/hacluster
 git clone https://github.com/openstack/charm-ceilometer.git $distro/ceilometer
 git clone https://github.com/openstack/charm-ceilometer-agent.git $distro/ceilometer-agent
-git clone https://github.com/openstack/charm-ceph.git $distro/ceph
+git clone https://github.com/openstack/charm-ceph-mon.git $distro/ceph
 git clone https://github.com/openstack/charm-ceph-osd.git $distro/ceph-osd
 git clone https://github.com/openstack/charm-ceph-radosgw.git $distro/ceph-radosgw
 git clone https://github.com/openstack/charm-cinder.git $distro/cinder

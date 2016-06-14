@@ -117,6 +117,7 @@ case "$6" in
     'xenial' )
         #changing the target to the ubuntu distro we want to deploy.
         sed -i -- "s|trusty|$6|g" ./bundles.yaml
+        sed -i -- "s|source-branch:|#source-branch:|g" ./bundles.yaml
         ;;
 esac
 
