@@ -47,16 +47,6 @@ if [ -e ~/.juju/deployment.yaml ]; then
 fi
 
 case "$3" in
-     'cengnlynxpod1' )
-        # Chose the hard drive(s) to use for CEPH OSD
-         sed -i -- 's|osd-devices: /srv|osd-devices: /dev/sdb|g' ./bundles.yaml
-        # As per your lab vip address list be deafult uses 10.4.1.11 - 10.4.1.20
-         sed -i -- 's/10.4.1.1/10.120.0.1/g' ./bundles.yaml
-        # choose the correct interface to use for data network
-         sed -i -- 's/#os-data-network: 10.4.8.0\/21/os-data-network: 172.16.121.0\/24/g' ./bundles.yaml
-        # Choose the external port to go out from gateway to use.
-         sed -i -- 's/#ext-port: "eth1"/ext-port: "eth1.1202"/g' ./bundles.yaml
-        ;;
      'juniperpod1' )
          sed -i -- 's/10.4.1.1/172.16.50.1/g' ./bundles.yaml
          sed -i -- 's/#ext-port: "eth1"/ext-port: "eth1"/g' ./bundles.yaml

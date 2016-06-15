@@ -1,0 +1,145 @@
+lab:
+  location: cengn
+  racks:
+  - rack: pod2
+    # Define one network and control and two control, compute and storage
+    # and rest for compute and storage for backward compaibility. again
+    # server with more disks should be used for compute and storage only.
+    nodes:
+    # DCOMP4-B, 24cores, 64G, 2disk, 4TBdisk
+    - name: rack-2-m1
+      architecture: x86_64
+      roles: [network,control]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["0c:c4:7a:3a:c5:b6"]
+      - ifname: eth2
+        spaces: [public]
+        mac: ["0c:c4:7a:3a:c5:b7"]
+      - ifname: eth1
+        spaces: [data]
+        mac: ["0c:c4:7a:1f:d7:f4"]
+      - ifname: eth3
+        spaces: [storage]
+        mac: ["0c:c4:7a:1f:d7:f5"]
+      power:
+        type: ipmi
+        address: 192.168.42.72
+        user: root
+        pass: root
+    # PCOMP2-D, 48cores, 128G, 3disk, 1TBdisk
+    - name: rack-2-m2
+      architecture: x86_64
+      roles: [control,compute,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["0c:c4:7a:3a:b2:ae"]
+      - ifname: eth1
+        spaces: [data]
+        mac: ["0c:c4:7a:1f:d9:f0"]
+      - ifname: eth3
+        spaces: [storage]
+        mac: ["0c:c4:7a:1f:d9:f1"]
+      power:
+        type: ipmi
+        address: 192.168.42.40
+        user: root
+        pass: root
+    # PCTRL2, 24cores, 64G, 3disk, 6TBdisk
+    - name: rack-2-m3
+      architecture: x86_64
+      roles: [control,compute,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["0c:c4:7a:1f:6f:c0"]
+      - ifname: eth4
+        spaces: [data]
+        mac: ["0c:c4:7a:1f:d5:0e"]
+      - ifname: eth5
+        spaces: [storage]
+        mac: ["0c:c4:7a:1f:d5:0f"]
+      power:
+        type: ipmi
+        address: 192.168.42.33
+        user: root
+        pass: root
+    # PSTOR1, 12cores, 32G, 14disk, 24TBdisk
+    - name: rack-2-m4
+      architecture: x86_64
+      roles: [storage,compute]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["0c:c4:7a:31:9d:bc"]
+      - ifname: eth5
+        spaces: [data]
+        mac: ["0c:c4:7a:59:ac:12"]
+      - ifname: eth4
+        spaces: [storage]
+        mac: ["0c:c4:7a:59:ac:13"]
+      - ifname: eth1
+        spaces: [public]
+        mac: ["0c:c4:7a:31:9d:bd"]
+      power:
+        type: ipmi
+        address: 192.168.42.6
+        user: root
+        pass: root
+    # PSTOR2, 12cores, 32G, 14disk, 24TBdisk
+    - name: rack-2-m5
+      architecture: x86_64
+      roles: [storage,compute]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["00:25:90:fd:2e:48"]
+      - ifname: eth1
+        spaces: [data]
+        mac: ["0c:c4:7a:1f:8c:6a"]
+      - ifname: eth4
+        spaces: [storage]
+        mac: ["0c:c4:7a:1f:8c:6b"]
+      power:
+        type: ipmi
+        address: 192.168.42.35
+        user: root
+        pass: root
+    floating-ip-range: 172.16.120.20,172.16.120.62,172.16.120.254,172.16.120.0/24
+    # Mutiple MACs seperated by space where MACs are from ext-ports across all network nodes.
+    # eth1 of m4 since tags for networking are not yet implemented.
+    ext-port: "eth1"
+    dns: 8.8.8.8
+
+opnfv:
+  release: c
+  distro: trusty
+  type: nonha
+  openstack: liberty
+  sdncontroller:
+  - type: nosdn
+  storage:
+  - type: ceph
+    disk: /dev/sdb /dev/sdc
+  feature: odl_l2
+  spaces:
+  - type: admin
+    bridge: brAdm
+    cidr: 10.120.0.0/24
+    gateway: 10.120.0.254
+    vlan:
+  - type: data
+    bridge: brData
+    cidr: 192.168.11.0/24
+    gateway:
+    vlan:
+  - type: storage
+    bridge: brStorage
+    cidr: 192.168.21.0/24
+    gateway:
+  - type: public
+    bridge: brPublic
+    cidr: 172.16.120.0/24
+    gateway: 172.16.120.254

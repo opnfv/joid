@@ -74,11 +74,13 @@ else
         'juniperpod1' )
             cp maas/juniper/pod1/deployment.yaml ./deployment.yaml
             ;;
-        'cengnlynxpod1' )
-            cp maas/cengn_lynx/pod1/deployment.yaml ./deployment.yaml
-            ;;
         'cengnpod1' )
             cp ../labconfig/cengn/pod1/labconfig.yaml ./
+            #to be removed later once converted for all labs.
+            python deploy.py
+            ;;
+        'cengnpod2' )
+            cp ../labconfig/cengn/pod2/labconfig.yaml ./
             #to be removed later once converted for all labs.
             python deploy.py
             ;;
@@ -299,15 +301,6 @@ case "$labname" in
         enableautomodebyname eth1.905 AUTO "10.9.15.0/24" control || true
         ;;
     'juniperpod1' )
-        ;;
-    'cengnlynxpod1' )
-        maas refresh
-        crvlanupdsubnet vlan1201 1 "DataNetwork" 1201 2 || true
-        crvlanupdsubnet vlan1202 2 "PublicNetwork" 1202 3 || true
-        crnodevlanint $vlan1201 eth1 || true
-        crnodevlanint $vlan1202 eth1 || true
-        enableautomode eth1.1201 AUTO "172.16.121.3/24" compute || true
-        enableautomode eth1.1201 AUTO "172.16.121.3/24" control || true
         ;;
 esac
 
