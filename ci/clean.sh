@@ -11,6 +11,7 @@ if [ -d $HOME/.juju/environments ]; then
         echo " environment is bootstrapped ..."
         juju destroy-environment demo-maas  -y
     fi
+    rm -rf precise
     rm -rf trusty
     rm -rf xenial
     rm -rf $HOME/.juju/j*

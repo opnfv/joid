@@ -26,7 +26,7 @@ git clone https://github.com/openstack/charm-cinder-ceph.git $distro/cinder-ceph
 git clone https://github.com/openstack/charm-glance.git $distro/glance
 git clone https://github.com/openstack/charm-keystone.git $distro/keystone
 git clone https://github.com/openstack/charm-percona-cluster.git $distro/percona-cluster
-git clone https://github.com/openstack/charm-neutron-api.git $distro/neutron-api
+#git clone https://github.com/openstack/charm-neutron-api.git $distro/neutron-api
 git clone https://github.com/openstack/charm-neutron-gateway.git $distro/neutron-gateway
 git clone https://github.com/openstack/charm-neutron-openvswitch.git $distro/neutron-openvswitch
 git clone https://github.com/openstack/charm-nova-cloud-controller.git $distro/nova-cloud-controller
@@ -38,12 +38,13 @@ git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
 build
 
 # Controller specific charm
-bzr branch lp:~sdn-charmers/charms/$distro/keepalived/trunk $distro/keepalived
-bzr branch lp:~stub/charms/$distro/cassandra/noauthentication $distro/cassandra-noauthentication
-bzr branch lp:~sdn-charmers/charms/$distro/contrail-analytics/trunk $distro/contrail-analytics
-bzr branch lp:~sdn-charmers/charms/$distro/contrail-configuration/trunk $distro/contrail-configuration
-bzr branch lp:~sdn-charmers/charms/$distro/contrail-control/trunk $distro/contrail-control
-bzr branch lp:~sdn-charmers/charms/$distro/contrail-webui/trunk $distro/contrail-webui
+bzr branch lp:~sdn-charmers/charms/trusty/keepalived/trunk $distro/keepalived
+bzr branch lp:~stub/charms/trusty/cassandra/noauthentication $distro/cassandra
+bzr branch lp:~sdn-charmers/charms/trusty/contrail-analytics/trunk $distro/contrail-analytics
+bzr branch lp:~sdn-charmers/charms/trusty/contrail-configuration/trunk $distro/contrail-configuration
+bzr branch lp:~sdn-charmers/charms/trusty/contrail-control/trunk $distro/contrail-control
+bzr branch lp:~sdn-charmers/charms/trusty/contrail-webui/trunk $distro/contrail-webui
 bzr branch lp:~charmers/charms/precise/zookeeper/trunk precise/zookeeper
-bzr branch lp:~opnfv-team/charms/$distro/neutron-api-contrail/trunk $distro/neutron-api-contrail
-bzr branch lp:~opnfv-team/charms/$distro/neutron-contrail/trunk $distro/neutron-contrail
+bzr branch lp:~opnfv-team/charms/trusty/neutron-api-contrail/trunk $distro/neutron-api-contrail
+bzr branch lp:~opnfv-team/charms/trusty/neutron-contrail/trunk $distro/neutron-contrail
+bzr branch lp:~opnfv-team/charms/trusty/neutron-api/next $distro/neutron-api

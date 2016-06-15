@@ -76,10 +76,10 @@ create_openrc
 . ./cloud/admin-openrc
 
 wget -P /tmp/images http://download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img
-glance image-create --name "cirros-0.3.3-x86_64" --file /tmp/images/cirros-0.3.3-x86_64-disk.img --disk-format qcow2 --container-format bare --progress
+openstack image create --file /tmp/images/cirros-0.3.3-x86_64-disk.img --disk-format qcow2 --container-format bare "cirros-0.3.3-x86_64"
 
 #wget -P /tmp/images http://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img
-#glance image-create --name "ubuntu-trusty-daily" --file /tmp/images/trusty-server-cloudimg-amd64-disk1.img --disk-format qcow2 --container-format bare --progress
+#openstack image create --file /tmp/images/trusty-server-cloudimg-amd64-disk1.img --disk-format qcow2 --container-format bare "ubuntu-trusty-daily"
 rm -rf /tmp/images
 
 # adjust tiny image
@@ -88,10 +88,10 @@ rm -rf /tmp/images
 
 
 # import key pair
-keystone tenant-create --name demo --description "Demo Tenant"
-keystone user-create --name demo --tenant demo --pass demo --email demo@demo.demo
+openstack project create --description "Demo Tenant" demo
+openstack user create --project demo --password demo --email demo@demo.demo demo
 
-nova keypair-add --pub-key ~/.ssh/id_rsa.pub ubuntu-keypair
+openstack keypair create --public-key ~/.ssh/id_rsa.pub ubuntu-keypair
 
 # configure external network
 
