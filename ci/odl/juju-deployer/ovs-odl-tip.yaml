@@ -236,7 +236,7 @@ openstack-phase2:
       charm: local:trusty/neutron-api
       options:
         neutron-security-groups: True
-        flat-network-providers: "*"
+        manage-neutron-plugin-legacy-mode: False
       to:
         - "lxc:nodes=0"
     neutron-gateway:
