@@ -14,10 +14,10 @@ lab:
       - ifname: eth0
         spaces: [admin]
         mac: ["0c:c4:7a:3a:c5:b6"]
-      - ifname: eth2
+      - ifname: eth1
         spaces: [public]
         mac: ["0c:c4:7a:3a:c5:b7"]
-      - ifname: eth1
+      - ifname: eth2
         spaces: [data]
         mac: ["0c:c4:7a:1f:d7:f4"]
       - ifname: eth3
@@ -124,6 +124,7 @@ opnfv:
   - type: ceph
     disk: /dev/sdb /dev/sdc
   feature: odl_l2
+  #  Ensure the following configuration matches the bridge configuration on your jumphost
   spaces:
   - type: admin
     bridge: brAdm
@@ -132,12 +133,12 @@ opnfv:
     vlan:
   - type: data
     bridge: brData
-    cidr: 192.168.11.0/24
+    cidr: 192.168.21.0/24
     gateway:
     vlan:
   - type: storage
     bridge: brStorage
-    cidr: 192.168.21.0/24
+    cidr: 192.168.11.0/24
     gateway:
   - type: public
     bridge: brPublic
