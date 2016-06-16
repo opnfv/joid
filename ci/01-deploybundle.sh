@@ -113,4 +113,7 @@ esac
 
 echo "... Deployment Started ...."
     juju-deployer -vW -d -t 3600 -c bundles.yaml $6-"$2"-nodes
+
+    juju ssh nodes/0 "echo 512 | sudo tee /proc/sys/fs/inotify/max_user_instances"
+
     juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $6-"$2"
