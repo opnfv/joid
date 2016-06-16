@@ -11,7 +11,7 @@ openstack=mitaka
 opnfvlab=default
 opnfvrel=c
 opnfvfeature=odl_l2
-opnfvdistro=trusty
+opnfvdistro=xenial
 opnfvarch=amd64
 
 read_config() {
@@ -150,8 +150,16 @@ check_status() {
 }
 
 echo "...... deployment started ......"
-#deploy_dep
 deploy
+
+#temporary change the user instances as dhcp failed with limitation exceeded.
+# to be remove once charm fixes the issue
+
+if [ "$opnfvdistro" == "xenial" ]; then
+    juju ssh neutron-gateway/0 "echo 512 | sudo tee /proc/sys/fs/inotify/max_user_instances"
+fi
+# Temorary change end
+
 check_status
 echo "...... deployment finished  ......."
 
