@@ -12,10 +12,12 @@ sudo apt-add-repository ppa:maas/stable -y
 sudo apt-add-repository cloud-archive:mitaka -y
 sudo apt-get update -y
 sudo apt-get dist-upgrade -y
-sudo apt-get install openssh-server git maas-deployer juju juju-deployer maas-cli python-pip python-openstackclient python-congressclient gsutil -y
+sudo apt-get install openssh-server bzr git maas-deployer juju juju-deployer \
+             maas-cli python-pip python-psutil python-openstackclient \
+             python-congressclient gsutil -y
 
-#first parameter should be custom and second should be either 
-# absolute location of file (including file name) or url of the 
+#first parameter should be custom and second should be either
+# absolute location of file (including file name) or url of the
 # file to download.
 
 if [ "$1" == "custom" ]; then

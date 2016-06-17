@@ -80,6 +80,9 @@ openstack image create --file /tmp/images/cirros-0.3.3-x86_64-disk.img --disk-fo
 
 #wget -P /tmp/images http://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img
 #openstack image create --file /tmp/images/trusty-server-cloudimg-amd64-disk1.img --disk-format qcow2 --container-format bare "ubuntu-trusty-daily"
+#wget -P /tmp/images http://cloud-images.ubuntu.com/trusty/current/xenial-server-cloudimg-amd64.tar.gz
+#openstack image create --file /tmp/images/xenial-server-cloudimg-amd64.tar.gz --container-format bare --disk-format raw "xenial-server-cloudimg-amd64"
+
 rm -rf /tmp/images
 
 # adjust tiny image

@@ -3,7 +3,7 @@ trusty-mitaka-nodes:
   inherits: openstack-phase1
 
 trusty-mitaka:
-  inherits: openstack-phase2
+  inherits: contrail
   overrides:
     #os-data-network: 10.4.8.0/21
     #ceph-cluster-network: 10.4.0.0/21
@@ -19,7 +19,6 @@ trusty-mitaka:
 
 openstack-phase1:
   services:
-    nodes:
     nodes:
       charm: "cs:trusty/ubuntu"
       num_units: 5
@@ -384,4 +383,3 @@ openstack-phase2:
         #source-branch: stable/mitaka
       to:
         - "lxc:nodes=0"
-
