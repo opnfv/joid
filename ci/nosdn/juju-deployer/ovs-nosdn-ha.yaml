@@ -31,6 +31,8 @@ openstack-phase1:
 openstack-phase2:
   inherits: openstack-phase1
   relations:
+    - - mysql:ha
+      - hacluster-mysql:ha
     - - glance:ha
       - hacluster-glance:ha
     - - keystone:ha
@@ -166,6 +168,11 @@ openstack-phase2:
       options:
         corosync_key: |
           'el1dd8107J5mwQDPS7tEJPZrr0XFfL95+Tku/QG90W5Q5f5SP4W8TRfKvddGmZWZl2lVd1neG5WqaHa1mq/aScJpoflzVAJCvshN7Gd2AjHhLNNugeI8S90j/7wrKUhqiCAlkKaeri2xs5bB5PZ7Z9AHuNZL7SW1al8lxrKhUFI='
+    hacluster-mysql:
+      charm: "local:trusty/hacluster"
+      options:
+        corosync_key: |
+          'Q29yb3N5bmMgQ2x1c3RlciBFbmdpbmUgQXV0aGVudGljYXRpb24ga2V5IGdlbmVyYXRvci4KR2F0aGVyaW5nIDEwMjQgYml0cyBmb3Iga2V5IGZyb20gL2Rldi9yYW5kb20uClByZXNzIGtleXMgb24geW91ciBrZXlib2FyZCB0byBnZW5lcmF0ZSBlbnRyb3B5LgpQcmVzcyBrZXlzIG9uIHlvdXIga2V5Ym9hcmQgdG8gZ2VuZXJhdGUgZW50cm9weSAoYml0cyA9IDkyMCkuClByZXNzIGtleXMgb24geW91ciBrZXlib2FyZCB0byBnZW5lcmF0ZSBlbnRyb3B5IChiaXRzID0gMTAwMCkuCldyaXRpbmcgY29yb3N5bmMga2V5IHRvIC9ldGMvY29yb3N5bmMvYXV0aGtleS4K'
     ceilometer:
       charm: "local:trusty/ceilometer"
       num_units: 3
