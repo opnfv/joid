@@ -35,8 +35,8 @@ git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
 build
 
 # Controller specific charm
-bzr branch lp:~wuwenbin2/onosfw/onos-controller $distro/onos-controller
-#bzr branch lp:~wuwenbin2/onosfw/neutron-gateway $distro/neutron-gateway
-bzr branch lp:~wuwenbin2/onosfw/neutron-api-onos $distro/neutron-api-onos
-bzr branch lp:~wuwenbin2/onosfw/openvswitch-onos $distro/openvswitch-onos
-bzr branch lp:~narindergupta/opnfv/neutron-gateway $distro/neutron-gateway
+bzr branch lp:~zhangyuanyou/onosfw/onos-controller $distro/onos-controller
+bzr branch lp:~zhangyuanyou/onosfw/neutron-gateway $distro/neutron-gateway
+bzr branch lp:~zhangyuanyou/onosfw/neutron-api-onos $distro/neutron-api-onos
+bzr branch lp:~zhangyuanyou/onosfw/openvswitch-onos $distro/openvswitch-onos
+#bzr branch lp:~narindergupta/opnfv/neutron-gateway $distro/neutron-gateway
