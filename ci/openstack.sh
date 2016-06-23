@@ -29,7 +29,7 @@ launch_eth() {
     for node in $computer_list; do
         echo "node name is ${node}"
         juju ssh $node "sudo ifconfig $EXTNET_PORT up"
-        juju ssh $node "sudo route del default gw $ADMNET_GW"
+        #juju ssh $node "sudo route del default gw $ADMNET_GW"
     done
 }
 
