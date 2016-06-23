@@ -106,14 +106,22 @@ if [ "onos" == "$1" ]; then
     neutron net-create ext-net --shared --router:external=True
     neutron subnet-create ext-net --name ext-subnet $EXTNET_NET
     update_gw_mac
+elif [ "nosdn" == "$1" ]; then
+    neutron net-create ext-net --shared --router:external --provider:physical_network external --provider:network_type flat
+    neutron subnet-create ext-net --name ext-subnet \
+       --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
+          --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
+    # configure security groups
+    neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
+    neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
 else
     neutron net-create ext-net --shared --router:external --provider:physical_network external --provider:network_type flat
     neutron subnet-create ext-net --name ext-subnet \
        --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
           --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
     # configure security groups
-#    neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
-#    neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
+    #neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
+    #neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
 fi
 
 

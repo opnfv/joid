@@ -163,12 +163,6 @@ fi
 check_status
 echo "...... deployment finished  ......."
 
-if [ "$opnfvsdn" == "onos" ]; then
-    ./openstack.sh "$opnfvsdn"
-    check_status
-else
-    #create the basic data for verification of stack.
-    ./openstack.sh
-fi
+./openstack.sh "$opnfvsdn"
 
 echo "...... finished  ......."
