@@ -105,7 +105,7 @@ if [ "onos" == "$1" ]; then
     launch_eth
     neutron net-create ext-net --shared --router:external=True
     neutron subnet-create ext-net --name ext-subnet $EXTNET_NET
-    update_gw_mac
+    #update_gw_mac
 elif [ "nosdn" == "$1" ]; then
     neutron net-create ext-net --shared --router:external --provider:physical_network external --provider:network_type flat
     neutron subnet-create ext-net --name ext-subnet \
