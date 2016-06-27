@@ -170,7 +170,6 @@ openstack-phase2:
       options:
         block-device: None
         glance-api-version: 2
-        ha-mcastport: 5401
       to:
         - "lxc:nodes=1"
     cinder-ceph:
@@ -178,7 +177,6 @@ openstack-phase2:
     glance:
       charm: "local:trusty/glance"
       options:
-        ha-mcastport: 5402
       to:
         - "lxc:nodes=0"
     opnfv-promise:
@@ -190,7 +188,6 @@ openstack-phase2:
       options:
         admin-password: openstack
         admin-token: admin
-        ha-mcastport: 5403
       to:
         - "lxc:nodes=0"
     mongodb:

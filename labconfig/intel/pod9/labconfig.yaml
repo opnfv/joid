@@ -60,6 +60,7 @@ lab:
     floating-ip-range: 10.9.15.6,10.9.15.250,10.9.15.254,10.9.15.0/24
     ext-port: "00:1E:67:C5:5B:09"
     dns: 8.8.8.8
+    osdomainname:
 opnfv:
     release: c
     distro: trusty

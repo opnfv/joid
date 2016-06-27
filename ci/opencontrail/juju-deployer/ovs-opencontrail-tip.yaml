@@ -202,7 +202,6 @@ openstack-phase2:
       options:
         block-device: None
         glance-api-version: 2
-#        ha-mcastport: 5401
       to:
         - "lxc:nodes=1"
     cinder-ceph:

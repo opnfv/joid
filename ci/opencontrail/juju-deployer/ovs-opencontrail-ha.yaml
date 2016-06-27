@@ -207,36 +207,43 @@ openstack-phase2:
     hacluster-keystone:
       charm: "local:trusty/hacluster"
       options:
+        corosync_transport: unicast
         corosync_key: |
           'QisjNpoKHLkvyc3PEdDHP5VZjgD0kOk9t0ABPWmCELlu5AgWgnW6bJd34BVXO7VhW+3ZwNQM3W+bZ3pl28ftY4ki4N/S0KLFNia5egFgiA3AH2QXLnokS7OYXuu6GMJJ1S5mDe6P5zU+tfJe/Mebq24u7CgR0gAvohSPRdDTwdY='
     hacluster-horizon:
       charm: "local:trusty/hacluster"
       options:
+        corosync_transport: unicast
         corosync_key: |
           'aCVPHw6XYne+Hxv0WPiM3+yEfeIxs0Ly0EMKB494Rdzjf5rE52GcXqqxuvIa/nXJ4GCR+UdKk9FEwcASfYkeu3HDWUld9uTE6pOc+ibWYnybNH7VBfEHW8h9YmQKs3HD2T3wlTcS2irU4CUW7/IKNok4etYdM3iFn1K2ReSGXEI='
     hacluster-nova:
       charm: "local:trusty/hacluster"
       options:
+        corosync_transport: unicast
         corosync_key: |
           'gel86qmEze8dYKYbfqIgRpqapJpKtdYL2hxC1y5nWYBPq7EMf6V8mF01IjeUkSRs14CUDrsPpT4PWeom7EOY2fleuLx/aIuqQUfEDkhf/gvaz7BaU4hrmTCoDBK7/HvEwY+/wu4qkEeckzSRPsm9MYzqnLRshh8yjZJ70xU/mmk='
     hacluster-neutron: 
       charm: "local:trusty/hacluster"
       options:
+        corosync_transport: unicast
         corosync_key: |
           'KNhb4++3jlllbnscS5D3qdzOJDsQPEeZ7zOLZJHbkKrRjX9gRCijVVOiv2JCvq03HqQ7LIufQzWGl9Za8qh0f6QmQ3XhFh/Cb/3WaYFj+tEf0zArWv+8miswmM1z4eyTSrTWBq0dTgx1z96wjBxP5HV0+1LWW+3Ei4oZWyRGeR0='
     hacluster-glance:
       charm: "local:trusty/hacluster"
       options:
+        corosync_transport: unicast
         corosync_key: |
           'el1dd8107J5mwQDPS7tEJPZrr0XFfL95+Tku/QG90W5Q5f5SP4W8TRfKvddGmZWZl2lVd1neG5WqaHa1mq/aScJpoflzVAJCvshN7Gd2AjHhLNNugeI8S90j/7wrKUhqiCAlkKaeri2xs5bB5PZ7Z9AHuNZL7SW1al8lxrKhUFI='
     hacluster-ceilometer:
       charm: "local:trusty/hacluster"
       options:
+        corosync_transport: unicast
         corosync_key: |
           'cHkgKGJpdHMgPSA5NjApLgpQcmVzcyBrZXlzIG9uIHlvdXIga2V5Ym9hcmQgdG8gZ2VuZXJhdGUgZW50cm9weSAoYml0cyA9IDEwMDgpLgpXcml0aW5nIGNvcm9zeW5jIGtleSB0byAvZXRjL2Nvcm9zeW5jL2F1dGhrZXkuCg=='
     hacluster-mysql:
       charm: "local:trusty/hacluster"
       options:
+        corosync_transport: unicast
         corosync_key: |
           'Q29yb3N5bmMgQ2x1c3RlciBFbmdpbmUgQXV0aGVudGljYXRpb24ga2V5IGdlbmVyYXRvci4KR2F0aGVyaW5nIDEwMjQgYml0cyBmb3Iga2V5IGZyb20gL2Rldi9yYW5kb20uClByZXNzIGtleXMgb24geW91ciBrZXlib2FyZCB0byBnZW5lcmF0ZSBlbnRyb3B5LgpQcmVzcyBrZXlzIG9uIHlvdXIga2V5Ym9hcmQgdG8gZ2VuZXJhdGUgZW50cm9weSAoYml0cyA9IDkyMCkuClByZXNzIGtleXMgb24geW91ciBrZXlib2FyZCB0byBnZW5lcmF0ZSBlbnRyb3B5IChiaXRzID0gMTAwMCkuCldyaXRpbmcgY29yb3N5bmMga2V5IHRvIC9ldGMvY29yb3N5bmMvYXV0aGtleS4K'
     ceilometer:
@@ -296,7 +303,6 @@ openstack-phase2:
       options:
         block-device: None
         glance-api-version: 2
-#        ha-mcastport: 5401
       to:
         - "lxc:nodes=0"
         - "lxc:nodes=1"
@@ -306,6 +312,8 @@ openstack-phase2:
     rabbitmq-server: 
       charm: local:trusty/rabbitmq-server
       num_units: 3
+      options:
+        vip: 10.4.1.10
       to:
         - "lxc:nodes=1"
         - "lxc:nodes=2"

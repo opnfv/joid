@@ -38,7 +38,7 @@ lab:
         type: ipmi
         address: 192.168.1.12
         user: Administrator
-        pass: pod1Admin:
+        pass: pod1Admin
     - name: rack-1-m3
       architecture: x86_64
       roles: [compute,control,storage]
@@ -96,6 +96,7 @@ lab:
     floating-ip-range: 161.105.231.2,161.105.231.62,161.105.231.1,161.105.231.0/26
     ext-port: "eth1"
     dns: 192.168.1.1
+    osdomainname: pod1.opnfv.fr
 opnfv:
   release: c
   distro: trusty

@@ -49,30 +49,65 @@ unitMachine() {
         juju status | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"services\"][\"$1\"][\"units\"][\"$1/$2\"][\"machine\"]" 2> /dev/null
 }
 
+keystoneIp() {
+    KEYSTONE=$(juju status keystone |grep public-address|sed -- 's/.*\: //')
+    if [ $(echo $KEYSTONE|wc -w) == 1 ];then
+        echo $KEYSTONE
+    else
+        juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['vip']['value']"
+    fi
+}
+
 # create external network and subnet in openstack
 create_openrc() {
     mkdir -m 0700 -p cloud
-    keystoneIp=$(juju get keystone | grep vip: -A 7 | grep value | awk '{print $2}')
-    if [ -z "$keystoneIp" ]; then
-        keystoneIp=$(unitAddress keystone 0)
-    fi
-    adminPasswd=$(juju get keystone | grep admin-password -A 5 | grep value | awk '{print $2}')
+    keystoneIp=$(keystoneIp)
+    adminPasswd=$(juju get keystone | grep admin-password -A 5 | grep value | awk '{print $2}' 2> /dev/null)
     configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v2.0 Canonical > cloud/admin-openrc
     chmod 0600 cloud/admin-openrc
 }
 
 configOpenrc() {
-	cat <<-EOF
-		export OS_USERNAME=$1
-		export OS_PASSWORD=$2
-		export OS_TENANT_NAME=$3
-		export OS_AUTH_URL=$4
-		export OS_REGION_NAME=$5
-		EOF
+    cat <<-EOF
+        export OS_USERNAME=$1
+        export OS_PASSWORD=$2
+        export OS_TENANT_NAME=$3
+        export OS_AUTH_URL=$4
+        export OS_REGION_NAME=$5
+        export OS_ENDPOINT_TYPE='internalURL'
+        export CINDER_ENDPOINT_TYPE='internalURL'
+        export GLANCE_ENDPOINT_TYPE='internalURL'
+        export KEYSTONE_ENDPOINT_TYPE='internalURL'
+        export NEUTRON_ENDPOINT_TYPE='internalURL'
+        export NOVA_ENDPOINT_TYPE='internalURL'
+EOF
 }
 
-create_openrc
+# Push api fqdn local ip to all /etc/hosts
+API_FQDN=$(juju get keystone | python -c "import yaml; import sys;\
+    print yaml.load(sys.stdin)['settings']['os-public-hostname']['value']")
 
+
+
+KEYSTONEIP=$(keystoneIp)
+juju run --all "if grep $API_FQDN /etc/hosts > /dev/null; then \
+                    echo 'API FQDN already present'; \
+                else \
+                    sudo sh -c 'echo $KEYSTONEIP $API_FQDN >> /etc/hosts'; \
+                    echo 'API FQDN injected'; \
+                fi"
+
+#change in jumphost as well as below commands will run on jumphost
+
+if grep $API_FQDN /etc/hosts; then
+    echo 'API FQDN already present'
+else
+    sudo sh -c "echo $KEYSTONEIP $API_FQDN >> /etc/hosts"
+    echo 'API FQDN injected'
+fi
+
+# Create an load openrc
+create_openrc
 . ./cloud/admin-openrc
 
 wget -P /tmp/images http://download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img
@@ -110,7 +145,7 @@ elif [ "nosdn" == "$1" ]; then
     neutron net-create ext-net --shared --router:external --provider:physical_network external --provider:network_type flat
     neutron subnet-create ext-net --name ext-subnet \
        --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
-          --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
+       --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET
     # configure security groups
     neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
     neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
@@ -118,10 +153,7 @@ else
     neutron net-create ext-net --shared --router:external --provider:physical_network external --provider:network_type flat
     neutron subnet-create ext-net --name ext-subnet \
        --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
-          --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
-    # configure security groups
-    #neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
-    #neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
+       --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET
 fi
 
 
@@ -138,8 +170,8 @@ neutron router-gateway-set demo-router ext-net
 # create pool of floating ips
 i=0
 while [ $i -ne 3 ]; do
-	neutron floatingip-create ext-net
-	i=$((i + 1))
+    neutron floatingip-create ext-net
+    i=$((i + 1))
 done
 
 #http://docs.openstack.org/juno/install-guide/install/apt/content/launch-instance-neutron.html

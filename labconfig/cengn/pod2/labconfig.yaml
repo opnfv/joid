@@ -112,6 +112,7 @@ lab:
     # eth1 of m4 since tags for networking are not yet implemented.
     ext-port: "eth1"
     dns: 8.8.8.8
+    osdomainname:
 
 opnfv:
   release: c

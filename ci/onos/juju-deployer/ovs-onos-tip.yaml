@@ -183,7 +183,6 @@ openstack-phase2:
       options:
         block-device: None
         glance-api-version: 2
-#        ha-mcastport: 5401
 #        openstack-origin-git: include-file://cinder-master.yaml
       to:
         - "lxc:nodes=1"
