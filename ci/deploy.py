@@ -215,7 +215,10 @@ opnfvlabcfg["opnfv"]["floating-ip-range"]=labcfg["lab"]["racks"][0]["floating-ip
 opnfvlabcfg["opnfv"]["ext-port"]=labcfg["lab"]["racks"][0]["ext-port"]
 opnfvlabcfg["opnfv"]["ceph-disk"]=labcfg["opnfv"]["storage"][0]["disk"]
 opnfvlabcfg["opnfv"]["interface-enable"]=",".join(list(set(ifnamelist)))
-opnfvlabcfg["opnfv"]["os-domain-name"] = labcfg["lab"]["racks"][0]["osdomainname"]
+
+osdomname = labcfg["lab"]["racks"][0]["osdomainname"]
+if osdomname:
+    opnfvlabcfg["opnfv"]["os-domain-name"] = labcfg["lab"]["racks"][0]["osdomainname"]
 
 with open('deployment.yaml', 'wa') as opnfvf:
    yaml.dump(opnfvcfg, opnfvf, default_flow_style=False)
