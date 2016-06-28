@@ -229,7 +229,8 @@ openstack-phase2:
       charm: local:charms/trusty/neutron-api
       options:
         neutron-security-groups: True
-        flat-network-providers: "*"
+        overlay-network-type: vxlan
+        #flat-network-providers: "*"
       to:
         - "lxc:nodes=0"
     neutron-gateway:

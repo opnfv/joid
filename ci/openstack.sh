@@ -20,7 +20,7 @@ if [ -f ./deployconfig.yaml ];then
     EXTNET_NET=${EXTNET[3]}
     EXTNET_PORT=`grep "ext-port" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
     ADMNET_GW=`grep "admNetgway" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
-
+    API_FQDN=`grep "os-domain-name" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
 fi
 
 # launch eth on computer nodes and remove default gw route
@@ -83,42 +83,42 @@ configOpenrc() {
 EOF
 }
 
-# Push api fqdn local ip to all /etc/hosts
-API_FQDN=$(juju get keystone | python -c "import yaml; import sys;\
-    print yaml.load(sys.stdin)['settings']['os-public-hostname']['value']")
+if [ "$API_FQDN" != "''" ]; then
+    # Push api fqdn local ip to all /etc/hosts
+    API_FQDN=$(juju get keystone | python -c "import yaml; import sys;\
+        print yaml.load(sys.stdin)['settings']['os-public-hostname']['value']")
 
+    KEYSTONEIP=$(keystoneIp)
+    juju run --all "if grep $API_FQDN /etc/hosts > /dev/null; then \
+                        echo 'API FQDN already present'; \
+                    else \
+                        sudo sh -c 'echo $KEYSTONEIP $API_FQDN >> /etc/hosts'; \
+                        echo 'API FQDN injected'; \
+                    fi"
 
+    #change in jumphost as well as below commands will run on jumphost
 
-KEYSTONEIP=$(keystoneIp)
-juju run --all "if grep $API_FQDN /etc/hosts > /dev/null; then \
-                    echo 'API FQDN already present'; \
-                else \
-                    sudo sh -c 'echo $KEYSTONEIP $API_FQDN >> /etc/hosts'; \
-                    echo 'API FQDN injected'; \
-                fi"
-
-#change in jumphost as well as below commands will run on jumphost
-
-if grep $API_FQDN /etc/hosts; then
-    echo 'API FQDN already present'
-else
-    sudo sh -c "echo $KEYSTONEIP $API_FQDN >> /etc/hosts"
-    echo 'API FQDN injected'
+    if grep $API_FQDN /etc/hosts; then
+        echo 'API FQDN already present'
+    else
+        sudo sh -c "echo $KEYSTONEIP $API_FQDN >> /etc/hosts"
+        echo 'API FQDN injected'
+    fi
 fi
 
 # Create an load openrc
 create_openrc
 . ./cloud/admin-openrc
 
-wget -P /tmp/images http://download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img
-openstack image create --file /tmp/images/cirros-0.3.3-x86_64-disk.img --disk-format qcow2 --container-format bare "cirros-0.3.3-x86_64"
+#wget -P /tmp/images http://download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img
+#openstack image create --file /tmp/images/cirros-0.3.3-x86_64-disk.img --disk-format qcow2 --container-format bare "cirros-0.3.3-x86_64"
 
 #wget -P /tmp/images http://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img
 #openstack image create --file /tmp/images/trusty-server-cloudimg-amd64-disk1.img --disk-format qcow2 --container-format bare "ubuntu-trusty-daily"
 #wget -P /tmp/images http://cloud-images.ubuntu.com/trusty/current/xenial-server-cloudimg-amd64.tar.gz
 #openstack image create --file /tmp/images/xenial-server-cloudimg-amd64.tar.gz --container-format bare --disk-format raw "xenial-server-cloudimg-amd64"
 
-rm -rf /tmp/images
+#rm -rf /tmp/images
 
 # adjust tiny image
 #nova flavor-delete m1.tiny
@@ -126,31 +126,67 @@ rm -rf /tmp/images
 
 
 # import key pair
-openstack project create --description "Demo Tenant" demo
-openstack user create --project demo --password demo --email demo@demo.demo demo
+#openstack project create --description "Demo Tenant" demo
+#openstack user create --project demo --password demo --email demo@demo.demo demo
 
-openstack keypair create --public-key ~/.ssh/id_rsa.pub ubuntu-keypair
+#openstack keypair create --public-key ~/.ssh/id_rsa.pub ubuntu-keypair
+
+#Modify the flavours to fit better
+#nova flavor-create FLAVOR_NAME FLAVOR_ID RAM_IN_MB ROOT_DISK_IN_GB NUMBER_OF_VCPUS
+nova flavor-delete m1.tiny > /dev/null 2>&1
+nova flavor-delete m1.small > /dev/null 2>&1
+nova flavor-delete m1.medium > /dev/null 2>&1
+nova flavor-delete m1.large > /dev/null 2>&1
+nova flavor-delete m1.xlarge > /dev/null 2>&1
+nova flavor-create --is-public true m1.tiny auto 512 5 1 > /dev/null 2>&1
+nova flavor-create --is-public true m1.small auto 1024 10 1 > /dev/null 2>&1
+nova flavor-create --is-public true m1.medium auto 2048 10 2 > /dev/null 2>&1
+nova flavor-create --is-public true m1.large auto 3072 10 2 > /dev/null 2>&1
+## need extra for windows image (15g)
+nova flavor-create --is-public true m1.xlarge auto 8096 30 4  > /dev/null 2>&1
+
+echo "modifying default quotas for admin user"
+
+TENANT_ID=admin
+
+#Modify quotas for the tenant to allow large deployments
+nova quota-update --instances 400 $TENANT_ID
+nova quota-update --cores 800 $TENANT_ID
+nova quota-update --ram 404800 $TENANT_ID
+nova quota-update --security-groups 4000 $TENANT_ID
+nova quota-update --floating_ips -1 $TENANT_ID
+nova quota-update --security-group-rules -1 $TENANT_ID
+
+### need to find how to change quota for the project not the tenant
+
+### modify default quota the same way..
+nova quota-class-update --instances 400 $TENANT_ID
+nova quota-class-update --cores 800 $TENANT_ID
+nova quota-class-update --ram 404800 $TENANT_ID
+nova quota-class-update --security-groups 4000 $TENANT_ID
+nova quota-class-update --floating-ips -1 $TENANT_ID
+nova quota-class-update --security-group-rules -1 $TENANT_ID
 
 # configure external network
 
 ##
 ## Create external subnet Network
 ##
+
+neutron net-create ext-net --shared --router:external=True
+
 if [ "onos" == "$1" ]; then
     launch_eth
-    neutron net-create ext-net --shared --router:external=True
     neutron subnet-create ext-net --name ext-subnet $EXTNET_NET
     #update_gw_mac
 elif [ "nosdn" == "$1" ]; then
-    neutron net-create ext-net --shared --router:external --provider:physical_network external --provider:network_type flat
     neutron subnet-create ext-net --name ext-subnet \
        --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
        --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET
     # configure security groups
-    neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
-    neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
+    #neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
+    #neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
 else
-    neutron net-create ext-net --shared --router:external --provider:physical_network external --provider:network_type flat
     neutron subnet-create ext-net --name ext-subnet \
        --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
        --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET

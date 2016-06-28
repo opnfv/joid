@@ -307,7 +307,8 @@ openstack-phase2:
       num_units: 3
       options:
         neutron-security-groups: true
-        flat-network-providers: "*"
+        overlay-network-type: vxlan
+        #flat-network-providers: "*"
         vip: 10.4.1.17
       to:
         - "lxc:nodes=1"
