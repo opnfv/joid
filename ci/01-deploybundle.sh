@@ -27,6 +27,27 @@ case "$1" in
         ;;
 esac
 
+#check whether charms are still executing the code even juju-deployer says installed.
+check_status() {
+    retval=0
+    timeoutiter=0
+    while [ $retval -eq 0 ]; do
+       sleep 30
+       juju status > status.txt
+       if [ "$(grep -c "executing" status.txt )" -ge 1 ]; then
+           echo " still executing the reltionship within charms ..."
+           if [ $timeoutiter -ge 90 ]; then
+               retval=1
+           fi
+           timeoutiter=$((timeoutiter+1))
+       else
+           retval=1
+       fi
+    done
+    status=`juju action do heat/0 domain-setup`
+    echo $status
+    echo "...... deployment finishing ......."
+}
 
 #read the value from deployment.yaml
 if [ -e ~/.juju/deployment.yaml ]; then
@@ -118,6 +139,7 @@ esac
 
 echo "... Deployment Started ...."
     juju-deployer -vW -d -t 3600 -c bundles.yaml $6-"$2"-nodes
+    check_status
 
     juju ssh nodes/0 "echo 512 | sudo tee /proc/sys/fs/inotify/max_user_instances"
 
