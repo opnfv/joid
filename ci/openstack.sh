@@ -68,6 +68,7 @@ create_openrc() {
 }
 
 configOpenrc() {
+if [ "$API_FQDN" != "''" ]; then
     cat <<-EOF
         export OS_USERNAME=$1
         export OS_PASSWORD=$2
@@ -81,6 +82,16 @@ configOpenrc() {
         export NEUTRON_ENDPOINT_TYPE='internalURL'
         export NOVA_ENDPOINT_TYPE='internalURL'
 EOF
+else
+    cat <<-EOF
+        export OS_USERNAME=$1
+        export OS_PASSWORD=$2
+        export OS_TENANT_NAME=$3
+        export OS_AUTH_URL=$4
+        export OS_REGION_NAME=$5
+EOF
+
+fi
 }
 
 if [ "$API_FQDN" != "''" ]; then
@@ -108,6 +119,7 @@ fi
 
 # Create an load openrc
 create_openrc
+
 . ./cloud/admin-openrc
 
 #wget -P /tmp/images http://download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img
@@ -133,39 +145,39 @@ create_openrc
 
 #Modify the flavours to fit better
 #nova flavor-create FLAVOR_NAME FLAVOR_ID RAM_IN_MB ROOT_DISK_IN_GB NUMBER_OF_VCPUS
-nova flavor-delete m1.tiny > /dev/null 2>&1
-nova flavor-delete m1.small > /dev/null 2>&1
-nova flavor-delete m1.medium > /dev/null 2>&1
-nova flavor-delete m1.large > /dev/null 2>&1
-nova flavor-delete m1.xlarge > /dev/null 2>&1
-nova flavor-create --is-public true m1.tiny auto 512 5 1 > /dev/null 2>&1
-nova flavor-create --is-public true m1.small auto 1024 10 1 > /dev/null 2>&1
-nova flavor-create --is-public true m1.medium auto 2048 10 2 > /dev/null 2>&1
-nova flavor-create --is-public true m1.large auto 3072 10 2 > /dev/null 2>&1
+#nova flavor-delete m1.tiny > /dev/null 2>&1
+#nova flavor-delete m1.small > /dev/null 2>&1
+#nova flavor-delete m1.medium > /dev/null 2>&1
+#nova flavor-delete m1.large > /dev/null 2>&1
+#nova flavor-delete m1.xlarge > /dev/null 2>&1
+#nova flavor-create --is-public true m1.tiny auto 512 5 1 > /dev/null 2>&1
+#nova flavor-create --is-public true m1.small auto 1024 10 1 > /dev/null 2>&1
+#nova flavor-create --is-public true m1.medium auto 2048 10 2 > /dev/null 2>&1
+#nova flavor-create --is-public true m1.large auto 3072 10 2 > /dev/null 2>&1
 ## need extra for windows image (15g)
-nova flavor-create --is-public true m1.xlarge auto 8096 30 4  > /dev/null 2>&1
+#nova flavor-create --is-public true m1.xlarge auto 8096 30 4  > /dev/null 2>&1
 
 echo "modifying default quotas for admin user"
 
 TENANT_ID=admin
 
 #Modify quotas for the tenant to allow large deployments
-nova quota-update --instances 400 $TENANT_ID
-nova quota-update --cores 800 $TENANT_ID
-nova quota-update --ram 404800 $TENANT_ID
-nova quota-update --security-groups 4000 $TENANT_ID
-nova quota-update --floating_ips -1 $TENANT_ID
-nova quota-update --security-group-rules -1 $TENANT_ID
+#nova quota-update --instances 400 $TENANT_ID
+#nova quota-update --cores 800 $TENANT_ID
+#nova quota-update --ram 404800 $TENANT_ID
+#nova quota-update --security-groups 4000 $TENANT_ID
+#nova quota-update --floating_ips -1 $TENANT_ID
+#nova quota-update --security-group-rules -1 $TENANT_ID
 
 ### need to find how to change quota for the project not the tenant
 
 ### modify default quota the same way..
-nova quota-class-update --instances 400 $TENANT_ID
-nova quota-class-update --cores 800 $TENANT_ID
-nova quota-class-update --ram 404800 $TENANT_ID
-nova quota-class-update --security-groups 4000 $TENANT_ID
-nova quota-class-update --floating-ips -1 $TENANT_ID
-nova quota-class-update --security-group-rules -1 $TENANT_ID
+#nova quota-class-update --instances 400 $TENANT_ID
+#nova quota-class-update --cores 800 $TENANT_ID
+#nova quota-class-update --ram 404800 $TENANT_ID
+#nova quota-class-update --security-groups 4000 $TENANT_ID
+#nova quota-class-update --floating-ips -1 $TENANT_ID
+#nova quota-class-update --security-group-rules -1 $TENANT_ID
 
 # configure external network
 
