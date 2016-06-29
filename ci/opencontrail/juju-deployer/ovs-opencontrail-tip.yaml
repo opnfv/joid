@@ -80,7 +80,7 @@ contrail:
       to:
         - "lxc:nodes=0"
     contrail-control:
-      charm: lcoal:trusty/contrail-control
+      charm: local:trusty/contrail-control
       to:
         - "lxc:nodes=1"
     contrail-analytics:

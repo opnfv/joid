@@ -16,6 +16,8 @@ trusty-mitaka:
     #ceph-osd-replication-count: 2
     admin-role: admin
     keystone-admin-role: admin
+    use-internal-endpoints: true
+    #os-public-hostname: pod.maas
 
 openstack-phase1:
   services:
@@ -24,46 +26,6 @@ openstack-phase1:
       num_units: 5
     ntp:
       charm: "local:trusty/ntp"
-    hacluster-keystone:
-      charm: "local:trusty/hacluster"
-      options:
-        corosync_transport: unicast
-    hacluster-cinder:
-      charm: "local:trusty/hacluster"
-      options:
-        corosync_transport: unicast
-    hacluster-heat:
-      charm: "local:trusty/hacluster"
-      options:
-        corosync_transport: unicast
-    hacluster-horizon:
-      charm: "local:trusty/hacluster"
-      options:
-        corosync_transport: unicast
-    hacluster-nova:
-      charm: "local:trusty/hacluster"
-      options:
-        corosync_transport: unicast
-    hacluster-neutron:
-      charm: "local:trusty/hacluster"
-      options:
-        corosync_transport: unicast
-    hacluster-glance:
-      charm: "local:trusty/hacluster"
-      options:
-        corosync_transport: unicast
-    hacluster-ceilometer:
-      charm: "local:trusty/hacluster"
-      options:
-        corosync_transport: unicast
-    hacluster-mysql:
-      charm: "local:trusty/hacluster"
-      options:
-        corosync_transport: unicast
-#    hacluster-ceph-radosgw:
-#      charm: "local:trusty/hacluster"
-#      options:
-#        corosync_transport: unicast
     mysql:
       charm: "local:trusty/percona-cluster"
       num_units: 3
@@ -175,6 +137,7 @@ openstack-phase1:
       charm: local:trusty/openstack-dashboard
       num_units: 3
       options:
+        endpoint-type: internalURL
         secret: admin
         vip: 10.4.1.11
         webroot: /
@@ -203,6 +166,7 @@ openstack-phase1:
       options:
         console-access-protocol: novnc
         network-manager: Neutron
+        #console-proxy-ip: pod.maas
         #service-guard: true
         vip: 10.4.1.16
         #os-public-hostname: api.public-fqdn
@@ -235,8 +199,6 @@ openstack-phase1:
       options:
         install-url: "https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.4.2-Beryllium-SR2/distribution-karaf-0.4.2-Beryllium-SR2.tar.gz"
         profile: "openvswitch-odl-beryllium"
-        http-proxy: "http://squid.internal:3128"
-        https-proxy: "http://squid.internal:3128"
       to:
         - "lxc:nodes=0"
     glance:
@@ -259,6 +221,46 @@ openstack-phase1:
         #source-branch: stable/mitaka
       to:
         - "lxc:nodes=0"
+    hacluster-keystone:
+      charm: "local:trusty/hacluster"
+      options:
+        corosync_transport: unicast
+    hacluster-cinder:
+      charm: "local:trusty/hacluster"
+      options:
+        corosync_transport: unicast
+    hacluster-heat:
+      charm: "local:trusty/hacluster"
+      options:
+        corosync_transport: unicast
+    hacluster-horizon:
+      charm: "local:trusty/hacluster"
+      options:
+        corosync_transport: unicast
+    hacluster-nova:
+      charm: "local:trusty/hacluster"
+      options:
+        corosync_transport: unicast
+    hacluster-neutron:
+      charm: "local:trusty/hacluster"
+      options:
+        corosync_transport: unicast
+    hacluster-glance:
+      charm: "local:trusty/hacluster"
+      options:
+        corosync_transport: unicast
+    hacluster-ceilometer:
+      charm: "local:trusty/hacluster"
+      options:
+        corosync_transport: unicast
+    hacluster-mysql:
+      charm: "local:trusty/hacluster"
+      options:
+        corosync_transport: unicast
+#    hacluster-ceph-radosgw:
+#      charm: "local:trusty/hacluster"
+#      options:
+#        corosync_transport: unicast
   relations:
     - - "ntp:juju-info"
       - "nodes:juju-info"
