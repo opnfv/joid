@@ -66,6 +66,8 @@ if [ -e ~/.juju/deployment.yaml ]; then
       sed --i "s@osd-devices: /srv@osd-devices: $cephdisk@g" ./bundles.yaml
       osdomname=`grep "os-domain-name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
       if [ "$osdomname" != "''" ]; then
+          sed --i "s@#use-internal-endpoints: true@use-internal-endpoints: true@g" ./bundles.yaml
+          sed --i "s@#endpoint-type: internalURL@endpoint-type: internalURL@g" ./bundles.yaml
           sed --i "s@#os-public-hostname: pod.maas@os-public-hostname: api.$osdomname@g" ./bundles.yaml
           sed --i "s@#console-proxy-ip: pod.maas@console-proxy-ip: $osdomname@g" ./bundles.yaml
       fi
