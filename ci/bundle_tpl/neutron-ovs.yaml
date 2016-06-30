@@ -1,6 +1,5 @@
     neutron-openvswitch:
-      charm: "local:{{ ubuntu.release }}/neutron-openvswitch"
-      num_units: 1
+      charm: local:{{ ubuntu.release }}/neutron-openvswitch
       options:
 {% if os.network.dpdk %}
         enable-dpdk: true

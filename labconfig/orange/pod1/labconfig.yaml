@@ -98,31 +98,13 @@ lab:
     dns: 192.168.1.1
     osdomainname: pod1.opnfv.fr
 opnfv:
-## New items
-  units: 4
-  admin_password: openstack
-  domain: pod1.opnfv.fr
-  ext_port: eth1
-  vip:
-    ceilometer: 192.168.1.24
-    cinder: 192.168.1.29
-    dashboard: 192.168.1.21
-    glance: 192.168.1.22
-    heat: 192.168.1.28
-    keystone: 192.168.1.23
-    mysql: 192.168.1.25
-    neutron: 192.168.1.27
-    nova: 192.168.1.26
-    rabbitmq: 192.168.1.20
   release: c
-# items that should be in default_deployment_config.yaml
-  distro: trusty
+  distro: xenial
   type: nonha
-  openstack: liberty
+  openstack: mitaka
   sdncontroller:
-  - type: nosdn
+  - type: odl
   feature: odl_l2
-# END OF SCENARIO ITEMS
   storage:
   - type: ceph
     disk: /dev/sdb /dev/sdc

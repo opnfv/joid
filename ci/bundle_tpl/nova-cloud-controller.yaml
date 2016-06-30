@@ -7,7 +7,6 @@
         console-proxy-ip: {{ opnfv.domain }}
 {% endif %}
         network-manager: Neutron
-        service-guard: true
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.nova }}
 {% endif %}

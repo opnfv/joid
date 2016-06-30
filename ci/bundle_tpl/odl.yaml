@@ -7,10 +7,3 @@
         https-proxy: "http://squid.internal:3128"
       to:
         - "lxc:nodes=0"
-    neutron-api-odl:
-      charm: local:{{ ubuntu.release }}/neutron-api-odl
-      options:
-        overlay-network-type: 'vxlan'
-        security-groups: True
-    openvswitch-odl:
-      charm: local:{{ ubuntu.release }}/openvswitch-odl

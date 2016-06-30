@@ -1,6 +1,6 @@
     nova-compute:
       charm: "local:{{ ubuntu.release }}/nova-compute"
-      num_units: {{ opnfv.units }}
+      num_units: {{ opnfv.units - 1 }}
       options:
         enable-live-migration: true
         enable-resize: true
@@ -13,6 +13,6 @@
         virt-type: lxd
 {% endif %}
       to:
-{% for unit_id in to_select(opnfv.units) %}
-        - "nodes={{ unit_id }}"
+{% for unit_id in to_select(opnfv.units - 1) %}
+        - "nodes={{ unit_id + 1 }}"
 {% endfor %}

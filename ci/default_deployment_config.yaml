@@ -1,6 +1,5 @@
 ubuntu:
     release: xenial
-
 os:
     release: mitaka
     ha:

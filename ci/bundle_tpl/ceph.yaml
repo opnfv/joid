@@ -35,6 +35,4 @@
 {% for unit_id in to_select(unit_qty() if os.beta.hacluster_ceph_radosgw else 1) %}
         - "lxc:nodes={{ unit_id }}"
 {% endfor %}
-    cinder-ceph:
-      charm: "local:{{ ubuntu.release }}/cinder-ceph"
 {% endif %}

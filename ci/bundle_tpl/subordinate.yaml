@@ -1,0 +1,28 @@
+    ceilometer-agent:
+      charm: local:{{ ubuntu.release }}/ceilometer-agent
+{% if opnfv.storage_dict.ceph is defined %}
+    cinder-ceph:
+      charm: local:{{ ubuntu.release }}/cinder-ceph
+{% endif %}
+{% if os.network.controller == 'nosdn' %}{% include 'neutron-ovs.yaml' %}
+{% elif os.network.controller == 'odl' %}
+    neutron-api-odl:
+      charm: local:{{ ubuntu.release }}/neutron-api-odl
+      options:
+        overlay-network-type: 'vxlan'
+        security-groups: True
+    openvswitch-odl:
+      charm: local:{{ ubuntu.release }}/openvswitch-odl
+{% elif os.network.controller == 'nons' %}
+    openvswitch-onos:
+      charm: local:{{ ubuntu.release }}/openvswitch-onos
+    neutron-api-onos:
+      charm: local:{{ ubuntu.release }}/neutron-api-onos
+      options:
+        overlay-network-type: 'vxlan'
+        security-groups: True
+{% endif %}
+{% if os.lxd is defined %}
+    lxd:
+      charm: local:{{ ubuntu.release }}/lxd
+{% endif %}

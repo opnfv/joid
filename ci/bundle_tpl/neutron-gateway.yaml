@@ -1,6 +1,5 @@
     neutron-gateway:
       charm: "local:{{ ubuntu.release }}/neutron-gateway"
-      num_units: 1
       options:
 {% if opnfv.ext_port is defined  %}
         ext-port: {{ opnfv.ext_port }}

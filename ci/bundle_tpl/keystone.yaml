@@ -4,7 +4,6 @@
       options:
         admin-password: {{ opnfv.admin_password | default(os.admin.password) }}
         admin-token: {{ os.admin.name }}
-        ha-mcastport: 5403
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.keystone }}
 {% endif %}

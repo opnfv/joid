@@ -3,7 +3,9 @@
       num_units: {{ unit_qty() }}
       options:
         neutron-security-groups: true
-        flat-network-providers: "*"
+{% if os.network.controller == 'nosdn' %}
+        overlay-network-type: vxlan
+{% endif %}
 {% if os.network.controller == 'odl' %}
         manage-neutron-plugin-legacy-mode: False
 {% endif %}

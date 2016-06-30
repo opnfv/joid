@@ -1,5 +1,3 @@
-    ceilometer-agent:
-      charm: "local:{{ ubuntu.release }}/ceilometer-agent"
     mongodb:
       charm: local:{{ ubuntu.release }}/mongodb
       to:

@@ -55,7 +55,11 @@ opnfvcfg['demo-maas']={'juju-bootstrap':{'memory': 4096,'name': "bootstrap",\
 
 opnfvlabcfg['opnfv']={'ext-port':'','floating-ip-range':'','dataNetwork':'','ceph-disk':'/srv/',\
                       'storageNetwork':'','interface-enable':'','publicNetwork':'',\
-                      'os-domain-name':''}
+                      'os-domain-name':'','vip':{'rabbitmq':'','dashboard':'','glance':'',\
+                                                 'keystone':'','ceilometer':'','mysql':'',\
+                                                 'nova':'','neutron':'','heat':'','cinder':''}\
+                     }
+
 
 opnfvcfg['demo-maas']['maas']['apt_sources'].append("ppa:maas/stable")
 opnfvcfg['demo-maas']['maas']['apt_sources'].append("ppa:juju/stable")
@@ -216,9 +220,28 @@ opnfvlabcfg["opnfv"]["ext-port"]=labcfg["lab"]["racks"][0]["ext-port"]
 opnfvlabcfg["opnfv"]["ceph-disk"]=labcfg["opnfv"]["storage"][0]["disk"]
 opnfvlabcfg["opnfv"]["interface-enable"]=",".join(list(set(ifnamelist)))
 
+#setup vip addresss for HA
+opnfvlabcfg["opnfv"]["vip"]["rabbitmq"] = opnfvlabcfg["opnfv"]["admNetwork"]+"0"
+opnfvlabcfg["opnfv"]["vip"]["dashboard"] = opnfvlabcfg["opnfv"]["admNetwork"]+"1"
+opnfvlabcfg["opnfv"]["vip"]["glance"] = opnfvlabcfg["opnfv"]["admNetwork"]+"2"
+opnfvlabcfg["opnfv"]["vip"]["keystone"] = opnfvlabcfg["opnfv"]["admNetwork"]+"3"
+opnfvlabcfg["opnfv"]["vip"]["ceilometer"] = opnfvlabcfg["opnfv"]["admNetwork"]+"4"
+opnfvlabcfg["opnfv"]["vip"]["mysql"] = opnfvlabcfg["opnfv"]["admNetwork"]+"5"
+opnfvlabcfg["opnfv"]["vip"]["nova"] = opnfvlabcfg["opnfv"]["admNetwork"]+"6"
+opnfvlabcfg["opnfv"]["vip"]["neutron"] = opnfvlabcfg["opnfv"]["admNetwork"]+"7"
+opnfvlabcfg["opnfv"]["vip"]["heat"] = opnfvlabcfg["opnfv"]["admNetwork"]+"8"
+opnfvlabcfg["opnfv"]["vip"]["cinder"] = opnfvlabcfg["opnfv"]["admNetwork"]+"9"
+
 osdomname = labcfg["lab"]["racks"][0]["osdomainname"]
+
 if osdomname:
     opnfvlabcfg["opnfv"]["os-domain-name"] = labcfg["lab"]["racks"][0]["osdomainname"]
+    opnfvlabcfg["opnfv"]["domain"] = labcfg["lab"]["racks"][0]["osdomainname"]
+
+opnfvlabcfg["opnfv"]["ext_port"]=labcfg["lab"]["racks"][0]["ext-port"]
+opnfvlabcfg["opnfv"]["units"]=len(labcfg["lab"]["racks"][0]["nodes"])
+opnfvlabcfg["opnfv"]["admin_password"]="openstack"
+opnfvlabcfg["opnfv"]["storage"]=labcfg["opnfv"]["storage"]
 
 with open('deployment.yaml', 'wa') as opnfvf:
    yaml.dump(opnfvcfg, opnfvf, default_flow_style=False)
