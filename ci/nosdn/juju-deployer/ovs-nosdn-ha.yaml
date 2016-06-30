@@ -206,38 +206,47 @@ openstack-phase1:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
     hacluster-cinder:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
     hacluster-heat:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
     hacluster-horizon:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
     hacluster-ceilometer:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
     hacluster-nova:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
     hacluster-neutron:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
     hacluster-glance:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
     hacluster-mysql:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
 
   relations:
     - - ntp:juju-info

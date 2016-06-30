@@ -55,7 +55,12 @@ openstack-phase1:
         - "lxc:nodes=0"
     heat:
       charm: "local:trusty/heat"
+      num_units: 3
+      options:
+        vip: 10.4.1.18
       to:
+        - "lxc:nodes=3"
+        - "lxc:nodes=4"
         - "lxc:nodes=0"
     ceph:
       charm: "local:trusty/ceph"
@@ -93,6 +98,7 @@ openstack-phase1:
       charm: "local:trusty/cinder"
       num_units: 3
       options:
+        vip: 10.4.1.19
         block-device: None
         glance-api-version: 2
       to:
@@ -209,30 +215,47 @@ openstack-phase1:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
     hacluster-horizon:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
     hacluster-nova:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
     hacluster-neutron:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
     hacluster-glance:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
     hacluster-ceilometer:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
     hacluster-mysql:
       charm: "local:trusty/hacluster"
       options:
         corosync_transport: unicast
+        cluster_count: 3
+    hacluster-heat:
+      charm: "local:trusty/hacluster"
+      options:
+        corosync_transport: unicast
+        cluster_count: 3
+    hacluster-cinder:
+      charm: "local:trusty/hacluster"
+      options:
+        corosync_transport: unicast
+        cluster_count: 3
   relations:
     - - "ntp:juju-info"
       - "nodes:juju-info"
@@ -250,6 +273,10 @@ openstack-phase1:
       - "hacluster-horizon:ha"
     - - "ceilometer:ha"
       - "hacluster-ceilometer:ha"
+    - - "heat:ha"
+      - "hacluster-heat:ha"
+    - - "cinder:ha"
+      - "hacluster-cinder:ha"
 
 openstack-phase2:
   inherits: openstack-phase1
