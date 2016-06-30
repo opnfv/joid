@@ -1,0 +1,14 @@
+    neutron-gateway:
+      charm: "local:{{ ubuntu.release }}/neutron-gateway"
+      num_units: 1
+      options:
+{% if opnfv.ext_port is defined  %}
+        ext-port: {{ opnfv.ext_port }}
+{% endif %}
+{% if os.network.controller == 'odl' %}
+        plugin: ovs-odl
+{% endif %}
+        instance-mtu: 1400
+      to:
+        - "nodes=0"
+{# Empty block to avoid bad block trim #}

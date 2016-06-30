@@ -1,0 +1,15 @@
+    openstack-dashboard:
+      charm: "local:{{ ubuntu.release }}/openstack-dashboard"
+      num_units: {{ unit_qty() }}
+      options:
+        secret: admin
+        webroot: /
+{% if os.ha.mode == 'ha' %}
+        vip: {{ opnfv.vip.dashboard }}
+{% endif %}
+{% if os.beta.public_api %}
+        endpoint-type: internalURL
+{% endif %}
+{% for unit_id in to_select() %}
+        - "lxc:nodes={{ unit_id }}"
+{% endfor %}

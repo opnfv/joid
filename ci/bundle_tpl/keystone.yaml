@@ -1,0 +1,14 @@
+    keystone:
+      charm: "local:{{ ubuntu.release }}/keystone"
+      num_units: {{ unit_qty() }}
+      options:
+        admin-password: {{ opnfv.admin_password | default(os.admin.password) }}
+        admin-token: {{ os.admin.name }}
+        ha-mcastport: 5403
+{% if os.ha.mode == 'ha' %}
+        vip: {{ opnfv.vip.keystone }}
+{% endif %}
+      to:
+{% for unit_id in to_select() %}
+        - "lxc:nodes={{ unit_id }}"
+{% endfor %}

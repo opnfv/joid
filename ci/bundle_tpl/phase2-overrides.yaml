@@ -1,0 +1,23 @@
+{% if opnfv.spaces_dict.data is defined %}
+    os-data-network: {{ opnfv.spaces_dict.data.cidr }}
+{% endif %}
+{% if opnfv.spaces_dict.storage is defined %}
+    ceph-cluster-network: {{ opnfv.spaces_dict.storage.cidr }}
+{% endif %}
+    prefer-ipv6: {{ os.network.ipv6 }}
+{% if os.network.dvr %}
+    enable-dvr: true
+{% endif %}
+{% if os.network.l2_population %}
+    l2-population: true
+{% endif %}
+    region: {{ os.region }}
+    #source: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+    openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+    ceph-osd-replication-count: {{ os.storage.ceph_replica }}
+    admin-role: {{ os.admin_role }}
+    keystone-admin-role: {{ os.admin_role }}
+{% if os.beta.public_api %}
+    use-internal-endpoints: true
+    os-public-hostname: api.{{ opnfv.domain }}
+{% endif %}

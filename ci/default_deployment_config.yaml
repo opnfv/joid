@@ -1,0 +1,26 @@
+ubuntu:
+    release: xenial
+
+os:
+    release: mitaka
+    ha:
+        mode: ha
+        cluster_size: 3
+    lxd: False
+    region: Canonical
+    admin:
+        role: admin
+        name: admin
+        password: openstack
+    storage:
+        ceph_replica: '2'
+    network:
+        controller: odl
+        enhanced_ovs: False
+        dvr: False
+        ipv6: False
+        l2_population: False
+    beta:
+        hacluster_ceph_radosgw: False
+        public_api: False
+        huge_pages: False

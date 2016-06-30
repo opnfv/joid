@@ -1,0 +1,16 @@
+    mysql:
+      charm: "local:{{ ubuntu.release }}/percona-cluster"
+      num_units: {{ unit_qty() }}
+      options:
+        dataset-size: 2G
+        lp1366997-workaround: true
+        max-connections: 10000
+        root-password: {{ get_password('mysql_root') }}
+        sst-password: {{ get_password('mysql_sst') }}
+{% if os.ha.mode == 'ha' %}
+        vip: {{ opnfv.vip.mysql }}
+{% endif %}
+      to:
+{% for unit_id in to_select() %}
+        - "lxc:nodes={{ unit_id }}"
+{% endfor %}

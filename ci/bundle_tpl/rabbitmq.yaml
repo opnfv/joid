@@ -1,0 +1,7 @@
+    rabbitmq-server:
+      charm: "local:{{ ubuntu.release }}/rabbitmq-server"
+      num_units: {{ unit_qty() }}
+      to:
+{% for unit_id in to_select() %}
+        - "lxc:nodes={{ unit_id }}"
+{% endfor %}

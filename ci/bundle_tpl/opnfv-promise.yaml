@@ -1,0 +1,5 @@
+    opnfv-promise:
+      charm: local:{{ ubuntu.release }}/promise
+      to:
+        - "lxc:nodes=0"
+{# Empty block to avoid bad block trim #}

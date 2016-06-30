@@ -1,0 +1,12 @@
+    glance:
+      charm: "local:{{ ubuntu.release }}/glance"
+      num_units: {{ unit_qty() }}
+      options:
+        ha-mcastport: 5402
+{% if os.ha.mode == 'ha' %}
+        vip: {{ opnfv.vip.glance }}
+{% endif %}
+      to:
+{% for unit_id in to_select() %}
+        - "lxc:nodes={{ unit_id }}"
+{% endfor %}

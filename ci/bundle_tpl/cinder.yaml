@@ -1,0 +1,14 @@
+    cinder:
+      charm: "local:{{ ubuntu.release }}/cinder"
+      num_units: {{ unit_qty() }}
+      options:
+        block-device: None
+        glance-api-version: 2
+        ha-mcastport: 5401
+{% if os.ha.mode == 'ha' %}
+        vip: {{ opnfv.vip.cinder }}
+{% endif %}
+      to:
+{% for unit_id in to_select() %}
+        - "lxc:nodes={{ unit_id }}"
+{% endfor %}

@@ -1,0 +1,47 @@
+# vim: set ts=2 et:
+{{ ubuntu.release }}-{{ os.release }}-nodes:
+  inherits: openstack-phase1
+
+
+{{ ubuntu.release }}-{{ os.release }}:
+  inherits: openstack-phase2
+  overrides:
+{% include 'phase2-overrides.yaml' %}
+
+
+openstack-phase1:
+  services:
+    nodes:
+      charm: "cs:{{ ubuntu.release }}/ubuntu"
+      num_units: 2
+    ntp:
+      charm: "local:{{ ubuntu.release }}/ntp"
+  relations:
+    - - "ntp:juju-info"
+      - "nodes:juju-info"
+
+
+openstack-phase2:
+  inherits: openstack-phase1
+  relations:
+{% include 'relations.yaml' %}
+  services:
+{% if os.ha.mode == 'ha' %}
+    {% include 'haclusters.yaml' %}
+{% endif %}
+{% include 'mysql.yaml' %}
+{% include 'ceilometer.yaml' %}
+{% include 'ceph.yaml' %}
+{% include 'cinder.yaml' %}
+{% include 'glance.yaml' %}
+{% include 'opnfv-promise.yaml' %}
+{% include 'keystone.yaml' %}
+{% include 'nova-cloud-controller.yaml' %}
+{% include 'nova-compute.yaml' %}
+{% include 'openstack-dashboard.yaml' %}
+{% include 'rabbitmq.yaml' %}
+{% include 'heat.yaml' %}
+{% include 'neutron-api.yaml' %}
+{% include 'neutron-gateway.yaml' %}
+{% if os.network.controller == 'nosdn' %}{% include 'neutron-ovs.yaml' %}
+{% elif os.network.controller == 'odl' %}{% include 'odl.yaml' %}{% endif %}

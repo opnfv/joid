@@ -1,0 +1,18 @@
+    nova-compute:
+      charm: "local:{{ ubuntu.release }}/nova-compute"
+      num_units: {{ opnfv.units }}
+      options:
+        enable-live-migration: true
+        enable-resize: true
+        manage-neutron-plugin-legacy-mode: false
+        migration-auth-type: ssh
+{% if os.beta.huge_pages %}
+        hugepages: "50%"
+{% endif %}
+{% if os.lxd %}
+        virt-type: lxd
+{% endif %}
+      to:
+{% for unit_id in to_select(opnfv.units) %}
+        - "nodes={{ unit_id }}"
+{% endfor %}

@@ -1,0 +1,165 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+from optparse import OptionParser
+from jinja2 import Environment, FileSystemLoader
+from pprint import pprint as pp
+import os
+import random
+import yaml
+import sys, traceback
+
+##
+## Parse parameters
+##
+
+parser = OptionParser()
+parser.add_option("-s", "--scenario", dest="scenario", help ="scenario name")
+parser.add_option("-l", "--lab", dest="lab", help ="lab config file")
+(options, args) = parser.parse_args()
+scenario = options.scenario
+labconfig_file = options.lab
+
+##
+## Set Path and configs path
+##
+
+scenarioconfig_file = 'default_deployment_config.yaml'
+# Capture our current directory
+TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/bundle_tpl'
+
+##
+## Prepare variables
+##
+
+# Prepare a storage for passwords
+passwords_store = dict()
+
+##
+## Local Functions
+##
+
+def load_yaml(filepath):
+    with open(filepath, 'r') as stream:
+        try:
+            return yaml.load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+
+##
+## Templates functions
+##
+
+def unit_qty():
+    global config
+    if config['os']['ha']['mode'] == 'ha':
+        return config['os']['ha']['cluster_size']
+    else:
+        return 1
+
+def to_select( qty = False ):
+    global config
+    if not qty:
+        qty = config['os']['ha']['cluster_size'] if config['os']['ha']['mode'] == 'ha' else 1
+    return random.sample(range(0,config['opnfv']['units']), qty )
+
+def get_password(key, length=16, special=False):
+    global passwords_store
+    if key not in passwords_store.keys():
+        alphabet = "abcdefghijklmnopqrstuvwxyz"
+        upperalphabet = alphabet.upper()
+        char_list = alphabet + upperalphabet
+        pwlist = []
+        if special:
+            char_list += "+-,;./:?!*"
+        for i in range(length):
+            pwlist.append(char_list[random.randrange(len(char_list))])
+        random.shuffle(pwlist)
+        passwords_store[key] = "".join(pwlist)
+    return passwords_store[key]
+
+##
+## Config import
+##
+
+#Load scenario Config
+config = load_yaml(scenarioconfig_file)
+#Load lab Config
+config.update(load_yaml(labconfig_file))
+
+#We transform array to hash for an easier work
+config['opnfv']['spaces_dict'] = dict()
+for space in config['opnfv']['spaces']:
+    config['opnfv']['spaces_dict'][space['type']] = space
+config['opnfv']['storage_dict'] = dict()
+for storage in config['opnfv']['storage']:
+    config['opnfv']['storage_dict'][storage['type']] = storage
+
+##
+## Parse scenario name
+##
+
+# Set default scenario name
+if not scenario:
+    scenario = "os-nosdn-nofeature-nonha"
+
+# Parse scenario name
+try:
+    sc = scenario.split('-')
+    (sdn, features, hamode) = sc[1:4]
+    features = features.split('_')
+    if len(sc) > 4:
+        extra = sc[4].split('_')
+    else:
+        extra = []
+except ValueError as err:
+    print('Error: Bad scenario name syntax, use '
+          '"os-<controller>-<nfvfeature>-<mode>[-<extrastuff>]" format')
+    sys.exit(1)
+
+##
+## Update config with scenario name
+##
+
+# change ha mode
+config['os']['ha']['mode'] = hamode
+
+# change ha mode
+config['os']['network']['controller'] = sdn
+
+# Change features
+if 'lxd' in features:
+    config['os']['lxd'] = True
+if 'drv' in features:
+    config['os']['network']['dvr'] = True
+if 'ipv6' in features:
+    config['os']['network']['ipv6'] = True
+if 'ovs' in features:
+    config['os']['network']['enhanced_ovs'] = True
+
+# Set beta option from extra
+if 'publicapi' in extra:
+    config['os']['beta']['public_api'] = True
+if 'radosgwcluster' in extra:
+    config['os']['beta']['hacluster_ceph_radosgw'] = True
+if 'hugepages' in extra:
+    config['os']['beta']['huge_pages'] = True
+
+# pp(config)
+
+##
+## Transform template to bundle.yaml according to config
+##
+
+# Create the jinja2 environment.
+env = Environment(loader=FileSystemLoader(TPL_DIR),
+                  trim_blocks=True)
+template = env.get_template('bundle.yaml')
+
+# Add functions
+env.globals.update(get_password=get_password)
+env.globals.update(unit_qty=unit_qty)
+env.globals.update(to_select=to_select)
+
+# Render the template
+print(template.render(**config))

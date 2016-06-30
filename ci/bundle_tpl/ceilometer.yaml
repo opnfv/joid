@@ -1,0 +1,17 @@
+    ceilometer-agent:
+      charm: "local:{{ ubuntu.release }}/ceilometer-agent"
+    mongodb:
+      charm: local:{{ ubuntu.release }}/mongodb
+      to:
+        - "lxc:nodes=0"
+    ceilometer:
+      charm: "local:{{ ubuntu.release }}/ceilometer"
+      num_units: {{ unit_qty() }}
+      options:
+{% if os.ha.mode == 'ha' %}
+        vip: {{ opnfv.vip.ceilometer }}
+{% endif %}
+      to:
+{% for unit_id in to_select() %}
+        - "lxc:nodes={{ unit_id }}"
+{% endfor %}
