@@ -62,7 +62,7 @@ if [ -e ~/.juju/deployment.yaml ]; then
       fi
       admnet=`grep "admNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
       sed --i "s@10.4.1.1@$admnet@g" ./bundles.yaml
-      cephdisk=`grep "disk" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+      cephdisk=`grep "ceph-disk" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
       sed --i "s@osd-devices: /srv@osd-devices: $cephdisk@g" ./bundles.yaml
       osdomname=`grep "os-domain-name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
       if [ "$osdomname" != "''" ]; then
