@@ -185,21 +185,25 @@ TENANT_ID=admin
 ## Create external subnet Network
 ##
 
-neutron net-create ext-net --shared --router:external=True
+#neutron net-create ext_net --shared --router:external=True
+neutron net-create ext_net --router:external=True
 
 if [ "onos" == "$1" ]; then
     launch_eth
-    neutron subnet-create ext-net --name ext-subnet $EXTNET_NET
+    neutron subnet-create ext_net --name ext-subnet \
+       --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
+       --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET
+    #neutron subnet-create ext_net --name ext-subnet $EXTNET_NET
     #update_gw_mac
 elif [ "nosdn" == "$1" ]; then
-    neutron subnet-create ext-net --name ext-subnet \
+    neutron subnet-create ext_net --name ext-subnet \
        --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
        --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET
     # configure security groups
     #neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
     #neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
 else
-    neutron subnet-create ext-net --name ext-subnet \
+    neutron subnet-create ext_net --name ext-subnet \
        --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
        --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET
 fi
@@ -213,12 +217,12 @@ neutron router-create demo-router
 
 neutron router-interface-add demo-router demo-subnet
 
-neutron router-gateway-set demo-router ext-net
+neutron router-gateway-set demo-router ext_net
 
 # create pool of floating ips
 i=0
 while [ $i -ne 3 ]; do
-    neutron floatingip-create ext-net
+    neutron floatingip-create ext_net
     i=$((i + 1))
 done
 
