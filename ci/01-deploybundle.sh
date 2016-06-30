@@ -89,9 +89,14 @@ case "$3" in
 esac
 
 # lets put the if seperateor as "," as this will save me from world.
+fea=""
 IFS=","
-
 for feature in $5; do
+    if [ "$fea" == "" ]; then
+        fea=$feature
+    else
+        fea=$fea"_"$feature
+    fi
     case "$feature" in
         'ipv6' )
              sed -i -- 's/#prefer-ipv6: true/prefer-ipv6: true/g' ./bundles.yaml
@@ -138,6 +143,13 @@ case "$6" in
         sed -i -- "s|trusty|$6|g" ./bundles.yaml
         ;;
 esac
+
+var=os-$4-$fea-$1
+if [ "$4" == "nosdn" ]; then
+    python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
+elif [ "$4" == "odl" ]; then
+    python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
+fi
 
 echo "... Deployment Started ...."
     juju-deployer -vW -d -t 3600 -c bundles.yaml $6-"$2"-nodes

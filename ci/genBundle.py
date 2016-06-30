@@ -130,7 +130,7 @@ config['os']['network']['controller'] = sdn
 # Change features
 if 'lxd' in features:
     config['os']['lxd'] = True
-if 'drv' in features:
+if 'dvr' in features:
     config['os']['network']['dvr'] = True
 if 'ipv6' in features:
     config['os']['network']['ipv6'] = True

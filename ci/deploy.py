@@ -242,6 +242,7 @@ opnfvlabcfg["opnfv"]["ext_port"]=labcfg["lab"]["racks"][0]["ext-port"]
 opnfvlabcfg["opnfv"]["units"]=len(labcfg["lab"]["racks"][0]["nodes"])
 opnfvlabcfg["opnfv"]["admin_password"]="openstack"
 opnfvlabcfg["opnfv"]["storage"]=labcfg["opnfv"]["storage"]
+opnfvlabcfg["opnfv"]["spaces"]=labcfg["opnfv"]["spaces"]
 
 with open('deployment.yaml', 'wa') as opnfvf:
    yaml.dump(opnfvcfg, opnfvf, default_flow_style=False)
