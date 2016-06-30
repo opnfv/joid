@@ -10,6 +10,7 @@
 {% if os.beta.public_api %}
         endpoint-type: internalURL
 {% endif %}
+      to:
 {% for unit_id in to_select() %}
         - "lxc:nodes={{ unit_id }}"
 {% endfor %}
