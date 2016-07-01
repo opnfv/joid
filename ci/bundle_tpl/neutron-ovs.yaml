@@ -4,8 +4,8 @@
 {% if os.network.dpdk %}
         enable-dpdk: true
         #dpdk-driver: uio_pci_generic
-{% endif %}
         #data-port: ""
         #default-socket-memory: 1024
         #default-socket-cores: 1
+{% endif %}
 {# Empty block to avoid bad block trim #}

@@ -100,12 +100,25 @@
     - - neutron-openvswitch:neutron-plugin-api
       - neutron-api:neutron-plugin-api
 {% elif os.network.controller == 'odl' %}
-    - - nova-compute:neutron-plugin
-      - openvswitch-odl:neutron-plugin
-    - - neutron-gateway
-      - openvswitch-odl
-    - - openvswitch-odl:ovsdb-manager
-      - odl-controller:ovsdb-manager
-    - - neutron-api-odl:odl-controller
-      - odl-controller:controller-api
+    - - "neutron-api:neutron-plugin-api-subordinate"
+      - "neutron-api-odl:neutron-plugin-api-subordinate"
+    - - "nova-compute:neutron-plugin"
+      - "openvswitch-odl:neutron-plugin"
+    - - "neutron-gateway"
+      - "openvswitch-odl"
+    - - "openvswitch-odl:ovsdb-manager"
+      - "odl-controller:ovsdb-manager"
+    - - "neutron-api-odl:odl-controller"
+      - "odl-controller:controller-api"
+{% elif os.network.controller == 'onos' %}
+    - - "neutron-api:neutron-plugin-api-subordinate"
+      - "neutron-api-onos:neutron-plugin-api-subordinate"
+    - - "nova-compute:neutron-plugin"
+      - "openvswitch-onos:neutron-plugin"
+    - - "neutron-gateway"
+      - "openvswitch-onos"
+    - - "openvswitch-onos:ovsdb-manager"
+      - "onos-controller:ovsdb-manager"
+    - - "neutron-api-onos:onos-controller"
+      - "onos-controller:controller-api"
 {% endif %}

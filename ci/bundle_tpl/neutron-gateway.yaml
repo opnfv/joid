@@ -6,6 +6,8 @@
 {% endif %}
 {% if os.network.controller == 'odl' %}
         plugin: ovs-odl
+{% elif os.network.controller == 'onos' %}
+        plugin: onos
 {% endif %}
         instance-mtu: 1400
       to:

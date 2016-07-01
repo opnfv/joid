@@ -5,8 +5,10 @@
         neutron-security-groups: true
 {% if os.network.controller == 'nosdn' %}
         overlay-network-type: vxlan
-{% endif %}
-{% if os.network.controller == 'odl' %}
+{% elif os.network.controller == 'odl' %}
+        manage-neutron-plugin-legacy-mode: False
+{% elif os.network.controller == 'onos' %}
+        flat-network-providers: "*"
         manage-neutron-plugin-legacy-mode: False
 {% endif %}
 {% if os.ha.mode == 'ha' %}

@@ -10,6 +10,8 @@ set -ex
     sed -i -- "s|distro=trusty|distro=$6|g" ./fetch-charms.sh
     ./fetch-charms.sh $6
 
+osdomname=''
+
 case "$1" in
     'nonha' )
         cp $4/juju-deployer/ovs-$4-nonha.yaml ./bundles.yaml
@@ -144,10 +146,17 @@ case "$6" in
         ;;
 esac
 
-var=os-$4-$fea-$1
-if [ "$4" == "nosdn" ]; then
+if [ "$osdomname" != "''" ]; then
+    var=os-$4-$fea-$1-publicapi
+else
+    var=os-$4-$fea-$1
+fi
+
+if [ "$4" != "nosdn" ]; then
     python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
 elif [ "$4" == "odl" ]; then
+    python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
+elif [ "$4" == "onos" ]; then
     python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
 fi
 

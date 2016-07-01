@@ -33,7 +33,11 @@ openstack-phase1:
 {% include 'heat.yaml' %}
 {% include 'neutron-api.yaml' %}
 {% include 'neutron-gateway.yaml' %}
-{% if os.network.controller == 'odl' %}{% include 'odl.yaml' %}{% endif %}
+{% if os.network.controller == 'odl' %}
+    {% include 'odl.yaml' %}
+{% elif os.network.controller == 'onos' %}
+    {% include 'onos.yaml' %}
+{% endif %}
 {% if os.ha.mode == 'ha' %}
     {% include 'haclusters.yaml' %}
 {% endif %}
