@@ -18,6 +18,11 @@ openstack-phase1:
 {% endif %}
     ntp:
       charm: "local:{{ ubuntu.release }}/ntp"
+{% if os.network.controller == 'ocl' %}
+      options:
+        source: "0.ubuntu.pool.ntp.org 1.ubuntu.pool.ntp.org 2.ubuntu.pool.ntp.org 3.ubuntu.pool.ntp.org"
+        auto_peers: false
+{% endif %}
 {% include 'mysql.yaml' %}
 {% include 'ceilometer.yaml' %}
 {% include 'ceph.yaml' %}
@@ -34,19 +39,21 @@ openstack-phase1:
 {% include 'neutron-api.yaml' %}
 {% include 'neutron-gateway.yaml' %}
 {% if os.network.controller == 'odl' %}
-    {% include 'odl.yaml' %}
+{% include 'odl.yaml' %}
 {% elif os.network.controller == 'onos' %}
-    {% include 'onos.yaml' %}
+{% include 'onos.yaml' %}
+{% elif os.network.controller == 'ocl' %}
+{% include 'oclphase1.yaml' %}
 {% endif %}
 {% if os.ha.mode == 'ha' %}
-    {% include 'haclusters.yaml' %}
+{% include 'haclusters.yaml' %}
 {% endif %}
 
   relations:
     - - "ntp:juju-info"
       - "nodes:juju-info"
 {% if os.ha.mode == 'ha' %}
-    {% include 'harelations.yaml' %}
+{% include 'harelations.yaml' %}
 {% endif %}
 
 openstack-phase2:

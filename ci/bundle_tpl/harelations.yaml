@@ -1,5 +1,4 @@
 {% if os.ha.mode == 'ha' %}
-
     - - mysql:ha
       - hacluster-mysql:ha
     - - cinder:ha

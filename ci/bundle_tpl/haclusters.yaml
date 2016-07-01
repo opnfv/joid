@@ -1,4 +1,3 @@
-
     hacluster-keystone:
       charm: "local:{{ ubuntu.release }}/hacluster"
       options:

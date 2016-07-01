@@ -152,13 +152,8 @@ else
     var=os-$4-$fea-$1
 fi
 
-if [ "$4" != "nosdn" ]; then
-    python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
-elif [ "$4" == "odl" ]; then
-    python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
-elif [ "$4" == "onos" ]; then
-    python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
-fi
+#lets generate the bundle for all target using genBundle.py
+python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
 
 echo "... Deployment Started ...."
     juju-deployer -vW -d -t 3600 -c bundles.yaml $6-"$2"-nodes

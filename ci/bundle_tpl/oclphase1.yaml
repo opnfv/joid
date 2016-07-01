@@ -1,0 +1,58 @@
+    zookeeper:
+      charm: local:precise/zookeeper
+      num_units: {{ unit_qty() }}
+      series: precise
+      to:
+{% for unit_id in to_select() %}
+        - "lxc:nodes={{ unit_id }}"
+{% endfor %}
+    cassandra:
+      charm: local:{{ ubuntu.release }}/cassandra
+      num_units: {{ unit_qty() }}
+      to:
+{% for unit_id in to_select() %}
+        - "lxc:nodes={{ unit_id }}"
+{% endfor %}
+      options:
+        authenticator: AllowAllAuthenticator
+    contrail-configuration:
+      charm: local:{{ ubuntu.release }}/contrail-configuration
+      num_units: {{ unit_qty() }}
+      options:
+{% if os.ha.mode == 'ha' %}
+        vip: {{ opnfv.vip.contrailconfig }}
+{% endif %}
+      to:
+{% for unit_id in to_select() %}
+        - "lxc:nodes={{ unit_id }}"
+{% endfor %}
+    contrail-control:
+      charm: local:{{ ubuntu.release }}/contrail-control
+      num_units: {{ unit_qty() }}
+      to:
+{% for unit_id in to_select() %}
+        - "lxc:nodes={{ unit_id }}"
+{% endfor %}
+    contrail-analytics:
+      charm: local:{{ ubuntu.release }}/contrail-analytics
+      num_units: {{ unit_qty() }}
+      to:
+{% for unit_id in to_select() %}
+        - "lxc:nodes={{ unit_id }}"
+{% endfor %}
+    contrail-webui:
+      charm: local:{{ ubuntu.release }}/contrail-webui
+      num_units: {{ unit_qty() }}
+      to:
+{% for unit_id in to_select() %}
+        - "lxc:nodes={{ unit_id }}"
+{% endfor %}
+    haproxy:
+      charm: local:{{ ubuntu.release }}/haproxy
+      num_units: {{ unit_qty() }}
+      options:
+        peering_mode: active-active
+      to:
+{% for unit_id in to_select() %}
+        - "lxc:nodes={{ unit_id }}"
+{% endfor %}

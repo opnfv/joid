@@ -22,6 +22,17 @@
         security-groups: True
     openvswitch-onos:
       charm: local:{{ ubuntu.release }}/openvswitch-onos
+{% elif os.network.controller == 'ocl' %}
+    neutron-api-contrail:
+      charm: local:{{ ubuntu.release }}/neutron-api-contrail
+    neutron-contrail:
+      charm: local:{{ ubuntu.release }}/neutron-contrail
+    keepalived:
+      charm: local:{{ ubuntu.release }}/keepalived
+      options:
+{% if os.ha.mode == 'ha' %}
+        virtual-ip: {{ opnfv.vip.keepalived }}
+{% endif %}
 {% endif %}
 {% if os.lxd %}
     lxd:
