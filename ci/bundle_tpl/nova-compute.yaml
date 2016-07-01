@@ -13,6 +13,6 @@
         virt-type: lxd
 {% endif %}
       to:
-{% for unit_id in to_select(opnfv.units - 1) %}
-        - "nodes={{ unit_id + 1 }}"
+{% for unit_id in range(1, opnfv.units) %}
+        - "nodes={{ unit_id }}"
 {% endfor %}
