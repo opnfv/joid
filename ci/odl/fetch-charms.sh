@@ -33,6 +33,7 @@ git clone https://github.com/openstack/charm-openstack-dashboard.git $distro/ope
 git clone https://github.com/openstack/charm-rabbitmq-server.git $distro/rabbitmq-server
 git clone https://github.com/openstack/charm-heat.git $distro/heat
 git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
+git clone https://github.com/openstack/charm-lxd.git xenial/lxd
 build
 
 #controller specific charm

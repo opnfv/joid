@@ -1,0 +1,9 @@
+    congress:
+      charm: "local:{{ ubuntu.release }}/congress"
+{% if ubuntu.release == 'trusty' %}
+      options:
+        source-branch: "stable/{{ os.release  }}"
+{% endif %}
+      to:
+        - "lxc:nodes=0"
+{# Empty block to avoid bad block trim #}

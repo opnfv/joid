@@ -22,7 +22,7 @@
         overlay-network-type: 'vxlan'
         security-groups: True
 {% endif %}
-{% if os.lxd is defined %}
+{% if os.lxd %}
     lxd:
       charm: local:{{ ubuntu.release }}/lxd
 {% endif %}
