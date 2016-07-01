@@ -14,7 +14,7 @@
         security-groups: True
     openvswitch-odl:
       charm: local:{{ ubuntu.release }}/openvswitch-odl
-{% elif os.network.controller == 'nons' %}
+{% elif os.network.controller == 'onos' %}
     neutron-api-onos:
       charm: local:{{ ubuntu.release }}/neutron-api-onos
       options:
