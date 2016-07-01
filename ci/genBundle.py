@@ -57,11 +57,21 @@ def unit_qty():
     else:
         return 1
 
+def unit_ceph_qty():
+    global config
+    if config['os']['ha']['mode'] == 'ha':
+        return config['os']['ha']['cluster_size']
+    else:
+        return 2
+
 def to_select( qty = False ):
     global config
     if not qty:
         qty = config['os']['ha']['cluster_size'] if config['os']['ha']['mode'] == 'ha' else 1
-    return random.sample(range(0,config['opnfv']['units']), qty )
+    if config['os']['ha']['mode'] == 'ha':
+        return random.sample(range(0,config['opnfv']['units']), qty )
+    else:
+        return random.sample(range(0,2),qty )
 
 def get_password(key, length=16, special=False):
     global passwords_store
@@ -159,6 +169,7 @@ template = env.get_template('bundle.yaml')
 # Add functions
 env.globals.update(get_password=get_password)
 env.globals.update(unit_qty=unit_qty)
+env.globals.update(unit_ceph_qty=unit_ceph_qty)
 env.globals.update(to_select=to_select)
 
 # Render the template

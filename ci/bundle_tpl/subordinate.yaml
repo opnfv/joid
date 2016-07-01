@@ -5,7 +5,7 @@
       charm: local:{{ ubuntu.release }}/cinder-ceph
 {% endif %}
 {% if os.network.controller == 'nosdn' %}
-    {% include 'neutron-ovs.yaml' %}
+{% include 'neutron-ovs.yaml' %}
 {% elif os.network.controller == 'odl' %}
     neutron-api-odl:
       charm: local:{{ ubuntu.release }}/neutron-api-odl

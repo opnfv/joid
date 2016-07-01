@@ -1,9 +1,9 @@
 {% if opnfv.storage_dict.ceph is defined %}
     ceph:
       charm: "local:{{ ubuntu.release }}/ceph"
-      num_units: {{ unit_qty() }}
+      num_units: {{ unit_ceph_qty() }}
       options:
-        monitor-count: {{ unit_qty() }}
+        monitor-count: {{ unit_ceph_qty() }}
         fsid: 5a791d94-980b-11e4-b6f6-3c970e8b1cf7
         monitor-secret: AQAi5a9UeJXUExAA+By9u+GPhl8/XiUQ4nwI3A==
 {% if opnfv.spaces_dict.storage is defined %}
@@ -11,19 +11,29 @@
 {% endif %}
 #        ceph-public-network: 192.168.0.0/24
       to:
+{% if os.ha.mode == 'ha' %}
 {% for unit_id in to_select() %}
         - "lxc:nodes={{ unit_id }}"
 {% endfor %}
+{% else %}
+        - "lxc:nodes=0"
+        - "lxc:nodes=1"
+{% endif %}
     ceph-osd:
       charm: "local:{{ ubuntu.release }}/ceph-osd"
-      num_units: {{ unit_qty() }}
+      num_units: {{ unit_ceph_qty() }}
       options:
         osd-devices: {{ opnfv.storage_dict.ceph.disk }}
         osd-reformat: 'yes'
       to:
+{% if os.ha.mode == 'ha' %}
 {% for unit_id in to_select() %}
         - "nodes={{ unit_id }}"
 {% endfor %}
+{% else %}
+        - "nodes=0"
+        - "nodes=1"
+{% endif %}
     ceph-radosgw:
       charm: "local:{{ ubuntu.release }}/ceph-radosgw"
       num_units: {{ unit_qty() if os.beta.hacluster_ceph_radosgw else 1 }}

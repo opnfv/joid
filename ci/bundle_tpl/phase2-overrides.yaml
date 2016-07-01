@@ -14,7 +14,7 @@
     l2-population: true
 {% endif %}
     region: {{ os.region }}
-{% if os.release == 'trusty' %}
+{% if ubuntu.release == 'trusty' %}
     source: "cloud:{{ ubuntu.release }}-{{ os.release }}"
 {% endif %}
     openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"

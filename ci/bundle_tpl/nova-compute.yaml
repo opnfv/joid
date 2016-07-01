@@ -1,6 +1,10 @@
     nova-compute:
       charm: "local:{{ ubuntu.release }}/nova-compute"
+{% if os.ha.mode == 'ha' %}
       num_units: {{ opnfv.units - 1 }}
+{% else %}
+      num_units: 1
+{% endif %}
       options:
         enable-live-migration: true
         enable-resize: true
@@ -13,6 +17,10 @@
         virt-type: lxd
 {% endif %}
       to:
+{% if os.ha.mode == 'ha' %}
 {% for unit_id in range(1, opnfv.units) %}
         - "nodes={{ unit_id }}"
 {% endfor %}
+{% else %}
+        - "nodes=1"
+{% endif %}
