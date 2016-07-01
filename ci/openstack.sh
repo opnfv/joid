@@ -232,6 +232,16 @@ done
 
 # Create Congress datasources
 sudo apt-get install -y python-congressclient
+
+# Remove public endpoint and recreate it from internal
+# Waiting congress client can be use with internal endpoints
+if [ "$API_FQDN" != "''" ]; then
+    CONGRESS_PUB_ENDPOINT=$(openstack endpoint list --service policy --interface public -c ID -f value)
+    openstack endpoint delete $CONGRESS_PUB_ENDPOINT
+    CONGRESS_NEW_PUB_ENDPOINT=$(openstack endpoint list --service policy --interface internal -c URL -f value)
+    openstack endpoint create --region Canonical policy public $CONGRESS_NEW_PUB_ENDPOINT
+fi
+
 openstack congress datasource create nova "nova" \
   --config username=$OS_USERNAME \
   --config tenant_name=$OS_TENANT_NAME \
