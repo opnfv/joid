@@ -18,7 +18,7 @@ lab:
         mac: ["90:E2:BA:85:4E:2D"]
       power:
         type: ipmi
-        address: 10.2.117.81
+        address: 10.2.117.85
         user: root
         pass: root
     - name: rack-5-m2
@@ -36,7 +36,7 @@ lab:
         mac: ["90:E2:BA:84:08:B9"]
       power:
         type: ipmi
-        address: 10.2.117.82
+        address: 10.2.117.86
         user: root
         pass: root
     - name: rack-5-m3
@@ -54,7 +54,7 @@ lab:
         mac: ["90:E2:BA:84:07:0E"]
       power:
         type: ipmi
-        address: 10.2.117.83
+        address: 10.2.117.87
         user: root
         pass: root
     - name: rack-5-m4
@@ -72,7 +72,7 @@ lab:
         mac: ["90:E2:BA:83:FD:81"]
       power:
         type: ipmi
-        address: 10.2.117.84
+        address: 10.2.117.88
         user: root
         pass: root
     - name: rack-5-m5
@@ -90,9 +90,27 @@ lab:
         mac: ["90:E2:BA:75:22:75"]
       power:
         type: ipmi
-        address: 10.2.117.85
+        address: 10.2.117.89
         user: root
         pass: root
+#    - name: rack-5-m6
+#      architecture: x86_64
+#      roles: [compute,storage]
+#      nics:
+#      - ifname: eth1
+#        spaces: [admin]
+#        mac: ["98:4F:EE:10:03:43"]
+#      - ifname: eth4
+#        spaces: [data]
+#        mac: ["00:1E:67:9C:3E:54"]
+#      - ifname: eth5
+#        spaces: [public]
+#        mac: ["00:1E:67:9C:3E:55"]
+#      power:
+#        type: ipmi
+#        address: 10.2.117.90
+#        user: root
+#        pass: root
     floating-ip-range: 10.5.15.6,10.5.15.250,10.5.15.254,10.5.15.0/24
     ext-port: "eth5"
     dns: 8.8.8.8
@@ -106,7 +124,7 @@ opnfv:
     - type: nosdn
     storage:
     - type: ceph
-      disk: /srv
+      disk: /dev/sdb
     feature: odl_l2
     spaces:
     - type: admin

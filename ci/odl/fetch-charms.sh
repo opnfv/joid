@@ -23,7 +23,7 @@ git clone https://github.com/openstack/charm-cinder.git $distro/cinder
 git clone https://github.com/openstack/charm-cinder-ceph.git $distro/cinder-ceph
 git clone https://github.com/openstack/charm-glance.git $distro/glance
 git clone https://github.com/openstack/charm-keystone.git $distro/keystone
-git clone https://github.com/openstack/charm-percona-cluster.git $distro/percona-cluster
+git clone -b stable/16.04 https://github.com/openstack/charm-percona-cluster.git $distro/percona-cluster
 git clone https://github.com/openstack/charm-neutron-api.git $distro/neutron-api
 git clone https://github.com/openstack/charm-neutron-gateway.git $distro/neutron-gateway
 git clone https://github.com/openstack/charm-neutron-openvswitch.git $distro/neutron-openvswitch
