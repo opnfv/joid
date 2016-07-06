@@ -50,8 +50,7 @@ openstack-phase1:
 {% endif %}
 
   relations:
-    - - "ntp:juju-info"
-      - "nodes:juju-info"
+    - [ 'ntp:juju-info', 'nodes:juju-info' ]
 {% if os.ha.mode == 'ha' %}
 {% include 'harelations.yaml' %}
 {% endif %}

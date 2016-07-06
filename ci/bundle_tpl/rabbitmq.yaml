@@ -1,6 +1,11 @@
     rabbitmq-server:
       charm: "local:{{ ubuntu.release }}/rabbitmq-server"
       num_units: {{ unit_qty() }}
+      options:
+{% if os.ha.mode == 'ha' %}
+        vip: {{ opnfv.vip.mysql }}
+        min-cluster-size: {{ unit_qty() }}
+{% endif %}
       to:
 {% for unit_id in to_select() %}
         - "lxc:nodes={{ unit_id }}"

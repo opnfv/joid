@@ -4,7 +4,7 @@
       options:
         innodb-buffer-pool-size: 2G
         #lp1366997-workaround: true
-        #max-connections: 20000
+        max-connections: 20000
         root-password: {{ get_password('mysql_root') }}
         sst-password: {{ get_password('mysql_sst') }}
 {% if os.ha.mode == 'ha' %}
