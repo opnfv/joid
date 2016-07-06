@@ -27,8 +27,6 @@
     - [ 'ceph:client', 'cinder-ceph:ceph' ]
     - [ 'ceph:client', 'glance:ceph' ]
     - [ 'ceph-osd:mon', 'ceph:osd' ]
-    - [ 'ntp:juju-info', 'nova-compute:juju-info' ]
-    - [ 'ntp:juju-info', 'neutron-gateway:juju-info' ]
     - [ 'ceph-radosgw:mon', 'ceph:radosgw' ]
     - [ 'ceph-radosgw:identity-service', 'keystone:identity-service' ]
     - [ 'ceilometer:amqp', 'rabbitmq-server:amqp' ]

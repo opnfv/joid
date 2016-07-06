@@ -7,7 +7,6 @@
     - [ 'neutron-api:ha', 'hacluster-neutron:ha' ]
     - [ 'nova-cloud-controller:ha', 'hacluster-nova:ha' ]
     - [ 'openstack-dashboard:ha', 'hacluster-horizon:ha' ]
-    - [ 'heat:ha', 'hacluster-heat:ha' ]
     - [ 'ceilometer:ha', 'hacluster-ceilometer:ha' ]
 {% if os.beta.hacluster_ceph_radosgw %}
     - [ 'ceph-radosgw:ha', 'hacluster-ceph-radosgw:ha' ]

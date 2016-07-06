@@ -122,65 +122,6 @@ create_openrc
 
 . ./cloud/admin-openrc
 
-#wget -P /tmp/images http://download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img
-#openstack image create --file /tmp/images/cirros-0.3.3-x86_64-disk.img --disk-format qcow2 --container-format bare "cirros-0.3.3-x86_64"
-
-#wget -P /tmp/images http://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img
-#openstack image create --file /tmp/images/trusty-server-cloudimg-amd64-disk1.img --disk-format qcow2 --container-format bare "ubuntu-trusty-daily"
-#wget -P /tmp/images http://cloud-images.ubuntu.com/trusty/current/xenial-server-cloudimg-amd64.tar.gz
-#openstack image create --file /tmp/images/xenial-server-cloudimg-amd64.tar.gz --container-format bare --disk-format raw "xenial-server-cloudimg-amd64"
-
-#rm -rf /tmp/images
-
-# adjust tiny image
-#nova flavor-delete m1.tiny
-#nova flavor-create m1.tiny 1 512 8 1
-
-
-# import key pair
-#openstack project create --description "Demo Tenant" demo
-#openstack user create --project demo --password demo --email demo@demo.demo demo
-
-#openstack keypair create --public-key ~/.ssh/id_rsa.pub ubuntu-keypair
-
-#Modify the flavours to fit better
-#nova flavor-create FLAVOR_NAME FLAVOR_ID RAM_IN_MB ROOT_DISK_IN_GB NUMBER_OF_VCPUS
-#nova flavor-delete m1.tiny > /dev/null 2>&1
-#nova flavor-delete m1.small > /dev/null 2>&1
-#nova flavor-delete m1.medium > /dev/null 2>&1
-#nova flavor-delete m1.large > /dev/null 2>&1
-#nova flavor-delete m1.xlarge > /dev/null 2>&1
-#nova flavor-create --is-public true m1.tiny auto 512 5 1 > /dev/null 2>&1
-#nova flavor-create --is-public true m1.small auto 1024 10 1 > /dev/null 2>&1
-#nova flavor-create --is-public true m1.medium auto 2048 10 2 > /dev/null 2>&1
-#nova flavor-create --is-public true m1.large auto 3072 10 2 > /dev/null 2>&1
-## need extra for windows image (15g)
-#nova flavor-create --is-public true m1.xlarge auto 8096 30 4  > /dev/null 2>&1
-
-echo "modifying default quotas for admin user"
-
-TENANT_ID=admin
-
-#Modify quotas for the tenant to allow large deployments
-#nova quota-update --instances 400 $TENANT_ID
-#nova quota-update --cores 800 $TENANT_ID
-#nova quota-update --ram 404800 $TENANT_ID
-#nova quota-update --security-groups 4000 $TENANT_ID
-#nova quota-update --floating_ips -1 $TENANT_ID
-#nova quota-update --security-group-rules -1 $TENANT_ID
-
-### need to find how to change quota for the project not the tenant
-
-### modify default quota the same way..
-#nova quota-class-update --instances 400 $TENANT_ID
-#nova quota-class-update --cores 800 $TENANT_ID
-#nova quota-class-update --ram 404800 $TENANT_ID
-#nova quota-class-update --security-groups 4000 $TENANT_ID
-#nova quota-class-update --floating-ips -1 $TENANT_ID
-#nova quota-class-update --security-group-rules -1 $TENANT_ID
-
-# configure external network
-
 ##
 ## Create external subnet Network
 ##
@@ -208,27 +149,6 @@ else
        --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET
 fi
 
-
-# create vm network
-neutron net-create demo-net
-neutron subnet-create --name demo-subnet --gateway 10.20.5.1 demo-net 10.20.5.0/24
-
-neutron router-create demo-router
-
-neutron router-interface-add demo-router demo-subnet
-
-neutron router-gateway-set demo-router ext_net
-
-# create pool of floating ips
-i=0
-while [ $i -ne 3 ]; do
-    neutron floatingip-create ext_net
-    i=$((i + 1))
-done
-
-#http://docs.openstack.org/juno/install-guide/install/apt/content/launch-instance-neutron.html
-# nova boot --flavor m1.small --image cirros-0.3.3-x86_64 --nic net-id=b65479a4-3638-4595-9245-6e41ccd8bfd8 --security-group default --key-name ubuntu-keypair demo-instance1
-# nova floating-ip-associate demo-instance1 10.5.8.35
 
 # Create Congress datasources
 sudo apt-get install -y python-congressclient
@@ -272,3 +192,71 @@ openstack congress datasource create keystone "keystone" \
   --config tenant_name=$OS_TENANT_NAME \
   --config password=$OS_PASSWORD \
   --config auth_url=http://$keystoneIp:5000/v2.0
+
+
+##enable extra stuff only if testing manually
+
+#wget -P /tmp/images http://download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img
+#openstack image create --file /tmp/images/cirros-0.3.3-x86_64-disk.img --disk-format qcow2 --container-format bare "cirros-0.3.3-x86_64"
+#wget -P /tmp/images http://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img
+#openstack image create --file /tmp/images/trusty-server-cloudimg-amd64-disk1.img --disk-format qcow2 --container-format bare "ubuntu-trusty-daily"
+#wget -P /tmp/images http://cloud-images.ubuntu.com/trusty/current/xenial-server-cloudimg-amd64.tar.gz
+#openstack image create --file /tmp/images/xenial-server-cloudimg-amd64.tar.gz --container-format bare --disk-format raw "xenial-server-cloudimg-amd64"
+
+#rm -rf /tmp/images
+
+## import key pair
+#openstack project create --description "Demo Tenant" demo
+#openstack user create --project demo --password demo --email demo@demo.demo demo
+
+#openstack keypair create --public-key ~/.ssh/id_rsa.pub ubuntu-keypair
+
+## create vm network
+#neutron net-create demo-net
+#neutron subnet-create --name demo-subnet --gateway 10.20.5.1 demo-net 10.20.5.0/24
+#neutron router-create demo-router
+#neutron router-interface-add demo-router demo-subnet
+#neutron router-gateway-set demo-router ext_net
+
+## create pool of floating ips
+#i=0
+#while [ $i -ne 3 ]; do
+#    neutron floatingip-create ext_net
+#    i=$((i + 1))
+#done
+
+##http://docs.openstack.org/juno/install-guide/install/apt/content/launch-instance-neutron.html
+# nova boot --flavor m1.small --image cirros-0.3.3-x86_64 --nic net-id=b65479a4-3638-4595-9245-6e41ccd8bfd8 --security-group default --key-name ubuntu-keypair demo-instance1
+# nova floating-ip-associate demo-instance1 10.5.8.35
+
+##Modify the flavours to fit better
+#nova flavor-create FLAVOR_NAME FLAVOR_ID RAM_IN_MB ROOT_DISK_IN_GB NUMBER_OF_VCPUS
+#nova flavor-delete m1.tiny > /dev/null 2>&1
+#nova flavor-delete m1.small > /dev/null 2>&1
+#nova flavor-delete m1.medium > /dev/null 2>&1
+#nova flavor-delete m1.large > /dev/null 2>&1
+#nova flavor-delete m1.xlarge > /dev/null 2>&1
+#nova flavor-create --is-public true m1.tiny auto 512 5 1 > /dev/null 2>&1
+#nova flavor-create --is-public true m1.small auto 1024 10 1 > /dev/null 2>&1
+#nova flavor-create --is-public true m1.medium auto 2048 10 2 > /dev/null 2>&1
+#nova flavor-create --is-public true m1.large auto 3072 10 2 > /dev/null 2>&1
+## need extra for windows image (15g)
+#nova flavor-create --is-public true m1.xlarge auto 8096 30 4  > /dev/null 2>&1
+#echo "modifying default quotas for admin user"
+#TENANT_ID=admin
+#Modify quotas for the tenant to allow large deployments
+#nova quota-update --instances 400 $TENANT_ID
+#nova quota-update --cores 800 $TENANT_ID
+#nova quota-update --ram 404800 $TENANT_ID
+#nova quota-update --security-groups 4000 $TENANT_ID
+#nova quota-update --floating_ips -1 $TENANT_ID
+#nova quota-update --security-group-rules -1 $TENANT_ID
+### need to find how to change quota for the project not the tenant
+### modify default quota the same way..
+#nova quota-class-update --instances 400 $TENANT_ID
+#nova quota-class-update --cores 800 $TENANT_ID
+#nova quota-class-update --ram 404800 $TENANT_ID
+#nova quota-class-update --security-groups 4000 $TENANT_ID
+#nova quota-class-update --floating-ips -1 $TENANT_ID
+#nova quota-class-update --security-group-rules -1 $TENANT_ID
+

@@ -46,8 +46,6 @@ check_status() {
            retval=1
        fi
     done
-    status=`juju action do heat/0 domain-setup`
-    echo $status
     echo "...... deployment finishing ......."
 }
 
@@ -160,5 +158,6 @@ echo "... Deployment Started ...."
     check_status
 
     juju ssh nodes/0 "echo 512 | sudo tee /proc/sys/fs/inotify/max_user_instances"
+    juju ssh nodes/1 "echo 512 | sudo tee /proc/sys/fs/inotify/max_user_instances"
 
     juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $6-"$2"
