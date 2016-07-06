@@ -126,25 +126,25 @@ create_openrc
 ## Create external subnet Network
 ##
 
-#neutron net-create ext_net --shared --router:external=True
-neutron net-create ext_net --router:external=True
+#neutron net-create ext-net --shared --router:external=True
+neutron net-create ext-net --router:external=True
 
 if [ "onos" == "$1" ]; then
     launch_eth
-    neutron subnet-create ext_net --name ext-subnet \
+    neutron subnet-create ext-net --name ext-subnet \
        --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
        --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET
-    #neutron subnet-create ext_net --name ext-subnet $EXTNET_NET
+    #neutron subnet-create ext-net --name ext-subnet $EXTNET_NET
     #update_gw_mac
 elif [ "nosdn" == "$1" ]; then
-    neutron subnet-create ext_net --name ext-subnet \
+    neutron subnet-create ext-net --name ext-subnet \
        --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
        --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET
     # configure security groups
     #neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
     #neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
 else
-    neutron subnet-create ext_net --name ext-subnet \
+    neutron subnet-create ext-net --name ext-subnet \
        --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
        --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET
 fi

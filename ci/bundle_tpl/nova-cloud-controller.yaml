@@ -3,6 +3,7 @@
       num_units: {{ unit_qty() }}
       options:
         console-access-protocol: novnc
+        neutron-external-network: ext-net
 {% if opnfv.domain is defined %}
         console-proxy-ip: {{ opnfv.domain }}
 {% endif %}

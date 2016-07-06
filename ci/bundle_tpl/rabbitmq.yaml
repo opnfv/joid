@@ -3,7 +3,7 @@
       num_units: {{ unit_qty() }}
       options:
 {% if os.ha.mode == 'ha' %}
-        vip: {{ opnfv.vip.mysql }}
+        vip: {{ opnfv.vip.rabbitmq }}
         min-cluster-size: {{ unit_qty() }}
 {% endif %}
       to:
