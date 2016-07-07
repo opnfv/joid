@@ -4,6 +4,7 @@
       options:
         console-access-protocol: novnc
         neutron-external-network: ext-net
+        service-guard: true
 {% if opnfv.domain is defined %}
         console-proxy-ip: {{ opnfv.domain }}
 {% endif %}

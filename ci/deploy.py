@@ -44,7 +44,7 @@ opnfvcfg['demo-maas']={'juju-bootstrap':{'memory': 4096,'name': "bootstrap",\
                                                           }\
                                              },\
                               'settings':{'maas_name':'','upstream_dns':'',\
-                                          'main_archive':"http://us.archive.ubuntu.com/ubuntu"\
+                                          'main_archive':"http://archive.ubuntu.com/ubuntu"\
                                          },\
                               'virsh':{'rsa_priv_key':'/home/ubuntu/.ssh/id_rsa',
                                        'rsa_pub_key':'/home/ubuntu/.ssh/id_rsa.pub',

@@ -1,11 +1,8 @@
 # vim: set ts=2 et:
-{{ ubuntu.release }}-{{ os.release }}-nodes:
+{{ ubuntu.release }}-{{ os.release }}:
   inherits: openstack-phase1
   overrides:
 {% include 'phase2-overrides.yaml' %}
-
-{{ ubuntu.release }}-{{ os.release }}:
-  inherits: openstack-phase2
 
 openstack-phase1:
   services:
@@ -48,16 +45,12 @@ openstack-phase1:
 {% if os.ha.mode == 'ha' %}
 {% include 'haclusters.yaml' %}
 {% endif %}
+{% include 'subordinate.yaml' %}
 
   relations:
     - [ 'ntp:juju-info', 'nodes:juju-info' ]
 {% if os.ha.mode == 'ha' %}
 {% include 'harelations.yaml' %}
 {% endif %}
-
-openstack-phase2:
-  inherits: openstack-phase1
-  relations:
 {% include 'relations.yaml' %}
-  services:
-{% include 'subordinate.yaml' %}
+

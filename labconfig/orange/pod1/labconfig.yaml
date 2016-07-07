@@ -107,7 +107,7 @@ opnfv:
   feature: odl_l2
   storage:
   - type: ceph
-    disk: /dev/sdb /dev/sdc
+    disk: /dev/sdb
   spaces:
   - type: admin
     bridge: brAdm

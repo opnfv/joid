@@ -1,7 +1,7 @@
     neutron-openvswitch:
       charm: local:{{ ubuntu.release }}/neutron-openvswitch
-      options:
 {% if os.network.dpdk %}
+      options:
         enable-dpdk: true
         #dpdk-driver: uio_pci_generic
         #data-port: ""

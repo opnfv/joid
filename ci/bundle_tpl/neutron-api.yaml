@@ -4,7 +4,8 @@
       options:
         neutron-security-groups: true
 {% if os.network.controller == 'nosdn' %}
-        overlay-network-type: vxlan
+        flat-network-providers: "*"
+        #overlay-network-type: gre vxlan
 {% elif os.network.controller == 'odl' %}
         manage-neutron-plugin-legacy-mode: False
 {% elif os.network.controller == 'onos' %}

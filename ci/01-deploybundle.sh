@@ -154,10 +154,9 @@ fi
 python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
 
 echo "... Deployment Started ...."
-    juju-deployer -vW -d -t 3600 -c bundles.yaml $6-"$2"-nodes
-    check_status
+    juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $6-"$2"
+    #juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $6-"$2"-nodes
+    #check_status
 
     juju ssh nodes/0 "echo 512 | sudo tee /proc/sys/fs/inotify/max_user_instances"
     juju ssh nodes/1 "echo 512 | sudo tee /proc/sys/fs/inotify/max_user_instances"
-
-    juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $6-"$2"
