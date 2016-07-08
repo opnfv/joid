@@ -146,6 +146,14 @@ if 'ipv6' in features:
     config['os']['network']['ipv6'] = True
 if 'ovs' in features:
     config['os']['network']['enhanced_ovs'] = True
+if 'sfc' in features:
+    config['os']['network']['sfc'] = True
+if 'dpdk' in features:
+    config['os']['network']['dpdk'] = True
+if 'bgpvpn' in features:
+    config['os']['network']['bgpvpn'] = True
+if 'odll3' in features:
+    config['os']['network']['odll3'] = True
 
 # Set beta option from extra
 if 'publicapi' in extra:
@@ -154,6 +162,10 @@ if 'radosgwcluster' in extra:
     config['os']['beta']['hacluster_ceph_radosgw'] = True
 if 'hugepages' in extra:
     config['os']['beta']['huge_pages'] = True
+if 'trusty' in extra:
+    config['ubuntu']['release'] = 'trusty'
+    if 'liberty' in extra:
+        config['os']['release'] = 'liberty'
 
 # pp(config)
 

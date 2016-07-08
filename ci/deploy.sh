@@ -10,7 +10,7 @@ opnfvtype=nonha
 openstack=mitaka
 opnfvlab=default
 opnfvrel=c
-opnfvfeature=odl_l2
+opnfvfeature=none
 opnfvdistro=xenial
 opnfvarch=amd64
 

@@ -14,7 +14,7 @@ sudo apt-get update -y
 sudo apt-get dist-upgrade -y
 sudo apt-get install openssh-server bzr git maas-deployer juju juju-deployer \
              maas-cli python-pip python-psutil python-openstackclient \
-             python-congressclient gsutil -y
+             python-congressclient gsutil charm-tools -y
 
 #first parameter should be custom and second should be either
 # absolute location of file (including file name) or url of the
@@ -213,6 +213,7 @@ maas maas sshkeys new key="`cat $HOME/.ssh/id_rsa.pub`"
 
 #Added the Qtip public to run the Qtip test after install on bare metal nodes.
 maas maas sshkeys new key="`cat ./maas/sshkeys/QtipKey.pub`"
+maas maas sshkeys new key="`cat ./maas/sshkeys/DominoKey.pub`"
 
 #adding compute and control nodes VM to MAAS for deployment purpose.
 if [ "$virtinstall" -eq 1 ]; then
