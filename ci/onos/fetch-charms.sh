@@ -29,8 +29,8 @@ git clone https://github.com/openstack/charm-neutron-openvswitch.git $distro/neu
 git clone https://github.com/openstack/charm-nova-cloud-controller.git $distro/nova-cloud-controller
 git clone https://github.com/openstack/charm-nova-compute.git $distro/nova-compute
 git clone https://github.com/openstack/charm-openstack-dashboard.git $distro/openstack-dashboard
-charm pull cs:~james-page/xenial/rabbitmq-server-bug1590085 $distro/rabbitmq-server
-#git clone https://github.com/openstack/charm-rabbitmq-server.git $distro/rabbitmq-server
+#charm pull cs:~james-page/xenial/rabbitmq-server-bug1590085 $distro/rabbitmq-server
+git clone https://github.com/openstack/charm-rabbitmq-server.git $distro/rabbitmq-server
 git clone https://github.com/openstack/charm-heat.git $distro/heat
 git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
 build

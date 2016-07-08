@@ -111,7 +111,7 @@ lab:
 #        address: 10.2.117.106
 #        user: root
 #        pass: root
-    floating-ip-range: 10.6.15.6,10.6.15.250,10.6.15.254,10.6.15.0/24
+    floating-ip-range: 10.6.15.6,10.6.15.250,10.6.15.1,10.6.15.0/24
     ext-port: "eth5"
     dns: 8.8.8.8
     osdomainname:
