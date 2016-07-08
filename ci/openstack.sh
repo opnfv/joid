@@ -128,10 +128,10 @@ create_openrc
 ##
 
 echo "Removing swift endpoint and service"
-swift_service_id=\$(openstack service list | grep swift | cut -d ' ' -f 2)
-swift_endpoint_id=\$(openstack endpoint list | grep swift | cut -d ' ' -f 2)
-openstack endpoint delete \$swift_endpoint_id
-openstack service delete \$swift_service_id
+swift_service_id=$(openstack service list | grep swift | cut -d ' ' -f 2)
+swift_endpoint_id=$(openstack endpoint list | grep swift | cut -d ' ' -f 2)
+openstack endpoint delete $swift_endpoint_id
+openstack service delete $swift_service_id
 
 ##
 ## Create external subnet Network
