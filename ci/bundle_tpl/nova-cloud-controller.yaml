@@ -2,7 +2,7 @@
       charm: "local:{{ ubuntu.release }}/nova-cloud-controller"
       num_units: {{ unit_qty() }}
       options:
-        console-access-protocol: novnc
+        #console-access-protocol: novnc
         neutron-external-network: ext-net
         service-guard: true
 {% if opnfv.domain is defined %}
