@@ -38,9 +38,9 @@
     - [ 'heat:shared-db', 'mysql:shared-db' ]
     - [ 'heat:identity-service', 'keystone:identity-service' ]
     - [ 'heat:amqp', 'rabbitmq-server:amqp' ]
-    - [ 'congress:shared-db', 'mysql:shared-db' ]
-    - [ 'congress:identity-service', 'keystone:identity-service' ]
-    - [ 'congress:amqp', 'rabbitmq-server:amqp' ]
+#    - [ 'congress:shared-db', 'mysql:shared-db' ]
+#    - [ 'congress:identity-service', 'keystone:identity-service' ]
+#    - [ 'congress:amqp', 'rabbitmq-server:amqp' ]
 {% if os.lxd %}
     - [ 'nova-compute:lxd', 'lxd:lxd' ]
 {% endif %}
