@@ -22,6 +22,10 @@
         security-groups: True
     openvswitch-onos:
       charm: local:{{ ubuntu.release }}/openvswitch-onos
+{% if os.network.sfc %}
+      options:
+        profile: onos-sfc
+{% endif %}
 {% elif os.network.controller == 'ocl' %}
     neutron-api-contrail:
       charm: local:{{ ubuntu.release }}/neutron-api-contrail
