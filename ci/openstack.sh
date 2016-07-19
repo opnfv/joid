@@ -173,36 +173,36 @@ if [ "$API_FQDN" != "''" ]; then
     openstack endpoint create --region Canonical policy public $CONGRESS_NEW_PUB_ENDPOINT
 fi
 
-#openstack congress datasource create nova "nova" \
-#  --config username=$OS_USERNAME \
-#  --config tenant_name=$OS_TENANT_NAME \
-#  --config password=$OS_PASSWORD \
-#  --config auth_url=http://$keystoneIp:5000/v2.0
-#openstack congress datasource create neutronv2 "neutronv2" \
-#  --config username=$OS_USERNAME \
-#  --config tenant_name=$OS_TENANT_NAME \
-#  --config password=$OS_PASSWORD \
-#  --config auth_url=http://$keystoneIp:5000/v2.0
-#openstack congress datasource create ceilometer "ceilometer" \
-#  --config username=$OS_USERNAME \
-#  --config tenant_name=$OS_TENANT_NAME \
-#  --config password=$OS_PASSWORD \
-#  --config auth_url=http://$keystoneIp:5000/v2.0
-#openstack congress datasource create cinder "cinder" \
-#  --config username=$OS_USERNAME \
-#  --config tenant_name=$OS_TENANT_NAME \
-#  --config password=$OS_PASSWORD \
-#  --config auth_url=http://$keystoneIp:5000/v2.0
-#openstack congress datasource create glancev2 "glancev2" \
-#  --config username=$OS_USERNAME \
-#  --config tenant_name=$OS_TENANT_NAME \
-#  --config password=$OS_PASSWORD \
-#  --config auth_url=http://$keystoneIp:5000/v2.0
-#openstack congress datasource create keystone "keystone" \
-#  --config username=$OS_USERNAME \
-#  --config tenant_name=$OS_TENANT_NAME \
-#  --config password=$OS_PASSWORD \
-#  --config auth_url=http://$keystoneIp:5000/v2.0
+openstack congress datasource create nova "nova" \
+  --config username=$OS_USERNAME \
+  --config tenant_name=$OS_TENANT_NAME \
+  --config password=$OS_PASSWORD \
+  --config auth_url=http://$keystoneIp:5000/v2.0
+openstack congress datasource create neutronv2 "neutronv2" \
+  --config username=$OS_USERNAME \
+  --config tenant_name=$OS_TENANT_NAME \
+  --config password=$OS_PASSWORD \
+  --config auth_url=http://$keystoneIp:5000/v2.0
+openstack congress datasource create ceilometer "ceilometer" \
+  --config username=$OS_USERNAME \
+  --config tenant_name=$OS_TENANT_NAME \
+  --config password=$OS_PASSWORD \
+  --config auth_url=http://$keystoneIp:5000/v2.0
+openstack congress datasource create cinder "cinder" \
+  --config username=$OS_USERNAME \
+  --config tenant_name=$OS_TENANT_NAME \
+  --config password=$OS_PASSWORD \
+  --config auth_url=http://$keystoneIp:5000/v2.0
+openstack congress datasource create glancev2 "glancev2" \
+  --config username=$OS_USERNAME \
+  --config tenant_name=$OS_TENANT_NAME \
+  --config password=$OS_PASSWORD \
+  --config auth_url=http://$keystoneIp:5000/v2.0
+openstack congress datasource create keystone "keystone" \
+  --config username=$OS_USERNAME \
+  --config tenant_name=$OS_TENANT_NAME \
+  --config password=$OS_PASSWORD \
+  --config auth_url=http://$keystoneIp:5000/v2.0
 
 
 ##enable extra stuff only if testing manually
