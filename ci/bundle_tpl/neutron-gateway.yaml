@@ -1,6 +1,11 @@
     neutron-gateway:
       charm: "local:{{ ubuntu.release }}/neutron-gateway"
       options:
+{% if opnfv.spaces_dict.data is defined %}
+        os-data-network: {{ opnfv.spaces_dict.data.cidr }}
+{% else %}
+        #os-data-network: {{ opnfv.spaces_dict.data.cidr }}
+{% endif %}
 {% if opnfv.ext_port is defined  %}
         ext-port: {{ opnfv.ext_port }}
 {% endif %}

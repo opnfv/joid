@@ -1,6 +1,3 @@
-{% if opnfv.spaces_dict.data is defined %}
-    os-data-network: {{ opnfv.spaces_dict.data.cidr }}
-{% endif %}
 {% if opnfv.spaces_dict.storage is defined %}
     #ceph-cluster-network: {{ opnfv.spaces_dict.storage.cidr }}
 {% endif %}
