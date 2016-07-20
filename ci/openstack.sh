@@ -63,7 +63,7 @@ create_openrc() {
     mkdir -m 0700 -p cloud
     keystoneIp=$(keystoneIp)
     adminPasswd=$(juju get keystone | grep admin-password -A 5 | grep value | awk '{print $2}' 2> /dev/null)
-    configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v2.0 Canonical > cloud/admin-openrc
+    configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v2.0 RegionOne > cloud/admin-openrc
     chmod 0600 cloud/admin-openrc
 }
 
@@ -170,7 +170,7 @@ if [ "$API_FQDN" != "''" ]; then
     CONGRESS_PUB_ENDPOINT=$(openstack endpoint list --service policy --interface public -c ID -f value)
     openstack endpoint delete $CONGRESS_PUB_ENDPOINT
     CONGRESS_NEW_PUB_ENDPOINT=$(openstack endpoint list --service policy --interface internal -c URL -f value)
-    openstack endpoint create --region Canonical policy public $CONGRESS_NEW_PUB_ENDPOINT
+    openstack endpoint create --region RegionOne policy public $CONGRESS_NEW_PUB_ENDPOINT
 fi
 
 openstack congress datasource create nova "nova" \

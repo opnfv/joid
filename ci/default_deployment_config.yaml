@@ -6,7 +6,7 @@ os:
         mode: ha
         cluster_size: 3
     lxd: False
-    region: Canonical
+    region: RegionOne
     admin:
         role: admin
         name: admin
