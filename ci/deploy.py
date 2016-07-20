@@ -61,7 +61,7 @@ opnfvcfg['demo-maas'] = {'juju-bootstrap': {'memory': 4096,
                                   'boot_source': {
                                         'keyring_filename': "/usr/share/keyrings/ubuntu-cloudimage-keyring.gpg",
                                         'url': "http://maas.ubuntu.com/images/ephemeral-v2/releases/",
-                                        'sections': {
+                                        'selections': {
                                             '1': {
                                                 'arches': 'amd64',
                                                 'labels': 'release',
