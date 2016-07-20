@@ -25,7 +25,4 @@
     keystone-admin-role: {{ os.admin.role }}
 {% if os.beta.public_api %}
     use-internal-endpoints: true
-{% if opnfv.domain is defined %}
-    os-public-hostname: api.{{ opnfv.domain }}
-{% endif %}
 {% endif %}

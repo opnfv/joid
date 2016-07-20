@@ -2,6 +2,9 @@
       charm: "local:{{ ubuntu.release }}/cinder"
       num_units: {{ unit_qty() }}
       options:
+{% if os.beta.public_api %}
+        os-public-hostname: api.{{ opnfv.domain }}
+{% endif %}
         block-device: None
         glance-api-version: 2
 {% if os.ha.mode == 'ha' %}
