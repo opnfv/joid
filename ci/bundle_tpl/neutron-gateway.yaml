@@ -13,6 +13,9 @@
         plugin: ovs-odl
 {% elif os.network.controller == 'onos' %}
         plugin: onos
+{% if os.network.sfc %}
+        profile: onos-sfc
+{% endif %}
 {% endif %}
         instance-mtu: 1400
       to:
