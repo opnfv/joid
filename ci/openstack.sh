@@ -164,15 +164,6 @@ fi
 # Create Congress datasources
 sudo apt-get install -y python-congressclient
 
-# Remove public endpoint and recreate it from internal
-# Waiting congress client can be use with internal endpoints
-if [ "$API_FQDN" != "''" ]; then
-    CONGRESS_PUB_ENDPOINT=$(openstack endpoint list --service policy --interface public -c ID -f value)
-    openstack endpoint delete $CONGRESS_PUB_ENDPOINT
-    CONGRESS_NEW_PUB_ENDPOINT=$(openstack endpoint list --service policy --interface internal -c URL -f value)
-    openstack endpoint create --region RegionOne policy public $CONGRESS_NEW_PUB_ENDPOINT
-fi
-
 openstack congress datasource create nova "nova" \
   --config username=$OS_USERNAME \
   --config tenant_name=$OS_TENANT_NAME \
@@ -243,4 +234,3 @@ openstack congress datasource create keystone "keystone" \
 # netid=`neutron net-show demo-net -c id -f value`
 # nova boot --flavor m1.small --image cirros-0.3.3-x86_64 --nic net-id=$netid --security-group default --key-name ubuntu-keypair demo-instance1
 # nova floating-ip-associate demo-instance1 10.5.15.8
-
