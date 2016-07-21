@@ -93,7 +93,7 @@ lab:
         address: 192.168.1.15
         user: Administrator
         pass: pod1Admin
-    floating-ip-range: 10.0.2.2,10.0.2.254,10.0.2.1,10.0.2.0/24
+    floating-ip-range: 10.0.2.5,10.0.2.254,10.0.2.1,10.0.2.0/24
     ext-port: "eth1"
     dns: 192.168.1.1
     osdomainname: pod1.opnfv.fr
