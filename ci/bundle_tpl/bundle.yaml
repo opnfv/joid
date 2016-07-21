@@ -11,11 +11,7 @@ openstack-phase1:
   services:
     nodes:
       charm: "cs:{{ ubuntu.release }}/ubuntu"
-{% if os.ha.mode == 'ha' %}
-      num_units: 5
-{% else %}
-      num_units: 2
-{% endif %}
+      num_units: {{ opnfv.units }}
     ntp:
       charm: "local:{{ ubuntu.release }}/ntp"
 {% if os.network.controller == 'ocl' %}

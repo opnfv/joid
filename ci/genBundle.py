@@ -76,7 +76,10 @@ def unit_ceph_qty():
     if config['os']['ha']['mode'] == 'ha':
         return config['os']['ha']['cluster_size']
     else:
-        return 2
+        if config['opnfv']['units'] >= 3:
+            return config['os']['ha']['cluster_size']
+        else:
+            return 2
 
 
 def to_select(qty=False):
@@ -85,10 +88,7 @@ def to_select(qty=False):
     if not qty:
         qty = config['os']['ha']['cluster_size'] if \
                 config['os']['ha']['mode'] == 'ha' else 1
-    if config['os']['ha']['mode'] == 'ha':
-        return random.sample(range(0, config['opnfv']['units']), qty)
-    else:
-        return random.sample(range(0, 2), qty)
+    return random.sample(range(0, config['opnfv']['units']), qty)
 
 
 def get_password(key, length=16, special=False):

@@ -10,14 +10,9 @@
         #ceph-cluster-network: {{ opnfv.spaces_dict.storage.cidr }}
 {% endif %}
       to:
-{% if os.ha.mode == 'ha' %}
-{% for unit_id in to_select() %}
+{% for unit_id in to_select(unit_ceph_qty()) %}
         - "lxc:nodes={{ unit_id }}"
 {% endfor %}
-{% else %}
-        - "lxc:nodes=0"
-        - "lxc:nodes=1"
-{% endif %}
     ceph-osd:
       charm: "local:{{ ubuntu.release }}/ceph-osd"
       num_units: {{ unit_ceph_qty() }}
@@ -25,14 +20,9 @@
         osd-devices: {{ opnfv.storage_dict.ceph.disk }}
         osd-reformat: 'yes'
       to:
-{% if os.ha.mode == 'ha' %}
-{% for unit_id in to_select() %}
+{% for unit_id in to_select(unit_ceph_qty()) %}
         - "nodes={{ unit_id }}"
 {% endfor %}
-{% else %}
-        - "nodes=0"
-        - "nodes=1"
-{% endif %}
     ceph-radosgw:
       charm: "local:{{ ubuntu.release }}/ceph-radosgw"
       num_units: {{ unit_qty() if os.beta.hacluster_ceph_radosgw else 1 }}
