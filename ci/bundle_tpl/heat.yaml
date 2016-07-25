@@ -10,3 +10,4 @@
 {% endif %}
       to:
         - "lxc:nodes=0"
+{# Empty block to avoid bad block trim #}
