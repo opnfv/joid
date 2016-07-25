@@ -155,9 +155,9 @@ deploy
 #temporary change the user instances as dhcp failed with limitation exceeded.
 # to be remove once charm fixes the issue
 
-if [ "$opnfvdistro" == "xenial" ]; then
-    juju ssh neutron-gateway/0 "echo 512 | sudo tee /proc/sys/fs/inotify/max_user_instances"
-fi
+#if [ "$opnfvdistro" == "xenial" ]; then
+#    juju ssh neutron-gateway/0 "echo 512 | sudo tee /proc/sys/fs/inotify/max_user_instances"
+#fi
 # Temorary change end
 
 check_status
