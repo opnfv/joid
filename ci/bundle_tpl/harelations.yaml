@@ -1,7 +1,7 @@
 {% if os.ha.mode == 'ha' %}
     - [ 'mysql:ha', 'hacluster-mysql:ha' ]
     - [ 'cinder:ha', 'hacluster-cinder:ha' ]
-    - [ 'heat:ha', 'hacluster-heat:ha' ]
+#    - [ 'heat:ha', 'hacluster-heat:ha' ]
     - [ 'glance:ha', 'hacluster-glance:ha' ]
     - [ 'keystone:ha', 'hacluster-keystone:ha' ]
     - [ 'neutron-api:ha', 'hacluster-neutron:ha' ]
