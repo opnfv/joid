@@ -24,7 +24,7 @@ openstack keypair create --public-key ~/.ssh/id_rsa.pub ubuntu-keypair
 
 ## create vm network
 neutron net-create demo-net
-neutron subnet-create demo-net 10.20.5.0/24 --name demo-subnet --gateway 10.20.5.1 --enable-dhcp --allocation-pool start=10.0.0.5,end=10.0.0.254 --dns-nameserver 8.8.8.8
+neutron subnet-create demo-net 10.20.5.0/24 --name demo-subnet --gateway 10.20.5.1 --enable-dhcp --allocation-pool start=10.20.0.5,end=10.20.0.254 --dns-nameserver 8.8.8.8
 neutron router-create demo-router
 neutron router-gateway-set demo-router ext-net
 neutron router-interface-add demo-router subnet=demo-subnet
