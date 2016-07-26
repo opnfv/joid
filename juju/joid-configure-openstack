@@ -1,0 +1,146 @@
+#!/bin/bash
+#
+#    Copyright (C) 2014 Canonical Ltd.
+#
+#    Authors: Nicolas Thomss  <nicolas.thomas@canonical.com>
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, version 3 of the License.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+set -ex
+
+echo "This command is run to configure an Orange-Box Openstack deployment"
+
+NEUTRON_FIXED_NET_CIDR="192.168.16.0/22"
+
+#Check if VIP is set on keystone
+#keystone_VIP=`juju get-config keystone| python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"settings\"][\"vip\"][\"value\"]"||true`
+keystone_VIP=`juju get keystone| python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"settings\"][\"vip\"][\"value\"]"||true`
+
+keystoneIp() {
+    KEYSTONE=$(juju status keystone |grep public-address|sed -- 's/.*\: //')
+    if [ $(echo $KEYSTONE|wc -w) == 1 ];then
+        echo $KEYSTONE
+    else
+        juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['vip']['value']"
+    fi
+}
+
+if [ -n "$keystone_VIP" ]
+then
+    keystone=$keystone_VIP
+else
+    #if os-public-hostname is set and not VIP assume we need to use those at OpenStack endpoints.
+    keystone=$(keystoneIp)
+    keystone_PUBENDPOINT=`juju get keystone| python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"settings\"][\"os-public-hostname\"][\"value\"]"||true`
+fi
+
+
+echo "export SERVICE_ENDPOINT=http://$keystone:35357/v2.0/
+unset SERVICE_TOKEN
+unset SERVICE_ENDPOINT 
+export OS_AUTH_URL=http://$keystone:35357/v2.0/
+export OS_USERNAME=$(juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"settings\"][\"admin-user\"][\"value\"]")
+export OS_PASSWORD=$(juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"settings\"][\"admin-password\"][\"value\"]")
+export OS_TENANT_NAME=admin
+export OS_REGION_NAME=$(juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"settings\"][\"region\"][\"value\"]")
+" > ~/nova.rc
+
+source ~/nova.rc
+
+# Determine the tenant id for the configured tenant name.
+export TENANT_ID="$(keystone tenant-list | grep $OS_TENANT_NAME | awk '{ print $2 }')"
+
+if [ "$TENANT_ID" = "" ]; then
+	echo "Unable to find tenant ID, keystone auth problem"
+	exit
+fi
+
+echo "Configuring Openstack Neutron Networking"
+
+#create ext network with neutron for floating IPs
+EXTERNAL_NETWORK_ID=$(neutron net-show ext-net | grep " id" | awk '{print $4}')
+
+#Create private network for neutron for tenant VMs
+neutron net-show private > /dev/null 2>&1 || neutron net-create private
+neutron subnet-show private_subnet > /dev/null 2>&1 || neutron subnet-create private $NEUTRON_FIXED_NET_CIDR -- --name private_subnet --dns_nameservers list=true 8.8.8.8
+SUBNET_ID=$(neutron subnet-show private_subnet | grep " id" | awk '{print $4}')
+
+#Create router for external network and private network
+neutron router-show provider-router > /dev/null 2>&1 || neutron router-create --tenant-id $TENANT_ID provider-router
+ROUTER_ID=$(neutron router-show provider-router | grep " id" | awk '{print $4}')
+
+neutron router-gateway-clear provider-router || true
+neutron router-gateway-set $ROUTER_ID $EXTERNAL_NETWORK_ID
+## make it always ok to have it indempodent.
+neutron router-interface-add $ROUTER_ID $SUBNET_ID || true
+
+
+echo "Configuring security groups for access to ICMP, SSH and RDP by default"
+
+#Configure the default security group to allow ICMP and SSH
+neutron security-group-rule-list default | grep icmp > /dev/null 2>&1 || neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
+neutron security-group-rule-list default | grep 22 > /dev/null 2>&1 || neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
+neutron security-group-rule-list default | grep 3389 > /dev/null 2>&1 || neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 3389 --port-range-max 3389 --remote-ip-prefix 0.0.0.0/0 default
+
+echo "Uploading default SSH key"
+
+#Upload a default SSH key
+nova keypair-list | grep default  > /dev/null 2>&1 || nova  keypair-add --pub-key ~/.ssh/id_rsa.pub default > /dev/null 2>&1
+
+echo "Modifying the flavors to be better sized for the Orange Box"
+
+#Modify the flavours to fit better on the OB
+#nova flavor-create FLAVOR_NAME FLAVOR_ID RAM_IN_MB ROOT_DISK_IN_GB NUMBER_OF_VCPUS
+nova flavor-delete m1.tiny > /dev/null 2>&1
+nova flavor-delete m1.small > /dev/null 2>&1
+nova flavor-delete m1.medium > /dev/null 2>&1
+nova flavor-delete m1.large > /dev/null 2>&1
+nova flavor-delete m1.xlarge > /dev/null 2>&1
+nova flavor-create --is-public true m1.tiny auto 512 5 1 > /dev/null 2>&1
+nova flavor-create --is-public true m1.small auto 1024 10 1 > /dev/null 2>&1
+nova flavor-create --is-public true m1.medium auto 2048 10 2 > /dev/null 2>&1
+nova flavor-create --is-public true m1.large auto 3072 10 2 > /dev/null 2>&1
+## need extra for windows image (15g)
+nova flavor-create --is-public true m1.xlarge auto 8096 30 4  > /dev/null 2>&1
+
+echo "modifying default quotas for admin user"
+
+#Modify quotas for the tenant to allow large deployments
+nova quota-update --instances 400 $TENANT_ID
+nova quota-update --cores 800 $TENANT_ID
+nova quota-update --ram 404800 $TENANT_ID
+nova quota-update --security-groups 4000 $TENANT_ID
+nova quota-update --floating-ips -1 $TENANT_ID
+nova quota-update --security-group-rules -1 $TENANT_ID
+
+### need to find how to change quota for the project not the tenant
+
+### modify default quota the same way..
+nova quota-class-update --instances 400 $TENANT_ID
+nova quota-class-update --cores 800 $TENANT_ID
+nova quota-class-update --ram 404800 $TENANT_ID
+nova quota-class-update --security-groups 4000 $TENANT_ID
+nova quota-class-update --floating_ips -1 $TENANT_ID
+nova quota-class-update --security-group-rules -1 $TENANT_ID
+
+echo "Uploading images to glance"
+
+#Upload images to glance
+glance image-show "Precise x86_64" > /dev/null 2>&1 || glance image-create --name="Precise x86_64" --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/precise-server-cloudimg-amd64-disk1.img --progress
+glance image-show "Trusty x86_64" > /dev/null 2>&1 || glance image-create --name="Trusty x86_64" --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/trusty-server-cloudimg-amd64-disk1.img --progress
+glance image-show "Xenial x86_64" > /dev/null 2>&1 || glance image-create --name="Xenial x86_64" --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/xenial-server-cloudimg-amd64-disk1.img --progress
+glance image-show "CentOS 6.4" > /dev/null 2>&1 || glance image-create --name="CentOS 6.4" --visibility=public --container-format=bare --disk-format=qcow2 < /srv/data/centos6.4-x86_64-gold-master.img --progress
+glance image-show "Cirros 0.3" > /dev/null 2>&1 || glance image-create --name="Cirros 0.3" --visibility=public --container-format=bare --disk-format=qcow2 < /srv/data/cirros-0.3.4-x86_64-disk.img --progress
+## image name is used by script to generate metadata .. don't screw the series
+#glance image-show "win2012r2" > /dev/null 2>&1 || gzip -cd /srv/data/windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz |glance image-create --name="Windows Server 2012" --is-public=true --container-format=bare --disk-format=qcow2 --progress
+

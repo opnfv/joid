@@ -106,6 +106,11 @@ createresource() {
 #copy the files and create extra resources needed for HA deployment
 # in case of default VM labs.
 deploy() {
+
+    if [ ! -f ./environments.yaml ] && [ -e ~/.juju/environments.yaml ]; then
+        cp ~/.juju/environments.yaml ./environments.yaml
+    fi
+
     #copy the script which needs to get deployed as part of ofnfv release
     echo "...... deploying now ......"
     echo "   " >> environments.yaml

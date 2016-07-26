@@ -1,0 +1,153 @@
+#!/bin/bash
+#
+#    Copyright (C) 2014 Canonical Ltd.
+#
+#    Authors: Nicolas Thomss  <nicolas.thomas@canonical.com>
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, version 3 of the License.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+
+set -ex
+## TODO use sudo apt-get install python-openstackclient    instead
+## examples:
+## openstack  ip floating list  --format=csv
+##  openstack  ip floating create  --format=shell ext_net
+## to avoid table parsing..
+## openstack server show -c status --format value my-instance-name
+
+
+echo "This command is run to launch the first instance on a new Orange box Openstack deployment"
+
+source ~/nova.rc
+
+#Create a floating IP for the instance
+if ( nova list | grep jumpserver2 >/dev/null )
+then
+    FLOAT_IP="$(nova list | grep jumpserver2 | awk '{ print $13 }')"
+else
+    FLOAT_IP="$(openstack ip floating create ext-net -c ip -f value)"
+fi
+    
+#Launch an instance
+NET_UUID="$(nova net-list | grep private | awk '{ print $2 }')"
+IMAGE_UUID="$(nova image-list | grep Xenial | awk '{ print $2 }')"
+nova list | grep jumpserver2 ||nova boot --flavor m1.small --key-name default --image $IMAGE_UUID --nic net-id=$NET_UUID --security-group default jumpserver2
+# checking jumpserver2 state until active ..
+INST_STATE=` nova show jumpserver2 | grep status | awk '{print $4}'`
+while [ $INST_STATE != "ACTIVE" ]; 
+do  
+    INST_STATE=` nova show jumpserver2 | grep status | awk '{print $4}'`
+    echo "Jumpserver2 instance state is: "$INST_STATE" waiting to be active"
+    sleep 1
+done
+sleep 6
+#Associate the floating IP with the new instance
+nova floating-ip-associate jumpserver2 $FLOAT_IP || true 
+
+sleep 30
+
+### make it more Readable
+export SSH="ssh -o StrictHostKeyChecking=no ubuntu@$FLOAT_IP"
+
+
+#Add juju stable repo
+$SSH sudo add-apt-repository -y ppa:juju/stable
+
+#SSH into the instance and install Juju
+$SSH sudo apt-get -y update
+
+$SSH sudo apt-get -y install juju python-novaclient python-swiftclient
+
+
+#copy over SSH keys
+scp -o StrictHostKeyChecking=no ~/.ssh/id_rsa* ubuntu@$FLOAT_IP:~/.ssh/
+
+
+#Output a juju cloud file that works on this cloud
+$SSH \
+"echo 'clouds:
+    openstack:
+      type: openstack
+      auth-types: [access-key, userpass]
+      regions:
+        $OS_REGION_NAME:
+          endpoint: $OS_AUTH_URL
+' > os-cloud.yaml"
+$SSH juju add-cloud openstack os-cloud.yaml
+
+#Output a juju cred file that works on this cloud
+$SSH \
+"echo 'credentials:
+  openstack:
+    openstack:
+      auth-type: userpass
+      password: $OS_PASSWORD
+      tenant-name: $OS_TENANT_NAME
+      username: $OS_USERNAME
+' > os-creds.yaml"
+
+$SSH "juju add-credential openstack -f os-creds.yaml"
+
+## Creating images metadata
+$SSH mkdir -p juju-meta
+for s in precise trusty xenial win2012r2
+do
+#Create juju metadata
+    IMAGE_UUID="$(nova image-list | grep -i $s | awk '{ print $2 }')"
+    [ -n "$IMAGE_UUID" ] &&  $SSH "juju metadata generate-image -a amd64 -u $OS_AUTH_URL -i $IMAGE_UUID -r $OS_REGION_NAME -d juju-meta/ -s $s"
+done
+
+## Generate tools (needed if windows is in).
+$SSH "juju metadata generate-tools -d juju-meta/ "
+
+## upload images and tools streams to swift and make public
+$SSH "cd ~/juju-meta/ && swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME \
+ --os-password $OS_PASSWORD --os-tenant-name $OS_TENANT_NAME \
+upload juju-meta images"
+$SSH "cd ~/juju-meta/ && swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME \
+ --os-password $OS_PASSWORD --os-tenant-name $OS_TENANT_NAME \
+upload juju-meta tools"
+
+$SSH swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME  --os-password $OS_PASSWORD \
+ --os-tenant-name $OS_TENANT_NAME  post -r '.r:*' juju-meta
+
+## collect the URL for getting the images 
+$($SSH swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME  --os-password $OS_PASSWORD \
+ --os-tenant-name $OS_TENANT_NAME auth)
+
+###
+###juju bootstrap openstack openstack --config image-metadata-url=http://192.168.16.5/juju/images/ --config network=private --upload-tools --debug -v
+###
+
+my_ip=`ip route | grep src| grep -v virb|grep -v lxcb| head -1| cut -d " " -f 12 `
+#Bootstrap Juju
+##$SSH "juju bootstrap openstack openstack --metadata-source=/var/www/html/juju-meta/ --upload-tools"
+$SSH "juju bootstrap openstack openstack --config image-metadata-url=$OS_STORAGE_URL/juju-meta/images/ --config tools-metadata-url=$OS_STORAGE_URL/juju-meta/tools/ --config network=private"
+
+
+
+## useless if juju floating ip option on.
+#########################################
+#Create a new floating IP and associate with juju bootstrap instance
+#INSTANCE_ID="$(nova list | grep juju-openstack-machine-0 | awk '{ print $2}')"
+#FLOAT_IP2="$(nova floating-ip-create | grep ext_net | awk '{ print $2}')"
+#nova floating-ip-associate $INSTANCE_ID $FLOAT_IP2 
+
+#Print the address of Juju-gui for deployments on Openstack
+echo "Now connect to the Juju-GUI at: http://$FLOAT_IP2/ to continue deployments on Openstack."
+echo "Pass: $OS_PASSWORD"
+
+echo "OR Log in to openstack Jumpserver2 to deploy from command line"
+echo "ssh ubuntu@$FLOAT_IP"
+echo " You must set the following if creating a new model:"
+echo " juju set-model-config image-metadata-url=$OS_STORAGE_URL/juju-meta/images/ tools-metadata-url=$OS_STORAGE_URL/juju-meta/tools/ network=private"
+exit
+
