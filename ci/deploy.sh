@@ -160,6 +160,8 @@ deploy
 check_status
 echo "...... deployment finished  ......."
 
-./openstack.sh "$opnfvsdn"
+./openstack.sh "$opnfvsdn" || true
+sudo ../juju/get-cloud-images || true
+../juju/joid-configure-openstack || true
 
 echo "...... finished  ......."

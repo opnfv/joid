@@ -127,36 +127,29 @@ create_openrc
 ## one option is not to used radosgw and other one is remove endpoint.
 ##
 
-echo "Removing swift endpoint and service"
-swift_service_id=$(openstack service list | grep swift | cut -d ' ' -f 2)
-swift_endpoint_id=$(openstack endpoint list | grep swift | cut -d ' ' -f 2)
-openstack endpoint delete $swift_endpoint_id
-openstack service delete $swift_service_id
+#echo "Removing swift endpoint and service"
+#swift_service_id=$(openstack service list | grep swift | cut -d ' ' -f 2)
+#swift_endpoint_id=$(openstack endpoint list | grep swift | cut -d ' ' -f 2)
+#openstack endpoint delete $swift_endpoint_id
+#openstack service delete $swift_service_id
 
 ##
 ## Create external subnet Network
 ##
 
 #neutron net-create ext-net --shared --router:external=True
-neutron net-create ext-net --router:external=True
+neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net --router:external=True
 
 if [ "onos" == "$1" ]; then
     launch_eth
-    neutron subnet-create ext-net --name ext-subnet \
-       --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
+    neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net \
+       --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
        --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET
     #neutron subnet-create ext-net --name ext-subnet $EXTNET_NET
     #update_gw_mac
-elif [ "nosdn" == "$1" ]; then
-    neutron subnet-create ext-net --name ext-subnet \
-       --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
-       --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET
-    # configure security groups
-    #neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
-    #neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
 else
-    neutron subnet-create ext-net --name ext-subnet \
-       --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
+    neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net \
+       --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
        --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET
 fi
 

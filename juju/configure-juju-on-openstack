@@ -35,24 +35,24 @@ then
 else
     FLOAT_IP="$(openstack ip floating create ext-net -c ip -f value)"
 fi
-    
+
 #Launch an instance
 NET_UUID="$(nova net-list | grep private | awk '{ print $2 }')"
 IMAGE_UUID="$(nova image-list | grep Xenial | awk '{ print $2 }')"
 nova list | grep jumpserver2 ||nova boot --flavor m1.small --key-name default --image $IMAGE_UUID --nic net-id=$NET_UUID --security-group default jumpserver2
 # checking jumpserver2 state until active ..
 INST_STATE=` nova show jumpserver2 | grep status | awk '{print $4}'`
-while [ $INST_STATE != "ACTIVE" ]; 
-do  
+while [ $INST_STATE != "ACTIVE" ];
+do
     INST_STATE=` nova show jumpserver2 | grep status | awk '{print $4}'`
     echo "Jumpserver2 instance state is: "$INST_STATE" waiting to be active"
     sleep 1
 done
 sleep 6
 #Associate the floating IP with the new instance
-nova floating-ip-associate jumpserver2 $FLOAT_IP || true 
+nova floating-ip-associate jumpserver2 $FLOAT_IP || true
 
-sleep 30
+sleep 90
 
 ### make it more Readable
 export SSH="ssh -o StrictHostKeyChecking=no ubuntu@$FLOAT_IP"
@@ -119,7 +119,7 @@ upload juju-meta tools"
 $SSH swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME  --os-password $OS_PASSWORD \
  --os-tenant-name $OS_TENANT_NAME  post -r '.r:*' juju-meta
 
-## collect the URL for getting the images 
+## collect the URL for getting the images
 $($SSH swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME  --os-password $OS_PASSWORD \
  --os-tenant-name $OS_TENANT_NAME auth)
 
@@ -139,7 +139,7 @@ $SSH "juju bootstrap openstack openstack --config image-metadata-url=$OS_STORAGE
 #Create a new floating IP and associate with juju bootstrap instance
 #INSTANCE_ID="$(nova list | grep juju-openstack-machine-0 | awk '{ print $2}')"
 #FLOAT_IP2="$(nova floating-ip-create | grep ext_net | awk '{ print $2}')"
-#nova floating-ip-associate $INSTANCE_ID $FLOAT_IP2 
+#nova floating-ip-associate $INSTANCE_ID $FLOAT_IP2
 
 #Print the address of Juju-gui for deployments on Openstack
 echo "Now connect to the Juju-GUI at: http://$FLOAT_IP2/ to continue deployments on Openstack."
