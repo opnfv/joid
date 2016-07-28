@@ -41,6 +41,9 @@
     - [ 'congress:shared-db', 'mysql:shared-db' ]
     - [ 'congress:identity-service', 'keystone:identity-service' ]
     - [ 'congress:amqp', 'rabbitmq-server:amqp' ]
+    - [ 'aodh:amqp', 'rabbitmq-server:amqp' ]
+    - [ 'aodh:shared-db', 'mysql:shared-db' ]
+    - [ 'aodh:identity-service', 'keystone:identity-service' ]
 {% if os.lxd %}
     - [ 'nova-compute:lxd', 'lxd:lxd' ]
 {% endif %}

@@ -1,0 +1,5 @@
+    aodh:
+      charm: "local:{{ ubuntu.release }}/aodh"
+      to:
+        - "lxc:nodes=0"
+{# Empty block to avoid bad block trim #}
