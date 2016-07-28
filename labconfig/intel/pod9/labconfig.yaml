@@ -7,90 +7,144 @@ lab:
       architecture: x86_64
       roles: [network,control]
       nics:
-      - ifname: eth3
+      - ifname: eth1
         spaces: [admin]
         mac: ["00:1E:67:D4:30:38"]
-      - ifname: eth0
+      - ifname: eth2
         spaces: [data]
         mac: ["00:1E:67:C5:5B:08"]
-      - ifname: eth1
+      - ifname: eth3
         spaces: [public]
         mac: ["00:1E:67:C5:5B:09"]
       power:
         type: ipmi
-        address: 10.2.117.142
+        address:10.2.117.150
         user: root
         pass: root
     - name: rack-9-m2
       architecture: x86_64
-      roles: [compute,control,storage]
+      roles: [network,control]
       nics:
-      - ifname: eth3
-        spaces: [admin]
-        mac: ["00:1E:67:D4:33:A2"]
-      - ifname: eth0
-        spaces: [data]
-        mac: ["00:1E:67:E2:6C:74"]
       - ifname: eth1
-        spaces: [public]
+        spaces: [admin]
+        mac: ["00:1E:67:D4:33:A3"]
+      - ifname: eth2
+        spaces: [data]
         mac: ["00:1E:67:E2:6C:75"]
+      - ifname: eth3
+        spaces: [public]
+        mac: ["00:1E:67:E2:6C:76"]
       power:
         type: ipmi
-        address: 10.2.117.144
+        address:10.2.117.152
         user: root
         pass: root
     - name: rack-9-m3
       architecture: x86_64
-      roles: [compute,control,storage]
+      roles: [network,control]
       nics:
-      - ifname: eth3
+      - ifname: eth1
         spaces: [admin]
         mac: ["00:1E:67:D4:2F:BA"]
-      - ifname: eth0
+      - ifname: eth2
         spaces: [data]
         mac: ["00:1E:67:C5:5B:00"]
-      - ifname: eth1
+      - ifname: eth3
         spaces: [public]
         mac: ["00:1E:67:C5:5B:01"]
       power:
         type: ipmi
-        address: 10.2.117.146
+        address:10.2.117.154
         user: root
         pass: root
-    floating-ip-range: 10.9.15.6,10.9.15.250,10.9.15.254,10.9.15.0/24
-    ext-port: "00:1E:67:C5:5B:09"
+    - name: rack-9-m4
+      architecture: x86_64
+      roles: [network,control]
+      nics:
+      - ifname: eth1
+        spaces: [admin]
+        mac: ["00:1E:67:D4:37:7E"]
+      - ifname: eth2
+        spaces: [data]
+        mac: ["00:1E:67:E2:65:D8"]
+      - ifname: eth3
+        spaces: [public]
+        mac: ["00:1E:67:E2:65:D9"]
+      power:
+        type: ipmi
+        address:10.2.117.156
+        user: root
+        pass: root
+    - name: rack-9-m5
+      architecture: x86_64
+      roles: [network,control]
+      nics:
+      - ifname: eth1
+        spaces: [admin]
+        mac: ["98:4F:EE:10:04:65"]
+      - ifname: eth2
+        spaces: [data]
+        mac: ["00:1E:67:D4:41:B1"]
+      - ifname: eth3
+        spaces: [public]
+        mac: ["00:1E:67:D4:41:30"]
+      power:
+        type: ipmi
+        address:10.2.117.158
+        user: root
+        pass: root
+    - name: rack-9-m6
+      architecture: x86_64
+      roles: [network,control]
+      nics:
+      - ifname: eth1
+        spaces: [admin]
+        mac: ["00:1E:67:FE:F4:24"]
+      - ifname: eth2
+        spaces: [data]
+        mac: ["00:1E:67:9C:35:D8"]
+      - ifname: eth3
+        spaces: [public]
+        mac: ["00:1E:67:9C:35:D9"]
+      power:
+        type: ipmi
+        address:10.2.117.160
+        user: root
+        pass: root
+    floating-ip-range: 10.9.15.6,10.9.15.250,10.9.15.1,10.9.15.0/24
+    ext-port: "eth3"
     dns: 8.8.8.8
     osdomainname:
 opnfv:
     release: c
     distro: trusty
     type: nonha
-    openstack: mitaka
+    openstack: liberty
     sdncontroller:
     - type: nosdn
     storage:
     - type: ceph
-      disk: /srv
+      disk: /dev/sdb
     feature: odl_l2
     spaces:
     - type: admin
       bridge: brAdm
       cidr: 10.9.1.0/24
       gateway: 10.9.1.1
-      vlan: 901
+      vlan:
     - type: data
       bridge: brData
       cidr: 10.9.12.0/24
       gateway:
-      vlan: 902
+      vlan:
     - type: public
       bridge: brPublic
       cidr: 10.9.15.0/24
       gateway: 10.9.15.254
-      vlan: 905
+      vlan:
     - type: external
       bridge: brExt
       cidr:
       gateway:
-      ipaddress: 10.2.117.143
+      ipaddress: 10.2.117.149
       vlan:
