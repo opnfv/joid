@@ -18,7 +18,7 @@ lab:
         mac: ["00:1E:67:C5:5B:09"]
       power:
         type: ipmi
-        address:10.2.117.150
+        address: 10.2.117.150
         user: root
         pass: root
     - name: rack-9-m2
@@ -36,7 +36,7 @@ lab:
         mac: ["00:1E:67:E2:6C:76"]
       power:
         type: ipmi
-        address:10.2.117.152
+        address: 10.2.117.152
         user: root
         pass: root
     - name: rack-9-m3
@@ -54,7 +54,7 @@ lab:
         mac: ["00:1E:67:C5:5B:01"]
       power:
         type: ipmi
-        address:10.2.117.154
+        address: 10.2.117.154
         user: root
         pass: root
     - name: rack-9-m4
@@ -72,7 +72,7 @@ lab:
         mac: ["00:1E:67:E2:65:D9"]
       power:
         type: ipmi
-        address:10.2.117.156
+        address: 10.2.117.156
         user: root
         pass: root
     - name: rack-9-m5
@@ -90,7 +90,7 @@ lab:
         mac: ["00:1E:67:D4:41:30"]
       power:
         type: ipmi
-        address:10.2.117.158
+        address: 10.2.117.158
         user: root
         pass: root
     - name: rack-9-m6
@@ -108,7 +108,7 @@ lab:
         mac: ["00:1E:67:9C:35:D9"]
       power:
         type: ipmi
-        address:10.2.117.160
+        address: 10.2.117.160
         user: root
         pass: root
     floating-ip-range: 10.9.15.6,10.9.15.250,10.9.15.1,10.9.15.0/24
@@ -139,12 +139,12 @@ opnfv:
       vlan:
     - type: public
       bridge: brPublic
-      cidr: 10.9.15.0/24
-      gateway: 10.9.15.254
+      cidr: 10.9.13.0/24
+      gateway: 10.9.13.1
       vlan:
     - type: external
       bridge: brExt
       cidr:
       gateway:
-      ipaddress: 10.2.117.149
+      ipaddress: 10.2.117.151
       vlan:
