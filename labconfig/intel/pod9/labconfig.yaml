@@ -23,7 +23,7 @@ lab:
         pass: root
     - name: rack-9-m2
       architecture: x86_64
-      roles: [network,control]
+      roles: [compute,control,storage]
       nics:
       - ifname: eth1
         spaces: [admin]
@@ -41,7 +41,7 @@ lab:
         pass: root
     - name: rack-9-m3
       architecture: x86_64
-      roles: [network,control]
+      roles: [compute,control,storage]
       nics:
       - ifname: eth1
         spaces: [admin]
@@ -59,7 +59,7 @@ lab:
         pass: root
     - name: rack-9-m4
       architecture: x86_64
-      roles: [network,control]
+      roles: [compute,storage]
       nics:
       - ifname: eth1
         spaces: [admin]
@@ -77,7 +77,7 @@ lab:
         pass: root
     - name: rack-9-m5
       architecture: x86_64
-      roles: [network,control]
+      roles: [compute,storage]
       nics:
       - ifname: eth1
         spaces: [admin]
@@ -95,7 +95,7 @@ lab:
         pass: root
     - name: rack-9-m6
       architecture: x86_64
-      roles: [network,control]
+      roles: [compute,storage]
       nics:
       - ifname: eth1
         spaces: [admin]
