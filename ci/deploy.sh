@@ -151,6 +151,9 @@ check_status() {
     done
     status=`juju action do heat/0 domain-setup`
     echo $status
+    juju expose ceph-radosgw
+    juju ssh ceph/0 \ 'sudo radosgw-admin user create --uid="ubuntu" --display-name="Ubuntu Ceph"'
+
     echo "...... deployment finishing ......."
 }
 
