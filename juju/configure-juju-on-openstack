@@ -27,10 +27,12 @@ set -ex
 echo "This command is run to launch the first instance on a new Orange box Openstack deployment"
 
 source ~/nova.rc
+associated=0
 
 #Create a floating IP for the instance
 if ( nova list | grep jumpserver2 >/dev/null )
 then
+    associated=1
     FLOAT_IP="$(nova list | grep jumpserver2 | awk '{ print $13 }')"
 else
     FLOAT_IP="$(openstack ip floating create ext-net -c ip -f value)"
@@ -49,8 +51,12 @@ do
     sleep 1
 done
 sleep 6
+
 #Associate the floating IP with the new instance
-nova floating-ip-associate jumpserver2 $FLOAT_IP || true
+if [ "$associated" -eq "0" ]; then
+   nova floating-ip-associate jumpserver2 $FLOAT_IP || true
+   sleep 90
+fi
 
 sleep 90
 
@@ -81,7 +87,7 @@ $SSH \
         $OS_REGION_NAME:
           endpoint: $OS_AUTH_URL
 ' > os-cloud.yaml"
-$SSH juju add-cloud openstack os-cloud.yaml
+$SSH juju add-cloud openstack os-cloud.yaml --replace
 
 #Output a juju cred file that works on this cloud
 $SSH \
@@ -94,7 +100,7 @@ $SSH \
       username: $OS_USERNAME
 ' > os-creds.yaml"
 
-$SSH "juju add-credential openstack -f os-creds.yaml"
+$SSH "juju add-credential openstack -f os-creds.yaml" --replace
 
 ## Creating images metadata
 $SSH mkdir -p juju-meta
