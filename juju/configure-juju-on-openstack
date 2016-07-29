@@ -109,15 +109,16 @@ done
 $SSH "juju metadata generate-tools -d juju-meta/ "
 
 ## upload images and tools streams to swift and make public
+$SSH swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME  --os-password $OS_PASSWORD \
+ --os-tenant-name $OS_TENANT_NAME  post -r '.r:*' juju-meta
+
 $SSH "cd ~/juju-meta/ && swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME \
  --os-password $OS_PASSWORD --os-tenant-name $OS_TENANT_NAME \
 upload juju-meta images"
+
 $SSH "cd ~/juju-meta/ && swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME \
  --os-password $OS_PASSWORD --os-tenant-name $OS_TENANT_NAME \
 upload juju-meta tools"
-
-$SSH swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME  --os-password $OS_PASSWORD \
- --os-tenant-name $OS_TENANT_NAME  post -r '.r:*' juju-meta
 
 ## collect the URL for getting the images
 $($SSH swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME  --os-password $OS_PASSWORD \
