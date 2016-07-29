@@ -84,10 +84,10 @@ lab:
         mac: ["98:4F:EE:10:04:65"]
       - ifname: eth2
         spaces: [data]
-        mac: ["00:1E:67:D4:41:B1"]
+        mac: ["00:1E:67:9C:3E:6C"]
       - ifname: eth3
         spaces: [public]
-        mac: ["00:1E:67:D4:41:30"]
+        mac: ["00:1E:67:9C:3E:6D"]
       power:
         type: ipmi
         address: 10.2.117.158
