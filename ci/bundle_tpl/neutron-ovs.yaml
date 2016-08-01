@@ -3,8 +3,6 @@
       options:
 {% if opnfv.spaces_dict.data is defined %}
         os-data-network: {{ opnfv.spaces_dict.data.cidr }}
-{% else %}
-        #os-data-network: {{ opnfv.spaces_dict.data.cidr }}
 {% endif %}
 {% if os.network.dpdk %}
         enable-dpdk: true
@@ -12,5 +10,10 @@
         #data-port: ""
         #default-socket-memory: 1024
         #default-socket-cores: 1
+{% endif %}
+{% if opnfv.ext_port is defined  %}
+{% if os.network.dvr %}
+        ext-port: {{ opnfv.ext_port }}
+{% endif %}
 {% endif %}
 {# Empty block to avoid bad block trim #}
