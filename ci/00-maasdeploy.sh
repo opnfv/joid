@@ -23,7 +23,7 @@ sudo apt-get install openssh-server bzr git maas-deployer juju juju-deployer \
 if [ "$1" == "custom" ]; then
     if [ -e $2 ]; then
         cp $2 ./labconfig.yaml || true
-        python deploy.py
+        python genmaasconfig.py
     else
         wget $2 -t 3 -T 10 -O ./labconfig.yaml || true
         count=`wc -l labconfig.yaml  | cut -d " " -f 1`
@@ -31,7 +31,7 @@ if [ "$1" == "custom" ]; then
         if [ $count -lt 10 ]; then
             rm -rf labconfig.yaml
         else
-            python deploy.py
+            python genmaasconfig.py
         fi
     fi
 
@@ -46,32 +46,32 @@ else
         'intelpod5' )
             cp ../labconfig/intel/pod5/labconfig.yaml ./
             #to be removed later once converted for all labs.
-            python deploy.py
+            python genmaasconfig.py
             ;;
         'intelpod6' )
             cp ../labconfig/intel/pod6/labconfig.yaml ./
             #to be removed later once converted for all labs.
-            python deploy.py
+            python genmaasconfig.py
             ;;
         'intelpod9' )
             cp ../labconfig/intel/pod6/labconfig.yaml ./
             #to be removed later once converted for all labs.
-            python deploy.py
+            python genmaasconfig.py
             ;;
         'orangepod1' )
             cp ../labconfig/orange/pod1/labconfig.yaml ./
             #to be removed later once converted for all labs.
-            python deploy.py
+            python genmaasconfig.py
             ;;
         'orangepod2' )
             cp ../labconfig/orange/pod1/labconfig.yaml ./
             #to be removed later once converted for all labs.
-            python deploy.py
+            python genmaasconfig.py
             ;;
         'attvirpod1' )
             cp ../labconfig/att/virpod1/labconfig.yaml ./
             #to be removed later once converted for all labs.
-            python deploy.py
+            python genmaasconfig.py
             ;;
         'juniperpod1' )
             cp maas/juniper/pod1/deployment.yaml ./deployment.yaml
@@ -79,12 +79,12 @@ else
         'cengnpod1' )
             cp ../labconfig/cengn/pod1/labconfig.yaml ./
             #to be removed later once converted for all labs.
-            python deploy.py
+            python genmaasconfig.py
             ;;
         'cengnpod2' )
             cp ../labconfig/cengn/pod2/labconfig.yaml ./
             #to be removed later once converted for all labs.
-            python deploy.py
+            python genmaasconfig.py
             ;;
         * )
             virtinstall=1
@@ -302,8 +302,6 @@ case "$labname" in
         enableautomodebyname eth1.905 AUTO "10.9.15.0/24" compute || true
         enableautomodebyname eth0.902 AUTO "10.9.12.0/24" control || true
         enableautomodebyname eth1.905 AUTO "10.9.15.0/24" control || true
-        ;;
-    'juniperpod1' )
         ;;
 esac
 

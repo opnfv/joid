@@ -2,13 +2,22 @@
 #placeholder for deployment script.
 set -ex
 
-#    ./01-deploybundle.sh $opnfvtype $openstack $opnfvlab $opnfvsdn $opnfvfeature $opnfvdistro
+#    ./02-deploybundle.sh $opnfvtype $openstack $opnfvlab $opnfvsdn $opnfvfeature $opnfvdistro
 
-    #copy and download charms
-    cp $4/fetch-charms.sh ./fetch-charms.sh
-    #modify the ubuntu series wants to deploy
-    sed -i -- "s|distro=trusty|distro=$6|g" ./fetch-charms.sh
-    ./fetch-charms.sh $6
+opnfvtype=$1
+openstack=$2
+opnfvlab=$3
+opnfvsdn=$4
+opnfvfeature=$5
+opnfvdistro=$6
+
+#copy and download charms
+cp $opnfvsdn/fetch-charms.sh ./fetch-charms.sh
+
+#modify the ubuntu series wants to deploy
+sed -i -- "s|distro=trusty|distro=$opnfvdistro|g" ./fetch-charms.sh
+
+./fetch-charms.sh $opnfvdistro
 
 osdomname=''
 
@@ -45,7 +54,7 @@ if [ -e ~/.juju/deployment.yaml ]; then
    fi
 fi
 
-case "$3" in
+case "$opnfvlab" in
      'juniperpod1' )
          sed -i -- 's/10.4.1.1/172.16.50.1/g' ./bundles.yaml
          sed -i -- 's/#ext-port: "eth1"/ext-port: "eth1"/g' ./bundles.yaml
@@ -58,7 +67,7 @@ esac
 # lets put the if seperateor as "," as this will save me from world.
 fea=""
 IFS=","
-for feature in $5; do
+for feature in $opnfvfeature; do
     if [ "$fea" == "" ]; then
         fea=$feature
     else
@@ -67,7 +76,7 @@ for feature in $5; do
 done
 
 #update source if trusty is target distribution
-var=os-$4-$fea-$1"-"$6"_"$2
+var=os-$opnfvsdn-$fea-$opnfvtype"-"$opnfvdistro"_"$openstack
 
 if [ "$osdomname" != "''" ]; then
     var=$var"_"publicapi
@@ -77,7 +86,7 @@ fi
 python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
 
 echo "... Deployment Started ...."
-juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $6-"$2"-nodes
+juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack"-nodes
 
 # seeing issue related to number of open files.
 # juju run --service nodes 'echo 2048 | sudo tee /proc/sys/fs/inotify/max_user_instances'
@@ -90,4 +99,4 @@ while [ $c -lt $count ]; do
     let c+=1
 done
 
-juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $6-"$2" || true
+juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack" || true

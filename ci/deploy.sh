@@ -126,10 +126,10 @@ deploy() {
     fi
 
     #bootstrap the node
-    ./00-bootstrap.sh
+    ./01-bootstrap.sh
 
     #case default deploy the opnfv platform:
-    ./01-deploybundle.sh $opnfvtype $openstack $opnfvlab $opnfvsdn $opnfvfeature $opnfvdistro
+    ./02-deploybundle.sh $opnfvtype $openstack $opnfvlab $opnfvsdn $opnfvfeature $opnfvdistro
 }
 
 #check whether charms are still executing the code even juju-deployer says installed.
