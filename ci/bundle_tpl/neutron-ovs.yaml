@@ -3,6 +3,8 @@
       options:
 {% if opnfv.spaces_dict.data is defined %}
         os-data-network: {{ opnfv.spaces_dict.data.cidr }}
+{% else %}
+        #os-data-network: {{ opnfv.spaces_dict.data.cidr }}
 {% endif %}
 {% if os.network.dpdk %}
         enable-dpdk: true

@@ -15,12 +15,12 @@
 {% endfor %}
     ceph-osd:
       charm: "local:{{ ubuntu.release }}/ceph-osd"
-      num_units: {{ opnfv.units - 1 }}
+      num_units: {{ opnfv.units }}
       options:
         osd-devices: {{ opnfv.storage_dict.ceph.disk }}
         osd-reformat: 'yes'
       to:
-{% for unit_id in range(1, opnfv.units) %}
+{% for unit_id in range(0, opnfv.units) %}
         - "nodes={{ unit_id }}"
 {% endfor %}
     ceph-radosgw:

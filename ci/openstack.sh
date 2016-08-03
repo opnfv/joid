@@ -137,20 +137,28 @@ create_openrc
 ## Create external subnet Network
 ##
 
-#neutron net-create ext-net --shared --router:external=True
-neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net --router:external=True
-
 if [ "onos" == "$1" ]; then
     launch_eth
+    neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net --router:external=True
     neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net \
        --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
-       --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET
+       --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
     #neutron subnet-create ext-net --name ext-subnet $EXTNET_NET
     #update_gw_mac
-else
+elif [ "nosdn" == "$1" ]; then
+    neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net \
+                                             --router:external=True \
+                                             --provider:network_type flat \
+                                              --provider:physical_network external
+
     neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net \
        --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
-       --disable-dhcp --gateway $EXTNET_GW --dns-nameserver 8.8.8.8 $EXTNET_NET
+       --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
+else
+    neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net --router:external=True
+    neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net \
+       --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
+       --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
 fi
 
 

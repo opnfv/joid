@@ -3,8 +3,20 @@
       options:
 {% if opnfv.spaces_dict.data is defined %}
         os-data-network: {{ opnfv.spaces_dict.data.cidr }}
+{% else %}
+        #os-data-network: {{ opnfv.spaces_dict.data.cidr }}
 {% endif %}
+{% if os.network.controller == 'nosdn' %}
 {% if opnfv.ext_port is defined  %}
+{% if opnfv.data_port is defined  %}
+        bridge-mappings: physnet1:br-data external:br-ex
+        data-port: br-data:{{ opnfv.data_port }} br-ex:{{ opnfv.ext_port }}
+{% else %}
+        bridge-mappings: external:br-ex
+        data-port: br-ex:{{ opnfv.ext_port }}
+{% endif %}
+{% endif %}
+{% else %}
         ext-port: {{ opnfv.ext_port }}
 {% endif %}
 {% if os.network.controller == 'odl' %}
