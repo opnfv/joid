@@ -16,17 +16,28 @@
         data-port: br-ex:{{ opnfv.ext_port }}
 {% endif %}
 {% endif %}
+{% elif os.network.controller == 'onos' %}
+        plugin: onos
+{% if opnfv.ext_port is defined  %}
+{% if opnfv.data_port is defined  %}
+        bridge-mappings: physnet1:br-data external:br-ex
+        data-port: br-data:{{ opnfv.data_port }} br-ex:{{ opnfv.ext_port }}
 {% else %}
+        bridge-mappings: external:br-ex
+        data-port: br-ex:{{ opnfv.ext_port }}
+{% endif %}
+{% endif %}
+{% if os.network.sfc %}
+        profile: onos-sfc
+{% endif %}
+{% elif os.network.controller == 'odl' %}
+        plugin: ovs-odl
 {% if opnfv.ext_port is defined  %}
         ext-port: {{ opnfv.ext_port }}
 {% endif %}
-{% endif %}
-{% if os.network.controller == 'odl' %}
-        plugin: ovs-odl
-{% elif os.network.controller == 'onos' %}
-        plugin: onos
-{% if os.network.sfc %}
-        profile: onos-sfc
+{% else %}
+{% if opnfv.ext_port is defined  %}
+        ext-port: {{ opnfv.ext_port }}
 {% endif %}
 {% endif %}
         instance-mtu: 1400
