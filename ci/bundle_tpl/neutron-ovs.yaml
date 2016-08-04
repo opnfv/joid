@@ -15,7 +15,17 @@
 {% endif %}
 {% if opnfv.ext_port is defined  %}
 {% if os.network.dvr %}
-        ext-port: {{ opnfv.ext_port }}
+{% if os.network.controller == 'nosdn' %}
+{% if opnfv.data_port is defined  %}
+        bridge-mappings: physnet1:br-data external:br-ex
+        data-port: br-data:{{ opnfv.data_port }} br-ex:{{ opnfv.ext_port }}
+{% else %}
+        bridge-mappings: external:br-ex
+        data-port: br-ex:{{ opnfv.ext_port }}
+{% endif %}
+{% else %}
+         ext-port: {{ opnfv.ext_port }}
+{% endif %}
 {% endif %}
 {% endif %}
 {# Empty block to avoid bad block trim #}
