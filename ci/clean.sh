@@ -20,4 +20,3 @@ if [ -d $HOME/.juju/environments ]; then
     rm -rf $HOME/.juju/environments
     rm -rf $HOME/.juju/ssh
 fi
-
