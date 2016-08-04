@@ -6,6 +6,7 @@
 {% else %}
         #os-data-network: {{ opnfv.spaces_dict.data.cidr }}
 {% endif %}
+{% if os.network.controller == 'nosdn' %}
 {% if opnfv.ext_port is defined  %}
 {% if opnfv.data_port is defined  %}
         bridge-mappings: physnet1:br-data external:br-ex
@@ -13,6 +14,11 @@
 {% else %}
         bridge-mappings: external:br-ex
         data-port: br-ex:{{ opnfv.ext_port }}
+{% endif %}
+{% endif %}
+{% else %}
+{% if opnfv.ext_port is defined  %}
+        ext-port: {{ opnfv.ext_port }}
 {% endif %}
 {% endif %}
 {% if os.network.controller == 'odl' %}
