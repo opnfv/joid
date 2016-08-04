@@ -34,7 +34,7 @@ labconfig_file = options.lab
 
 scenarioconfig_file = 'default_deployment_config.yaml'
 # Capture our current directory
-TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/bundle_tpl'
+TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl/bundle_tpl'
 
 #
 # Prepare variables
@@ -186,8 +186,6 @@ if 'trusty' in extra:
     if 'liberty' in extra:
         config['os']['release'] = 'liberty'
 
-# pp(config)
-
 #
 # Transform template to bundle.yaml according to config
 #
@@ -204,4 +202,13 @@ env.globals.update(unit_ceph_qty=unit_ceph_qty)
 env.globals.update(to_select=to_select)
 
 # Render the template
-print(template.render(**config))
+output = template.render(**config)
+
+# Check output syntax
+try:
+    yaml.load(output)
+except yaml.YAMLError as exc:
+    print(exc)
+
+# print output
+print(output)

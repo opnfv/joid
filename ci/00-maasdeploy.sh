@@ -20,84 +20,66 @@ sudo apt-get install openssh-server bzr git maas-deployer juju juju-deployer \
 # absolute location of file (including file name) or url of the
 # file to download.
 
-if [ "$1" == "custom" ]; then
-    if [ -e $2 ]; then
-        cp $2 ./labconfig.yaml || true
-        python genmaasconfig.py
-    else
-        wget $2 -t 3 -T 10 -O ./labconfig.yaml || true
-        count=`wc -l labconfig.yaml  | cut -d " " -f 1`
+labname=$1
+labfile=$2
 
-        if [ $count -lt 10 ]; then
-            rm -rf labconfig.yaml
+#
+# Config preparation
+#
+
+# Get labconfig and generate deployment.yaml for MAAS and deployconfig.yaml
+case "$labname" in
+    intelpod[569]|orangepod[12]|cengnpod[12] )
+        array=(${labname//pod/ })
+        cp maas/${array[0]}/pod${array[0]}/labconfig.yaml .
+        python genDeploymentConfig.py > deployment.yaml
+        python genMAASConfig.py > deployconfig.yaml
+        ;;
+    'attvirpod1' )
+        cp maas/att/virpod1/labconfig.yaml .
+        python genDeploymentConfig.py > deployment.yaml
+        python genMAASConfig.py > deployconfig.yaml
+        ;;
+    'juniperpod1' )
+        cp maas/juniper/pod1/deployment.yaml ./deployment.yaml
+        ;;
+    'custom')
+        if [ -e $labfile ]; then
+            cp $labfile ./labconfig.yaml || true
         else
-            python genmaasconfig.py
+            wget $labconfigfile -t 3 -T 10 -O ./labconfig.yaml || true
+            count=`wc -l labconfig.yaml  | cut -d " " -f 1`
+            if [ $count -lt 10 ]; then
+                rm -rf labconfig.yaml
+            fi
         fi
-    fi
-
-    if [ ! -e ./labconfig.yaml ]; then
-        virtinstall=1
-        cp ../labconfig/default/deployment.yaml ./
-        cp ../labconfig/default/labconfig.yaml ./
-    fi
-    labname=`grep "maas_name" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
-else
-    case "$1" in
-        'intelpod5' )
-            cp ../labconfig/intel/pod5/labconfig.yaml ./
-            #to be removed later once converted for all labs.
-            python genmaasconfig.py
-            ;;
-        'intelpod6' )
-            cp ../labconfig/intel/pod6/labconfig.yaml ./
-            #to be removed later once converted for all labs.
-            python genmaasconfig.py
-            ;;
-        'intelpod9' )
-            cp ../labconfig/intel/pod6/labconfig.yaml ./
-            #to be removed later once converted for all labs.
-            python genmaasconfig.py
-            ;;
-        'orangepod1' )
-            cp ../labconfig/orange/pod1/labconfig.yaml ./
-            #to be removed later once converted for all labs.
-            python genmaasconfig.py
-            ;;
-        'orangepod2' )
-            cp ../labconfig/orange/pod1/labconfig.yaml ./
-            #to be removed later once converted for all labs.
-            python genmaasconfig.py
-            ;;
-        'attvirpod1' )
-            cp ../labconfig/att/virpod1/labconfig.yaml ./
-            #to be removed later once converted for all labs.
-            python genmaasconfig.py
-            ;;
-        'juniperpod1' )
-            cp maas/juniper/pod1/deployment.yaml ./deployment.yaml
-            ;;
-        'cengnpod1' )
-            cp ../labconfig/cengn/pod1/labconfig.yaml ./
-            #to be removed later once converted for all labs.
-            python genmaasconfig.py
-            ;;
-        'cengnpod2' )
-            cp ../labconfig/cengn/pod2/labconfig.yaml ./
-            #to be removed later once converted for all labs.
-            python genmaasconfig.py
-            ;;
-        * )
+        if [ ! -e ./labconfig.yaml ]; then
             virtinstall=1
-            labname="default"
-            ./cleanvm.sh
-            cp ../labconfig/default/deployment.yaml ./
-            cp ../labconfig/default/deployconfig.yaml ./
-            ;;
-    esac
+        else
+            python genDeploymentConfig.py > deployment.yaml
+            python genMAASConfig.py > deployconfig.yaml
+            labname=`grep "maas_name" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+        fi
+        ;;
+    * )
+        virtinstall=1
+        ;;
+esac
+
+# In the case of a virtual deployment get deployment.yaml and deployconfig.yaml
+if [ "$virtinstall" -eq 1 ]; then
+    labname="default"
+    ./cleanvm.sh
+    cp ../labconfig/default/deployment.yaml ./
+    cp ../labconfig/default/labconfig.yaml ./
+    cp ../labconfig/default/deployconfig.yaml ./
 fi
 
-#make sure no password asked during the deployment.
+#
+# Prepare local environment to avoid password asking
+#
 
+# make sure no password asked during the deployment.
 echo "$USER ALL=(ALL) NOPASSWD:ALL" > 90-joid-init
 
 if [ -e /etc/sudoers.d/90-joid-init ]; then
@@ -112,32 +94,25 @@ else
     sudo mv 90-joid-init /etc/sudoers.d/
 fi
 
-echo "... Deployment of maas Started ...."
-
 if [ ! -e $HOME/.ssh/id_rsa ]; then
     ssh-keygen -N '' -f $HOME/.ssh/id_rsa
 fi
 
-#define the pool and try to start even though its already exist.
-# For fresh install this may or may not there.
+echo "... Deployment of maas Started ...."
 
+#
+# Virsh preparation
+#
+
+# define the pool and try to start even though its already exist.
+# For fresh install this may or may not there.
 sudo apt-get install libvirt-bin -y
 sudo adduser $USER libvirtd
 sudo virsh pool-define-as default --type dir --target /var/lib/libvirt/images/ || true
 sudo virsh pool-start default || true
 sudo virsh pool-autostart default || true
 
-# To avoid problem between apiclient/maas_client and apiclient from google
-# we remove the package google-api-python-client from yardstick installer
-if [ $(pip list |grep google-api-python-client |wc -l) == 1 ]; then
-    sudo pip uninstall google-api-python-client
-fi
-
-sudo pip install shyaml
-juju init -f
-
-cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
-
+# In case of virtual install set network
 if [ "$virtinstall" -eq 1 ]; then
     sudo virsh net-dumpxml default > default-net-org.xml
     sudo sed -i '/dhcp/d' default-net-org.xml
@@ -147,64 +122,43 @@ if [ "$virtinstall" -eq 1 ]; then
     sudo virsh net-start default
 fi
 
-#Below function will mark the interfaces in Auto mode to enbled by MAAS
-enableautomode() {
-    listofnodes=`maas maas nodes list | grep system_id | cut -d '"' -f 4`
-    for nodes in $listofnodes
-    do
-        maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3
-    done
-}
+# Ensure virsh can connect without ssh auth
+cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 
-#Below function will mark the interfaces in Auto mode to enbled by MAAS
-# using hostname of the node added into MAAS
 
-enableautomodebyname() {
-    if [ ! -z "$4" ]; then
-        for i in `seq 1 7`;
-        do
-            nodes=`maas maas nodes list hostname=node$i-$4 | grep system_id | cut -d '"' -f 4`
-            if [ ! -z "$nodes" ]; then
-                maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3
-            fi
-       done
-    fi
-}
+#
+# Cleanup, juju init and config backup
+#
 
-#Below function will create vlan and update interface with the new vlan
-# will return the vlan id created
-crvlanupdsubnet() {
-    newvlanid=`maas maas vlans create $2 name=$3 vid=$4 | grep resource | cut -d '/' -f 6 `
-    maas maas subnet update $5 vlan=$newvlanid
-    eval "$1"="'$newvlanid'"
-}
+# To avoid problem between apiclient/maas_client and apiclient from google
+# we remove the package google-api-python-client from yardstick installer
+if [ $(pip list |grep google-api-python-client |wc -l) == 1 ]; then
+    sudo pip uninstall google-api-python-client
+fi
 
-#Below function will create interface with new vlan and bind to physical interface
-crnodevlanint() {
-    listofnodes=`maas maas nodes list | grep system_id | cut -d '"' -f 4`
+# Init Juju
+juju init -f
 
-    for nodes in $listofnodes
-    do
-        parentid=`maas maas interface read $nodes $2 | grep interfaces | cut -d '/' -f 8`
-        maas maas interfaces create-vlan $nodes vlan=$1 parent=$parentid
-     done
- }
-
-#just make sure the ssh keys added into maas for the current user
-sed --i "s@/home/ubuntu@$HOME@g" ./deployment.yaml
-sed --i "s@qemu+ssh://ubuntu@qemu+ssh://$USER@g" ./deployment.yaml
-
+# Backup deployment.yaml and deployconfig.yaml in .juju folder
 cp ./deployment.yaml ~/.juju/
 
 if [ -e ./deployconfig.yaml ]; then
     cp ./deployconfig.yaml ~/.juju/
 fi
 
+#
+# MAAS deploy
+#
+
 sudo maas-deployer -c deployment.yaml -d --force
 
 sudo chown $USER:$USER environments.yaml
 
 echo "... Deployment of maas finish ...."
+
+#
+# MAAS Customization
+#
 
 maas_ip=`grep " ip_address" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
 apikey=`grep maas-oauth: environments.yaml | cut -d "'" -f 2`
@@ -215,7 +169,7 @@ maas maas sshkeys new key="`cat $HOME/.ssh/id_rsa.pub`"
 maas maas sshkeys new key="`cat ./maas/sshkeys/QtipKey.pub`"
 maas maas sshkeys new key="`cat ./maas/sshkeys/DominoKey.pub`"
 
-#adding compute and control nodes VM to MAAS for deployment purpose.
+#adding compute and control nodes VM to MAAS for virtual deployment purpose.
 if [ "$virtinstall" -eq 1 ]; then
     # create two more VMs to do the deployment.
     sudo virt-install --connect qemu:///system --name node1-control --ram 8192 --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node1-control
@@ -248,49 +202,56 @@ if [ "$virtinstall" -eq 1 ]; then
     maas maas tag update-nodes compute add=$computenodeid
 fi
 
-#read interface needed in Auto mode and enable it. Will be rmeoved once auto enablement will be implemented in the maas-deployer.
-enable_if(){
-   if [ -e ~/.juju/deployconfig.yaml ]; then
-      cp ~/.juju/deployconfig.yaml ./deployconfig.yaml
+#
+# Functions for MAAS network customization
+#
 
-      enableiflist=`grep "interface-enable" deployconfig.yaml | cut -d ' ' -f 4 `
-      datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-      stornet=`grep "storageNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-      pubnet=`grep "publicNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-
-      # split EXTERNAL_NETWORK=first ip;last ip; gateway;network
-
-      if [ "$datanet" != "''" ]; then
-          EXTNET=(${enableiflist//,/ })
-          i="0"
-          while [ ! -z "${EXTNET[i]}" ];
-          do
-              enableautomode ${EXTNET[i]} AUTO $datanet || true
-              i=$[$i+1]
-          done
-      fi
-      if [ "$stornet" != "''" ]; then
-          EXTNET=(${enableiflist//,/ })
-          i="0"
-          while [ ! -z "${EXTNET[i]}" ];
-          do
-              enableautomode ${EXTNET[i]} AUTO $stornet || true
-              i=$[$i+1]
-          done
-      fi
-      if [ "$pubnet" != "''" ]; then
-          EXTNET=(${enableiflist//,/ })
-          i="0"
-          while [ ! -z "${EXTNET[i]}" ];
-          do
-              enableautomode ${EXTNET[i]} AUTO $pubnet || true
-              i=$[$i+1]
-          done
-      fi
-   fi
+#Below function will mark the interfaces in Auto mode to enbled by MAAS
+enableautomode() {
+    listofnodes=`maas maas nodes list | grep system_id | cut -d '"' -f 4`
+    for nodes in $listofnodes
+    do
+        maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3
+    done
 }
 
-# Enable vlan interfaces with maas
+#Below function will mark the interfaces in Auto mode to enbled by MAAS
+# using hostname of the node added into MAAS
+enableautomodebyname() {
+    if [ ! -z "$4" ]; then
+        for i in `seq 1 7`;
+        do
+            nodes=`maas maas nodes list hostname=node$i-$4 | grep system_id | cut -d '"' -f 4`
+            if [ ! -z "$nodes" ]; then
+                maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3
+            fi
+       done
+    fi
+}
+
+#Below function will create vlan and update interface with the new vlan
+# will return the vlan id created
+crvlanupdsubnet() {
+    newvlanid=`maas maas vlans create $2 name=$3 vid=$4 | grep resource | cut -d '/' -f 6 `
+    maas maas subnet update $5 vlan=$newvlanid
+    eval "$1"="'$newvlanid'"
+}
+
+#Below function will create interface with new vlan and bind to physical interface
+crnodevlanint() {
+    listofnodes=`maas maas nodes list | grep system_id | cut -d '"' -f 4`
+
+    for nodes in $listofnodes
+    do
+        parentid=`maas maas interface read $nodes $2 | grep interfaces | cut -d '/' -f 8`
+        maas maas interfaces create-vlan $nodes vlan=$1 parent=$parentid
+     done
+ }
+
+#
+# VLAN customization
+#
+
 case "$labname" in
     'intelpod9' )
         maas refresh
@@ -305,6 +266,51 @@ case "$labname" in
         ;;
 esac
 
-enable_if
+#
+# Enable MAAS nodes interfaces
+#
 
+#read interface needed in Auto mode and enable it. Will be rmeoved once auto enablement will be implemented in the maas-deployer.
+if [ -e ~/.juju/deployconfig.yaml ]; then
+  cp ~/.juju/deployconfig.yaml ./deployconfig.yaml
+
+  enableiflist=`grep "interface-enable" deployconfig.yaml | cut -d ' ' -f 4 `
+  datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+  stornet=`grep "storageNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+  pubnet=`grep "publicNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+
+  # split EXTERNAL_NETWORK=first ip;last ip; gateway;network
+
+  if [ "$datanet" != "''" ]; then
+      EXTNET=(${enableiflist//,/ })
+      i="0"
+      while [ ! -z "${EXTNET[i]}" ];
+      do
+          enableautomode ${EXTNET[i]} AUTO $datanet || true
+          i=$[$i+1]
+      done
+  fi
+  if [ "$stornet" != "''" ]; then
+      EXTNET=(${enableiflist//,/ })
+      i="0"
+      while [ ! -z "${EXTNET[i]}" ];
+      do
+          enableautomode ${EXTNET[i]} AUTO $stornet || true
+          i=$[$i+1]
+      done
+  fi
+  if [ "$pubnet" != "''" ]; then
+      EXTNET=(${enableiflist//,/ })
+      i="0"
+      while [ ! -z "${EXTNET[i]}" ];
+      do
+          enableautomode ${EXTNET[i]} AUTO $pubnet || true
+          i=$[$i+1]
+      done
+  fi
+fi
+
+#
+# End of scripts
+#
 echo " .... MAAS deployment finished successfully ...."

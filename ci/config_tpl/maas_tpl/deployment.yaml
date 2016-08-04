@@ -1,0 +1,45 @@
+opnfv-{{ lab.location }}{{ lab.racks[0].rack }}-maas:
+  juju-bootstrap:
+{% include 'juju-bootstrap.yaml' %}
+  maas:
+    apt_sources:
+    - ppa:maas/stable
+    - ppa:juju/stable
+    arch: amd64
+    boot_source:
+      keyring_filename: /usr/share/keyrings/ubuntu-cloudimage-keyring.gpg
+      selections:
+        '1':
+          arches: amd64
+          labels: release
+          os: ubuntu
+          release: xenial
+          subarches: '*'
+      url: http://maas.ubuntu.com/images/ephemeral-v2/releases/
+    disk_size: 160G
+    interfaces:
+{% for net in opnfv.spaces %}
+    - bridge={{ net.bridge }},model=virtio
+{% endfor %}
+    ip_address: {{ opnfv.spaces_dict.admin.cidr[:-4] }}5
+    memory: 4096
+    name: opnfv-{{ lab.location }}{{ lab.racks[0].rack }}
+    network_config: |
+{% include 'maas-network_config.yaml' %}
+    node_group_ifaces:
+{% include 'maas-node_group_ifaces.yaml' %}
+    nodes:
+{% include 'maas-nodes.yaml' %}
+    password: ubuntu
+    pool: default
+    release: trusty
+    settings:
+      maas_name: {{ lab.location }}{{ lab.racks[0].rack }}
+      main_archive: http://archive.ubuntu.com/ubuntu
+      upstream_dns: {{ lab.racks[0].dns }}
+    user: ubuntu
+    vcpus: 4
+    virsh:
+      rsa_priv_key: {{ os.home }}/.ssh/id_rsa
+      rsa_pub_key: {{ os.home }}/.ssh/id_rsa.pub
+      uri: qemu+ssh://{{ os.user }}@{{ os.brAdmIP }}/system
