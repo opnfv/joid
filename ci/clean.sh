@@ -9,7 +9,8 @@ if [ -d $HOME/.juju/environments ]; then
         echo " environment is not bootstrapped ..."
     else
         echo " environment is bootstrapped ..."
-        juju destroy-environment demo-maas  -y
+        jujuenv=`juju status | grep environment | cut -d ":" -f 2`
+        juju destroy-environment $jujuenv  -y
     fi
     rm -rf precise
     rm -rf trusty
