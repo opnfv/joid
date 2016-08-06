@@ -68,7 +68,7 @@ create_openrc() {
 }
 
 configOpenrc() {
-if [ "$API_FQDN" != "''" ]; then
+if [ "$API_FQDN" != "None" ]; then
     cat <<-EOF
         export OS_USERNAME=$1
         export OS_PASSWORD=$2
@@ -94,7 +94,7 @@ EOF
 fi
 }
 
-if [ "$API_FQDN" != "''" ]; then
+if [ "$API_FQDN" != "None" ]; then
     # Push api fqdn local ip to all /etc/hosts
     API_FQDN=$(juju get keystone | python -c "import yaml; import sys;\
         print yaml.load(sys.stdin)['settings']['os-public-hostname']['value']")
