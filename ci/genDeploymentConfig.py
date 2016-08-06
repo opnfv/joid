@@ -79,7 +79,7 @@ for node in config['lab']['racks'][0]['nodes']:
     for nic in node['nics']:
         if 'admin' not in nic['spaces']:
             ifnamelist.add(nic['ifname'])
-config['lab']['racks'][0]['ifnamelist'] = ', '.join(ifnamelist)
+config['lab']['racks'][0]['ifnamelist'] = ','.join(ifnamelist)
 
 #
 # Transform template to deployconfig.yaml according to config

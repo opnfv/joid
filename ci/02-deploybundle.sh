@@ -78,7 +78,7 @@ done
 #update source if trusty is target distribution
 var=os-$opnfvsdn-$fea-$opnfvtype"-"$opnfvdistro"_"$openstack
 
-if [ "$osdomname" != "''" ]; then
+if [ "$osdomname" != "None" ]; then
     var=$var"_"publicapi
 fi
 

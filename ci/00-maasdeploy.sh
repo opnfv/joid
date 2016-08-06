@@ -31,14 +31,14 @@ labfile=$2
 case "$labname" in
     intelpod[569]|orangepod[12]|cengnpod[12] )
         array=(${labname//pod/ })
-        cp maas/${array[0]}/pod${array[0]}/labconfig.yaml .
-        python genDeploymentConfig.py > deployment.yaml
-        python genMAASConfig.py > deployconfig.yaml
+        cp ../labconfig/${array[0]}/pod${array[1]}/labconfig.yaml .
+        python genMAASConfig.py -l labconfig.yaml > deployment.yaml
+        python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
         ;;
     'attvirpod1' )
-        cp maas/att/virpod1/labconfig.yaml .
-        python genDeploymentConfig.py > deployment.yaml
-        python genMAASConfig.py > deployconfig.yaml
+        cp ../labconfig/att/virpod1/labconfig.yaml .
+        python genMAASConfig.py -l labconfig.yaml > deployment.yaml
+        python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
         ;;
     'juniperpod1' )
         cp maas/juniper/pod1/deployment.yaml ./deployment.yaml
@@ -56,8 +56,8 @@ case "$labname" in
         if [ ! -e ./labconfig.yaml ]; then
             virtinstall=1
         else
-            python genDeploymentConfig.py > deployment.yaml
-            python genMAASConfig.py > deployconfig.yaml
+            python genMAASConfig.py -l labconfig.yaml > deployment.yaml
+            python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
             labname=`grep "maas_name" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
         fi
         ;;
