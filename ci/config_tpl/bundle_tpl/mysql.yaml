@@ -2,8 +2,11 @@
       charm: "local:{{ ubuntu.release }}/percona-cluster"
       num_units: {{ unit_qty() }}
       options:
-        innodb-buffer-pool-size: 100M
-        #lp1366997-workaround: true
+{% if os.ha.mode == 'ha' %}
+        innodb-buffer-pool-size: 10G
+{% else %}
+        innodb-buffer-pool-size: 1G
+{% endif %}
         max-connections: 20000
         root-password: {{ get_password('mysql_root') }}
         sst-password: {{ get_password('mysql_sst') }}

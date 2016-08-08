@@ -7,6 +7,10 @@
       num_units: {{ unit_qty() }}
       options:
 {% if os.ha.mode == 'ha' %}
+        haproxy-server-timeout: 10000
+        haproxy-client-timeout: 10000
+        haproxy-queue-timeout: 10000
+        haproxy-connect-timeout: 10000
         vip: {{ opnfv.vip.ceilometer }}
 {% endif %}
 {% if os.beta.public_api %}
