@@ -1,13 +1,13 @@
 {% for node in lab.racks[0].nodes %}
-{% if node.architecture=='x86_64' %}
-    - architecture: amd64/generic
-{% endif %}
-      interfaces:
+    - interfaces:
 {% for nic in node.nics %}
       - mac_address: {{ nic.mac[0] }}
         mode: auto
         name: {{ nic.ifname }}
 {% endfor %}
+{% if node.architecture=='x86_64' %}
+      architecture: amd64/generic
+{% endif %}
       mac_addresses:
 {% for nic in node.nics %}
       - {{ nic.mac[0] }}
