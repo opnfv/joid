@@ -5,10 +5,6 @@
         neutron-security-groups: true
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.neutron }}
-        haproxy-server-timeout: 10000
-        haproxy-client-timeout: 10000
-        haproxy-queue-timeout: 10000
-        haproxy-connect-timeout: 10000
 {% endif %}
 {% if os.network.controller == 'nosdn' %}
         flat-network-providers: "*"

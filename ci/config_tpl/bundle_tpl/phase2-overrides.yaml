@@ -4,6 +4,17 @@
 {% if os.network.ipv6 %}
     prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
+{% if os.ha.mode == 'ha' %}
+{% if os.api.haproxy_timeout %}
+    haproxy-server-timeout: {{ os.api.haproxy_timeout }}
+    haproxy-client-timeout: {{ os.api.haproxy_timeout }}
+    haproxy-queue-timeout: {{ os.api.haproxy_timeout }}
+    haproxy-connect-timeout: {{ os.api.haproxy_timeout }}
+{% endif %}
+{% endif %}
+{% if os.api.worker_multiplier %}
+    worker-multiplier: {{ os.api.worker_multiplier }}
+{% endif %}
 {% if os.network.dvr %}
     enable-dvr: true
 {% endif %}

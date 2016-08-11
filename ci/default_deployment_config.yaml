@@ -7,6 +7,9 @@ os:
         cluster_size: 3
     lxd: False
     region: RegionOne
+    api:
+        worker_multiplier: 2
+        haproxy_timeout: 10000
     admin:
         role: admin
         name: admin

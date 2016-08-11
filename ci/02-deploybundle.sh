@@ -52,6 +52,24 @@ if [ -e ~/.juju/deployment.yaml ]; then
       cephdisk=`grep "ceph-disk" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
       osdomname=`grep "os-domain-name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
    fi
+
+    workmutiple=`maas maas nodes list | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
+    max=0
+    for v in ${workmutiple[@]}; do
+        if (( $v > $max )); then max=$v; fi;
+    done
+    echo $max
+
+    if [ "$max" -lt 8 ];then
+        workmutiple=1
+    elif [ "$max" -lt 32 ]; then
+        workmutiple=0.25
+    elif [ "$max" -lt 72 ]; then
+        workmutiple=0.1
+    else
+        workmutiple=0.05
+    fi
+    sed -i "s/worker-multiplier: 2/worker-multiplier: ${workmutiple}/g" default_deployment_config.yaml
 fi
 
 case "$opnfvlab" in

@@ -6,10 +6,6 @@
         neutron-external-network: ext-net
         service-guard: true
 {% if os.ha.mode == 'ha' %}
-        haproxy-server-timeout: 10000
-        haproxy-client-timeout: 10000
-        haproxy-queue-timeout: 10000
-        haproxy-connect-timeout: 10000
         vip: {{ opnfv.vip.nova }}
 {% endif %}
 {% if opnfv.domain is defined %}
