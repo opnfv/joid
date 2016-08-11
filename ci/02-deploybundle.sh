@@ -61,15 +61,15 @@ if [ -e ~/.juju/deployment.yaml ]; then
     echo $max
 
     if [ "$max" -lt 8 ];then
-        workmutiple=1
-    elif [ "$max" -lt 32 ]; then
+        workmutiple=1.0
+    elif [ "$max" -lt 33 ]; then
         workmutiple=0.25
-    elif [ "$max" -lt 72 ]; then
+    elif [ "$max" -lt 73 ]; then
         workmutiple=0.1
     else
         workmutiple=0.05
     fi
-    sed -i "s/worker-multiplier: 2/worker-multiplier: ${workmutiple}/g" default_deployment_config.yaml
+    sed -i "s/worker_multiplier: 2/worker_multiplier: ${workmutiple}/g" default_deployment_config.yaml
 fi
 
 case "$opnfvlab" in
