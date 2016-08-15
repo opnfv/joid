@@ -112,7 +112,7 @@ lab:
         user: root
         pass: root
     floating-ip-range: 10.9.15.6,10.9.15.250,10.9.15.1,10.9.15.0/24
-    ext-port: "eth3"
+    ext-port: "eth1.905"
     dns: 8.8.8.8
     osdomainname:
 opnfv:
@@ -139,8 +139,8 @@ opnfv:
       vlan:
     - type: public
       bridge: brPublic
-      cidr: 10.9.13.0/24
-      gateway: 10.9.13.1
+      cidr: 10.9.15.0/24
+      gateway: 10.9.15.1
       vlan:
     - type: external
       bridge: brExt

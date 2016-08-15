@@ -221,7 +221,7 @@ enableautomodebyname() {
     if [ ! -z "$4" ]; then
         for i in `seq 1 7`;
         do
-            nodes=`maas maas nodes list hostname=node$i-$4 | grep system_id | cut -d '"' -f 4`
+            nodes=`maas maas nodes list | grep system_id | cut -d '"' -f 4`
             if [ ! -z "$nodes" ]; then
                 maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3
             fi
@@ -255,14 +255,14 @@ crnodevlanint() {
 case "$labname" in
     'intelpod9' )
         maas refresh
-        crvlanupdsubnet vlan902 1 "DataNetwork" 902 2 || true
-        crvlanupdsubnet vlan905 2 "PublicNetwork" 905 3 || true
-        crnodevlanint $vlan902 eth0 || true
+        crvlanupdsubnet vlan904 fabric-1 "MgmtNetwork" 904 2 || true
+        crvlanupdsubnet vlan905 fabric-2 "PublicNetwork" 905 3 || true
         crnodevlanint $vlan905 eth1 || true
-        enableautomodebyname eth0.902 AUTO "10.9.12.0/24" compute || true
-        enableautomodebyname eth1.905 AUTO "10.9.15.0/24" compute || true
-        enableautomodebyname eth0.902 AUTO "10.9.12.0/24" control || true
-        enableautomodebyname eth1.905 AUTO "10.9.15.0/24" control || true
+        crnodevlanint $vlan905 eth3 || true
+        enableautomodebyname eth1.905 AUTO "10.9.15.0/24" || true
+        enableautomodebyname eth3.905 AUTO "10.9.15.0/24" || true
+        enableautomodebyname eth0 AUTO "10.9.12.0/24" || true
+        enableautomodebyname eth2 AUTO "10.9.12.0/24" || true
         ;;
 esac
 
