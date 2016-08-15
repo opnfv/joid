@@ -88,7 +88,10 @@ def to_select(qty=False):
     if not qty:
         qty = config['os']['ha']['cluster_size'] if \
                 config['os']['ha']['mode'] == 'ha' else 1
-    return random.sample(range(0, config['opnfv']['units']), qty)
+    if config['os']['hyperconverged']:
+        return random.sample(range(0, config['opnfv']['units']), qty)
+    else:
+        return random.sample(range(0, qty), qty)
 
 
 def get_password(key, length=16, special=False):
@@ -173,6 +176,8 @@ if 'bgpvpn' in features:
     config['os']['network']['bgpvpn'] = True
 if 'odll3' in features:
     config['os']['network']['odll3'] = True
+if 'dishypcon' in features:
+    config['os']['hyperconverged'] = False
 
 # Set beta option from extra
 if 'publicapi' in extra:
@@ -185,6 +190,8 @@ if 'trusty' in extra:
     config['ubuntu']['release'] = 'trusty'
     if 'liberty' in extra:
         config['os']['release'] = 'liberty'
+if 'dishypcon' in extra:
+    config['os']['hyperconverged'] = False
 
 #
 # Transform template to bundle.yaml according to config

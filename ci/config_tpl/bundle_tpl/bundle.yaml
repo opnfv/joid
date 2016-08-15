@@ -9,9 +9,27 @@
 
 openstack-phase1:
   services:
+{% if os.hyperconverged %}
     nodes:
       charm: "cs:{{ ubuntu.release }}/ubuntu"
       num_units: {{ opnfv.units }}
+{% else %}
+    nodes:
+      charm: "cs:{{ ubuntu.release }}/ubuntu"
+{% if os.ha.mode == 'ha' %}
+      num_units: 3
+{% else %}
+      num_units: 1
+{% endif %}
+      constraints: tags=control
+    nodes-compute:
+      charm: "cs:{{ ubuntu.release }}/ubuntu"
+{% if os.ha.mode == 'ha' %}
+      num_units: {{ opnfv.units - 3 }}
+{% else %}
+      num_units: {{ opnfv.units - 1 }}
+{% endif %}
+{% endif %}
     ntp:
       charm: "local:{{ ubuntu.release }}/ntp"
 {% if os.network.controller == 'ocl' %}
@@ -46,8 +64,14 @@ openstack-phase1:
 {% include 'haclusters.yaml' %}
 {% endif %}
 
+{% if os.hyperconverged %}
   relations:
     - [ 'ntp:juju-info', 'nodes:juju-info' ]
+{% else %}
+  relations:
+    - [ 'ntp:juju-info', 'nodes:juju-info' ]
+    - [ 'ntp:juju-info', 'nodes-compute:juju-info' ]
+{% endif %}
 {% if os.ha.mode == 'ha' %}
 {% include 'harelations.yaml' %}
 {% endif %}

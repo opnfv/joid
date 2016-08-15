@@ -2,6 +2,7 @@ ubuntu:
     release: xenial
 os:
     release: mitaka
+    hyperconverged: True
     ha:
         mode: ha
         cluster_size: 3

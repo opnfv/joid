@@ -15,14 +15,30 @@
 {% endfor %}
     ceph-osd:
       charm: "local:{{ ubuntu.release }}/ceph-osd"
+{% if os.hyperconverged %}
       num_units: {{ opnfv.units }}
+{% else %}
+      num_units: 3
+{% endif %}
       options:
         osd-devices: {{ opnfv.storage_dict.ceph.disk }}
         osd-reformat: 'yes'
       to:
+{% if os.hyperconverged %}
 {% for unit_id in range(0, opnfv.units) %}
         - "nodes={{ unit_id }}"
 {% endfor %}
+{% else %}
+{% if os.ha.mode == 'ha' %}
+{% for unit_id in range(0, 3) %}
+        - "nodes={{ unit_id }}"
+{% endfor %}
+{% else %}
+        - "nodes=0"
+        - "nodes-compute=0"
+        - "nodes-compute=1"
+{% endif %}
+{% endif %}
     ceph-radosgw:
       charm: "local:{{ ubuntu.release }}/ceph-radosgw"
       num_units: {{ unit_qty() if os.beta.hacluster_ceph_radosgw else 1 }}
