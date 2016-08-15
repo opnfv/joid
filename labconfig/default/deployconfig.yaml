@@ -4,11 +4,12 @@ opnfv:
   admin_password: openstack
   ceph-disk: /srv
   dataNetwork: ''
+  domain: None
   ext-port: eth1
   ext_port: eth1
   floating-ip-range: 192.168.122.30,192.168.122.49,192.168.122.1,192.168.122.0/24
   interface-enable: eth1
-  os-domain-name: ''
+  os-domain-name: None
   publicNetwork: ''
   spaces:
   - bridge: brAdm
