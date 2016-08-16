@@ -9,11 +9,11 @@
       options:
         corosync_transport: unicast
         cluster_count: 3
-    hacluster-heat:
-      charm: "local:{{ ubuntu.release }}/hacluster"
-      options:
-        corosync_transport: unicast
-        cluster_count: 3
+#    hacluster-heat:
+#      charm: "local:{{ ubuntu.release }}/hacluster"
+#      options:
+#        corosync_transport: unicast
+#        cluster_count: 3
     hacluster-horizon:
       charm: "local:{{ ubuntu.release }}/hacluster"
       options:

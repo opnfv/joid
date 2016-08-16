@@ -1,15 +1,15 @@
     heat:
       charm: "local:{{ ubuntu.release }}/heat"
-      num_units: {{ unit_qty() }}
+#      num_units: {{ unit_qty() }}
       options:
 {% if os.ha.mode == 'ha' %}
-        vip: {{ opnfv.vip.heat }}
+#        vip: {{ opnfv.vip.heat }}
 {% endif %}
 {% if os.beta.public_api %}
-        os-public-hostname: api.{{ opnfv.domain }}
+#        os-public-hostname: api.{{ opnfv.domain }}
 {% endif %}
       to:
 {% for unit_id in to_select() %}
-        - "lxc:nodes={{ unit_id }}"
+        - "lxc:nodes=0"
 {% endfor %}
 {# Empty block to avoid bad block trim #}
