@@ -9,7 +9,7 @@ os:
     lxd: False
     region: RegionOne
     api:
-        worker_multiplier: 0.5
+        worker_multiplier: 1
         haproxy_timeout: 10000
     admin:
         role: admin
