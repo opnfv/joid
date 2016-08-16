@@ -113,7 +113,10 @@ count=`juju status nodes --format=short | grep nodes | wc -l`
 
 c=0
 while [ $c -lt $count ]; do
-    juju ssh nodes/$c 'echo 2048 | sudo tee /proc/sys/fs/inotify/max_user_instances'
+    juju ssh nodes/$c 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p' || true
+    juju ssh nodes-compute/$c 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p' || true
+    juju ssh nodes/$c 'echo 2048 | sudo tee /proc/sys/fs/inotify/max_user_instances' || true
+    juju ssh nodes-compute/$c 'echo 2048 | sudo tee /proc/sys/fs/inotify/max_user_instances' || true
     let c+=1
 done
 
