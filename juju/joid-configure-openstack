@@ -136,11 +136,12 @@ nova quota-class-update --security-group-rules -1 $TENANT_ID
 echo "Uploading images to glance"
 
 #Upload images to glance
-glance image-list | grep "Precise x86_64" > /dev/null 2>&1 || glance image-create --name="Precise x86_64" --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/precise-server-cloudimg-amd64-disk1.img --progress
-glance image-list | grep "Trusty x86_64" > /dev/null 2>&1 || glance image-create --name="Trusty x86_64" --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/trusty-server-cloudimg-amd64-disk1.img --progress
-glance image-list | grep "Xenial x86_64" > /dev/null 2>&1 || glance image-create --name="Xenial x86_64" --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/xenial-server-cloudimg-amd64-disk1.img --progress
-glance image-list | grep "CentOS 6.4" > /dev/null 2>&1 || glance image-create --name="CentOS 6.4" --visibility=public --container-format=bare --disk-format=qcow2 < /srv/data/centos6.4-x86_64-gold-master.img --progress
-glance image-list | grep "Cirros 0.3" > /dev/null 2>&1 || glance image-create --name="Cirros 0.3" --visibility=public --container-format=bare --disk-format=qcow2 < /srv/data/cirros-0.3.4-x86_64-disk.img --progress
+#glance image-list | grep "Precise x86_64" > /dev/null 2>&1 || glance image-create --name="Precise x86_64" --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/precise-server-cloudimg-amd64-disk1.img
+glance image-list | grep "Trusty x86_64" > /dev/null 2>&1 || glance image-create --name="Trusty x86_64" --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/trusty-server-cloudimg-amd64-disk1.img
+glance image-list | grep "Xenial x86_64" > /dev/null 2>&1 || glance image-create --name="Xenial x86_64" --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/xenial-server-cloudimg-amd64-disk1.img
+glance image-list | grep "CentOS 6.4" > /dev/null 2>&1 || glance image-create --name="CentOS 6.4" --visibility=public --container-format=bare --disk-format=qcow2 < /srv/data/centos6.4-x86_64-gold-master.img
+glance image-list | grep "Cirros 0.3" > /dev/null 2>&1 || glance image-create --name="Cirros 0.3" --visibility=public --container-format=bare --disk-format=qcow2 < /srv/data/cirros-0.3.4-x86_64-disk.img
+glance image-list | grep "Xenial LXC x86_64" > /dev/null 2>&1 || glance image-create --name="Xenial LXC x86_64" --visibility=public --container-format=bare --disk-format=root-tar --property architecture="x86_64"  < /srv/data/xenial-server-cloudimg-amd64-root.tar.gz
+glance image-list | grep "Cirros LXC 0.3" > /dev/null 2>&1 || glance image-create --name="Cirros LXC 0.3" --visibility=public --container-format=bare --disk-format=root-tar --property architecture="x86_64"  < /srv/data/cirros-0.3.4-x86_64-lxc.tar.gz
 ## image name is used by script to generate metadata .. don't screw the series
 #glance image-list | grep "win2012r2" > /dev/null 2>&1 || gzip -cd /srv/data/windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz |glance image-create --name="Windows Server 2012" --is-public=true --container-format=bare --disk-format=qcow2 --progress
-
