@@ -1,7 +1,7 @@
     odl-controller:
       charm: local:{{ ubuntu.release }}/odl-controller
       options:
-        install-url: "https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.4.3-Beryllium-SR3/distribution-karaf-0.4.3-Beryllium-SR3.tar.gz"
+        install-url: "https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.4.2-Beryllium-SR2/distribution-karaf-0.4.2-Beryllium-SR2.tar.gz"
 {% if os.network.sfc %}
         profile: "openvswitch-odl-beryllium-sfc"
 {% elif os.network.bgpvpn %}
