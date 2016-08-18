@@ -21,7 +21,7 @@
         type: ipmi
         user: {{ node.power.user }}
 {% elif node.power.type=='wakeonlan' %}
-        type: etherwake
+        type: ether_wake
         mac_address: {{ node.power.mac_address }}
 {% endif %}
       tags: {{ ' '.join(node.roles) }}
