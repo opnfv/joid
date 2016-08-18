@@ -13,5 +13,6 @@ JOID Configuration guide
 
 .. add your content files here.
 
-.. include::  ./configguide.rst
+.. include::  ./installationprocedure.rst
+
 

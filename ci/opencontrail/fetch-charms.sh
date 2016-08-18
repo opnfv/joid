@@ -14,6 +14,7 @@ function build {
 bzr branch lp:~narindergupta/charms/trusty/promise/trunk $distro/promise
 bzr branch lp:~billy-olsen/charms/xenial/mongodb/trunk $distro/mongodb
 bzr branch lp:~narindergupta/opnfv/ntp $distro/ntp
+charm pull cs:~free.ekanayaka/xenial/haproxy xenial/haproxy
 
 git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
 build congress
@@ -23,8 +24,7 @@ build aodh
 git clone -b stable/16.07 https://github.com/openstack/charm-hacluster.git $distro/hacluster
 git clone -b stable/16.07 https://github.com/openstack/charm-ceilometer.git $distro/ceilometer
 git clone -b stable/16.07 https://github.com/openstack/charm-ceilometer-agent.git $distro/ceilometer-agent
-git clone -b stable/16.07 https://github.com/openstack/charm-ceph.git $distro/ceph-mon
-#git clone -b stable/16.07 https://github.com/openstack/charm-ceph-mon.git $distro/ceph
+git clone -b stable/16.07 https://github.com/openstack/charm-ceph.git $distro/ceph
 git clone -b stable/16.07 https://github.com/openstack/charm-ceph-osd.git $distro/ceph-osd
 git clone -b stable/16.07 https://github.com/openstack/charm-ceph-radosgw.git $distro/ceph-radosgw
 git clone -b stable/16.07 https://github.com/openstack/charm-cinder.git $distro/cinder
@@ -39,6 +39,7 @@ git clone -b stable/16.07 https://github.com/openstack/charm-nova-compute.git $d
 git clone -b stable/16.07 https://github.com/openstack/charm-openstack-dashboard.git $distro/openstack-dashboard
 git clone -b stable/16.07 https://github.com/openstack/charm-rabbitmq-server.git $distro/rabbitmq-server
 git clone -b stable/16.07 https://github.com/openstack/charm-heat.git $distro/heat
+git clone -b stable/16.07 https://github.com/openstack/charm-neutron-api.git $distro/neutron-api
 
 #charm pull cs:~openstack-charmers-next/hacluster $distro/hacluster
 #charm pull cs:~openstack-charmers-next/ceilometer $distro/ceilometer
@@ -71,4 +72,3 @@ bzr branch lp:~sdn-charmers/charms/trusty/contrail-webui/trunk $distro/contrail-
 bzr branch lp:~charmers/charms/precise/zookeeper/trunk precise/zookeeper
 bzr branch lp:~opnfv-team/charms/trusty/neutron-api-contrail/trunk $distro/neutron-api-contrail
 bzr branch lp:~opnfv-team/charms/trusty/neutron-contrail/trunk $distro/neutron-contrail
-bzr branch lp:~opnfv-team/charms/trusty/neutron-api/next $distro/neutron-api
