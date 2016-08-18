@@ -69,7 +69,7 @@ if [ -e ~/.juju/deployment.yaml ]; then
     else
         workmutiple=0.05
     fi
-    sed -i "s/worker_multiplier: 1/worker_multiplier: ${workmutiple}/g" default_deployment_config.yaml
+    sed -i "s/worker_multiplier: 1.0/worker_multiplier: ${workmutiple}/g" default_deployment_config.yaml
 fi
 
 case "$opnfvlab" in
