@@ -23,13 +23,13 @@ read_config() {
 }
 
 usage() { echo "Usage: $0 [-s <nosdn|odl|opencontrail>]
-                         [-t <nonha|ha|tip>] 
+                         [-t <nonha|ha|tip>]
                          [-o <juno|liberty>]
                          [-l <default|intelpod5>]
                          [-f <ipv6,dpdk,lxd,dvr>]
                          [-d <trusty|xenial>]
                          [-a <amd64>]
-                         [-r <a|b>]" 1>&2 exit 1; } 
+                         [-r <a|b>]" 1>&2 exit 1; }
 
 while getopts ":s:t:o:l:h:r:f:d:a:" opt; do
     case "${opt}" in
@@ -161,6 +161,18 @@ echo "...... deployment started ......"
 deploy
 
 check_status
+
+echo "...... deploy public api proxy ......"
+
+if [ "$opnfvlab" == "orangepod1" ] && [ "$opnfvsdn" == "nosdn" ]; then # only for first test phase
+    PUB_API_NET=$(grep floating-ip-range ./labconfig.yaml |cut -d/ -f2)
+    PUB_API_IP=$(grep public-api-ip ./labconfig.yaml |cut -d: -f2)
+    juju run --unit nodes/0 "sudo ip a a ${PUB_API_IP}/${PUB_API_NET} dev br-ex"
+    juju run --unit nodes/0 "sudo ip l set dev br-ex up"
+    python genPublicAPIProxyBundle.py -l labconfig.yaml > haproxy.bundle.yaml
+    juju-deployer -vW -d -t 7200 -r 5 -c haproxy.bundle.yaml haproxy
+fi
+
 echo "...... deployment finished  ......."
 
 ./openstack.sh "$opnfvsdn" || true

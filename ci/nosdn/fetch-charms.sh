@@ -41,6 +41,7 @@ git clone -b stable/16.07 https://github.com/openstack/charm-rabbitmq-server.git
 git clone -b stable/16.07 https://github.com/openstack/charm-heat.git $distro/heat
 git clone -b stable/16.07 https://github.com/openstack/charm-lxd.git xenial/lxd
 
+charm pull cs:~free.ekanayaka/xenial/haproxy-1 $distro/haproxy
 #charm pull cs:~openstack-charmers-next/hacluster $distro/hacluster
 #charm pull cs:~openstack-charmers-next/ceilometer $distro/ceilometer
 #charm pull cs:~openstack-charmers-next/ceilometer-agent $distro/ceilometer-agent
@@ -61,4 +62,3 @@ git clone -b stable/16.07 https://github.com/openstack/charm-lxd.git xenial/lxd
 #charm pull cs:~openstack-charmers-next/rabbitmq-server $distro/rabbitmq-server
 #charm pull cs:~openstack-charmers-next/heat $distro/heat
 #charm pull cs:~openstack-charmers-next/lxd xenial/lxd
-
