@@ -1,13 +1,13 @@
-haproxy:
-  charm: "local:{{ opnfv.distro }}/haproxy"
-  num_units: 1
-  options:
-    services: |-
+    haproxy:
+      charm: "local:{{ opnfv.distro }}/haproxy"
+      num_units: 1
+      options:
+        services: |-
 {% for service in public_api_services.values() %}
-      - service_name: {{ service.name }}
-        service_host: {{ public_api_ip }}
-        service_port: {{ service.port }}
-        servers: [[{{ service.name }},{{ service.ip }},{{ service.port }}]]
+          - service_name: {{ service.name }}
+            service_host: {{ public_api_ip }}
+            service_port: {{ service.port }}
+            servers: [[{{ service.name }},{{ service.ip }},{{ service.port }}]]
 {% endfor %}
-  to:
-    - "nodes=0"
+      to:
+        - "nodes=0"

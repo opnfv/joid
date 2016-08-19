@@ -139,13 +139,6 @@ fi
 # Init Juju
 juju init -f
 
-# Backup deployment.yaml and deployconfig.yaml in .juju folder
-cp ./deployment.yaml ~/.juju/
-
-if [ -e ./deployconfig.yaml ]; then
-    cp ./deployconfig.yaml ~/.juju/
-fi
-
 #
 # MAAS deploy
 #
@@ -155,6 +148,15 @@ sudo maas-deployer -c deployment.yaml -d --force
 sudo chown $USER:$USER environments.yaml
 
 echo "... Deployment of maas finish ...."
+
+# Backup deployment.yaml and deployconfig.yaml in .juju folder
+
+cp ./environments.yaml ~/.juju/
+
+if [ -e ./deployconfig.yaml ]; then
+    cp ./deployconfig.yaml ~/.juju/
+    cp ./labconfig.yaml ~/.juju/
+fi
 
 #
 # MAAS Customization
