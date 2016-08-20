@@ -162,20 +162,9 @@ deploy
 
 check_status
 
-echo "...... deploy public api proxy ......"
-
-if [ "$opnfvlab" == "orangepod1" ] && [ "$opnfvsdn" == "nosdn" ]; then # only for first test phase
-    PUB_API_NET=$(grep floating-ip-range ./labconfig.yaml |cut -d/ -f2)
-    PUB_API_IP=$(grep public-api-ip ./labconfig.yaml |cut -d: -f2)
-    juju run --unit nodes/0 "sudo ip a a ${PUB_API_IP}/${PUB_API_NET} dev br-ex" || true
-    juju run --unit nodes/0 "sudo ip l set dev br-ex up" || true
-    python genPublicAPIProxyBundle.py -l labconfig.yaml >> bundles.yaml
-    juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack" || true
-fi
-
 echo "...... deployment finished  ......."
 
-./openstack.sh "$opnfvsdn" || true
+./openstack.sh "$opnfvsdn" "$opnfvlab" || true
 sudo ../juju/get-cloud-images || true
 ../juju/joid-configure-openstack || true
 

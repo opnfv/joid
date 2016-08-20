@@ -7,6 +7,9 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
+opnfvlab=$2
+opnfvsdn=$1
+
 if [ -f ./deployconfig.yaml ];then
     EXTERNAL_NETWORK=`grep floating-ip-range deployconfig.yaml | cut -d ' ' -f 4 `
 
@@ -122,6 +125,19 @@ create_openrc
 
 . ./cloud/admin-openrc
 
+echo "...... deploy public api proxy ......"
+
+if [ "$opnfvlab" == "orangepod1" ] && [ "$opnfvsdn" == "nosdn" ]; then # only for first test phase
+    PUB_API_NET=$(grep floating-ip-range ./labconfig.yaml |cut -d/ -f2)
+    PUB_API_IP=$(grep public-api-ip ./labconfig.yaml |cut -d: -f2)
+    juju run --unit nodes/0 "sudo ip a a ${PUB_API_IP}/${PUB_API_NET} dev br-ex" || true
+    juju run --unit nodes/0 "sudo ip l set dev br-ex up" || true
+    python genPublicAPIProxyBundle.py -l labconfig.yaml >> bundles.yaml
+    juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack" || true
+fi
+
+echo "...... deploy end public api proxy ......"
+
 ##
 ## removing the swift API endpoint which is created by radosgw.
 ## one option is not to used radosgw and other one is remove endpoint.
@@ -137,7 +153,7 @@ create_openrc
 ## Create external subnet Network
 ##
 
-if [ "onos" == "$1" ]; then
+if [ "onos" == "$opnfvsdn" ]; then
     launch_eth
     neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net --router:external=True
     neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net \
@@ -145,7 +161,7 @@ if [ "onos" == "$1" ]; then
        --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
     #neutron subnet-create ext-net --name ext-subnet $EXTNET_NET
     #update_gw_mac
-elif [ "nosdn" == "$1" ]; then
+elif [ "nosdn" == "$opnfvsdn" ]; then
     neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net \
                                              --router:external=True \
                                              --provider:network_type flat \
