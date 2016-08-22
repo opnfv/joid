@@ -7,8 +7,11 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
-opnfvlab=$2
+#./openstack.sh "$opnfvsdn" "$opnfvdistro" "$openstack"
+
 opnfvsdn=$1
+opnfvdistro=$2
+opnfvos=$3
 
 if [ -f ./deployconfig.yaml ];then
     EXTERNAL_NETWORK=`grep floating-ip-range deployconfig.yaml | cut -d ' ' -f 4 `
@@ -134,7 +137,7 @@ if [ "$opnfvlab" == "orangepod1" ] && [ "$opnfvsdn" == "nosdn" ]; then # only fo
         juju run --unit nodes/0 "sudo ip a a ${PUB_API_IP}/${PUB_API_NET} dev br-ex" || true
         juju run --unit nodes/0 "sudo ip l set dev br-ex up" || true
         python genPublicAPIProxyBundle.py -l labconfig.yaml >> bundles.yaml
-        juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack" || true
+        juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$opnfvos" || true
     fi
 fi
 
