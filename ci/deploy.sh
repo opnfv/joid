@@ -110,6 +110,12 @@ deploy() {
     if [ ! -f ./environments.yaml ] && [ -e ~/.juju/environments.yaml ]; then
         cp ~/.juju/environments.yaml ./environments.yaml
     fi
+    if [ ! -f ./labconfig.yaml ] && [ -e ~/.juju/labconfig.yaml ]; then
+        cp ~/.juju/labconfig.yaml ./labconfig.yaml
+    fi
+    if [ ! -f ./deployconfig.yaml ] && [ -e ~/.juju/deployconfig.yaml ]; then
+        cp ~/.juju/deployconfig.yaml ./deployconfig.yaml
+    fi
 
     #copy the script which needs to get deployed as part of ofnfv release
     echo "...... deploying now ......"

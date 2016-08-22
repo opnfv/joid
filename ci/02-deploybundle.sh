@@ -42,11 +42,9 @@ check_status() {
 }
 
 #read the value from deployment.yaml
-if [ -e ~/.juju/deployment.yaml ]; then
-   cp ~/.juju/deployment.yaml ./deployment.yaml
-   if [ -e ~/.juju/deployconfig.yaml ]; then
-      cp ~/.juju/deployconfig.yaml ./deployconfig.yaml
-      cp ~/.juju/labconfig.yaml ./labconfig.yaml
+
+if [ -e ./deployment.yaml ]; then
+   if [ -e ./deployconfig.yaml ]; then
       extport=`grep "ext-port" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
       datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
       admnet=`grep "admNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
