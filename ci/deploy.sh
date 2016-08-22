@@ -170,7 +170,7 @@ check_status
 
 echo "...... deployment finished  ......."
 
-./openstack.sh "$opnfvsdn" "$opnfvlab" || true
+./openstack.sh "$opnfvsdn" "$opnfvdistro" "$openstack" || true
 sudo ../juju/get-cloud-images || true
 ../juju/joid-configure-openstack || true
 
