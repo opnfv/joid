@@ -7,11 +7,12 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
-#./openstack.sh "$opnfvsdn" "$opnfvdistro" "$openstack"
+#./openstack.sh "$opnfvsdn" "$opnfvlab" "$opnfvdistro" "$openstack" || true
 
 opnfvsdn=$1
-opnfvdistro=$2
-opnfvos=$3
+opnfvlab=$2
+opnfvdistro=$3
+opnfvos=$4
 
 if [ -f ./deployconfig.yaml ];then
     EXTERNAL_NETWORK=`grep floating-ip-range deployconfig.yaml | cut -d ' ' -f 4 `
