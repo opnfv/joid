@@ -8,7 +8,7 @@
             service_host: {{ public_api_ip }}
             service_port: {{ service.port }}
             service_options: [mode http, balance leastconn],
-            servers: [[{{ service.name }},{{ service.ip }},{{ service.port }}]]
+            servers: [[{{ service.name }}, {{ service.ip }}, {{ service.port }}, 'maxconn 100 cookie S0 check']]
 {% endfor %}
       to:
         - "nodes=0"
