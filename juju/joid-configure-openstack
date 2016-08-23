@@ -47,7 +47,7 @@ fi
 
 echo "export SERVICE_ENDPOINT=http://$keystone:35357/v2.0/
 unset SERVICE_TOKEN
-unset SERVICE_ENDPOINT 
+unset SERVICE_ENDPOINT
 export OS_AUTH_URL=http://$keystone:35357/v2.0/
 export OS_USERNAME=$(juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"settings\"][\"admin-user\"][\"value\"]")
 export OS_PASSWORD=$(juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"settings\"][\"admin-password\"][\"value\"]")
@@ -58,11 +58,11 @@ export OS_REGION_NAME=$(juju get keystone | python -c "import yaml; import sys; 
 source ~/nova.rc
 
 # Determine the tenant id for the configured tenant name.
-export TENANT_ID="$(keystone tenant-list | grep $OS_TENANT_NAME | awk '{ print $2 }')"
+export TENANT_ID="$(openstack project list | grep $OS_TENANT_NAME | awk '{ print $2 }')"
 
 if [ "$TENANT_ID" = "" ]; then
-	echo "Unable to find tenant ID, keystone auth problem"
-	exit
+    echo "Unable to find tenant ID, keystone auth problem"
+    exit
 fi
 
 echo "Configuring Openstack Neutron Networking"
@@ -130,7 +130,7 @@ nova quota-class-update --instances 400 $TENANT_ID
 nova quota-class-update --cores 800 $TENANT_ID
 nova quota-class-update --ram 404800 $TENANT_ID
 nova quota-class-update --security-groups 4000 $TENANT_ID
-nova quota-class-update --floating_ips -1 $TENANT_ID
+nova quota-class-update --floating-ips -1 $TENANT_ID
 nova quota-class-update --security-group-rules -1 $TENANT_ID
 
 echo "Uploading images to glance"
