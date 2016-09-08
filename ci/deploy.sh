@@ -110,6 +110,9 @@ deploy() {
     if [ ! -f ./environments.yaml ] && [ -e ~/.juju/environments.yaml ]; then
         cp ~/.juju/environments.yaml ./environments.yaml
     fi
+    if [ ! -f ./deployment.yaml ] && [ -e ~/.juju/deployment.yaml ]; then
+        cp ~/.juju/deployment.yaml ./deployment.yaml
+    fi
     if [ ! -f ./labconfig.yaml ] && [ -e ~/.juju/labconfig.yaml ]; then
         cp ~/.juju/labconfig.yaml ./labconfig.yaml
     fi

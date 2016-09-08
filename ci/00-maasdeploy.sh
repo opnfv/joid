@@ -158,6 +158,10 @@ if [ -e ./deployconfig.yaml ]; then
     cp ./labconfig.yaml ~/.juju/
 fi
 
+if [ -e ./deployment.yaml ]; then
+    cp ./deployment.yaml ~/.juju/
+fi
+
 #
 # MAAS Customization
 #
