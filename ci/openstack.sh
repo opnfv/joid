@@ -114,8 +114,11 @@ if [ "$API_FQDN" != "None" ]; then
                         echo 'API FQDN injected'; \
                     fi"
 
-    #change in jumphost as well as below commands will run on jumphost
+    # remove this enhancement for heat that does not manage endpoints
+    juju run --service=heat "cp /etc/hosts /tmp/hosts ; \
+                             grep -v $API_FQDN /tmp/hosts > /etc/hosts"
 
+    #change in jumphost as well as below commands will run on jumphost
     if grep $API_FQDN /etc/hosts; then
         echo 'API FQDN already present'
     else
@@ -217,4 +220,3 @@ openstack congress datasource create keystone "keystone" \
   --config tenant_name=$OS_TENANT_NAME \
   --config password=$OS_PASSWORD \
   --config auth_url=http://$keystoneIp:5000/v2.0
-
