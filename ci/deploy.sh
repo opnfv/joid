@@ -158,8 +158,7 @@ check_status() {
            retval=1
        fi
     done
-    status=`juju action do heat/0 domain-setup`
-    echo $status
+
     juju expose ceph-radosgw
     #juju ssh ceph/0 \ 'sudo radosgw-admin user create --uid="ubuntu" --display-name="Ubuntu Ceph"'
 
@@ -174,6 +173,11 @@ check_status
 echo "...... deployment finished  ......."
 
 ./openstack.sh "$opnfvsdn" "$opnfvlab" "$opnfvdistro" "$openstack" || true
+
+# creating heat domain after puching the public API into /etc/hosts
+status=`juju action do heat/0 domain-setup`
+echo $status
+
 sudo ../juju/get-cloud-images || true
 ../juju/joid-configure-openstack || true
 
