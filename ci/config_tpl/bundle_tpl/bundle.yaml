@@ -39,7 +39,11 @@ openstack-phase1:
 {% endif %}
 {% include 'mysql.yaml' %}
 {% include 'ceilometer.yaml' %}
+{% if opnfv.storage_dict.scaleio is defined %}
+{% include 'scaleio.yaml' %}
+{% else %}
 {% include 'ceph.yaml' %}
+{% endif %}
 {% include 'cinder.yaml' %}
 {% include 'glance.yaml' %}
 {% include 'opnfv-promise.yaml' %}

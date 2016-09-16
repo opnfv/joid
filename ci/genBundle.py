@@ -81,6 +81,9 @@ def unit_ceph_qty():
         else:
             return 2
 
+def unit_scaleio_qty():
+    """Return size of the scaleio cluster"""
+    return 3
 
 def to_select(qty=False):
     """Return a random list of machines numbers to deploy"""
@@ -206,6 +209,7 @@ template = env.get_template('bundle.yaml')
 env.globals.update(get_password=get_password)
 env.globals.update(unit_qty=unit_qty)
 env.globals.update(unit_ceph_qty=unit_ceph_qty)
+env.globals.update(unit_scaleio_qty=unit_scaleio_qty)
 env.globals.update(to_select=to_select)
 
 # Render the template

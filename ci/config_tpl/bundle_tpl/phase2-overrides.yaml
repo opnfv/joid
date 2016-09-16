@@ -27,7 +27,9 @@
 {% endif %}
     openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
 {% if os.ha.mode == 'nonha' %}
+{% if opnfv.storage_dict.ceph is defined %}
     ceph-osd-replication-count: {{ unit_ceph_qty() }}
+{% endif %}
 {% endif %}
     admin-role: {{ os.admin.role }}
     keystone-admin-role: {{ os.admin.role }}

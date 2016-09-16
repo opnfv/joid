@@ -49,3 +49,9 @@
     lxd:
       charm: local:{{ ubuntu.release }}/lxd
 {% endif %}
+{% if opnfv.storage_dict.scaleio is defined %}
+    scaleio-openstack:
+      charm: local:{{ ubuntu.release }}/scaleio-openstack
+      options:
+        protection-domains: 'pd1'
+{% endif %}

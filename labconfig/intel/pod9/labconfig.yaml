@@ -123,7 +123,7 @@ opnfv:
     sdncontroller:
     - type: nosdn
     storage:
-    - type: ceph
+    - type: scaleio
       disk: /dev/sdb
     feature: odl_l2
     spaces:
