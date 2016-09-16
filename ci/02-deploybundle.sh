@@ -19,6 +19,9 @@ sed -i -- "s|distro=trusty|distro=$opnfvdistro|g" ./fetch-charms.sh
 
 ./fetch-charms.sh $opnfvdistro
 
+mkdir trusty
+tar xvf common/scaleio.tar -C ./trusty/ --strip=2 juju-scaleio/trusty/
+
 osdomname=''
 
 #check whether charms are still executing the code even juju-deployer says installed.

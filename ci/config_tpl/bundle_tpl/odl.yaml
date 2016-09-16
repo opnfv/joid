@@ -1,7 +1,7 @@
     odl-controller:
       charm: local:{{ ubuntu.release }}/odl-controller
       options:
-        install-url: "https://nexus.opendaylight.org/content/repositories/autorelease-1495/org/opendaylight/integration/distribution-karaf/0.5.0-Boron/distribution-karaf-0.5.0-Boron.tar.gz"
+        install-url: "https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.5.0-Boron/distribution-karaf-0.5.0-Boron.tar.gz"
 {% if os.network.sfc %}
         profile: "openvswitch-odl-beryllium-sfc"
 {% elif os.network.bgpvpn %}
