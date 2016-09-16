@@ -19,8 +19,7 @@ sed -i -- "s|distro=trusty|distro=$opnfvdistro|g" ./fetch-charms.sh
 
 ./fetch-charms.sh $opnfvdistro
 
-mkdir trusty
-tar xvf common/scaleio.tar -C ./trusty/ --strip=2 juju-scaleio/trusty/
+tar xvf common/scaleio.tar -C ./$opnfvdistro/ --strip=2 juju-scaleio/trusty/
 
 osdomname=''
 

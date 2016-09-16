@@ -46,8 +46,10 @@ openstack-phase1:
 {% endif %}
 {% include 'cinder.yaml' %}
 {% include 'glance.yaml' %}
+{% if opnfv.storage_dict.ceph is defined %}
 {% include 'opnfv-promise.yaml' %}
 {% include 'congress.yaml' %}
+{% endif %}
 {% include 'keystone.yaml' %}
 {% include 'nova-cloud-controller.yaml' %}
 {% include 'nova-compute.yaml' %}
