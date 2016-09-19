@@ -65,7 +65,7 @@ brAdm and brPublic cat /etc/network/interfaces
 | ``   auto brPublic``
 | ``   iface brPublic inet static``
 | ``       address 10.2.66.2``
-| ``       netmask 255.255.255.0``
+| Seperate yaml fi ``       netmask 255.255.255.0``
 | ``       bridge_ports eth2``
 
 **NOTE: If you choose to use the separate network for management, data and
@@ -298,6 +298,18 @@ what feature to deploy. Comma seperated list
 which Ubuntu distro to use.
   [ -d <trusty|xenial> ]
 
+OPNFV Scenarios in JOID
+Following OPNFV scenarios can be deployed using JOID. Seperate yaml bundle will be created to deploy the individual scenario.
+
+Scenario	         Owner	        Known Issues
+os-nosdn-nofeature-ha	 Joid	 
+os-nosdn-nofeature-noha	 Joid	 
+os-odl_l2-nofeature-ha	 Joid	 
+os-nosdn-lxd-ha          Joid           Yardstick team is working to support.
+os-nosdn-lxd-noha        Joid           Yardstick team is working to support.
+os-onos-nofeature-ha	 ONOSFW	 
+os-onos-sfc-ha	         ONOSFW	 
+
 ------------
 Troubleshoot
 ------------
@@ -308,9 +320,9 @@ To Access of any control or compute nodes.
 juju ssh <service name>
 for example to login into openstack-dashboard container.
 
-*juju ssh openstack-dashboard/0
+juju ssh openstack-dashboard/0
 juju ssh nova-compute/0
-juju ssh neutron-gateway/0*
+juju ssh neutron-gateway/0
 
 By default juju will add the Ubuntu user keys for authentication into the deployed server and only ssh access will be available.
 
