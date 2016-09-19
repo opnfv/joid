@@ -2,17 +2,13 @@
 .. http://creativecommons.org/licenses/by/4.0
 .. (c) <optionally add copywriters name>
 
-========================
-JOID Configuration guide
-========================
+=============================
+JOID installation instruction
+=============================
 
 .. toctree::
    :numbered:
    :maxdepth: 2
 
-
-.. add your content files here.
-
-.. include::  ./installationprocedure.rst
-
+  ./installationprocedure.rst
 
