@@ -1,15 +1,13 @@
-=================
-JOID Installation
-=================
-
-
 
 Bare Metal Installations:
-^^^^^^^^^^^^^^^^^^^^^^^^^
+=========================
+
 Requirements as per Pharos:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+===========================
+
 Networking:
-^^^^^^^^^^^
+===========
+
 **Minimum 2 networks**
 
 | ``1. First for Admin network with gateway to access external network``
@@ -42,8 +40,9 @@ the Openstack please consider higher spec for each nodes.**
 
 Make sure all servers are connected to top of rack switch and configured accordingly. No DHCP server should be up and configured. Only gateway at eth0 and eth1 network should be configure to access the network outside your lab.
 
+------------------------
 Jump node configuration:
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 1. Install Ubuntu 14.04 LTS server version of OS on the nodes.
 2. Install the git and bridge-utils packages on the server and configure minimum two bridges on jump host:
@@ -76,7 +75,7 @@ use the appropriate network on jump-host depend upon VLAN ID on the interface.**
 
 
 Configure JOID for your lab
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+===========================
 
 **Get the joid code from gerritt**
 
@@ -106,10 +105,11 @@ If enabling first time then follow it further.
 labconfig.yaml
 
 labconfig.yaml file
-^^^^^^^^^^^^^^^^^^^^
+===================
 
+-------------
 Prerequisite:
-~~~~~~~~~~~~~
+-------------
 
 1. Make sure Jump host node has been configured with bridges on each interface,
 so that appropriate MAAS and JUJU bootstrap VM can be created. For example if
@@ -117,8 +117,9 @@ you have three network admin, data and public then I would suggest to give names
 like brAdm, brData and brPublic.
 2. You have information about the node MAC address and power management details (IPMI IP, username, password) of the nodes used for control and compute node.
 
+---------------------
 modify labconfig.yaml
-^^^^^^^^^^^^^^^^^^^^^^
+---------------------
 
 This file has been used to configure your maas and bootstrap node in a
 VM. Comments in the file are self explanatory and we expect fill up the
@@ -227,12 +228,13 @@ NOTE: If you are using VLAN tagged network then make sure you modify the case $1
     ;;*
 
 Deployment of OPNFV using JOID:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+===============================
 
 Once you have done the change in above section then run the following commands to do the automatic deployments.
 
+------------
 MAAS Install
-~~~~~~~~~~~~
+------------
 
 After integrating the changes as mentioned above run the MAAS install.
 Suppose you name the integration lab as intelpod7 then run the below
@@ -240,6 +242,7 @@ commands to start the MAAS deployment.
 
 ``   ./00-maasdeploy.sh custom ../labconfig/intel/pod7/labconfig.yaml``
 
+-------------
 OPNFV Install
 -------------
 
@@ -274,8 +277,9 @@ NOTE: Possible options are as follows:
   ipv6: ipv6 will be enabled for tenant in openstack.*
 
 
+------------
 Troubleshoot
-~~~~~~~~~~~~
+------------
 
 By default debug is enabled in script and error messages will be printed on ssh terminal where you are running the scripts.
 
