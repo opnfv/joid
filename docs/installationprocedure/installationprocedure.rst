@@ -1,4 +1,3 @@
-
 Bare Metal Installations:
 =========================
 
@@ -87,11 +86,18 @@ If you have already enabled maas for your environment and installed it then ther
 
 NOTE: If MAAS is pre installed without 00-maasdeploy.sh then please do the following and skip rest of the step to enable MAAS.
 
-1. Copy MAAS API key and paste in ~/.juju/environments.yaml at appropriate place.
-2. Run command cp ~/.juju/environments.yaml ./joid/ci/
-3. cp joid/labconfig/<company name>/<pod number>/labconfig.yaml joid/ci/
-4. cd joid/ci
-5. python deploy.py
+1.  Copy MAAS API key and paste in ~/.juju/environments.yaml at appropriate place.
+2.  Run command cp ~/.juju/environments.yaml ./joid/ci/
+3.  Generate labconfig.yaml for your lab and copy it to joid.
+    a. cp joid/labconfig/<company name>/<pod number>/labconfig.yaml joid/ci/ or
+    b. cp <newly generated labconfig.yaml> joid/ci
+4.  cd joid/ci
+5.  python genMAASConfig.py -l labconfig.yaml > deployment.yaml
+6.  python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
+7.  cp ./environments.yaml ~/.juju/
+8.  cp ./deployment.yaml ~/.juju/
+9.  cp ./labconfig.yaml ~/.juju/
+10. cp ./deployconfig.yaml ~/.juju/
 
 If enabling first time then follow it further.
 - Create a directory in joid/labconfig/<company name>/<pod number>/ for example
@@ -237,10 +243,11 @@ MAAS Install
 ------------
 
 After integrating the changes as mentioned above run the MAAS install.
-Suppose you name the integration lab as intelpod7 then run the below
-commands to start the MAAS deployment.
+then run the below commands to start the MAAS deployment.
 
-``   ./00-maasdeploy.sh custom ../labconfig/intel/pod7/labconfig.yaml``
+``   ./00-maasdeploy.sh custom <absolute path of config>/labconfig.yaml ``
+or
+``   ./00-maasdeploy.sh custom http://<web site location>/labconfig.yaml ``
 
 -------------
 OPNFV Install
@@ -249,33 +256,47 @@ OPNFV Install
 | ``   ./deploy.sh -o mitaka -s odl -t ha -l custom -f none -d xenial``
 | ``   ``
 
+./deploy.sh -o mitaka -s odl -t ha -l custom -f none -d xenial
+
 NOTE: Possible options are as follows:
 
-*choose which sdn controller to use.
+choose which sdn controller to use.
   [-s <nosdn|odl|opencontrail|onos>]
   nosdn: openvswitch only and no other SDN.
   odl: OpenDayLight Lithium version.
   opencontrail: OpenContrail SDN can be installed with Juno Openstack today.
   onos: ONOS framework as SDN.
-   
+
+Mode of Openstack deployed.
   [-t <nonha|ha|tip>]
   nonha: NO HA mode of Openstack
   ha: HA mode of openstack.
-  [-o <juno|liberty>]
-  juno: Juno Openstack
+  
+Wihch version of Openstack deployed.
+  [-o <liberty|Mitaka>]
   liberty: Liberty version of openstack.
-  [-l <default|intelpod5>] etc...
-  default: For virtual deployment where installation will be done on KVM created using ./02-maasdeploy.sh
+  Mitaka: Mitaka version of openstack.
+
+Where to deploy
+  [-l <custom | default | intelpod5 >] etc...
+  custom: For bare metal deployment where labconfig.yaml provided externally and not part of JOID.
+  default: For virtual deployment where installation will be done on KVM created using ./00-maasdeploy.sh
   intelpod5: Install on bare metal OPNFV pod5 of Intel lab.
   intelpod6
   orangepod2
-  ..
-  ..
-  <your pod>: if you make changes as per your pod above then please use that.
-  [-f <ipv6|none>]
-  none: no special feature will be enabled.
-  ipv6: ipv6 will be enabled for tenant in openstack.*
+  custom
 
+what feature to deploy. Comma seperated list
+  [-f <lxd|dvr|sfc|dpdk|ipv6|none>]
+  none: no special feature will be enabled.
+  ipv6: ipv6 will be enabled for tenant in openstack.
+  lxd:  With this feature hypervisor will be LXD rather than KVM.
+  dvr:  Will enable distributed virtual routing.
+  dpdk: Will enable DPDK feature.
+  sfc:  Will enable sfc feature only supported with onos deployment.
+
+which Ubuntu distro to use.
+  [ -d <trusty|xenial> ]
 
 ------------
 Troubleshoot
