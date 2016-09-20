@@ -2,26 +2,20 @@
 .. http://creativecommons.org/licenses/by/4.0
 .. (c) <optionally add copywriters name>
 
-=================================================
-Release Note for the Brahmaputra release of OPNFV
-=================================================
-
-.. toctree::
-   :maxdepth: 2
 
 Abstract
 ========
 
-This document compiles the release notes for the Brahmaputra release of
+This document compiles the release notes for the Colorado release of
 OPNFV when using JOID as a deployment tool.
 
 Introduction
 ============
 
 These notes provides release information for the use of joid as deployment
-tool for the Brahmaputra release of OPNFV.
+tool for the Colorado release of OPNFV.
 
-The goal of the Brahmaputra release and this JOID based deployment process is
+The goal of the Colorado release and this JOID based deployment process is
 to establish a lab ready platform accelerating further development
 of the OPNFV infrastructure.
 
@@ -31,15 +25,15 @@ OPNFV using JOID which is based on MAAS and Juju.
 Summary
 =======
 
-    Brahmaputra release with the JOID deployment toolchain will establish an OPNFV target system on a Pharos compliant lab infrastructure.
-The current definition of an OPNFV target system is and OpenStack Liberty combined with OpenDaylight Beryllium.
+    Colorado release with the JOID deployment toolchain will establish an OPNFV target system on a Pharos compliant lab infrastructure.
+The current definition of an OPNFV target system is and OpenStack Mitaka combined with OpenDaylight Beryllium.
 
     The system is deployed with OpenStack High Availability (HA) for most OpenStack services.
-Ceph storage is used as Cinder backend, and is the only supported storage for Brahmaputra. Ceph is setup as 2 OSDs and 2 Monitors, one OSD+Mon per Compute node.
+Ceph storage is used as Cinder backend, and is the only supported storage for Colorado. Ceph is setup as 2 OSDs and 2 Monitors, one OSD+Mon per Compute node.
 
     User has following choices to make to do the deployment.
 
-    - Openstack      -- Liberty
+    - Openstack      -- Mitaka
     - Type           -- HA, nonHA, tip (stable git branch of respective openstack)
     - SDN controller -- OpenDaylight, nosdn(Openvswitch), Onos, OpenContrail
     - Feature        -- IPV6, DVR(distributed virtual routing), SFC(service function chaining odl only), BGPVPN(odl only)
@@ -63,7 +57,7 @@ Release Data
 | **Release designation**              | Colorado release                     |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Release date**                     | September 25 2016                    |
+| **Release date**                     | September 22 2016                    |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Purpose of the delivery**          | Colorado release                     |
@@ -90,7 +84,7 @@ Version change
 
 Module version change
 ~~~~~~~~~~~~~~~~~~~~~
-  Brahmaputra release with the JOID deployment toolchain.
+  Colorado release with the JOID deployment toolchain.
   - OpenStack (Mitaka release)
   - OpenDaylight (Beryllium release)
   - Ubuntu 16.04 LTS
