@@ -194,6 +194,11 @@ Name:      joid-os-nosdn-nofeature-noha
 Test Link: https://build.opnfv.org/ci/user/narindergupta/my-views/view/joid/job/joid-os-nosdn-nofeature-noha-baremetal-daily-colorado/
 Notes:
 
+Name:      applies to all HA scenarios
+Notes:
+* 'COPPER-22 <https://jira.opnfv.org/browse/COPPER-22>`_:
+   Congress service HA deployment is not yet supported/verified.
+
 References
 ==========
 For more information on the OPNFV Colorado release, please visit
