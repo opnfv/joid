@@ -172,8 +172,8 @@ maas login maas http://${maas_ip}/MAAS/api/1.0 ${apikey}
 maas maas sshkeys new key="`cat $HOME/.ssh/id_rsa.pub`"
 
 #Added the Qtip public to run the Qtip test after install on bare metal nodes.
-maas maas sshkeys new key="`cat ./maas/sshkeys/QtipKey.pub`"
-maas maas sshkeys new key="`cat ./maas/sshkeys/DominoKey.pub`"
+#maas maas sshkeys new key="`cat ./maas/sshkeys/QtipKey.pub`"
+#maas maas sshkeys new key="`cat ./maas/sshkeys/DominoKey.pub`"
 
 #adding compute and control nodes VM to MAAS for virtual deployment purpose.
 if [ "$virtinstall" -eq 1 ]; then
