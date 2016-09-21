@@ -134,11 +134,32 @@ create_openrc
 
 echo "...... deploy public api proxy ......"
 
-if [ "$opnfvlab" == "orangepod1" ] && [ "$opnfvsdn" == "nosdn" ]; then # only for first test phase
+if ([ "$opnfvlab" == "orangepod1" ] \
+    || [ "$opnfvlab" == "intelpod6" ]) \
+    && [ "$opnfvsdn" == "nosdn" ] \
+    && [ "$API_FQDN" != "None" ]; then # only for first test phase
     if [ -e ./labconfig.yaml ]; then
-        PUB_API_NET=$(grep floating-ip-range ./labconfig.yaml |cut -d/ -f2)
+        PUB_API_MASK=$(grep floating-ip-range ./labconfig.yaml |cut -d/ -f2)
+        PUB_API_NET=$(grep floating-ip-range ./labconfig.yaml |cut -d, -f4)
         PUB_API_IP=$(grep public-api-ip ./labconfig.yaml |cut -d: -f2)
-        juju run --unit nodes/0 "sudo ip a a ${PUB_API_IP}/${PUB_API_NET} dev br-ex" || true
+        if grep "- type: public" ./labconfig.yaml; then
+            # The public network exists on MAAS, so we push the dns record to it
+
+            # Recover maas ips and login to it
+            maas_ip=$(grep " ip_address" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //')
+            maas_pubip=$(grep floating-ip-range ./labconfig.yaml |cut -d, -f4 |perl -pe 's!^(.*)\.\d+/\d+$!$1.5!')
+            apikey=$(grep maas-oauth: environments.yaml | cut -d "'" -f 2)
+            maas login maas http://${maas_ip}/MAAS/api/1.0 ${apikey}
+
+            # Configure maas to add the record
+            CLUSTER_UUID=$(maas ubuntu node-groups list | grep uuid | cut -d\" -f4)
+            PUBLIC_MAAS_IF=$(maas ubuntu node-group-interfaces list $cluster_uuid |\
+                             python -c "import yaml; import sys; cfg=yaml.load(sys.stdin); net_h={net['ip']:net['name'] for net in cfg}; print(net_h['$maas_pubip'])")
+            maas maas node-group-interface update ${CLUSTER_UUID} ${PUBLIC_MAAS_IF} static_ip_range_high=${PUB_API_IP} static_ip_range_low=${PUB_API_IP}
+            maas maas ipaddresses reserve network=${PUB_API_NET} requested_address=${PUB_API_IP} hostname=${API_FQDN}
+            dig ${PUB_API_IP} @${maas_ip} # just for log
+        fi
+        juju run --unit nodes/0 "sudo ip a a ${PUB_API_IP}/${PUB_API_MASK} dev br-ex" || true
         juju run --unit nodes/0 "sudo ip l set dev br-ex up" || true
         python genPublicAPIProxyBundle.py -l labconfig.yaml >> bundles.yaml
         juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$opnfvos" || true
