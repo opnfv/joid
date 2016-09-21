@@ -107,9 +107,6 @@ If enabling first time then follow it further.
 - copy labconfig.yaml from pod6 to pod7
 *cp joid/labconfig/intel/pod5/\* joid/labconfig/intel/pod7/*
 
-4 files will get copied: 
-labconfig.yaml
-
 labconfig.yaml file
 ===================
 
@@ -225,8 +222,8 @@ opnfv:
       ipaddress: 10.2.117.92
       vlan:*
 
-NOTE: If you are using VLAN tagged network then make sure you modify the case $1 section under Enable vlan interface with maas appropriately. 
- 
+NOTE: If you are using VLAN tagged network then make sure you modify the case $1 section under Enable vlan interface with maas appropriately.
+
 *'intelpod7' )
     maas refresh
     enableautomodebyname eth2 AUTO "10.4.9.0/24" compute || true
@@ -271,7 +268,7 @@ Mode of Openstack deployed.
   [-t <nonha|ha|tip>]
   nonha: NO HA mode of Openstack
   ha: HA mode of openstack.
-  
+
 Wihch version of Openstack deployed.
   [-o <liberty|Mitaka>]
   liberty: Liberty version of openstack.
@@ -302,13 +299,13 @@ OPNFV Scenarios in JOID
 Following OPNFV scenarios can be deployed using JOID. Seperate yaml bundle will be created to deploy the individual scenario.
 
 Scenario	         Owner	        Known Issues
-os-nosdn-nofeature-ha	 Joid	 
-os-nosdn-nofeature-noha	 Joid	 
-os-odl_l2-nofeature-ha	 Joid	 
+os-nosdn-nofeature-ha	 Joid
+os-nosdn-nofeature-noha	 Joid
+os-odl_l2-nofeature-ha	 Joid
 os-nosdn-lxd-ha          Joid           Yardstick team is working to support.
 os-nosdn-lxd-noha        Joid           Yardstick team is working to support.
-os-onos-nofeature-ha	 ONOSFW	 
-os-onos-sfc-ha	         ONOSFW	 
+os-onos-nofeature-ha	 ONOSFW
+os-onos-sfc-ha	         ONOSFW
 
 ------------
 Troubleshoot
