@@ -4,7 +4,7 @@ opnfv:
   admNetwork: {{ net_prefix }}2
   admin_password: openstack
 {% if opnfv.storage_dict.ceph is defined %}
-   ceph-disk: {{ opnfv.storage_dict.ceph.disk }}
+  ceph-disk: {{ opnfv.storage_dict.ceph.disk }}
 {% endif %}
 {% if opnfv.spaces_dict.data is defined %}
   dataNetwork: {{ opnfv.spaces_dict.data.cidr }}
