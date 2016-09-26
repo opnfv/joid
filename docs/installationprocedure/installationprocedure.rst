@@ -128,7 +128,7 @@ This file has been used to configure your maas and bootstrap node in a
 VM. Comments in the file are self explanatory and we expect fill up the
 information according to match lab infrastructure information. Sample
 labconfig.yaml can be found at
-https://gerrit.opnfv.org/gerrit/gitweb?p=joid.git;a=blob;f=labconfigintel/pod6/labconfig.yaml
+https://gerrit.opnfv.org/gerrit/gitweb?p=joid.git;a=blob;f=labconfig/intel/pod6/labconfig.yaml
 
 *lab:
   location: intel
