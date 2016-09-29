@@ -36,8 +36,10 @@
 {% elif os.network.controller == 'ocl' %}
     neutron-api-contrail:
       charm: local:{{ ubuntu.release }}/neutron-api-contrail
+      install-sources: ppa:opencontrail/trunk-20160812
     neutron-contrail:
       charm: local:{{ ubuntu.release }}/neutron-contrail
+      install-sources: ppa:opencontrail/trunk-20160812
     keepalived:
       charm: local:{{ ubuntu.release }}/keepalived
       options:
