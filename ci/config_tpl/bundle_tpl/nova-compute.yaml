@@ -12,7 +12,6 @@
       options:
         enable-live-migration: true
         enable-resize: true
-        manage-neutron-plugin-legacy-mode: false
         migration-auth-type: ssh
 {% if os.beta.huge_pages %}
         hugepages: "50%"
