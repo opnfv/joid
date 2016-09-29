@@ -4,22 +4,23 @@ distro=$1
 mkdir precise
 mkdir -p $distro
 
-function build {
-    sudo apt-get install charm-tools -y
-    (cd $distro/charm-$1; charm build -s $distro  -obuild src)
-    mv $distro/charm-$1/build/$distro/$1 $distro
-}
+#function build {
+#    sudo apt-get install charm-tools -y
+#    (cd $distro/charm-$1; charm build -s $distro  -obuild src)
+#    mv $distro/charm-$1/build/$distro/$1 $distro
+#}
 
 # openstack
-bzr branch lp:~narindergupta/charms/trusty/promise/trunk $distro/promise
-bzr branch lp:~billy-olsen/charms/xenial/mongodb/trunk $distro/mongodb
-bzr branch lp:~narindergupta/opnfv/ntp $distro/ntp
-charm pull cs:~free.ekanayaka/xenial/haproxy xenial/haproxy
+#bzr branch lp:~narindergupta/charms/trusty/promise/trunk $distro/promise
+#bzr branch lp:~billy-olsen/charms/xenial/mongodb/trunk $distro/mongodb
+charm pull cs:$distro/mongodb $distro/mongodb
+#charm pull cs:~free.ekanayaka/xenial/haproxy xenial/haproxy
+charm pull cs:$distro/haproxy
 
-git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
-build congress
-git clone -b stable/16.07 https://github.com/openstack/charm-aodh.git $distro/charm-aodh
-build aodh
+#git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
+#build congress
+#git clone -b stable/16.07 https://github.com/openstack/charm-aodh.git $distro/charm-aodh
+#build aodh
 
 git clone -b stable/16.07 https://github.com/openstack/charm-hacluster.git $distro/hacluster
 git clone -b stable/16.07 https://github.com/openstack/charm-ceilometer.git $distro/ceilometer
@@ -33,7 +34,7 @@ git clone -b stable/16.07 https://github.com/openstack/charm-glance.git $distro/
 git clone -b stable/16.07 https://github.com/openstack/charm-keystone.git $distro/keystone
 git clone -b stable/16.07 https://github.com/openstack/charm-percona-cluster.git $distro/percona-cluster
 git clone -b stable/16.07 https://github.com/openstack/charm-neutron-gateway.git $distro/neutron-gateway
-git clone -b stable/16.07 https://github.com/openstack/charm-neutron-openvswitch.git $distro/neutron-openvswitch
+#git clone -b stable/16.07 https://github.com/openstack/charm-neutron-openvswitch.git $distro/neutron-openvswitch
 git clone -b stable/16.07 https://github.com/openstack/charm-nova-cloud-controller.git $distro/nova-cloud-controller
 git clone -b stable/16.07 https://github.com/openstack/charm-nova-compute.git $distro/nova-compute
 git clone -b stable/16.07 https://github.com/openstack/charm-openstack-dashboard.git $distro/openstack-dashboard
@@ -63,12 +64,17 @@ git clone -b stable/16.07 https://github.com/openstack/charm-neutron-api.git $di
 #charm pull cs:~openstack-charmers-next/lxd xenial/lxd
 
 # Controller specific charm
-bzr branch lp:~sdn-charmers/charms/trusty/keepalived/trunk $distro/keepalived
-bzr branch lp:~stub/charms/trusty/cassandra/noauthentication $distro/cassandra
-bzr branch lp:~sdn-charmers/charms/trusty/contrail-analytics/trunk $distro/contrail-analytics
-bzr branch lp:~sdn-charmers/charms/trusty/contrail-configuration/trunk $distro/contrail-configuration
-bzr branch lp:~sdn-charmers/charms/trusty/contrail-control/trunk $distro/contrail-control
-bzr branch lp:~sdn-charmers/charms/trusty/contrail-webui/trunk $distro/contrail-webui
-bzr branch lp:~charmers/charms/precise/zookeeper/trunk precise/zookeeper
-bzr branch lp:~opnfv-team/charms/trusty/neutron-api-contrail/trunk $distro/neutron-api-contrail
-bzr branch lp:~opnfv-team/charms/trusty/neutron-contrail/trunk $distro/neutron-contrail
+charm pull cs:$distro/apache-kafka
+bzr branch lp:~sdn-charmers/charms/$distro/keepalived/trunk $distro/keepalived
+#bzr branch lp:~stub/charms/trusty/cassandra/noauthentication $distro/cassandra
+bzr branch lp:~sdn-charmers/charms/$distro/cassandra/ufw $distro/cassandra
+bzr branch lp:~sdn-charmers/charms/$distro/contrail-analytics/trunk $distro/contrail-analytics
+bzr branch lp:~sdn-charmers/charms/$distro/contrail-configuration/trunk $distro/contrail-configuration
+bzr branch lp:~sdn-charmers/charms/$distro/contrail-control/trunk $distro/contrail-control
+bzr branch lp:~sdn-charmers/charms/$distro/contrail-webui/trunk $distro/contrail-webui
+#bzr branch lp:~charmers/charms/precise/zookeeper/trunk precise/zookeeper
+charm pull cs:$distro/apache-zookeeper $distro/zookeeper
+bzr branch lp:~opnfv-team/charms/$distro/neutron-api-contrail/trunk $distro/neutron-api-contrail
+bzr branch lp:~opnfv-team/charms/$distro/neutron-contrail/trunk $distro/neutron-contrail
+bzr branch lp:~sdn-charmers/charms/$distro/ceilometer/ceilometer-plugin $distro/ceilometer-plugin
+bzr branch lp:~sdn-charmers/charms/$distro/ceilometer-contrail/trunk ceilometer-contrail/trunk
