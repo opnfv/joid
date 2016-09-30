@@ -4,11 +4,11 @@ distro=$1
 mkdir precise
 mkdir -p $distro
 
-#function build {
-#    sudo apt-get install charm-tools -y
-#    (cd $distro/charm-$1; charm build -s $distro  -obuild src)
-#    mv $distro/charm-$1/build/$distro/$1 $distro
-#}
+function build {
+    sudo apt-get install charm-tools -y
+    (cd $distro/charm-$1; charm build -s $distro  -obuild src)
+    mv $distro/charm-$1/build/$distro/$1 $distro
+}
 
 # openstack
 #bzr branch lp:~narindergupta/charms/trusty/promise/trunk $distro/promise
@@ -17,10 +17,10 @@ charm pull cs:$distro/mongodb $distro/mongodb
 #charm pull cs:~free.ekanayaka/xenial/haproxy xenial/haproxy
 charm pull cs:$distro/haproxy
 
-#git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
-#build congress
-#git clone -b stable/16.07 https://github.com/openstack/charm-aodh.git $distro/charm-aodh
-#build aodh
+git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
+build congress
+git clone -b stable/16.07 https://github.com/openstack/charm-aodh.git $distro/charm-aodh
+build aodh
 
 git clone -b stable/16.07 https://github.com/openstack/charm-hacluster.git $distro/hacluster
 git clone -b stable/16.07 https://github.com/openstack/charm-ceilometer.git $distro/ceilometer
