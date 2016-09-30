@@ -77,4 +77,4 @@ charm pull cs:$distro/apache-zookeeper $distro/zookeeper
 bzr branch lp:~opnfv-team/charms/$distro/neutron-api-contrail/trunk $distro/neutron-api-contrail
 bzr branch lp:~opnfv-team/charms/$distro/neutron-contrail/trunk $distro/neutron-contrail
 bzr branch lp:~sdn-charmers/charms/$distro/ceilometer/ceilometer-plugin $distro/ceilometer-plugin
-bzr branch lp:~sdn-charmers/charms/$distro/ceilometer-contrail/trunk ceilometer-contrail/trunk
+bzr branch lp:~sdn-charmers/charms/$distro/ceilometer-contrail/trunk $distro/ceilometer-contrail
