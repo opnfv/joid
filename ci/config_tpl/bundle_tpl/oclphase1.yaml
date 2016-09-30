@@ -1,7 +1,7 @@
     zookeeper:
-      charm: local:{{ ubuntu.release })/zookeeper
+      charm: local:{{ ubuntu.release }}/zookeeper
       num_units: {{ unit_qty() }}
-      series: {{ ubuntu.release )}
+      series: {{ ubuntu.release }}
       to:
 {% for unit_id in to_select() %}
         - "lxc:nodes={{ unit_id }}"
