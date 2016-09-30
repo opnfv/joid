@@ -64,7 +64,7 @@ git clone -b stable/16.07 https://github.com/openstack/charm-neutron-api.git $di
 #charm pull cs:~openstack-charmers-next/lxd xenial/lxd
 
 # Controller specific charm
-charm pull cs:$distro/apache-kafka
+charm pull cs:$distro/apache-kafka $distro/kafka
 bzr branch lp:~sdn-charmers/charms/$distro/keepalived/trunk $distro/keepalived
 #bzr branch lp:~stub/charms/trusty/cassandra/noauthentication $distro/cassandra
 bzr branch lp:~sdn-charmers/charms/$distro/cassandra/ufw $distro/cassandra

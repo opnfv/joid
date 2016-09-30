@@ -61,7 +61,7 @@
         - "lxc:nodes={{ unit_id }}"
 {% endfor %}
     kafka:
-      charm: local:{{ ubuntu.release }}/kafka:
+      charm: local:{{ ubuntu.release }}/kafka
       num_units: {{ unit_qty() }}
       to:
 {% for unit_id in to_select() %}
