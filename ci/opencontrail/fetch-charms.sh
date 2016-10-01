@@ -11,11 +11,10 @@ function build {
 }
 
 # openstack
-#bzr branch lp:~narindergupta/charms/trusty/promise/trunk $distro/promise
-#bzr branch lp:~billy-olsen/charms/xenial/mongodb/trunk $distro/mongodb
+bzr branch lp:~narindergupta/charms/trusty/promise/trunk $distro/promise
 charm pull cs:$distro/mongodb $distro/mongodb
-#charm pull cs:~free.ekanayaka/xenial/haproxy xenial/haproxy
-charm pull cs:$distro/haproxy
+charm pull cs:$distro/haproxy $distro/haproxy
+charm pull cs:$distro/ntp $distro/ntp
 
 git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
 build congress
@@ -66,13 +65,11 @@ git clone -b stable/16.07 https://github.com/openstack/charm-neutron-api.git $di
 # Controller specific charm
 charm pull cs:$distro/apache-kafka $distro/kafka
 bzr branch lp:~sdn-charmers/charms/$distro/keepalived/trunk $distro/keepalived
-#bzr branch lp:~stub/charms/trusty/cassandra/noauthentication $distro/cassandra
 bzr branch lp:~sdn-charmers/charms/$distro/cassandra/ufw $distro/cassandra
 bzr branch lp:~sdn-charmers/charms/$distro/contrail-analytics/trunk $distro/contrail-analytics
 bzr branch lp:~sdn-charmers/charms/$distro/contrail-configuration/trunk $distro/contrail-configuration
 bzr branch lp:~sdn-charmers/charms/$distro/contrail-control/trunk $distro/contrail-control
 bzr branch lp:~sdn-charmers/charms/$distro/contrail-webui/trunk $distro/contrail-webui
-#bzr branch lp:~charmers/charms/precise/zookeeper/trunk precise/zookeeper
 charm pull cs:$distro/apache-zookeeper $distro/zookeeper
 bzr branch lp:~opnfv-team/charms/$distro/neutron-api-contrail/trunk $distro/neutron-api-contrail
 bzr branch lp:~opnfv-team/charms/$distro/neutron-contrail/trunk $distro/neutron-contrail
