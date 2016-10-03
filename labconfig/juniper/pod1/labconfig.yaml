@@ -1,0 +1,106 @@
+lab:
+  location: juniper
+  racks:
+  - rack: pod1
+    nodes:
+    - name: rack-R4N3B1-m1
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["0c:c4:7a:53:57:c2"]
+      - ifname: eth1
+        spaces: [public]
+        mac: ["0c:c4:7a:53:57:c3"]
+      power:
+        type: ipmi
+        address: 10.10.7.84
+        user: ADMIN
+        pass: ADMIN
+    - name: rack-R4N4B2-m2
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["0c:c4:7a:16:2a:70"]
+      - ifname: eth1
+        spaces: [public]
+        mac: ["0c:c4:7a:16:2a:71"]
+      power:
+        type: ipmi
+        address: 10.10.7.92
+        user: ADMIN
+        pass: ADMIN
+    - name: rack-R4N4B3-m3
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["0c:c4:7a:16:2a:0a"]
+      - ifname: eth1
+        spaces: [public]
+        mac: ["0c:c4:7a:16:2a:0b"]
+      power:
+        type: ipmi
+        address: 10.10.7.93
+        user: ADMIN
+        pass: ADMIN
+    - name: rack-R4N4B4-m4
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["0c:c4:7a:16:22:9c"]
+      - ifname: eth1
+        spaces: [public]
+        mac: ["0c:c4:7a:16:22:9d"]
+      power:
+        type: ipmi
+        address: 10.10.7.95
+        user: ADMIN
+        pass: ADMIN
+    - name: rack-R4N3B2-m5
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["0c:c4:7a:53:57:16"]
+      - ifname: eth1
+        spaces: [public]
+        mac: ["0c:c4:7a:53:57:17"]
+      power:
+        type: ipmi
+        address: 10.10.7.85
+        user: ADMIN
+        pass: ADMIN
+    floating-ip-range: 10.5.15.6,10.5.15.250,10.5.15.1,10.5.15.0/24
+    ext-port: "eth1"
+    dns: 8.8.8.8
+    osdomainname:
+opnfv:
+    release: c
+    distro: trusty
+    type: nonha
+    openstack: mitaka
+    sdncontroller:
+    - type: nosdn
+    storage:
+    - type: ceph
+      disk: /srv
+    feature: odl_l2
+    spaces:
+    - type: admin
+      bridge: brAdm
+      cidr: 172.16.50.0/24
+      gateway: 172.16.50.1
+      vlan:
+    - type: public
+      bridge: brPublic
+      cidr: 10.10.0.0/28
+      gateway: 10.10.10.1
+      vlan:

@@ -1,8 +1,0 @@
-default: local
-
-environments:
-  local:
-    type: local
-    container: kvm
-    default-series: trusty
-    lxc-clone: true
