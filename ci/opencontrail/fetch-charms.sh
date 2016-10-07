@@ -21,9 +21,9 @@ git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
 build congress
 
 git clone -b stable/16.07 https://github.com/openstack/charm-hacluster.git $distro/hacluster
-bzr branch lp:~sdn-charmers/charms/$distro/ceilometer/ceilometer-plugin $distro/ceilometer
+#bzr branch lp:~sdn-charmers/charms/$distro/ceilometer/ceilometer-plugin $distro/ceilometer
 #git clone -b stable/16.07 https://github.com/openstack/charm-ceilometer.git $distro/ceilometer
-git clone -b stable/16.07 https://github.com/openstack/charm-ceilometer-agent.git $distro/ceilometer-agent
+#git clone -b stable/16.07 https://github.com/openstack/charm-ceilometer-agent.git $distro/ceilometer-agent
 git clone -b stable/16.07 https://github.com/openstack/charm-ceph.git $distro/ceph
 git clone -b stable/16.07 https://github.com/openstack/charm-ceph-osd.git $distro/ceph-osd
 git clone -b stable/16.07 https://github.com/openstack/charm-ceph-radosgw.git $distro/ceph-radosgw
@@ -63,14 +63,11 @@ git clone -b stable/16.07 https://github.com/openstack/charm-neutron-api.git $di
 #charm pull cs:~openstack-charmers-next/lxd xenial/lxd
 
 # Controller specific charm
-charm pull cs:trusty/apache-kafka $distro/kafka
-bzr branch lp:~sdn-charmers/charms/$distro/keepalived/trunk $distro/keepalived
-bzr branch lp:~sdn-charmers/charms/$distro/cassandra/ufw $distro/cassandra
-bzr branch lp:~sdn-charmers/charms/$distro/contrail-analytics/trunk $distro/contrail-analytics
-bzr branch lp:~sdn-charmers/charms/$distro/contrail-configuration/trunk $distro/contrail-configuration
-bzr branch lp:~sdn-charmers/charms/$distro/contrail-control/trunk $distro/contrail-control
-bzr branch lp:~sdn-charmers/charms/$distro/contrail-webui/trunk $distro/contrail-webui
-charm pull cs:trusty/apache-zookeeper $distro/zookeeper
-bzr branch lp:~sdn-charmers/charms/trusty/neutron-api-contrail/trunk $distro/neutron-api-contrail
-bzr branch lp:~sdn-charmers/charms/trusty/neutron-contrail/trunk $distro/neutron-contrail
-bzr branch lp:~sdn-charmers/charms/$distro/ceilometer-contrail/trunk $distro/ceilometer-contrail
+cd /tmp
+rm -rf ovno
+git clone https://git.opnfv.org/ovno.git
+cd ovno/charms
+tar cf /tmp/charms.tar trusty
+cd ~
+tar xf /tmp/charms.tar
+
