@@ -2,6 +2,7 @@
       charm: "local:{{ ubuntu.release }}/keystone"
       num_units: {{ unit_qty() }}
       options:
+        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
         admin-password: {{ opnfv.admin_password | default(os.admin.password) }}
         admin-token: {{ os.admin.name }}
 {% if os.ha.mode == 'ha' %}

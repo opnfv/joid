@@ -1,8 +1,12 @@
     ceilometer-agent:
       charm: local:{{ ubuntu.release }}/ceilometer-agent
+      options:
+        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
 {% if opnfv.storage_dict.ceph is defined %}
     cinder-ceph:
       charm: local:{{ ubuntu.release }}/cinder-ceph
+      options:
+        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
 {% endif %}
 {% if os.network.controller == 'nosdn' %}
 {% include 'neutron-ovs.yaml' %}
@@ -15,6 +19,7 @@
     openvswitch-odl:
       charm: local:{{ ubuntu.release }}/openvswitch-odl
       options:
+        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
 {% if opnfv.spaces_dict.data is defined %}
         os-data-network: {{ opnfv.spaces_dict.data.cidr }}
 {% endif %}
@@ -34,15 +39,22 @@
         profile: onos-sfc
 {% endif %}
 {% elif os.network.controller == 'ocl' %}
+    ceilometer-contrail:
+      charm: local:{{ ubuntu.release }}/ceilometer-contrail
+      options:
+        install-sources: ppa:opencontrail/trunk-20160812
     neutron-api-contrail:
       charm: local:{{ ubuntu.release }}/neutron-api-contrail
-      install-sources: ppa:opencontrail/trunk-20160812
+      options:
+        install-sources: ppa:opencontrail/trunk-20160812
     neutron-contrail:
       charm: local:{{ ubuntu.release }}/neutron-contrail
-      install-sources: ppa:opencontrail/trunk-20160812
+      options:
+        install-sources: ppa:opencontrail/trunk-20160812
     keepalived:
       charm: local:{{ ubuntu.release }}/keepalived
       options:
+        router-id: 1
 {% if os.ha.mode == 'ha' %}
         virtual-ip: {{ opnfv.vip.keepalived }}
 {% endif %}
@@ -50,6 +62,8 @@
 {% if os.lxd %}
     lxd:
       charm: local:{{ ubuntu.release }}/lxd
+      options:
+        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
 {% endif %}
 {% if opnfv.storage_dict.scaleio is defined %}
     scaleio-openstack:

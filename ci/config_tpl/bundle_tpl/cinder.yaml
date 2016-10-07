@@ -6,6 +6,7 @@
       num_units: {{ unit_qty() }}
 {% endif %}
       options:
+        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.cinder }}
 {% endif %}

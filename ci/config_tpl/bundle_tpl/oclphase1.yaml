@@ -22,7 +22,7 @@
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.contrailconfig }}
 {% endif %}
-      install-sources: ppa:opencontrail/trunk-20160812
+        install-sources: ppa:opencontrail/trunk-20160812
       to:
 {% for unit_id in to_select() %}
         - "lxc:nodes={{ unit_id }}"
@@ -30,7 +30,8 @@
     contrail-control:
       charm: local:{{ ubuntu.release }}/contrail-control
       num_units: {{ unit_qty() }}
-      install-sources: ppa:opencontrail/trunk-20160812
+      options:
+        install-sources: ppa:opencontrail/trunk-20160812
       to:
 {% for unit_id in to_select() %}
         - "lxc:nodes={{ unit_id }}"
@@ -38,7 +39,8 @@
     contrail-analytics:
       charm: local:{{ ubuntu.release }}/contrail-analytics
       num_units: {{ unit_qty() }}
-      install-sources: ppa:opencontrail/trunk-20160812
+      options:
+        install-sources: ppa:opencontrail/trunk-20160812
       to:
 {% for unit_id in to_select() %}
         - "lxc:nodes={{ unit_id }}"
@@ -46,7 +48,8 @@
     contrail-webui:
       charm: local:{{ ubuntu.release }}/contrail-webui
       num_units: {{ unit_qty() }}
-      install-sources: ppa:opencontrail/trunk-20160812
+      options:
+        install-sources: ppa:opencontrail/trunk-20160812
       to:
 {% for unit_id in to_select() %}
         - "lxc:nodes={{ unit_id }}"

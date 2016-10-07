@@ -1,6 +1,7 @@
     neutron-openvswitch:
       charm: local:{{ ubuntu.release }}/neutron-openvswitch
       options:
+        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
 {% if opnfv.spaces_dict.data is defined %}
         os-data-network: {{ opnfv.spaces_dict.data.cidr }}
 {% endif %}

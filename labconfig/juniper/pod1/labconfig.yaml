@@ -78,7 +78,7 @@ lab:
         address: 10.10.7.85
         user: ADMIN
         pass: ADMIN
-    floating-ip-range: 10.5.15.6,10.5.15.250,10.5.15.1,10.5.15.0/24
+    floating-ip-range: 10.10.10.6,10.10.10.250,10.10.10.1,10.10.10.0/24
     ext-port: "eth1"
     dns: 8.8.8.8
     osdomainname:
@@ -101,6 +101,6 @@ opnfv:
       vlan:
     - type: public
       bridge: brPublic
-      cidr: 10.10.0.0/28
+      cidr: 10.10.10.0/24
       gateway: 10.10.10.1
       vlan:

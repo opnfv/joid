@@ -23,14 +23,14 @@
 {% endif %}
     region: {{ os.region }}
 {% if ubuntu.release == 'trusty' %}
-    source: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+    #source: "cloud:{{ ubuntu.release }}-{{ os.release }}"
 {% endif %}
 {% if ubuntu.release == 'xenial' %}
 {% if os.release == 'newton' %}
-    source: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+    #source: "cloud:{{ ubuntu.release }}-{{ os.release }}"
 {% endif %}
 {% endif %}
-    openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+    #openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
 {% if os.ha.mode == 'nonha' %}
 {% if opnfv.storage_dict.ceph is defined %}
     ceph-osd-replication-count: {{ unit_ceph_qty() }}
