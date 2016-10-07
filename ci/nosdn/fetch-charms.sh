@@ -16,8 +16,6 @@ bzr branch lp:~narindergupta/opnfv/ntp $distro/ntp
 
 git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
 build congress
-git clone https://github.com/openstack/charm-aodh.git $distro/charm-aodh
-build aodh
 
 git clone  https://github.com/openstack/charm-hacluster.git $distro/hacluster
 git clone  https://github.com/openstack/charm-ceilometer.git $distro/ceilometer
@@ -41,6 +39,7 @@ git clone  https://github.com/openstack/charm-rabbitmq-server.git $distro/rabbit
 git clone  https://github.com/openstack/charm-heat.git $distro/heat
 git clone  https://github.com/openstack/charm-lxd.git xenial/lxd
 
+charm pull cs:$distro/aodh $distro/aodh
 charm pull cs:~free.ekanayaka/xenial/haproxy-1 $distro/haproxy
 #charm pull cs:~openstack-charmers-next/hacluster $distro/hacluster
 #charm pull cs:~openstack-charmers-next/ceilometer $distro/ceilometer

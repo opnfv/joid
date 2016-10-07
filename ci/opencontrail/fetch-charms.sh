@@ -15,11 +15,10 @@ bzr branch lp:~narindergupta/charms/trusty/promise/trunk $distro/promise
 charm pull cs:trusty/mongodb $distro/mongodb
 charm pull cs:$distro/haproxy $distro/haproxy
 charm pull cs:$distro/ntp $distro/ntp
+charm pull cs:$distro/aodh $distro/aodh
 
 git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
 build congress
-git clone -b stable/16.07 https://github.com/openstack/charm-aodh.git $distro/charm-aodh
-build aodh
 
 git clone -b stable/16.07 https://github.com/openstack/charm-hacluster.git $distro/hacluster
 #git clone -b stable/16.07 https://github.com/openstack/charm-ceilometer.git $distro/ceilometer
