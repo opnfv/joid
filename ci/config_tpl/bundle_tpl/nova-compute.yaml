@@ -14,6 +14,12 @@
         enable-live-migration: true
         enable-resize: true
         migration-auth-type: ssh
+{% if os.beta.public_api %}
+        use-internal-endpoints: true
+{% endif %}
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
 {% if opnfv.storage_dict.ceph is defined %}
         ceph-osd-replication-count: {{ unit_ceph_qty() }}
 {% endif %}

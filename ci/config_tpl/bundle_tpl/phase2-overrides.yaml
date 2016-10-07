@@ -2,7 +2,7 @@
     #ceph-cluster-network: {{ opnfv.spaces_dict.storage.cidr }}
 {% endif %}
 {% if os.network.ipv6 %}
-    prefer-ipv6: {{ os.network.ipv6 }}
+    #prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
 {% if os.ha.mode == 'ha' %}
 {% if os.api.haproxy_timeout %}
@@ -34,8 +34,8 @@
     #ceph-osd-replication-count: {{ unit_ceph_qty() }}
 {% endif %}
 {% endif %}
-    admin-role: {{ os.admin.role }}
-    keystone-admin-role: {{ os.admin.role }}
+    #admin-role: {{ os.admin.role }}
+    #keystone-admin-role: {{ os.admin.role }}
 {% if os.beta.public_api %}
-    use-internal-endpoints: true
+    #use-internal-endpoints: true
 {% endif %}

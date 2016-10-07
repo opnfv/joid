@@ -5,6 +5,9 @@
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
         secret: admin
         webroot: /
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.dashboard }}
 {% endif %}

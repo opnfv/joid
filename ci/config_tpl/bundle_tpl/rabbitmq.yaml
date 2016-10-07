@@ -5,6 +5,9 @@
 {% if opnfv.storage_dict.ceph is defined %}
         ceph-osd-replication-count: {{ unit_ceph_qty() }}
 {% endif %}
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.rabbitmq }}
         min-cluster-size: {{ unit_qty() }}

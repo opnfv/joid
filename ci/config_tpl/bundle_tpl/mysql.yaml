@@ -10,6 +10,9 @@
         max-connections: 20000
         root-password: {{ get_password('mysql_root') }}
         sst-password: {{ get_password('mysql_sst') }}
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.mysql }}
 {% endif %}
