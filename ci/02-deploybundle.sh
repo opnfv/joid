@@ -104,6 +104,9 @@ fi
 #lets generate the bundle for all target using genBundle.py
 python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
 
+#keep the back in cloud for later debugging.
+pastebinit bundles.yaml || true
+
 echo "... Deployment Started ...."
 juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack"-nodes
 

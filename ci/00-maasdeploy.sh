@@ -6,6 +6,7 @@ virtinstall=0
 labname=$1
 
 #install the packages needed
+sudo apt-add-repository ppa:opnfv-team/proposed -y
 sudo apt-add-repository ppa:maas-deployers/stable -y
 sudo apt-add-repository ppa:juju/stable -y
 sudo apt-add-repository ppa:maas/stable -y
@@ -14,7 +15,7 @@ sudo apt-get update -y
 sudo apt-get dist-upgrade -y
 sudo apt-get install openssh-server bzr git maas-deployer juju juju-deployer \
              maas-cli python-pip python-psutil python-openstackclient \
-             python-congressclient gsutil charm-tools -y
+             python-congressclient gsutil charm-tools pastebinit -y
 
 #first parameter should be custom and second should be either
 # absolute location of file (including file name) or url of the

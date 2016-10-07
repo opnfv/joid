@@ -1,7 +1,7 @@
 # vim: set ts=2 et:
 {{ ubuntu.release }}-{{ os.release }}-nodes:
   inherits: openstack-phase1
-  overrides:
+  #overrides:
 {% include 'phase2-overrides.yaml' %}
 
 {{ ubuntu.release }}-{{ os.release }}:
