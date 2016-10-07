@@ -2,6 +2,9 @@
       charm: "local:{{ ubuntu.release }}/rabbitmq-server"
       num_units: {{ unit_qty() }}
       options:
+{% if opnfv.storage_dict.ceph is defined %}
+        ceph-osd-replication-count: {{ unit_ceph_qty() }}
+{% endif %}
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.rabbitmq }}
         min-cluster-size: {{ unit_qty() }}

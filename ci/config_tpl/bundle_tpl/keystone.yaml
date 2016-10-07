@@ -3,6 +3,10 @@
       num_units: {{ unit_qty() }}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+        region: {{ os.region }}
+{% if os.api.worker_multiplier %}
+        worker-multiplier: {{ os.api.worker_multiplier }}
+{% endif %}
         admin-password: {{ opnfv.admin_password | default(os.admin.password) }}
         admin-token: {{ os.admin.name }}
 {% if os.ha.mode == 'ha' %}

@@ -7,6 +7,13 @@
 {% endif %}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+        region: {{ os.region }}
+{% if os.api.worker_multiplier %}
+        worker-multiplier: {{ os.api.worker_multiplier }}
+{% endif %}
+{% if opnfv.storage_dict.ceph is defined %}
+        ceph-osd-replication-count: {{ unit_ceph_qty() }}
+{% endif %}
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.cinder }}
 {% endif %}

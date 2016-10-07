@@ -2,6 +2,9 @@
       charm: "local:{{ ubuntu.release }}/neutron-gateway"
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+{% if os.api.worker_multiplier %}
+        worker-multiplier: {{ os.api.worker_multiplier }}
+{% endif %}
 {% if opnfv.spaces_dict.data is defined %}
         os-data-network: {{ opnfv.spaces_dict.data.cidr }}
 {% endif %}

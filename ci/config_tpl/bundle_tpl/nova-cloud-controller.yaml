@@ -3,9 +3,13 @@
       num_units: {{ unit_qty() }}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+        region: {{ os.region }}
         #console-access-protocol: novnc
         neutron-external-network: ext-net
         service-guard: true
+{% if os.api.worker_multiplier %}
+        worker-multiplier: {{ os.api.worker_multiplier }}
+{% endif %}
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.nova }}
 {% endif %}

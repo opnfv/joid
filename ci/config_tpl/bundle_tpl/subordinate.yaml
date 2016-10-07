@@ -6,7 +6,9 @@
     cinder-ceph:
       charm: local:{{ ubuntu.release }}/cinder-ceph
       options:
-        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+{% if opnfv.storage_dict.ceph is defined %}
+        ceph-osd-replication-count: {{ unit_ceph_qty() }}
+{% endif %}
 {% endif %}
 {% if os.network.controller == 'nosdn' %}
 {% include 'neutron-ovs.yaml' %}
@@ -19,7 +21,6 @@
     openvswitch-odl:
       charm: local:{{ ubuntu.release }}/openvswitch-odl
       options:
-        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
 {% if opnfv.spaces_dict.data is defined %}
         os-data-network: {{ opnfv.spaces_dict.data.cidr }}
 {% endif %}
@@ -63,7 +64,6 @@
     lxd:
       charm: local:{{ ubuntu.release }}/lxd
       options:
-        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
 {% endif %}
 {% if opnfv.storage_dict.scaleio is defined %}
     scaleio-openstack:

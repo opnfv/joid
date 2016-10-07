@@ -1,7 +1,8 @@
     congress:
       charm: "local:{{ ubuntu.release }}/congress"
-{% if ubuntu.release == 'trusty' %}
       options:
+        region: {{ os.region }}
+{% if ubuntu.release == 'trusty' %}
         source-branch: "stable/{{ os.release  }}"
 {% endif %}
       to:

@@ -14,6 +14,9 @@
         enable-live-migration: true
         enable-resize: true
         migration-auth-type: ssh
+{% if opnfv.storage_dict.ceph is defined %}
+        ceph-osd-replication-count: {{ unit_ceph_qty() }}
+{% endif %}
 {% if os.beta.huge_pages %}
         hugepages: "50%"
 {% endif %}

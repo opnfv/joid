@@ -55,8 +55,12 @@
       charm: "local:{{ ubuntu.release }}/ceph-radosgw"
       num_units: {{ unit_qty() if os.beta.hacluster_ceph_radosgw else 1 }}
       options:
+        region: {{ os.region }}
         use-embedded-webserver: true
         operator-roles: "Member,admin"
+{% if opnfv.storage_dict.ceph is defined %}
+        ceph-osd-replication-count: {{ unit_ceph_qty() }}
+{% endif %}
       to:
 {% for unit_id in to_select(unit_qty() if os.beta.hacluster_ceph_radosgw else 1) %}
         - "lxc:nodes={{ unit_id }}"

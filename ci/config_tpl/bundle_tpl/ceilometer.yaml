@@ -7,6 +7,7 @@
       num_units: {{ unit_qty() }}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+        region: {{ os.region }}
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.ceilometer }}
 {% endif %}

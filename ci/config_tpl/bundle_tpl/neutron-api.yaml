@@ -3,7 +3,11 @@
       num_units: {{ unit_qty() }}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+        region: {{ os.region }}
         neutron-security-groups: true
+{% if os.api.worker_multiplier %}
+        worker-multiplier: {{ os.api.worker_multiplier }}
+{% endif %}
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.neutron }}
 {% endif %}
@@ -20,6 +24,12 @@
 {% endif %}
 {% if os.beta.public_api %}
         os-public-hostname: api.{{ opnfv.domain }}
+{% endif %}
+{% if os.network.dvr %}
+        enable-dvr: true
+{% endif %}
+{% if os.network.l2_population %}
+        l2-population: true
 {% endif %}
       to:
 {% for unit_id in to_select() %}
