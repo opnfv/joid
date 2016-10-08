@@ -62,7 +62,7 @@ charm pull cs:$distro/aodh $distro/aodh
 #charm pull cs:~openstack-charmers-next/heat $distro/heat
 #charm pull cs:~openstack-charmers-next/lxd xenial/lxd
 
-#controller specific charm
-git clone  https://github.com/openstack/charm-odl-controller.git $distro/odl-controller
-git clone  https://github.com/openstack/charm-neutron-api-odl.git $distro/neutron-api-odl
-git clone  https://github.com/openstack/charm-openvswitch-odl.git $distro/openvswitch-odl
+#odl controller specific charm
+charm pull cs:$distro/odl-controller $distro/odl-controller
+charm pull cs:$distro/neutron-api-odl $distro/neutron-api-odl
+charm pull cs:$distro/openvswitch-odl $distro/openvswitch-odl
