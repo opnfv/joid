@@ -150,7 +150,7 @@ check_status() {
        juju status > status.txt
        if [ "$(grep -c "executing" status.txt )" -ge 1 ]; then
            echo " still executing the reltionship within charms ..."
-           if [ $timeoutiter -ge 60 ]; then
+           if [ $timeoutiter -ge 90 ]; then
                retval=1
            fi
            timeoutiter=$((timeoutiter+1))

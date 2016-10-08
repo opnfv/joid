@@ -108,7 +108,7 @@ python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
 pastebinit bundles.yaml || true
 
 echo "... Deployment Started ...."
-juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack"-nodes
+juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack"
 
 # seeing issue related to number of open files.
 # juju run --service nodes 'echo 2048 | sudo tee /proc/sys/fs/inotify/max_user_instances'
@@ -124,4 +124,3 @@ while [ $c -lt $count ]; do
     let c+=1
 done
 
-juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack" || true

@@ -1,13 +1,5 @@
 # vim: set ts=2 et:
-{{ ubuntu.release }}-{{ os.release }}-nodes:
-  inherits: openstack-phase1
-  #overrides:
-{% include 'phase2-overrides.yaml' %}
-
 {{ ubuntu.release }}-{{ os.release }}:
-  inherits: openstack-phase2
-
-openstack-phase1:
   services:
 {% if os.hyperconverged %}
     nodes:
@@ -69,6 +61,7 @@ openstack-phase1:
 {% if os.ha.mode == 'ha' %}
 {% include 'haclusters.yaml' %}
 {% endif %}
+{% include 'subordinate.yaml' %}
 
 {% if os.hyperconverged %}
   relations:
@@ -81,10 +74,4 @@ openstack-phase1:
 {% if os.ha.mode == 'ha' %}
 {% include 'harelations.yaml' %}
 {% endif %}
-
-openstack-phase2:
-  inherits: openstack-phase1
-  relations:
 {% include 'relations.yaml' %}
-  services:
-{% include 'subordinate.yaml' %}
