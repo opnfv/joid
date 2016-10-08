@@ -15,13 +15,13 @@
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
-    hacluster-heat:
-      charm: "local:{{ ubuntu.release }}/hacluster"
-      options:
-        corosync_transport: unicast
-        cluster_count: 3
+#    hacluster-heat:
+#      charm: "local:{{ ubuntu.release }}/hacluster"
+#      options:
+#        corosync_transport: unicast
+#        cluster_count: 3
 {% if os.network.ipv6 %}
-        prefer-ipv6: {{ os.network.ipv6 }}
+#        prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
     hacluster-horizon:
       charm: "local:{{ ubuntu.release }}/hacluster"
