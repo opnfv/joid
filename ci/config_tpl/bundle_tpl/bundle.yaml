@@ -61,6 +61,7 @@
 {% if os.ha.mode == 'ha' %}
 {% include 'haclusters.yaml' %}
 {% endif %}
+
 {% include 'subordinate.yaml' %}
 
 {% if os.hyperconverged %}
@@ -71,7 +72,9 @@
     - [ 'ntp:juju-info', 'nodes:juju-info' ]
     - [ 'ntp:juju-info', 'nodes-compute:juju-info' ]
 {% endif %}
+
 {% if os.ha.mode == 'ha' %}
 {% include 'harelations.yaml' %}
 {% endif %}
+
 {% include 'relations.yaml' %}

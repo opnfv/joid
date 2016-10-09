@@ -1,3 +1,4 @@
+
     ceilometer-agent:
       charm: local:{{ ubuntu.release }}/ceilometer-agent
       options:
