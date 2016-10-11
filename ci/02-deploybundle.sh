@@ -110,6 +110,9 @@ pastebinit bundles.yaml || true
 echo "... Deployment Started ...."
 juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack"
 
+#lets gather the status of deployment once juju-deployer completed.
+juju status --format=tabular
+
 # seeing issue related to number of open files.
 # juju run --service nodes 'echo 2048 | sudo tee /proc/sys/fs/inotify/max_user_instances'
 
