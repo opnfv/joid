@@ -70,7 +70,7 @@ esac
 # In the case of a virtual deployment get deployment.yaml and deployconfig.yaml
 if [ "$virtinstall" -eq 1 ]; then
     labname="default"
-    ./cleanvm.sh
+    ./cleanvm.sh || true
     cp ../labconfig/default/deployment.yaml ./
     cp ../labconfig/default/labconfig.yaml ./
     cp ../labconfig/default/deployconfig.yaml ./
@@ -137,8 +137,12 @@ if [ $(pip list |grep google-api-python-client |wc -l) == 1 ]; then
     sudo pip uninstall google-api-python-client
 fi
 
+#create backup directory
+mkdir ~/joid_config/ || true
+mkdir ~/.juju/ || true
+
 # Init Juju
-juju init -f
+juju init -f || true
 
 #
 # MAAS deploy
@@ -153,14 +157,18 @@ echo "... Deployment of maas finish ...."
 # Backup deployment.yaml and deployconfig.yaml in .juju folder
 
 cp ./environments.yaml ~/.juju/
+cp ./environments.yaml ~/joid_config/
 
 if [ -e ./deployconfig.yaml ]; then
     cp ./deployconfig.yaml ~/.juju/
     cp ./labconfig.yaml ~/.juju/
+    cp ./deployconfig.yaml ~/joid_config/
+    cp ./labconfig.yaml ~/joid_config/
 fi
 
 if [ -e ./deployment.yaml ]; then
     cp ./deployment.yaml ~/.juju/
+    cp ./deployment.yaml ~/joid_config/
 fi
 
 #
@@ -255,6 +263,35 @@ crnodevlanint() {
      done
  }
 
+#function for JUJU envronment
+
+addcredential() {
+    controllername=`awk 'NR==1{print $2}' environments.yaml`
+    cloudname=`awk 'NR==1{print $2}' environments.yaml`
+
+    echo  "credentials:" > credential.yaml
+    echo  "  $controllername:" >> credential.yaml
+    echo  "    opnfv-credentials:" >> credential.yaml
+    echo  "      auth-type: oauth1" >> credential.yaml
+    echo  "      maas-oauth: $apikey" >> credential.yaml
+
+    juju add-credential $controllername -f credential.yaml --replace
+}
+
+addcloud() {
+    controllername=`awk 'NR==1{print $2}' environments.yaml`
+    cloudname=`awk 'NR==1{print $2}' environments.yaml`
+
+    echo "clouds:" > maas-cloud.yaml
+    echo "   $cloudname:" >> maas-cloud.yaml
+    echo "      type: maas" >> maas-cloud.yaml
+    echo "      auth-types: [oauth1]" >> maas-cloud.yaml
+    echo "      endpoint: http://$maas_ip/MAAS" >> maas-cloud.yaml
+
+    juju add-cloud $cloudname maas-cloud.yaml --replace
+}
+
+
 #
 # VLAN customization
 #
@@ -278,8 +315,11 @@ esac
 #
 
 #read interface needed in Auto mode and enable it. Will be rmeoved once auto enablement will be implemented in the maas-deployer.
-if [ -e ~/.juju/deployconfig.yaml ]; then
+if [ -e ~/joid_config/deployconfig.yaml ]; then
+  cp ~/joid_config/deployconfig.yaml ./deployconfig.yaml
+elif [ -e ~/.juju/deployconfig.yaml ]; then
   cp ~/.juju/deployconfig.yaml ./deployconfig.yaml
+fi
 
   enableiflist=`grep "interface-enable" deployconfig.yaml | cut -d ' ' -f 4 `
   datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
@@ -315,6 +355,15 @@ if [ -e ~/.juju/deployconfig.yaml ]; then
           i=$[$i+1]
       done
   fi
+fi
+
+
+# Add the cloud and controller credentials for MAAS for that lab.
+jujuver=`juju --version`
+
+if [ "$jujuver" -ge "2" ]; then
+    addcloud
+    addcredential
 fi
 
 #

@@ -1,0 +1,11 @@
+    congress:
+      charm: "./{{ ubuntu.release }}/congress"
+      num_units: 1
+      options:
+        region: {{ os.region }}
+{% if ubuntu.release == 'trusty' %}
+        source-branch: "stable/{{ os.release  }}"
+{% endif %}
+      to:
+        - "lxd:nodes/0"
+{# Empty block to avoid bad block trim #}

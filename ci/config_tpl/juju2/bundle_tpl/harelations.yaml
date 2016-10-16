@@ -1,0 +1,14 @@
+{% if os.ha.mode == 'ha' %}
+    - [ 'mysql:ha', 'hacluster-mysql:ha' ]
+    - [ 'cinder:ha', 'hacluster-cinder:ha' ]
+#    - [ 'heat:ha', 'hacluster-heat:ha' ]
+    - [ 'glance:ha', 'hacluster-glance:ha' ]
+    - [ 'keystone:ha', 'hacluster-keystone:ha' ]
+    - [ 'neutron-api:ha', 'hacluster-neutron:ha' ]
+    - [ 'nova-cloud-controller:ha', 'hacluster-nova:ha' ]
+    - [ 'openstack-dashboard:ha', 'hacluster-horizon:ha' ]
+    - [ 'ceilometer:ha', 'hacluster-ceilometer:ha' ]
+{% if os.beta.hacluster_ceph_radosgw %}
+    - [ 'ceph-radosgw:ha', 'hacluster-ceph-radosgw:ha' ]
+{% endif %}
+{% endif %}

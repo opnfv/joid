@@ -1,0 +1,23 @@
+    mysql:
+      charm: "./{{ ubuntu.release }}/percona-cluster"
+      num_units: {{ unit_qty() }}
+      options:
+{% if os.ha.mode == 'ha' %}
+        innodb-buffer-pool-size: 10G
+{% else %}
+        innodb-buffer-pool-size: 1G
+{% endif %}
+        max-connections: 20000
+        root-password: {{ get_password('mysql_root') }}
+        sst-password: {{ get_password('mysql_sst') }}
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+{% if os.ha.mode == 'ha' %}
+        vip: {{ opnfv.vip.mysql }}
+{% endif %}
+        min-cluster-size: {{ unit_qty() }}
+      to:
+{% for unit_id in to_select() %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}

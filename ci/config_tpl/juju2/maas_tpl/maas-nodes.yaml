@@ -1,0 +1,28 @@
+{% for node in lab.racks[0].nodes %}
+    - interfaces:
+{% for nic in node.nics %}
+      - mac_address: {{ nic.mac[0] }}
+        mode: auto
+        name: {{ nic.ifname }}
+{% endfor %}
+{% if node.architecture=='x86_64' %}
+      architecture: amd64/generic
+{% endif %}
+      mac_addresses:
+{% for nic in node.nics %}
+      - {{ nic.mac[0] }}
+{% endfor %}
+      name: {{ node.name }}
+      power:
+{% if node.power.type=='ipmi' %}
+        address: {{ node.power.address }}
+        driver: LAN_2_0
+        pass: {{ node.power.pass }}
+        type: ipmi
+        user: {{ node.power.user }}
+{% elif node.power.type=='wakeonlan' %}
+        type: ether_wake
+        mac_address: {{ node.power.mac_address }}
+{% endif %}
+      tags: {{ ' '.join(node.roles) }}
+{% endfor %}

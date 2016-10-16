@@ -1,0 +1,26 @@
+    keystone:
+      charm: "./{{ ubuntu.release }}/keystone"
+      num_units: {{ unit_qty() }}
+      options:
+        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+        region: {{ os.region }}
+        admin-role: {{ os.admin.role }}
+        keystone-admin-role: {{ os.admin.role }}
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+{% if os.api.worker_multiplier %}
+        worker-multiplier: {{ os.api.worker_multiplier }}
+{% endif %}
+        admin-password: {{ opnfv.admin_password | default(os.admin.password) }}
+        admin-token: {{ os.admin.name }}
+{% if os.ha.mode == 'ha' %}
+        vip: {{ opnfv.vip.keystone }}
+{% endif %}
+{% if os.beta.public_api %}
+        os-public-hostname: api.{{ opnfv.domain }}
+{% endif %}
+      to:
+{% for unit_id in to_select() %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}

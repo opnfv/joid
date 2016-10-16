@@ -1,0 +1,76 @@
+    zookeeper:
+      charm: ./{{ ubuntu.release }}/zookeeper
+      num_units: {{ unit_qty() }}
+      series: {{ ubuntu.release }}
+      to:
+{% for unit_id in to_select() %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}
+    cassandra:
+      charm: ./{{ ubuntu.release }}/cassandra
+      num_units: {{ unit_qty() }}
+      to:
+{% for unit_id in to_select() %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}
+      options:
+        authenticator: AllowAllAuthenticator
+    contrail-configuration:
+      charm: ./{{ ubuntu.release }}/contrail-configuration
+      num_units: {{ unit_qty() }}
+      options:
+        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+        install-sources: ppa:opencontrail/trunk-20160812
+{% if os.ha.mode == 'ha' %}
+        vip: {{ opnfv.vip.contrailconfig }}
+{% endif %}
+      to:
+{% for unit_id in to_select() %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}
+    contrail-control:
+      charm: ./{{ ubuntu.release }}/contrail-control
+      num_units: {{ unit_qty() }}
+      options:
+        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+        install-sources: ppa:opencontrail/trunk-20160812
+      to:
+{% for unit_id in to_select() %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}
+    contrail-analytics:
+      charm: ./{{ ubuntu.release }}/contrail-analytics
+      num_units: {{ unit_qty() }}
+      options:
+        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+        install-sources: ppa:opencontrail/trunk-20160812
+      to:
+{% for unit_id in to_select() %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}
+    contrail-webui:
+      charm: ./{{ ubuntu.release }}/contrail-webui
+      num_units: {{ unit_qty() }}
+      options:
+        install-sources: ppa:opencontrail/trunk-20160812
+      to:
+{% for unit_id in to_select() %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}
+    haproxy:
+      charm: ./{{ ubuntu.release }}/haproxy
+      num_units: {{ unit_qty() }}
+      options:
+        peering_mode: active-active
+      to:
+{% for unit_id in to_select() %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}
+    kafka:
+      charm: ./{{ ubuntu.release }}/kafka
+      num_units: {{ unit_qty() }}
+      to:
+{% for unit_id in to_select() %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}
+

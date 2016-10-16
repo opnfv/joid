@@ -1,0 +1,8 @@
+    aodh:
+      charm: "./{{ ubuntu.release }}/aodh"
+      num_units: 1
+      options:
+        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+      to:
+        - "lxd:nodes/0"
+{# Empty block to avoid bad block trim #}

@@ -4,11 +4,19 @@ set -ex
 
 #export JUJU_DEV_FEATURE_FLAGS=address-allocation
 
-juju bootstrap --debug --to bootstrap.maas
-sleep 5
-#disable juju gui until xenial charms are in charm store.
-juju deploy cs:juju-gui-130 --to 0
+jujuver=`juju --version`
 
-JUJU_REPOSITORY=
-juju set-constraints tags=
+if [ "$jujuver" -lt "2" ]; then
+  juju bootstrap --debug --to bootstrap.maas
+  sleep 5
+  #disable juju gui until xenial charms are in charm store.
+  juju deploy cs:juju-gui-130 --to 0
 
+  JUJU_REPOSITORY=
+  juju set-constraints tags=
+
+else
+  controllername=`awk 'NR==1{print $2}' environments.yaml`
+  cloudname=`awk 'NR==1{print $2}' environments.yaml`
+  juju bootstrap $controllername $cloudname --debug --to bootstrap.maas
+fi

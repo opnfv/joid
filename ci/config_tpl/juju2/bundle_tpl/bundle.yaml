@@ -1,0 +1,78 @@
+# vim: set ts=2 et:
+  series: {{ ubuntu.release }}
+  services:
+{% if os.hyperconverged %}
+    nodes:
+      charm: "cs:{{ ubuntu.release }}/ubuntu"
+      num_units: {{ opnfv.units }}
+{% else %}
+    nodes:
+      charm: "cs:{{ ubuntu.release }}/ubuntu"
+{% if os.ha.mode == 'ha' %}
+      num_units: 3
+{% else %}
+      num_units: 1
+{% endif %}
+      constraints: tags=control
+    nodes-compute:
+      charm: "cs:{{ ubuntu.release }}/ubuntu"
+{% if os.ha.mode == 'ha' %}
+      num_units: {{ opnfv.units - 3 }}
+{% else %}
+      num_units: {{ opnfv.units - 1 }}
+{% endif %}
+{% endif %}
+    ntp:
+      charm: "./{{ ubuntu.release }}/ntp"
+{% if os.network.controller == 'ocl' %}
+      options:
+        source: "0.ubuntu.pool.ntp.org 1.ubuntu.pool.ntp.org 2.ubuntu.pool.ntp.org 3.ubuntu.pool.ntp.org"
+        auto_peers: false
+{% endif %}
+{% include 'mysql.yaml' %}
+{% include 'ceilometer.yaml' %}
+{% if opnfv.storage_dict.scaleio is defined %}
+{% include 'scaleio.yaml' %}
+{% else %}
+{% include 'ceph.yaml' %}
+{% endif %}
+{% include 'cinder.yaml' %}
+{% include 'glance.yaml' %}
+{% if opnfv.storage_dict.ceph is defined %}
+{% include 'opnfv-promise.yaml' %}
+{% include 'congress.yaml' %}
+{% endif %}
+{% include 'keystone.yaml' %}
+{% include 'nova-cloud-controller.yaml' %}
+{% include 'nova-compute.yaml' %}
+{% include 'openstack-dashboard.yaml' %}
+{% include 'rabbitmq.yaml' %}
+{% include 'heat.yaml' %}
+{% include 'neutron-api.yaml' %}
+{% include 'neutron-gateway.yaml' %}
+{% include 'aodh.yaml' %}
+{% if os.network.controller == 'odl' %}
+{% include 'odl.yaml' %}
+{% elif os.network.controller == 'onos' %}
+{% include 'onos.yaml' %}
+{% elif os.network.controller == 'ocl' %}
+{% include 'oclphase1.yaml' %}
+{% endif %}
+{% if os.ha.mode == 'ha' %}
+{% include 'haclusters.yaml' %}
+{% endif %}
+{% include 'subordinate.yaml' %}
+
+{% if os.hyperconverged %}
+  relations:
+    - [ 'ntp:juju-info', 'nodes:juju-info' ]
+{% else %}
+  relations:
+    - [ 'ntp:juju-info', 'nodes:juju-info' ]
+    - [ 'ntp:juju-info', 'nodes-compute:juju-info' ]
+{% endif %}
+
+{% if os.ha.mode == 'ha' %}
+{% include 'harelations.yaml' %}
+{% endif %}
+{% include 'relations.yaml' %}

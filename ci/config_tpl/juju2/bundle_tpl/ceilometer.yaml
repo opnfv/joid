@@ -1,0 +1,21 @@
+    mongodb:
+      charm: ./{{ ubuntu.release }}/mongodb
+      num_units: 1
+      to:
+        - "lxd:nodes/0"
+    ceilometer:
+      charm: "./{{ ubuntu.release }}/ceilometer"
+      num_units: {{ unit_qty() }}
+      options:
+        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+        region: {{ os.region }}
+{% if os.ha.mode == 'ha' %}
+        vip: {{ opnfv.vip.ceilometer }}
+{% endif %}
+{% if os.beta.public_api %}
+        os-public-hostname: api.{{ opnfv.domain }}
+{% endif %}
+      to:
+{% for unit_id in to_select() %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}

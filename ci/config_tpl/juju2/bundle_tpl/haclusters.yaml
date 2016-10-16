@@ -1,0 +1,83 @@
+
+    hacluster-keystone:
+      charm: "./{{ ubuntu.release }}/hacluster"
+      options:
+        corosync_transport: unicast
+        cluster_count: 3
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+    hacluster-cinder:
+      charm: "./{{ ubuntu.release }}/hacluster"
+      options:
+        corosync_transport: unicast
+        cluster_count: 3
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+#    hacluster-heat:
+#      charm: "./{{ ubuntu.release }}/hacluster"
+#      options:
+#        corosync_transport: unicast
+#        cluster_count: 3
+{% if os.network.ipv6 %}
+#        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+    hacluster-horizon:
+      charm: "./{{ ubuntu.release }}/hacluster"
+      options:
+        corosync_transport: unicast
+        cluster_count: 3
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+    hacluster-nova:
+      charm: "./{{ ubuntu.release }}/hacluster"
+      options:
+        corosync_transport: unicast
+        cluster_count: 3
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+    hacluster-neutron:
+      charm: "./{{ ubuntu.release }}/hacluster"
+      options:
+        corosync_transport: unicast
+        cluster_count: 3
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+    hacluster-glance:
+      charm: "./{{ ubuntu.release }}/hacluster"
+      options:
+        corosync_transport: unicast
+        cluster_count: 3
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+    hacluster-ceilometer:
+      charm: "./{{ ubuntu.release }}/hacluster"
+      options:
+        corosync_transport: unicast
+        cluster_count: 3
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+    hacluster-mysql:
+      charm: "./{{ ubuntu.release }}/hacluster"
+      options:
+        corosync_transport: unicast
+        cluster_count: 3
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+{% if os.beta.hacluster_ceph_radosgw %}
+    hacluster-ceph-radosgw:
+      charm: "./{{ ubuntu.release }}/hacluster"
+      options:
+        corosync_transport: unicast
+        cluster_count: 3
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+{% endif %}

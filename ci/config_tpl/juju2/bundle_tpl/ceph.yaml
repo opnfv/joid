@@ -1,0 +1,77 @@
+{% if opnfv.storage_dict.ceph is defined %}
+    ceph:
+      charm: "./{{ ubuntu.release }}/ceph"
+      num_units: {{ unit_ceph_qty() }}
+      options:
+        monitor-count: {{ unit_ceph_qty() }}
+        fsid: 5a791d94-980b-11e4-b6f6-3c970e8b1cf7
+        monitor-secret: AQAi5a9UeJXUExAA+By9u+GPhl8/XiUQ4nwI3A==
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+{% if opnfv.spaces_dict.storage is defined %}
+        #ceph-cluster-network: {{ opnfv.spaces_dict.storage.cidr }}
+{% endif %}
+      to:
+{% if os.hyperconverged %}
+{% for unit_id in to_select(unit_ceph_qty()) %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}
+{% else %}
+{% if os.ha.mode == 'ha' %}
+{% for unit_id in range(0, 3) %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}
+{% else %}
+        - "lxd:nodes/0"
+        - "lxd:nodes/0"
+        - "lxd:nodes/0"
+{% endif %}
+{% endif %}
+    ceph-osd:
+      charm: "./{{ ubuntu.release }}/ceph-osd"
+{% if os.hyperconverged %}
+      num_units: {{ opnfv.units }}
+{% else %}
+      num_units: 3
+{% endif %}
+      options:
+        osd-devices: {{ opnfv.storage_dict.ceph.disk }}
+        osd-reformat: 'yes'
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+      to:
+{% if os.hyperconverged %}
+{% for unit_id in range(0, opnfv.units) %}
+        - "nodes/{{ unit_id }}"
+{% endfor %}
+{% else %}
+{% if os.ha.mode == 'ha' %}
+{% for unit_id in range(0, 3) %}
+        - "nodes/{{ unit_id }}"
+{% endfor %}
+{% else %}
+        - "nodes/0"
+        - "nodes-compute/0"
+        - "nodes-compute/1"
+{% endif %}
+{% endif %}
+    ceph-radosgw:
+      charm: "./{{ ubuntu.release }}/ceph-radosgw"
+      num_units: {{ unit_qty() if os.beta.hacluster_ceph_radosgw else 1 }}
+      options:
+        region: {{ os.region }}
+        use-embedded-webserver: true
+        operator-roles: "Member,admin"
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+{% if opnfv.storage_dict.ceph is defined %}
+        ceph-osd-replication-count: {{ unit_ceph_qty() }}
+{% endif %}
+      to:
+{% for unit_id in to_select(unit_qty() if os.beta.hacluster_ceph_radosgw else 1) %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}
+{% endif %}

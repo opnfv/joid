@@ -6,7 +6,7 @@ set -ex
 # also along with envuronment destroy.
 
 echo " Cleanup Started ..."
-./clean.sh
+./clean.sh || true
  
 sudo virsh destroy node1-control || true
 sudo virsh destroy node3-control || true

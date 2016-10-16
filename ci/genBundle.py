@@ -12,7 +12,9 @@ Parameters:
 
 from optparse import OptionParser
 from jinja2 import Environment, FileSystemLoader
+from distutils.version import LooseVersion, StrictVersion
 import os
+import subprocess
 import random
 import yaml
 import sys
@@ -34,7 +36,12 @@ labconfig_file = options.lab
 
 scenarioconfig_file = 'default_deployment_config.yaml'
 # Capture our current directory
-TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl/bundle_tpl'
+jujuver = subprocess.check_output(["juju", "--version"])
+
+if LooseVersion(jujuver) >= LooseVersion('2'):
+    TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl/juju2/bundle_tpl'
+else:
+    TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl/bundle_tpl'
 
 #
 # Prepare variables

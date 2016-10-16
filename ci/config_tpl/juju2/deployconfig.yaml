@@ -1,0 +1,48 @@
+opnfv:
+{% set net_prefix = opnfv.spaces_dict.admin.cidr[:-4] %}
+  admNetgway: {{ opnfv.spaces_dict.admin.gateway }}
+  admNetwork: {{ net_prefix }}2
+  admin_password: openstack
+{% if opnfv.storage_dict.ceph is defined %}
+  ceph-disk: {{ opnfv.storage_dict.ceph.disk }}
+{% endif %}
+{% if opnfv.spaces_dict.data is defined %}
+  dataNetwork: {{ opnfv.spaces_dict.data.cidr }}
+{% endif %}
+  domain: {{ lab.racks[0].osdomainname }}
+  ext-port: {{ lab.racks[0]['ext-port'] }}
+  ext_port: {{ lab.racks[0]['ext-port'] }}
+  floating-ip-range: {{ lab.racks[0]['floating-ip-range'] }}
+  interface-enable: {{ lab.racks[0].ifnamelist }}
+  os-domain-name: {{ lab.racks[0].osdomainname }}
+{% if opnfv.spaces_dict.public is defined %}
+  publicNetwork: {{ opnfv.spaces_dict.public.cidr }}
+{% endif %}
+  spaces:
+{% for net in opnfv.spaces %}
+  - bridge: {{ net.bridge }}
+    cidr: {{ net.cidr }}
+    gateway: {{ net.gateway or '' }}
+    type: {{ net.type }}
+    vlan: {{ net.vlan or '' }}
+{% endfor %}
+  storage:
+{% for storage in opnfv.storage %}
+  - disk: {{ storage.disk }}
+    type: {{ storage.type }}
+{% endfor %}
+{% if opnfv.spaces_dict.storage is defined %}
+  storageNetwork: {{ opnfv.spaces_dict.storage.cidr }}
+{% endif %}
+  units: {{ lab.racks[0].nodes|count }}
+  vip:
+    ceilometer: {{ net_prefix }}24
+    cinder: {{ net_prefix }}29
+    dashboard: {{ net_prefix }}21
+    glance: {{ net_prefix }}22
+    heat: {{ net_prefix }}28
+    keystone: {{ net_prefix }}23
+    mysql: {{ net_prefix }}25
+    neutron: {{ net_prefix }}27
+    nova: {{ net_prefix }}26
+    rabbitmq: {{ net_prefix }}20

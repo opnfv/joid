@@ -14,6 +14,8 @@ opnfvdistro=$6
 #copy and download charms
 cp $opnfvsdn/fetch-charms.sh ./fetch-charms.sh
 
+jujuver=`juju --version`
+
 #modify the ubuntu series wants to deploy
 sed -i -- "s|distro=trusty|distro=$opnfvdistro|g" ./fetch-charms.sh
 
@@ -30,9 +32,9 @@ check_status() {
     while [ $retval -eq 0 ]; do
        sleep 30
        juju status > status.txt
-       if [ "$(grep -c "executing" status.txt )" -ge 2 ]; then
-           echo " still executing the reltionship within charms ..."
-           if [ $timeoutiter -ge 60 ]; then
+       if [ "$(grep -c "waiting" status.txt )" -ge 4 ]; then
+           echo " still waiting for machines ..."
+           if [ $timeoutiter -ge 240 ]; then
                retval=1
            fi
            timeoutiter=$((timeoutiter+1))
@@ -101,23 +103,29 @@ if [ "$osdomname" != "None" ]; then
     var=$var"_"publicapi
 fi
 
-#lets generate the bundle for all target using genBundle.py
-python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
-
-#keep the back in cloud for later debugging.
-pastebinit bundles.yaml || true
-
-echo "... Deployment Started ...."
-juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack"
+if [ "$jujuver" -lt "2" ]; then
+    #lets generate the bundle for all target using genBundle.py
+    python genBundle.py  -j 1 -l deployconfig.yaml  -s $var > bundles.yaml
+    #keep the back in cloud for later debugging.
+    pastebinit bundles.yaml || true
+    echo "... Deployment Started ...."
+    juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack"
+else
+    #lets generate the bundle for all target using genBundle.py
+    python genBundle.py -j 2  -l deployconfig.yaml  -s $var > bundles.yaml
+    #keep the back in cloud for later debugging.
+    pastebinit bundles.yaml || true
+    # with JUJU 2.0 bundles has to be deployed only once.
+    juju deploy bundles.yaml --debug
+    sleep 120
+    check_status
+fi
 
 #lets gather the status of deployment once juju-deployer completed.
 juju status --format=tabular
 
 # seeing issue related to number of open files.
-# juju run --service nodes 'echo 2048 | sudo tee /proc/sys/fs/inotify/max_user_instances'
-
 count=`juju status nodes --format=short | grep nodes | wc -l`
-
 c=0
 while [ $c -lt $count ]; do
     juju ssh nodes/$c 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p' || true

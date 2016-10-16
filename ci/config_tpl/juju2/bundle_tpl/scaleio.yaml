@@ -1,0 +1,56 @@
+{% if opnfv.storage_dict.scaleio is defined %}
+    scaleio-mdm:
+      charm: "./{{ ubuntu.release }}/scaleio-mdm"
+      num_units: {{ unit_scaleio_qty() }}
+      options:
+        cluster-mode: 3
+      to:
+{% if os.hyperconverged %}
+{% for unit_id in range(0, 3) %}
+        - "nodes/{{ unit_id }}"
+{% endfor %}
+{% else %}
+        - "nodes/0"
+        - "nodes-compute/0"
+        - "nodes-compute/1"
+{% endif %}
+    scaleio-sds:
+      charm: "./{{ ubuntu.release }}/scaleio-sds"
+      num_units: {{ opnfv.units }}
+      options:
+        protection-domain: 'pd1'
+        device-paths: {{ opnfv.storage_dict.scaleio.disk }}
+      to:
+{% if os.hyperconverged %}
+{% for unit_id in range(0, opnfv.units) %}
+        - "nodes/{{ unit_id }}"
+{% endfor %}
+{% else %}
+{% for unit_id in range(0, opnfv.units) %}
+        - "{{ unit_id }}"
+{% endfor %}
+{% endif %}
+    scaleio-sdc:
+      charm: "./{{ ubuntu.release }}/scaleio-sdc"
+      num_units: {{ opnfv.units }}
+      to:
+{% if os.hyperconverged %}
+{% for unit_id in range(0, opnfv.units) %}
+        - "nodes/{{ unit_id }}"
+{% endfor %}
+{% else %}
+{% for unit_id in range(0, opnfv.units) %}
+        - "{{ unit_id }}"
+{% endfor %}
+{% endif %}
+    scaleio-gw:
+      charm: "./{{ ubuntu.release }}/scaleio-gw"
+      num_units: 1
+      to:
+        - "nodes/0"
+    scaleio-gui:
+      charm: "./{{ ubuntu.release }}/scaleio-gui"
+      num_units: 1
+      to:
+        - "nodes/0"
+{% endif %}

@@ -1,0 +1,77 @@
+
+    ceilometer-agent:
+      charm: ./{{ ubuntu.release }}/ceilometer-agent
+      options:
+        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+{% if os.beta.public_api %}
+        use-internal-endpoints: true
+{% endif %}
+{% if opnfv.storage_dict.ceph is defined %}
+    cinder-ceph:
+      charm: ./{{ ubuntu.release }}/cinder-ceph
+      options:
+{% if opnfv.storage_dict.ceph is defined %}
+        ceph-osd-replication-count: {{ unit_ceph_qty() }}
+{% endif %}
+{% endif %}
+{% if os.network.controller == 'nosdn' %}
+{% include 'neutron-ovs.yaml' %}
+{% elif os.network.controller == 'odl' %}
+    neutron-api-odl:
+      charm: ./{{ ubuntu.release }}/neutron-api-odl
+      options:
+        overlay-network-type: 'vxlan'
+        security-groups: True
+    openvswitch-odl:
+      charm: ./{{ ubuntu.release }}/openvswitch-odl
+      options:
+{% if opnfv.spaces_dict.data is defined %}
+        os-data-network: {{ opnfv.spaces_dict.data.cidr }}
+{% endif %}
+{% elif os.network.controller == 'onos' %}
+    neutron-api-onos:
+      charm: ./{{ ubuntu.release }}/neutron-api-onos
+      options:
+        overlay-network-type: 'vxlan'
+        security-groups: True
+    openvswitch-onos:
+      charm: ./{{ ubuntu.release }}/openvswitch-onos
+      options:
+{% if opnfv.spaces_dict.data is defined %}
+        os-data-network: {{ opnfv.spaces_dict.data.cidr }}
+{% endif %}
+{% if os.network.sfc %}
+        profile: onos-sfc
+{% endif %}
+{% elif os.network.controller == 'ocl' %}
+    ceilometer-contrail:
+      charm: ./{{ ubuntu.release }}/ceilometer-contrail
+      options:
+        install-sources: ppa:opencontrail/trunk-20160812
+    neutron-api-contrail:
+      charm: ./{{ ubuntu.release }}/neutron-api-contrail
+      options:
+        install-sources: ppa:opencontrail/trunk-20160812
+    neutron-contrail:
+      charm: ./{{ ubuntu.release }}/neutron-contrail
+      options:
+        install-sources: ppa:opencontrail/trunk-20160812
+    keepalived:
+      charm: ./{{ ubuntu.release }}/keepalived
+      options:
+        router-id: 1
+{% if os.ha.mode == 'ha' %}
+        virtual-ip: {{ opnfv.vip.keepalived }}
+{% endif %}
+{% endif %}
+{% if os.lxd %}
+    lxd:
+      charm: ./{{ ubuntu.release }}/lxd
+      options:
+{% endif %}
+{% if opnfv.storage_dict.scaleio is defined %}
+    scaleio-openstack:
+      charm: ./{{ ubuntu.release }}/scaleio-openstack
+      options:
+        protection-domains: 'pd1'
+{% endif %}
