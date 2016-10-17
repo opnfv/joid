@@ -14,6 +14,8 @@ opnfvfeature=none
 opnfvdistro=xenial
 opnfvarch=amd64
 
+jujuver=`juju --version`
+
 read_config() {
     opnfvrel=`grep release: deploy.yaml | cut -d ":" -f2`
     openstack=`grep openstack: deploy.yaml | cut -d ":" -f2`
@@ -176,8 +178,15 @@ echo "...... deployment finished  ......."
 ./openstack.sh "$opnfvsdn" "$opnfvlab" "$opnfvdistro" "$openstack" || true
 
 # creating heat domain after puching the public API into /etc/hosts
-status=`juju action do heat/0 domain-setup`
-echo $status
+
+if [ "$jujuver" > "2" ]; then
+    status=`juju run-action do heat/0 domain-setup`
+    echo $status
+else
+    status=`juju action do heat/0 domain-setup`
+    echo $status
+fi
+
 
 sudo ../juju/get-cloud-images || true
 ../juju/joid-configure-openstack || true

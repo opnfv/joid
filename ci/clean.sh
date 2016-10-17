@@ -3,12 +3,13 @@
 set -ex
 
 if [ ! -d environments.yaml ]; then
-    cp ~/joid_config/environments.yaml ./environments.yaml
+    cp ~/joid_config/environments.yaml ./environments.yaml || true
+    cp ~/.juju/environments.yaml ./environments.yaml || true
 fi
 
 jujuver=`juju --version`
 
-if [ "$jujuver" -ge "2" ]; then
+if [ "$jujuver" > "2" ]; then
     controllername=`awk 'NR==1{print $2}' environments.yaml`
     cloudname=`awk 'NR==1{print $2}' environments.yaml`
     juju kill-controller $controllername --timeout 10s -y || true

@@ -361,7 +361,7 @@ fi
 # Add the cloud and controller credentials for MAAS for that lab.
 jujuver=`juju --version`
 
-if [ "$jujuver" -ge "2" ]; then
+if [ "$jujuver" > "2" ]; then
     addcloud
     addcredential
 fi

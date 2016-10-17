@@ -6,7 +6,7 @@ set -ex
 
 jujuver=`juju --version`
 
-if [ "$jujuver" -lt "2" ]; then
+if [ "$jujuver" < "2" ]; then
   juju bootstrap --debug --to bootstrap.maas
   sleep 5
   #disable juju gui until xenial charms are in charm store.

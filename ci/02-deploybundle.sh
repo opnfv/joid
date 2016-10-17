@@ -103,7 +103,7 @@ if [ "$osdomname" != "None" ]; then
     var=$var"_"publicapi
 fi
 
-if [ "$jujuver" -lt "2" ]; then
+if [ "$jujuver" < "2" ]; then
     #lets generate the bundle for all target using genBundle.py
     python genBundle.py  -j 1 -l deployconfig.yaml  -s $var > bundles.yaml
     #keep the back in cloud for later debugging.
