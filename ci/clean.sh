@@ -16,6 +16,7 @@ if [[ "$jujuver" > "2" ]]; then
     rm -rf precise
     rm -rf trusty
     rm -rf xenial
+    sudo sysctl -w vm.drop_caches=3
 elif [ -d $HOME/.juju/environments ]; then
     echo " " > status.txt
     juju status  &>>status.txt || true
@@ -33,5 +34,6 @@ elif [ -d $HOME/.juju/environments ]; then
     rm -rf $HOME/.juju/.deployer-store-cache
     rm -rf $HOME/.juju/environments
     rm -rf $HOME/.juju/ssh
+    sudo sysctl -w vm.drop_caches=3
 fi
 

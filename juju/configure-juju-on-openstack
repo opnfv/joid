@@ -27,7 +27,7 @@ set -ex
 
 echo "This command is run to launch the first instance on a new Orange box Openstack deployment"
 
-source ~/nova.rc
+source ~/joid_config/admin-openrc
 associated=0
 
 #Create a floating IP for the instance

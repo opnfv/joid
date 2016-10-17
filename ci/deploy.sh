@@ -184,7 +184,7 @@ echo "...... deployment finished  ......."
 # creating heat domain after puching the public API into /etc/hosts
 
 if [[ "$jujuver" > "2" ]]; then
-    status=`juju run-action do heat/0 domain-setup`
+    status=`juju run-action heat/0 domain-setup`
     echo $status
 else
     status=`juju action do heat/0 domain-setup`

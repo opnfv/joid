@@ -22,40 +22,7 @@ echo "This command is run to configure an Orange-Box Openstack deployment"
 
 NEUTRON_FIXED_NET_CIDR="192.168.16.0/22"
 
-#Check if VIP is set on keystone
-#keystone_VIP=`juju get-config keystone| python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"settings\"][\"vip\"][\"value\"]"||true`
-keystone_VIP=`juju get keystone| python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"settings\"][\"vip\"][\"value\"]"||true`
-
-keystoneIp() {
-    KEYSTONE=$(juju status keystone |grep public-address|sed -- 's/.*\: //')
-    if [ $(echo $KEYSTONE|wc -w) == 1 ];then
-        echo $KEYSTONE
-    else
-        juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['vip']['value']"
-    fi
-}
-
-if [ -n "$keystone_VIP" ]
-then
-    keystone=$keystone_VIP
-else
-    #if os-public-hostname is set and not VIP assume we need to use those at OpenStack endpoints.
-    keystone=$(keystoneIp)
-    keystone_PUBENDPOINT=`juju get keystone| python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"settings\"][\"os-public-hostname\"][\"value\"]"||true`
-fi
-
-
-echo "export SERVICE_ENDPOINT=http://$keystone:35357/v2.0/
-unset SERVICE_TOKEN
-unset SERVICE_ENDPOINT
-export OS_AUTH_URL=http://$keystone:35357/v2.0/
-export OS_USERNAME=$(juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"settings\"][\"admin-user\"][\"value\"]")
-export OS_PASSWORD=$(juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"settings\"][\"admin-password\"][\"value\"]")
-export OS_TENANT_NAME=admin
-export OS_REGION_NAME=$(juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"settings\"][\"region\"][\"value\"]")
-" > ~/nova.rc
-
-source ~/nova.rc
+source ~/joid_config/admin-openrc
 
 # Determine the tenant id for the configured tenant name.
 export TENANT_ID="$(openstack project list | grep $OS_TENANT_NAME | awk '{ print $2 }')"

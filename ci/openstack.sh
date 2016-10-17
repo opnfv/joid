@@ -14,6 +14,8 @@ opnfvlab=$2
 opnfvdistro=$3
 opnfvos=$4
 
+jujuver=`juju --version`
+
 if [ -f ./deployconfig.yaml ];then
     EXTERNAL_NETWORK=`grep floating-ip-range deployconfig.yaml | cut -d ' ' -f 4 `
 
@@ -45,23 +47,39 @@ update_gw_mac() {
     ## get gateway mac
     EXTNET_GW_MAC=$(juju ssh nova-compute/0 "arp -a ${EXTNET_GW} | grep -Eo '([0-9a-fA-F]{2})(([/\s:-][0-9a-fA-F]{2}){5})'")
     ## set external gateway mac in onos
-    juju set onos-controller gateway-mac=$EXTNET_GW_MAC
+    if [[ "$jujuver" < "2" ]]; then
+        juju set onos-controller gateway-mac=$EXTNET_GW_MAC
+    else
+        juju config onos-controller gateway-mac=$EXTNET_GW_MAC
+    fi
 }
 
 unitAddress() {
-        juju status | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"services\"][\"$1\"][\"units\"][\"$1/$2\"][\"public-address\"]" 2> /dev/null
+    if [[ "$jujuver" < "2" ]]; then
+        juju status --format yaml | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"services\"][\"$1\"][\"units\"][\"$1/$2\"][\"public-address\"]" 2> /dev/null
+    else
+        juju status --format yaml | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"applications\"][\"$1\"][\"units\"][\"$1/$2\"][\"public-address\"]" 2> /dev/null
+    fi
 }
 
 unitMachine() {
-        juju status | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"services\"][\"$1\"][\"units\"][\"$1/$2\"][\"machine\"]" 2> /dev/null
+    if [[ "$jujuver" < "2" ]]; then
+        juju status --format yaml | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"services\"][\"$1\"][\"units\"][\"$1/$2\"][\"machine\"]" 2> /dev/null
+    else
+        juju status --format yaml | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"applications\"][\"$1\"][\"units\"][\"$1/$2\"][\"machine\"]" 2> /dev/null
+    fi
 }
 
 keystoneIp() {
-    KEYSTONE=$(juju status keystone |grep public-address|sed -- 's/.*\: //')
-    if [ $(echo $KEYSTONE|wc -w) == 1 ];then
-        echo $KEYSTONE
+    KEYSTONE=$(juju status keystone --format=short | grep " keystone")
+    if [ $(echo $KEYSTONE|wc -l) == 1 ];then
+        unitAddress keystone 0
     else
-        juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['vip']['value']"
+        if [[ "$jujuver" < "2" ]]; then
+            juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['vip']['value']"
+        else
+            juju config keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['vip']['value']"
+        fi
     fi
 }
 
@@ -69,9 +87,14 @@ keystoneIp() {
 create_openrc() {
     mkdir -m 0700 -p cloud
     keystoneIp=$(keystoneIp)
-    adminPasswd=$(juju get keystone | grep admin-password -A 5 | grep value | awk '{print $2}' 2> /dev/null)
-    configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v2.0 RegionOne > cloud/admin-openrc
-    chmod 0600 cloud/admin-openrc
+    if [[ "$jujuver" < "2" ]]; then
+        adminPasswd=$(juju get keystone | grep admin-password -A 5 | grep value | awk '{print $2}' 2> /dev/null)
+    else
+        adminPasswd=$(juju config keystone | grep admin-password -A 5 | grep value | awk '{print $2}' 2> /dev/null)
+    fi
+
+    configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v2.0 RegionOne > ~/joid_config/admin-openrc
+    chmod 0600 ~/joid_config/admin-openrc
 }
 
 configOpenrc() {
@@ -103,8 +126,14 @@ fi
 
 if [ "$API_FQDN" != "None" ]; then
     # Push api fqdn local ip to all /etc/hosts
-    API_FQDN=$(juju get keystone | python -c "import yaml; import sys;\
-        print yaml.load(sys.stdin)['settings']['os-public-hostname']['value']")
+    if [[ "$jujuver" < "2" ]]; then
+        API_FQDN=$(juju get keystone | python -c "import yaml; import sys;\
+            print yaml.load(sys.stdin)['settings']['os-public-hostname']['value']")
+    else
+        API_FQDN=$(juju config keystone | python -c "import yaml; import sys;\
+            print yaml.load(sys.stdin)['settings']['os-public-hostname']['value']")
+    fi
+
 
     KEYSTONEIP=$(keystoneIp)
     juju run --all "if grep $API_FQDN /etc/hosts > /dev/null; then \
