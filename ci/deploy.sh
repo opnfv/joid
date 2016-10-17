@@ -137,6 +137,10 @@ deploy() {
         createresource
     fi
 
+    if [[ "$jujuver" > "2" ]]; then
+        juju model-config default-series=$opnfvdistro enable-os-refresh-update=false enable-os-upgrade=false
+    fi
+
     #bootstrap the node
     ./01-bootstrap.sh
 
@@ -179,7 +183,7 @@ echo "...... deployment finished  ......."
 
 # creating heat domain after puching the public API into /etc/hosts
 
-if [ "$jujuver" > "2" ]; then
+if [[ "$jujuver" > "2" ]]; then
     status=`juju run-action do heat/0 domain-setup`
     echo $status
 else

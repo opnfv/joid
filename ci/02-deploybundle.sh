@@ -103,18 +103,15 @@ if [ "$osdomname" != "None" ]; then
     var=$var"_"publicapi
 fi
 
-if [ "$jujuver" < "2" ]; then
-    #lets generate the bundle for all target using genBundle.py
-    python genBundle.py  -j 1 -l deployconfig.yaml  -s $var > bundles.yaml
-    #keep the back in cloud for later debugging.
-    pastebinit bundles.yaml || true
+#lets generate the bundle for all target using genBundle.py
+python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
+#keep the back in cloud for later debugging.
+pastebinit bundles.yaml || true
+
+if [[ "$jujuver" < "2" ]]; then
     echo "... Deployment Started ...."
     juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack"
 else
-    #lets generate the bundle for all target using genBundle.py
-    python genBundle.py -j 2  -l deployconfig.yaml  -s $var > bundles.yaml
-    #keep the back in cloud for later debugging.
-    pastebinit bundles.yaml || true
     # with JUJU 2.0 bundles has to be deployed only once.
     juju deploy bundles.yaml --debug
     sleep 120

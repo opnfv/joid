@@ -15,7 +15,7 @@ sudo apt-get update -y
 sudo apt-get dist-upgrade -y
 sudo apt-get install openssh-server bzr git maas-deployer juju juju-deployer \
              maas-cli python-pip python-psutil python-openstackclient \
-             python-congressclient gsutil charm-tools pastebinit -y
+             python-congressclient gsutil charm-tools pastebinit juju-core -y
 
 #first parameter should be custom and second should be either
 # absolute location of file (including file name) or url of the
@@ -147,6 +147,21 @@ juju init -f || true
 #
 # MAAS deploy
 #
+
+installmaas(){
+    sudo apt-get install maas -y
+
+
+}
+
+configuremaas(){
+    sudo maas createadmin --username=ubuntu --email=ubuntu@ubuntu.com
+}
+
+addnodes(){
+
+
+}
 
 sudo maas-deployer -c deployment.yaml -d --force
 
@@ -321,7 +336,6 @@ elif [ -e ~/.juju/deployconfig.yaml ]; then
   cp ~/.juju/deployconfig.yaml ./deployconfig.yaml
 fi
 
-if [ -e ./deployconfig.yaml ]; then
   enableiflist=`grep "interface-enable" deployconfig.yaml | cut -d ' ' -f 4 `
   datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
   stornet=`grep "storageNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
@@ -362,7 +376,7 @@ fi
 # Add the cloud and controller credentials for MAAS for that lab.
 jujuver=`juju --version`
 
-if [[ "$jujuver" > "2" ]]; then
+if [ "$jujuver" > "2" ]; then
     addcloud
     addcredential
 fi

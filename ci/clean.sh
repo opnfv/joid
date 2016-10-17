@@ -9,7 +9,7 @@ fi
 
 jujuver=`juju --version`
 
-if [ "$jujuver" > "2" ]; then
+if [[ "$jujuver" > "2" ]]; then
     controllername=`awk 'NR==1{print $2}' environments.yaml`
     cloudname=`awk 'NR==1{print $2}' environments.yaml`
     juju kill-controller $controllername --timeout 10s -y || true
