@@ -21,9 +21,11 @@
 {% if os.network.l2_population %}
     #l2-population: true
 {% endif %}
+    region: {{ os.region }}
 {% if ubuntu.release == 'trusty' %}
     #source: "cloud:{{ ubuntu.release }}-{{ os.release }}"
 {% endif %}
+    #openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
 {% if ubuntu.release == 'xenial' %}
 {% if os.release == 'newton' %}
     #source: "cloud:{{ ubuntu.release }}-{{ os.release }}"

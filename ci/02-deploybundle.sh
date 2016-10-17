@@ -110,25 +110,34 @@ pastebinit bundles.yaml || true
 
 if [[ "$jujuver" < "2" ]]; then
     echo "... Deployment Started ...."
-    juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack"
+    juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack"-nodes
+    count=`juju status nodes --format=short | grep nodes | wc -l`
+    c=0
+    while [ $c -lt $count ]; do
+        juju ssh nodes/$c 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p' || true
+        juju ssh nodes-compute/$c 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p' || true
+        juju ssh nodes/$c 'echo 2048 | sudo tee /proc/sys/fs/inotify/max_user_instances' || true
+        juju ssh nodes-compute/$c 'echo 2048 | sudo tee /proc/sys/fs/inotify/max_user_instances' || true
+        let c+=1
+    done
+
+    juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$openstack" || true
 else
     # with JUJU 2.0 bundles has to be deployed only once.
     juju deploy bundles.yaml --debug
     sleep 120
     check_status
+    # seeing issue related to number of open files.
+    count=`juju status nodes --format=short | grep nodes | wc -l`
+    c=0
+    while [ $c -lt $count ]; do
+        juju ssh nodes/$c 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p' || true
+        juju ssh nodes-compute/$c 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p' || true
+        juju ssh nodes/$c 'echo 2048 | sudo tee /proc/sys/fs/inotify/max_user_instances' || true
+        juju ssh nodes-compute/$c 'echo 2048 | sudo tee /proc/sys/fs/inotify/max_user_instances' || true
+        let c+=1
+    done
 fi
 
 #lets gather the status of deployment once juju-deployer completed.
 juju status --format=tabular
-
-# seeing issue related to number of open files.
-count=`juju status nodes --format=short | grep nodes | wc -l`
-c=0
-while [ $c -lt $count ]; do
-    juju ssh nodes/$c 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p' || true
-    juju ssh nodes-compute/$c 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p' || true
-    juju ssh nodes/$c 'echo 2048 | sudo tee /proc/sys/fs/inotify/max_user_instances' || true
-    juju ssh nodes-compute/$c 'echo 2048 | sudo tee /proc/sys/fs/inotify/max_user_instances' || true
-    let c+=1
-done
-

@@ -137,12 +137,12 @@ deploy() {
         createresource
     fi
 
+    #bootstrap the node
+    ./01-bootstrap.sh
+
     if [[ "$jujuver" > "2" ]]; then
         juju model-config default-series=$opnfvdistro enable-os-refresh-update=false enable-os-upgrade=false
     fi
-
-    #bootstrap the node
-    ./01-bootstrap.sh
 
     #case default deploy the opnfv platform:
     ./02-deploybundle.sh $opnfvtype $openstack $opnfvlab $opnfvsdn $opnfvfeature $opnfvdistro
