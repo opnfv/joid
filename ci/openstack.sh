@@ -71,8 +71,7 @@ unitMachine() {
 }
 
 keystoneIp() {
-    KEYSTONE=$(juju status keystone --format=short | grep " keystone")
-    if [ $(echo $KEYSTONE|wc -l) == 1 ];then
+    if [ $(juju status keystone --format=short | grep " keystone"|wc -l) == 1 ];then
         unitAddress keystone 0
     else
         if [[ "$jujuver" < "2" ]]; then
@@ -93,13 +92,16 @@ create_openrc() {
         adminPasswd=$(juju config keystone | grep admin-password -A 5 | grep value | awk '{print $2}' 2> /dev/null)
     fi
 
-    configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v2.0 RegionOne > ~/joid_config/admin-openrc
+    configOpenrc admin $adminPasswd admin http://$keystoneIp:35357/v2.0 RegionOne > ~/joid_config/admin-openrc
     chmod 0600 ~/joid_config/admin-openrc
 }
 
 configOpenrc() {
 if [ "$API_FQDN" != "None" ]; then
     cat <<-EOF
+        export SERVICE_ENDPOINT=$4
+        unset SERVICE_TOKEN
+        unset SERVICE_ENDPOINT
         export OS_USERNAME=$1
         export OS_PASSWORD=$2
         export OS_TENANT_NAME=$3
@@ -114,6 +116,9 @@ if [ "$API_FQDN" != "None" ]; then
 EOF
 else
     cat <<-EOF
+        export SERVICE_ENDPOINT=$4
+        unset SERVICE_TOKEN
+        unset SERVICE_ENDPOINT
         export OS_USERNAME=$1
         export OS_PASSWORD=$2
         export OS_TENANT_NAME=$3
@@ -159,7 +164,7 @@ fi
 # Create an load openrc
 create_openrc
 
-. ./cloud/admin-openrc
+. ~/joid_config/admin-openrc
 
 echo "...... deploy public api proxy ......"
 
