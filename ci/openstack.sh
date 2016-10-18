@@ -229,13 +229,15 @@ elif [ "nosdn" == "$opnfvsdn" ]; then
     neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net \
                                              --router:external=True \
                                              --provider:network_type flat \
-                                              --provider:physical_network external
+                                              --provider:physical_network physnet1
 
     neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net \
        --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
        --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
 else
-    neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net --router:external=True
+    neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net --router:external=True \
+                                                         --provider:physical_network physnet1
+
     neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net \
        --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
        --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET

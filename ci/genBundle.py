@@ -200,6 +200,10 @@ if 'trusty' in extra:
     config['ubuntu']['release'] = 'trusty'
     if 'liberty' in extra:
         config['os']['release'] = 'liberty'
+if 'xenial' in extra:
+    config['ubuntu']['release'] = 'xenial'
+    if 'newton' in extra:
+        config['os']['release'] = 'newton'
 if 'dishypcon' in extra:
     config['os']['hyperconverged'] = False
 

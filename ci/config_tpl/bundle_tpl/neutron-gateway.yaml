@@ -11,10 +11,10 @@
 {% if os.network.controller == 'nosdn' %}
 {% if opnfv.ext_port is defined  %}
 {% if opnfv.data_port is defined  %}
-        bridge-mappings: physnet1:br-data external:br-ex
-        data-port: br-data:{{ opnfv.data_port }} br-ex:{{ opnfv.ext_port }}
+        bridge-mappings: physnet1:br-ex physnet2:br-data
+        data-port: br-ex:{{ opnfv.ext_port }} br-data:{{ opnfv.data_port }}
 {% else %}
-        bridge-mappings: external:br-ex
+        bridge-mappings: physnet1:br-ex
         data-port: br-ex:{{ opnfv.ext_port }}
 {% endif %}
 {% endif %}
@@ -35,7 +35,13 @@
 {% elif os.network.controller == 'odl' %}
         plugin: ovs-odl
 {% if opnfv.ext_port is defined  %}
-        ext-port: {{ opnfv.ext_port }}
+{% if opnfv.data_port is defined  %}
+        bridge-mappings: physnet1:br-ex physnet2:br-data
+        data-port: br-ex:{{ opnfv.ext_port }} br-data:{{ opnfv.data_port }}
+{% else %}
+        bridge-mappings: physnet1:br-ex
+        data-port: br-ex:{{ opnfv.ext_port }}
+{% endif %}
 {% endif %}
 {% else %}
 {% if opnfv.ext_port is defined  %}

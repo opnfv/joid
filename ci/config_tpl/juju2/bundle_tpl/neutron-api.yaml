@@ -18,14 +18,15 @@
         vip: {{ opnfv.vip.neutron }}
 {% endif %}
 {% if os.network.controller == 'nosdn' %}
-        flat-network-providers: "*"
+        flat-network-providers: physnet1
 {% if os.network.dvr %}
         overlay-network-type: vxlan
 {% endif %}
 {% elif os.network.controller == 'odl' %}
         manage-neutron-plugin-legacy-mode: False
+        flat-network-providers: physnet1
 {% elif os.network.controller == 'onos' %}
-        flat-network-providers: "*"
+        flat-network-providers: physnet1
         manage-neutron-plugin-legacy-mode: False
 {% endif %}
 {% if os.beta.public_api %}
