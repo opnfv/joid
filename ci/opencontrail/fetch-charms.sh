@@ -63,6 +63,7 @@ git clone -b stable/16.07 https://github.com/openstack/charm-neutron-api.git $di
 #charm pull cs:~openstack-charmers-next/lxd xenial/lxd
 
 # Controller specific charm
+bzr branch lp:~charmers/charms/trusty/cassandra/trunk $distro/cassandra
 git clone https://git.opnfv.org/ovno.git
 cd ovno/charms/trusty
 mv * ../../../$distro/
