@@ -31,24 +31,24 @@ source ~/joid_config/admin-openrc
 associated=0
 
 #Create a floating IP for the instance
-if ( nova list | grep jumpserver2 >/dev/null )
+if ( openstack server list | grep jumpserver2 >/dev/null )
 then
     associated=1
-    FLOAT_IP="$(nova list | grep jumpserver2 | awk '{ print $13 }')"
+    FLOAT_IP="$(openstack server list | grep jumpserver2 | awk '{ print $13 }')"
 else
     FLOAT_IP="$(openstack ip floating create ext-net -c ip -f value)"
 fi
 
 #Launch an instance
-NET_UUID="$(nova net-list | grep private | awk '{ print $2 }')"
-IMAGE_UUID="$(nova image-list | grep "Xenial x86_64" | awk '{ print $2 }')"
-IMAGE_LXD_UUID="$(nova image-list | grep "Xenial LXC x86_64" | awk '{ print $2 }')"
-nova list | grep jumpserver2 ||nova boot --flavor m1.small --key-name default --image $IMAGE_UUID --nic net-id=$NET_UUID --security-group default jumpserver2
+NET_UUID="$(openstack network list | grep private | awk '{ print $2 }')"
+IMAGE_UUID="$(openstack image list | grep "Xenial x86_64" | awk '{ print $2 }')"
+IMAGE_LXD_UUID="$(openstack image list | grep "Xenial LXC x86_64" | awk '{ print $2 }')"
+openstack server list | grep jumpserver2 ||openstack server create --flavor m1.small --key-name default --image $IMAGE_UUID --nic net-id=$NET_UUID --security-group default jumpserver2
 # checking jumpserver2 state until active ..
-INST_STATE=` nova show jumpserver2 | grep status | awk '{print $4}'`
+INST_STATE=` openstack server show jumpserver2 | grep status | awk '{print $4}'`
 while [ $INST_STATE != "ACTIVE" ];
 do
-    INST_STATE=` nova show jumpserver2 | grep status | awk '{print $4}'`
+    INST_STATE=` openstack server show jumpserver2 | grep status | awk '{print $4}'`
     echo "Jumpserver2 instance state is: "$INST_STATE" waiting to be active"
     sleep 1
 done
@@ -56,7 +56,7 @@ sleep 6
 
 #Associate the floating IP with the new instance
 if [ "$associated" -eq "0" ]; then
-   nova floating-ip-associate jumpserver2 $FLOAT_IP || true
+   openstack ip floating add $FLOAT_IP jumpserver2 || true
    sleep 90
 fi
 
@@ -109,8 +109,8 @@ $SSH mkdir -p juju-meta
 for s in precise trusty xenial win2012r2
 do
 #Create juju metadata
-    IMAGE_UUID="$(nova image-list | grep -i "$s x86_64" | awk '{ print $2 }')"
-    IMAGE_LXC_UUID="$(nova image-list | grep -i "$s LXC x86_64" | awk '{ print $2 }')"
+    IMAGE_UUID="$(openstack image list | grep -i "$s x86_64" | awk '{ print $2 }')"
+    IMAGE_LXC_UUID="$(openstack image list | grep -i "$s LXC x86_64" | awk '{ print $2 }')"
     [ -n "$IMAGE_UUID" ] &&  $SSH "juju metadata generate-image -a amd64 -u $OS_AUTH_URL -i $IMAGE_UUID -r $OS_REGION_NAME -d juju-meta/ -s $s"
 done
 

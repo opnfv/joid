@@ -62,43 +62,33 @@ neutron security-group-rule-list | grep "3389/tcp" > /dev/null 2>&1 || neutron s
 echo "Uploading default SSH key"
 
 #Upload a default SSH key
-nova keypair-list | grep default  > /dev/null 2>&1 || nova  keypair-add --pub-key ~/.ssh/id_rsa.pub default > /dev/null 2>&1
+openstack keypair list | grep default  > /dev/null 2>&1 || openstack keypair create --public-key ~/.ssh/id_rsa.pub default > /dev/null 2>&1
 
 echo "Modifying the flavors to be better sized for the Orange Box"
 
 #Modify the flavours to fit better on the OB
 #nova flavor-create FLAVOR_NAME FLAVOR_ID RAM_IN_MB ROOT_DISK_IN_GB NUMBER_OF_VCPUS
-nova flavor-delete m1.tiny > /dev/null 2>&1
-nova flavor-delete m1.small > /dev/null 2>&1
-nova flavor-delete m1.medium > /dev/null 2>&1
-nova flavor-delete m1.large > /dev/null 2>&1
-nova flavor-delete m1.xlarge > /dev/null 2>&1
-nova flavor-create --is-public true m1.tiny auto 512 5 1 > /dev/null 2>&1
-nova flavor-create --is-public true m1.small auto 1024 10 1 > /dev/null 2>&1
-nova flavor-create --is-public true m1.medium auto 2048 10 2 > /dev/null 2>&1
-nova flavor-create --is-public true m1.large auto 3072 10 2 > /dev/null 2>&1
-## need extra for windows image (15g)
-nova flavor-create --is-public true m1.xlarge auto 8096 30 4  > /dev/null 2>&1
+openstack flavor delete m1.tiny > /dev/null 2>&1
+openstack flavor delete m1.small > /dev/null 2>&1
+openstack flavor delete m1.medium > /dev/null 2>&1
+openstack flavor delete m1.large > /dev/null 2>&1
+openstack flavor delete m1.xlarge > /dev/null 2>&1
+openstack flavor create --ram 512 --disk 5 --vcpus 1 --public m1.tiny > /dev/null 2>&1
+openstack flavor create --ram 1024 --disk 10 --vcpus 1 --public m1.small > /dev/null 2>&1
+openstack flavor create --ram 2048 --disk 10 --vcpus 2 --public m1.medium > /dev/null 2>&1
+openstack flavor create --ram 3072 --disk 10 --vcpus 2 --public m1.large > /dev/null 2>&1
+# need extra for windows image (15g)
+openstack flavor create --ram 8096 --disk 30 --vcpus 4 --public m1.xlarge > /dev/null 2>&1
 
 echo "modifying default quotas for admin user"
 
 #Modify quotas for the tenant to allow large deployments
-nova quota-update --instances 400 $TENANT_ID
-nova quota-update --cores 800 $TENANT_ID
-nova quota-update --ram 404800 $TENANT_ID
-nova quota-update --security-groups 4000 $TENANT_ID
-nova quota-update --floating-ips -1 $TENANT_ID
-nova quota-update --security-group-rules -1 $TENANT_ID
+openstack quota set --instances 400 --cores 800 --ram 404800 --secgroups 4000 --floating-ips -1 --secgroup-rules -1 $TENANT_ID
 
 ### need to find how to change quota for the project not the tenant
 
 ### modify default quota the same way..
-nova quota-class-update --instances 400 $TENANT_ID
-nova quota-class-update --cores 800 $TENANT_ID
-nova quota-class-update --ram 404800 $TENANT_ID
-nova quota-class-update --security-groups 4000 $TENANT_ID
-nova quota-class-update --floating-ips -1 $TENANT_ID
-nova quota-class-update --security-group-rules -1 $TENANT_ID
+openstack quota set --class --instances 400 --cores 800 --ram 404800 --secgroups 4000 --floating-ips -1 --secgroup-rules -1 $TENANT_ID
 
 echo "Uploading images to glance"
 
