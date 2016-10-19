@@ -68,17 +68,12 @@ echo "Modifying the flavors to be better sized for the Orange Box"
 
 #Modify the flavours to fit better on the OB
 #nova flavor-create FLAVOR_NAME FLAVOR_ID RAM_IN_MB ROOT_DISK_IN_GB NUMBER_OF_VCPUS
-openstack flavor delete m1.tiny > /dev/null 2>&1
-openstack flavor delete m1.small > /dev/null 2>&1
-openstack flavor delete m1.medium > /dev/null 2>&1
-openstack flavor delete m1.large > /dev/null 2>&1
-openstack flavor delete m1.xlarge > /dev/null 2>&1
-openstack flavor create --ram 512 --disk 5 --vcpus 1 --public m1.tiny > /dev/null 2>&1
-openstack flavor create --ram 1024 --disk 10 --vcpus 1 --public m1.small > /dev/null 2>&1
-openstack flavor create --ram 2048 --disk 10 --vcpus 2 --public m1.medium > /dev/null 2>&1
-openstack flavor create --ram 3072 --disk 10 --vcpus 2 --public m1.large > /dev/null 2>&1
+openstack flavor show m1.tiny > /dev/null 2>&1 || openstack flavor create --ram 512 --disk 5 --vcpus 1 --public m1.tiny > /dev/null 2>&1
+openstack flavor show m1.small > /dev/null 2>&1 || openstack flavor create --ram 1024 --disk 10 --vcpus 1 --public m1.small > /dev/null 2>&1
+openstack flavor show m1.medium > /dev/null 2>&1 || openstack flavor create --ram 2048 --disk 10 --vcpus 2 --public m1.medium > /dev/null 2>&1
+openstack flavor show m1.large > /dev/null 2>&1 || openstack flavor create --ram 3072 --disk 10 --vcpus 2 --public m1.large > /dev/null 2>&1
 # need extra for windows image (15g)
-openstack flavor create --ram 8096 --disk 30 --vcpus 4 --public m1.xlarge > /dev/null 2>&1
+openstack flavor show m1.xlarge > /dev/null 2>&1 || openstack flavor create --ram 8096 --disk 30 --vcpus 4 --public m1.xlarge > /dev/null 2>&1
 
 echo "modifying default quotas for admin user"
 
