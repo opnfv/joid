@@ -196,14 +196,14 @@ if 'radosgwcluster' in extra:
     config['os']['beta']['hacluster_ceph_radosgw'] = True
 if 'hugepages' in extra:
     config['os']['beta']['huge_pages'] = True
+if 'mitaka' in extra:
+    config['os']['release'] = 'mitaka'
 if 'trusty' in extra:
     config['ubuntu']['release'] = 'trusty'
     if 'liberty' in extra:
         config['os']['release'] = 'liberty'
 if 'xenial' in extra:
     config['ubuntu']['release'] = 'xenial'
-    if 'newton' in extra:
-        config['os']['release'] = 'newton'
 if 'dishypcon' in extra:
     config['os']['hyperconverged'] = False
 
