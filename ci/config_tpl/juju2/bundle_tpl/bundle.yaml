@@ -39,8 +39,12 @@
 {% include 'cinder.yaml' %}
 {% include 'glance.yaml' %}
 {% if opnfv.storage_dict.ceph is defined %}
+{% if os.service.promise %}
 {% include 'opnfv-promise.yaml' %}
+{% endif %}
+{% if os.service.congress %}
 {% include 'congress.yaml' %}
+{% endif %}
 {% endif %}
 {% include 'keystone.yaml' %}
 {% include 'nova-cloud-controller.yaml' %}
