@@ -13,6 +13,7 @@ sudo apt-add-repository ppa:maas/stable -y
 sudo apt-add-repository cloud-archive:mitaka -y
 sudo apt-get update -y
 sudo apt-get dist-upgrade -y
+sudo pip install --upgrade pip
 sudo apt-get install openssh-server bzr git maas-deployer juju juju-deployer \
              maas-cli python-pip python-psutil python-openstackclient \
              python-congressclient gsutil charm-tools pastebinit -y

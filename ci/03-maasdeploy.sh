@@ -5,17 +5,27 @@ set -ex
 virtinstall=0
 labname=$1
 
+API_SERVER="http://192.168.122.1/MAAS/api/2.0"
+PROFILE=ubuntu
+MY_UPSTREAM_DNS=192.168.122.1
+SSH_KEY=`cat ~/.ssh/id_rsa.pub`
+URL=https://images.maas.io/ephemeral-v2/daily/
+KEYRING_FILE=/usr/share/keyrings/ubuntu-cloudimage-keyring.gpg
+SOURCE_ID=1
+FABRIC_ID=1
+VLAN_TAG=""
+PRIMARY_RACK_CONTROLLER="192.168.122.1"
+
 #install the packages needed
-sudo apt-add-repository ppa:opnfv-team/proposed -y
-sudo apt-add-repository ppa:maas-deployers/stable -y
 sudo apt-add-repository ppa:juju/stable -y
 sudo apt-add-repository ppa:maas/stable -y
-sudo apt-add-repository cloud-archive:mitaka -y
+sudo apt-add-repository cloud-archive:newton -y
 sudo apt-get update -y
 sudo apt-get dist-upgrade -y
-sudo apt-get install openssh-server bzr git maas-deployer juju juju-deployer \
+sudo pip install --upgrade pip
+sudo apt-get install openssh-server bzr git juju virtinst qemu-kvm libvirt-bin \
              maas-cli python-pip python-psutil python-openstackclient \
-             python-congressclient gsutil charm-tools pastebinit juju-core -y
+             python-congressclient gsutil charm-tools pastebinit -y
 
 #first parameter should be custom and second should be either
 # absolute location of file (including file name) or url of the
@@ -107,7 +117,6 @@ echo "... Deployment of maas Started ...."
 
 # define the pool and try to start even though its already exist.
 # For fresh install this may or may not there.
-sudo apt-get install libvirt-bin -y
 sudo adduser $USER libvirtd
 sudo virsh pool-define-as default --type dir --target /var/lib/libvirt/images/ || true
 sudo virsh pool-start default || true
@@ -123,10 +132,6 @@ if [ "$virtinstall" -eq 1 ]; then
     sudo virsh net-start default
 fi
 
-# Ensure virsh can connect without ssh auth
-cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
-
-
 #
 # Cleanup, juju init and config backup
 #
@@ -141,29 +146,94 @@ fi
 mkdir ~/joid_config/ || true
 mkdir ~/.juju/ || true
 
-# Init Juju
-juju init -f || true
+sudo mkdir -p ~maas
+sudo chown maas:maas ~maas
+sudo -u maas ssh-keygen -N '' -f ~maas/.ssh/id_rsa
+# Ensure virsh can connect without ssh auth
+sudo cat ~maas/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+sudo cat HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+sudo -u maas virsh -c qemu+ssh://ubuntu@192.168.122.1/system list --all
 
 #
 # MAAS deploy
 #
 
 installmaas(){
-    sudo apt-get install maas -y
-
-
+    sudo apt-get install maas maas-region-controller -y
 }
 
+#
+# MAAS config
+#
 configuremaas(){
-    sudo maas createadmin --username=ubuntu --email=ubuntu@ubuntu.com
+    sudo maas createadmin --username=ubuntu --email=ubuntu@ubuntu.com --password=ubuntu
+    API_KEY=`sudo maas-region apikey --username=ubuntu`
+    maas login $PROFILE $API_SERVER $API_KEY
+    maas $PROFILE maas set-config name='main_archive' value='http://us.archive.ubuntu.com/ubuntu'
+    maas $PROFILE maas set-config name=upstream_dns value=$MY_UPSTREAM_DNS
+    maas $PROFILE maas set-config name='maas_name' value='automaas'
+    maas $PROFILE maas set-config name='ntp_server' value='ntp.ubuntu.com'
+    maas $PROFILE sshkeys create "key=$SSH_KEY"
+    maas $PROFILE boot-source update $SOURCE_ID \
+         url=$URL keyring_filename=$KEYRING_FILE
+    maas $PROFILE boot-source-selections create 1 \
+         release='xenial' arches='amd64' labels='release' \
+         os='ubuntu' subarches='*'
+    maas $PROFILE boot-source-selections create 1 \
+         release='trusty' arches='amd64' labels='release' \
+         os='ubuntu' subarches='*'
+    maas $PROFILE boot-resources import
+    COUNTER=0
+    while [  $COUNTER -eq 0 ]; do
+       COUNTER=`maas $PROFILE  boot-resources read | grep xenial | wc -l`
+       let COUNTER=COUNTER+1
+    done
+
+    IP_STATIC_RANGE_LOW="192.168.122.1"
+    IP_STATIC_RANGE_HIGH="192.168.122.49"
+    maas $PROFILE ipranges create type=reserved \
+         start_ip=$IP_STATIC_RANGE_LOW end_ip=$IP_STATIC_RANGE_HIGH \
+         comment='This is a reserved range'
+
+#    IP_DYNAMIC_RANGE_LOW="192.168.122.50"
+#    IP_DYNAMIC_RANGE_HIGH="192.168.122.240"
+#    maas $PROFILE ipranges create type=dynamic \
+#        start_ip=$IP_DYNAMIC_RANGE_LOW end_ip=$IP_DYNAMIC_RANGE_HIGH \
+#        comment='This is a reserved dynamic range'
+
+    maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True \
+        primary_rack=$PRIMARY_RACK_CONTROLLER
+
+    SUBNET_CIDR="192.168.122.0/24"
+    MY_GATEWAY="192.168.122.1"
+    MY_NAMESERVER=192.168.122.1
+    maas $PROFILE subnet update $SUBNET_CIDR gateway_ip=$MY_GATEWAY
+    maas $PROFILE subnet update $SUBNET_CIDR dns_servers=$MY_NAMESERVER
+    maas $PROFILE sshkeys create key="`cat $HOME/.ssh/id_rsa.pub`"
+
+    maas $PROFILE tags create name='bootstrap'
+    maas $PROFILE tags create name='compute'
+    maas $PROFILE tags create name='control'
+    maas $PROFILE tags create name='storage'
 }
 
 addnodes(){
+    virt-install --connect qemu:///system --name bootstrap --ram 2048 --vcpus 2 --video \
+                 cirrus --arch x86_64 --disk size=20,format=qcow2,bus=virtio,io=native,pool=default \
+                 --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole \
+                 --vnc --print-xml | tee bootstrap
 
+    bootstrapmac=`grep  "mac address" bootstrap | head -1 | cut -d '"' -f 2`
 
+    sudo virsh -c qemu:///system define --file bootstrap
+
+    bootstrapid=`maas $PROFILE machines create autodetect_nodegroup='yes' name='bootstrap' \
+                 tags='bootstrap' hostname='bootstrap' power_type='virsh' mac_addresses=$bootstrapmac \
+                 power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' \
+                 architecture='amd64/generic' power_parameters_power_id='bootstrap' | grep system_id | cut -d '"' -f 4 `
+
+    maas $PROFILE tag update-nodes bootstrap add=$bootstrapid
 }
-
-sudo maas-deployer -c deployment.yaml -d --force
 
 sudo chown $USER:$USER environments.yaml
 
@@ -186,18 +256,9 @@ if [ -e ./deployment.yaml ]; then
     cp ./deployment.yaml ~/joid_config/
 fi
 
-#
-# MAAS Customization
-#
-
-maas_ip=`grep " ip_address" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
-apikey=`grep maas-oauth: environments.yaml | cut -d "'" -f 2`
-maas login maas http://${maas_ip}/MAAS/api/1.0 ${apikey}
-maas maas sshkeys new key="`cat $HOME/.ssh/id_rsa.pub`"
-
 #Added the Qtip public to run the Qtip test after install on bare metal nodes.
-#maas maas sshkeys new key="`cat ./maas/sshkeys/QtipKey.pub`"
-#maas maas sshkeys new key="`cat ./maas/sshkeys/DominoKey.pub`"
+#maas $PROFILE sshkeys new key="`cat ./maas/sshkeys/QtipKey.pub`"
+#maas $PROFILE sshkeys new key="`cat ./maas/sshkeys/DominoKey.pub`"
 
 #adding compute and control nodes VM to MAAS for virtual deployment purpose.
 if [ "$virtinstall" -eq 1 ]; then
@@ -208,28 +269,25 @@ if [ "$virtinstall" -eq 1 ]; then
 
     sudo virt-install --connect qemu:///system --name node5-compute --ram 8192 --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node5-compute
 
-    node1controlmac=`grep  "mac address" node1-control | head -1 | cut -d "'" -f 2`
-    node2computemac=`grep  "mac address" node2-compute | head -1 | cut -d "'" -f 2`
-    node5computemac=`grep  "mac address" node5-compute | head -1 | cut -d "'" -f 2`
+    node1controlmac=`grep  "mac address" node1-control | head -1 | cut -d '"'-f 2`
+    node2computemac=`grep  "mac address" node2-compute | head -1 | cut -d '"' -f 2`
+    node5computemac=`grep  "mac address" node5-compute | head -1 | cut -d '"' -f 2`
 
     sudo virsh -c qemu:///system define --file node1-control
     sudo virsh -c qemu:///system define --file node2-compute
     sudo virsh -c qemu:///system define --file node5-compute
 
-    maas maas tags new name='control'
-    maas maas tags new name='compute'
+    controlnodeid=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node1-control' tags='control' hostname='node1-control' power_type='virsh' mac_addresses=$node1controlmac power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node1-control' | grep system_id | cut -d '"' -f 4 `
 
-    controlnodeid=`maas maas nodes new autodetect_nodegroup='yes' name='node1-control' tags='control' hostname='node1-control' power_type='virsh' mac_addresses=$node1controlmac power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node1-control' | grep system_id | cut -d '"' -f 4 `
+    maas $PROFILE tag update-nodes control add=$controlnodeid
 
-    maas maas tag update-nodes control add=$controlnodeid
+    computenodeid=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node2-compute' tags='compute' hostname='node2-compute' power_type='virsh' mac_addresses=$node2computemac power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node2-compute' | grep system_id | cut -d '"' -f 4 `
 
-    computenodeid=`maas maas nodes new autodetect_nodegroup='yes' name='node2-compute' tags='compute' hostname='node2-compute' power_type='virsh' mac_addresses=$node2computemac power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node2-compute' | grep system_id | cut -d '"' -f 4 `
+    maas $PROFILE tag update-nodes compute add=$computenodeid
 
-    maas maas tag update-nodes compute add=$computenodeid
+    computenodeid=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node5-compute' tags='compute' hostname='node5-compute' power_type='virsh' mac_addresses=$node5computemac power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node5-compute' | grep system_id | cut -d '"' -f 4 `
 
-    computenodeid=`maas maas nodes new autodetect_nodegroup='yes' name='node5-compute' tags='compute' hostname='node5-compute' power_type='virsh' mac_addresses=$node5computemac power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node5-compute' | grep system_id | cut -d '"' -f 4 `
-
-    maas maas tag update-nodes compute add=$computenodeid
+    maas $PROFILE tag update-nodes compute add=$computenodeid
 fi
 
 #
