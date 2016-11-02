@@ -64,7 +64,7 @@ if [ -e ./deployment.yaml ]; then
     echo $max
 
     if [ "$max" -lt 4 ];then
-        workmutiple=1.0
+        workmutiple=1.1
     elif [ "$max" -lt 33 ]; then
         workmutiple=0.25
     elif [ "$max" -lt 73 ]; then

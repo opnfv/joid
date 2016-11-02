@@ -36,7 +36,7 @@ then
     associated=1
     FLOAT_IP="$(openstack server list | grep jumpserver2 | awk '{ print $13 }')"
 else
-    FLOAT_IP="$(openstack ip floating create ext-net -c ip -f value)"
+    FLOAT_IP="$(openstack floating ip create ext-net -c floating_ip_address -f value)"
 fi
 
 #Launch an instance
