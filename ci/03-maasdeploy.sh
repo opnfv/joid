@@ -5,7 +5,12 @@ set -ex
 virtinstall=0
 labname=$1
 
+if [ ! -e $HOME/.ssh/id_rsa ]; then
+    ssh-keygen -N '' -f $HOME/.ssh/id_rsa
+fi
+
 API_SERVER="http://192.168.122.1/MAAS/api/2.0"
+API_SERVERMAAS="http://192.168.122.1/MAAS/"
 PROFILE=ubuntu
 MY_UPSTREAM_DNS=192.168.122.1
 SSH_KEY=`cat ~/.ssh/id_rsa.pub`
@@ -15,6 +20,8 @@ SOURCE_ID=1
 FABRIC_ID=1
 VLAN_TAG=""
 PRIMARY_RACK_CONTROLLER="192.168.122.1"
+SUBNET_CIDR="192.168.122.0/24"
+VLAN_TAG="untagged"
 
 #install the packages needed
 sudo apt-add-repository ppa:juju/stable -y
@@ -22,17 +29,16 @@ sudo apt-add-repository ppa:maas/stable -y
 sudo apt-add-repository cloud-archive:newton -y
 sudo apt-get update -y
 sudo apt-get dist-upgrade -y
-sudo pip install --upgrade pip
 sudo apt-get install openssh-server bzr git juju virtinst qemu-kvm libvirt-bin \
-             maas-cli python-pip python-psutil python-openstackclient \
-             python-congressclient gsutil charm-tools pastebinit -y
+             maas maas-region-controller python-pip python-psutil python-openstackclient \
+             python-congressclient gsutil charm-tools pastebinit python-jinja2 -y
+
+sudo pip install --upgrade pip
 
 #first parameter should be custom and second should be either
 # absolute location of file (including file name) or url of the
 # file to download.
 
-labname=$1
-labfile=$2
 
 #
 # Config preparation
@@ -55,6 +61,7 @@ case "$labname" in
         cp maas/juniper/pod1/deployment.yaml ./deployment.yaml
         ;;
     'custom')
+        labfile=$2
         if [ -e $labfile ]; then
             cp $labfile ./labconfig.yaml || true
         else
@@ -105,10 +112,6 @@ else
     sudo mv 90-joid-init /etc/sudoers.d/
 fi
 
-if [ ! -e $HOME/.ssh/id_rsa ]; then
-    ssh-keygen -N '' -f $HOME/.ssh/id_rsa
-fi
-
 echo "... Deployment of maas Started ...."
 
 #
@@ -148,11 +151,13 @@ mkdir ~/.juju/ || true
 
 sudo mkdir -p ~maas
 sudo chown maas:maas ~maas
-sudo -u maas ssh-keygen -N '' -f ~maas/.ssh/id_rsa
+if [ ! -e ~maas/.ssh/id_rsa ]; then
+    sudo -u maas ssh-keygen -N '' -f ~maas/.ssh/id_rsa
+fi
+
 # Ensure virsh can connect without ssh auth
 sudo cat ~maas/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
-sudo cat HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
-sudo -u maas virsh -c qemu+ssh://ubuntu@192.168.122.1/system list --all
+sudo cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 
 #
 # MAAS deploy
@@ -177,16 +182,14 @@ configuremaas(){
     maas $PROFILE boot-source update $SOURCE_ID \
          url=$URL keyring_filename=$KEYRING_FILE
     maas $PROFILE boot-source-selections create 1 \
-         release='xenial' arches='amd64' labels='release' \
-         os='ubuntu' subarches='*'
-    maas $PROFILE boot-source-selections create 1 \
-         release='trusty' arches='amd64' labels='release' \
+         release='trusty' arches='amd64' labels='daily' \
          os='ubuntu' subarches='*'
     maas $PROFILE boot-resources import
-    COUNTER=0
-    while [  $COUNTER -eq 0 ]; do
-       COUNTER=`maas $PROFILE  boot-resources read | grep xenial | wc -l`
-       let COUNTER=COUNTER+1
+
+    while [ "$(maas $PROFILE boot-resources read | grep trusty | wc -l )" -le 0 ];
+    do
+        maas $PROFILE boot-resources import
+        sleep 20
     done
 
     IP_STATIC_RANGE_LOW="192.168.122.1"
@@ -195,21 +198,24 @@ configuremaas(){
          start_ip=$IP_STATIC_RANGE_LOW end_ip=$IP_STATIC_RANGE_HIGH \
          comment='This is a reserved range'
 
-#    IP_DYNAMIC_RANGE_LOW="192.168.122.50"
-#    IP_DYNAMIC_RANGE_HIGH="192.168.122.240"
-#    maas $PROFILE ipranges create type=dynamic \
-#        start_ip=$IP_DYNAMIC_RANGE_LOW end_ip=$IP_DYNAMIC_RANGE_HIGH \
-#        comment='This is a reserved dynamic range'
+    IP_DYNAMIC_RANGE_LOW="192.168.122.50"
+    IP_DYNAMIC_RANGE_HIGH="192.168.122.80"
+    maas $PROFILE ipranges create type=dynamic \
+        start_ip=$IP_DYNAMIC_RANGE_LOW end_ip=$IP_DYNAMIC_RANGE_HIGH \
+        comment='This is a reserved dynamic range'
 
-    maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True \
-        primary_rack=$PRIMARY_RACK_CONTROLLER
+    FABRIC_ID=$(maas $PROFILE subnet read $SUBNET_CIDR \
+                | grep fabric | cut -d ' ' -f 10 | cut -d '"' -f 2)
+
+    PRIMARY_RACK_CONTROLLER=`maas $PROFILE rack-controllers read  | grep system_id | cut -d '"' -f 4`
+
+    maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER
 
     SUBNET_CIDR="192.168.122.0/24"
     MY_GATEWAY="192.168.122.1"
     MY_NAMESERVER=192.168.122.1
     maas $PROFILE subnet update $SUBNET_CIDR gateway_ip=$MY_GATEWAY
     maas $PROFILE subnet update $SUBNET_CIDR dns_servers=$MY_NAMESERVER
-    maas $PROFILE sshkeys create key="`cat $HOME/.ssh/id_rsa.pub`"
 
     maas $PROFILE tags create name='bootstrap'
     maas $PROFILE tags create name='compute'
@@ -218,7 +224,7 @@ configuremaas(){
 }
 
 addnodes(){
-    virt-install --connect qemu:///system --name bootstrap --ram 2048 --vcpus 2 --video \
+    sudo virt-install --connect qemu:///system --name bootstrap --ram 2048 --vcpus 2 --video \
                  cirrus --arch x86_64 --disk size=20,format=qcow2,bus=virtio,io=native,pool=default \
                  --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole \
                  --vnc --print-xml | tee bootstrap
@@ -235,14 +241,16 @@ addnodes(){
     maas $PROFILE tag update-nodes bootstrap add=$bootstrapid
 }
 
-sudo chown $USER:$USER environments.yaml
+configuremaas
+addnodes
+#sudo chown $USER:$USER environments.yaml
 
 echo "... Deployment of maas finish ...."
 
 # Backup deployment.yaml and deployconfig.yaml in .juju folder
 
-cp ./environments.yaml ~/.juju/
-cp ./environments.yaml ~/joid_config/
+#cp ./environments.yaml ~/.juju/
+#cp ./environments.yaml ~/joid_config/
 
 if [ -e ./deployconfig.yaml ]; then
     cp ./deployconfig.yaml ~/.juju/
@@ -269,7 +277,7 @@ if [ "$virtinstall" -eq 1 ]; then
 
     sudo virt-install --connect qemu:///system --name node5-compute --ram 8192 --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node5-compute
 
-    node1controlmac=`grep  "mac address" node1-control | head -1 | cut -d '"'-f 2`
+    node1controlmac=`grep  "mac address" node1-control | head -1 | cut -d '"' -f 2`
     node2computemac=`grep  "mac address" node2-compute | head -1 | cut -d '"' -f 2`
     node5computemac=`grep  "mac address" node5-compute | head -1 | cut -d '"' -f 2`
 
@@ -339,27 +347,28 @@ crnodevlanint() {
 #function for JUJU envronment
 
 addcredential() {
-    controllername=`awk 'NR==1{print $2}' environments.yaml`
-    cloudname=`awk 'NR==1{print $2}' environments.yaml`
+    API_KEY=`sudo maas-region apikey --username=ubuntu`
+    controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
+    cloudname=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
 
     echo  "credentials:" > credential.yaml
     echo  "  $controllername:" >> credential.yaml
     echo  "    opnfv-credentials:" >> credential.yaml
     echo  "      auth-type: oauth1" >> credential.yaml
-    echo  "      maas-oauth: $apikey" >> credential.yaml
+    echo  "      maas-oauth: $API_KEY" >> credential.yaml
 
     juju add-credential $controllername -f credential.yaml --replace
 }
 
 addcloud() {
-    controllername=`awk 'NR==1{print $2}' environments.yaml`
-    cloudname=`awk 'NR==1{print $2}' environments.yaml`
+    controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
+    cloudname=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
 
     echo "clouds:" > maas-cloud.yaml
     echo "   $cloudname:" >> maas-cloud.yaml
     echo "      type: maas" >> maas-cloud.yaml
     echo "      auth-types: [oauth1]" >> maas-cloud.yaml
-    echo "      endpoint: http://$maas_ip/MAAS" >> maas-cloud.yaml
+    echo "      endpoint: $API_SERVERMAAS" >> maas-cloud.yaml
 
     juju add-cloud $cloudname maas-cloud.yaml --replace
 }
@@ -394,6 +403,7 @@ elif [ -e ~/.juju/deployconfig.yaml ]; then
   cp ~/.juju/deployconfig.yaml ./deployconfig.yaml
 fi
 
+if [ -e ./deployconfig.yaml ]; then
   enableiflist=`grep "interface-enable" deployconfig.yaml | cut -d ' ' -f 4 `
   datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
   stornet=`grep "storageNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`

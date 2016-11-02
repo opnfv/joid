@@ -20,4 +20,8 @@ sudo virsh undefine node2-compute || true
 sudo virsh undefine node5-compute || true
 sudo rm -rf  /var/lib/libvirt/images/node1-control.img /var/lib/libvirt/images/node2-compute.img /var/lib/libvirt/images/node3-control.img /var/lib/libvirt/images/node4-control.img /var/lib/libvirt/images/node5-compute.img || true
  
+#sudo virsh destroy bootstrap || true
+#sudo virsh undefine bootstrap || true
+#sudo rm -rf  /var/lib/libvirt/images/bootstrap.img || true
+
 echo " Cleanup Finished ..."

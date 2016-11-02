@@ -10,8 +10,8 @@ fi
 jujuver=`juju --version`
 
 if [[ "$jujuver" > "2" ]]; then
-    controllername=`awk 'NR==1{print $2}' environments.yaml`
-    cloudname=`awk 'NR==1{print $2}' environments.yaml`
+    controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
+    cloudname=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
     juju kill-controller $controllername --timeout 10s -y || true
     rm -rf precise
     rm -rf trusty
@@ -37,3 +37,5 @@ elif [ -d $HOME/.juju/environments ]; then
     sudo sysctl -w vm.drop_caches=3
 fi
 
+#sudo apt-get purge maas maas-cli maas-common maas-dhcp maas-dns maas-proxy maas-rack-controller maas-region-api maas-region-controller  -y
+#sudo rm -rf /var/lib/maas
