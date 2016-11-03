@@ -10,7 +10,9 @@ Parameters:
 
 from optparse import OptionParser
 from jinja2 import Environment, FileSystemLoader
+from distutils.version import LooseVersion, StrictVersion
 import os
+import subprocess
 import yaml
 from pprint import pprint as pp
 import socket
@@ -31,7 +33,13 @@ labconfig_file = options.lab
 #
 
 # Capture our current directory
-TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl/maas_tpl'
+jujuver = subprocess.check_output(["juju", "--version"])
+
+if LooseVersion(jujuver) >= LooseVersion('2'):
+    TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl/maas_tpl'
+else:
+    TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl/maas2/maas_tpl'
+
 HOME = os.environ['HOME']
 USER = os.environ['USER']
 

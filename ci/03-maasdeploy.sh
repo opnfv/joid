@@ -2,26 +2,19 @@
 #placeholder for deployment script.
 set -ex
 
+maasver=`apt-cache policy maas | grep Installed | cut -d ':' -f 2 | sed -e 's/ //'`
+
+if [[ "$maasver" > "2" ]]; then
+    #sudo apt-get purge maas maas-cli maas-common maas-dhcp maas-dns maas-proxy maas-rack-controller maas-region-api maas-region-controller  -y
+    #sudo rm -rf /var/lib/maas
+fi
+
 virtinstall=0
 labname=$1
 
 if [ ! -e $HOME/.ssh/id_rsa ]; then
     ssh-keygen -N '' -f $HOME/.ssh/id_rsa
 fi
-
-API_SERVER="http://192.168.122.1/MAAS/api/2.0"
-API_SERVERMAAS="http://192.168.122.1/MAAS/"
-PROFILE=ubuntu
-MY_UPSTREAM_DNS=192.168.122.1
-SSH_KEY=`cat ~/.ssh/id_rsa.pub`
-URL=https://images.maas.io/ephemeral-v2/daily/
-KEYRING_FILE=/usr/share/keyrings/ubuntu-cloudimage-keyring.gpg
-SOURCE_ID=1
-FABRIC_ID=1
-VLAN_TAG=""
-PRIMARY_RACK_CONTROLLER="192.168.122.1"
-SUBNET_CIDR="192.168.122.0/24"
-VLAN_TAG="untagged"
 
 #install the packages needed
 sudo apt-add-repository ppa:juju/stable -y
@@ -84,9 +77,30 @@ case "$labname" in
         ;;
 esac
 
+MAAS_IP=$(grep " ip_address" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //')
+MAAS_NAME=`grep "maas_name" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+API_SERVER="http://$MAAS_IP/MAAS/api/2.0"
+API_SERVERMAAS="http://$MAAS_IP/MAAS/"
+PROFILE=ubuntu
+MY_UPSTREAM_DNS=`grep "upstream_dns" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+SSH_KEY=`cat ~/.ssh/id_rsa.pub`
+MAIN_ARCHIVE=`grep "main_archive" deployment.yaml | cut -d ':' -f 2-3 | sed -e 's/ //'`
+URL=https://images.maas.io/ephemeral-v2/daily/
+KEYRING_FILE=/usr/share/keyrings/ubuntu-cloudimage-keyring.gpg
+SOURCE_ID=1
+FABRIC_ID=1
+VLAN_TAG=""
+PRIMARY_RACK_CONTROLLER="$MAAS_IP"
+SUBNET_CIDR="192.168.122.0/24"
+VLAN_TAG="untagged"
+
 # In the case of a virtual deployment get deployment.yaml and deployconfig.yaml
 if [ "$virtinstall" -eq 1 ]; then
     labname="default"
+    MAAS_IP="192.168.122.1"
+    API_SERVER="http://$MAAS_IP/MAAS/api/2.0"
+    API_SERVERMAAS="http://$MAAS_IP/MAAS/"
+    PRIMARY_RACK_CONTROLLER="$MAAS_IP"
     ./cleanvm.sh || true
     cp ../labconfig/default/deployment.yaml ./
     cp ../labconfig/default/labconfig.yaml ./
@@ -174,9 +188,9 @@ configuremaas(){
     sudo maas createadmin --username=ubuntu --email=ubuntu@ubuntu.com --password=ubuntu
     API_KEY=`sudo maas-region apikey --username=ubuntu`
     maas login $PROFILE $API_SERVER $API_KEY
-    maas $PROFILE maas set-config name='main_archive' value='http://us.archive.ubuntu.com/ubuntu'
+    maas $PROFILE maas set-config name='main_archive' value=$MAIN_ARCHIVE
     maas $PROFILE maas set-config name=upstream_dns value=$MY_UPSTREAM_DNS
-    maas $PROFILE maas set-config name='maas_name' value='automaas'
+    maas $PROFILE maas set-config name='maas_name' value=$MAAS_NAME
     maas $PROFILE maas set-config name='ntp_server' value='ntp.ubuntu.com'
     maas $PROFILE sshkeys create "key=$SSH_KEY"
     maas $PROFILE boot-source update $SOURCE_ID \
