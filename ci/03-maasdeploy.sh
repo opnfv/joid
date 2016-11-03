@@ -5,6 +5,7 @@ set -ex
 maasver=`apt-cache policy maas | grep Installed | cut -d ':' -f 2 | sed -e 's/ //'`
 
 if [[ "$maasver" > "2" ]]; then
+    echo "removing existing maas ..."
     #sudo apt-get purge maas maas-cli maas-common maas-dhcp maas-dns maas-proxy maas-rack-controller maas-region-api maas-region-controller  -y
     #sudo rm -rf /var/lib/maas
 fi
@@ -163,10 +164,10 @@ fi
 mkdir ~/joid_config/ || true
 mkdir ~/.juju/ || true
 
-sudo mkdir -p ~maas
+sudo mkdir -p ~maas || true
 sudo chown maas:maas ~maas
 if [ ! -e ~maas/.ssh/id_rsa ]; then
-    sudo -u maas ssh-keygen -N '' -f ~maas/.ssh/id_rsa
+    sudo -u maas ssh-keygen -N '' -f ~maas/.ssh/id_rsa -y
 fi
 
 # Ensure virsh can connect without ssh auth
