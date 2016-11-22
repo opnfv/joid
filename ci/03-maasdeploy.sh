@@ -207,6 +207,17 @@ configuremaas(){
         sleep 20
     done
 
+    maas $PROFILE tags create name='bootstrap'
+    maas $PROFILE tags create name='compute'
+    maas $PROFILE tags create name='control'
+    maas $PROFILE tags create name='storage'
+}
+
+enablesubnetand dhcp(){
+
+    SUBNET_PREFIX="192.168.122"
+    SUBNET_CIDR="($SUBNET_PREFIX).0/24"
+
     IP_STATIC_RANGE_LOW="192.168.122.1"
     IP_STATIC_RANGE_HIGH="192.168.122.49"
     maas $PROFILE ipranges create type=reserved \
@@ -214,10 +225,11 @@ configuremaas(){
          comment='This is a reserved range'
 
     IP_DYNAMIC_RANGE_LOW="192.168.122.50"
-    IP_DYNAMIC_RANGE_HIGH="192.168.122.80"
+    IP_DYNAMIC_RANGE_HIGH="192.168.122.240"
     maas $PROFILE ipranges create type=dynamic \
         start_ip=$IP_DYNAMIC_RANGE_LOW end_ip=$IP_DYNAMIC_RANGE_HIGH \
         comment='This is a reserved dynamic range'
+
 
     FABRIC_ID=$(maas $PROFILE subnet read $SUBNET_CIDR \
                 | grep fabric | cut -d ' ' -f 10 | cut -d '"' -f 2)
@@ -226,16 +238,36 @@ configuremaas(){
 
     maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER
 
-    SUBNET_CIDR="192.168.122.0/24"
     MY_GATEWAY="192.168.122.1"
     MY_NAMESERVER=192.168.122.1
     maas $PROFILE subnet update $SUBNET_CIDR gateway_ip=$MY_GATEWAY
     maas $PROFILE subnet update $SUBNET_CIDR dns_servers=$MY_NAMESERVER
 
-    maas $PROFILE tags create name='bootstrap'
-    maas $PROFILE tags create name='compute'
-    maas $PROFILE tags create name='control'
-    maas $PROFILE tags create name='storage'
+
+}
+
+## derived from https://gist.github.com/epiloque/8cf512c6d64641bde388
+## works for arrays of hashes, as long as the hashes do not have arrays
+parse_yaml2() {
+    local prefix=$2
+    local s
+    local w
+    local fs
+    s='[[:space:]]*'
+    w='[a-zA-Z0-9_]*'
+    fs="$(echo @|tr @ '\034')"
+    sed -ne "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
+        -e "s|^\($s\)\($w\)$s[:-]$s\(.*\)$s\$|\1$fs\2$fs\3|p" "$1" |
+    awk -F"$fs" '{
+      indent = length($1)/2;
+      if (length($2) == 0) { conj[indent]="+";} else {conj[indent]="";}
+      vname[indent] = $2;
+      for (i in vname) {if (i > indent) {delete vname[i]}}
+      if (length($3) > 0) {
+              vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
+              printf("%s%s%s%s=(\"%s\")\n", "'"$prefix"'",vn, $2, conj[indent-1],$3);
+      }
+    }' | sed 's/_=/+=/g'
 }
 
 addnodes(){
