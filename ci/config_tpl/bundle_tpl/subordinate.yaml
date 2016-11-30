@@ -47,15 +47,21 @@
     ceilometer-contrail:
       charm: local:{{ ubuntu.release }}/ceilometer-contrail
       options:
-        install-sources: ppa:opencontrail/trunk-20160812
+        install-sources: |
+          - ppa:opencontrail/ppa
+          - ppa:opencontrail/trunk-20160812
     neutron-api-contrail:
       charm: local:{{ ubuntu.release }}/neutron-api-contrail
       options:
-        install-sources: ppa:opencontrail/trunk-20160812
+        install-sources: |
+          - ppa:opencontrail/ppa
+          - ppa:opencontrail/trunk-20160812
     neutron-contrail:
       charm: local:{{ ubuntu.release }}/neutron-contrail
       options:
-        install-sources: ppa:opencontrail/trunk-20160812
+        install-sources: |
+          - ppa:opencontrail/ppa
+          - ppa:opencontrail/trunk-20160812
     keepalived:
       charm: local:{{ ubuntu.release }}/keepalived
       options:

@@ -20,7 +20,9 @@
       num_units: {{ unit_qty() }}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
-        install-sources: ppa:opencontrail/trunk-20160812
+        install-sources: |
+          - ppa:opencontrail/ppa
+          - ppa:opencontrail/trunk-20160812
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.contrailconfig }}
 {% endif %}
@@ -33,7 +35,9 @@
       num_units: {{ unit_qty() }}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
-        install-sources: ppa:opencontrail/trunk-20160812
+        install-sources: |
+          - ppa:opencontrail/ppa
+          - ppa:opencontrail/trunk-20160812
       to:
 {% for unit_id in to_select() %}
         - "lxc:nodes={{ unit_id }}"
@@ -43,7 +47,9 @@
       num_units: {{ unit_qty() }}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
-        install-sources: ppa:opencontrail/trunk-20160812
+        install-sources: |
+          - ppa:opencontrail/ppa
+          - ppa:opencontrail/trunk-20160812
       to:
 {% for unit_id in to_select() %}
         - "lxc:nodes={{ unit_id }}"
@@ -52,7 +58,9 @@
       charm: local:{{ ubuntu.release }}/contrail-webui
       num_units: {{ unit_qty() }}
       options:
-        install-sources: ppa:opencontrail/trunk-20160812
+        install-sources: |
+          - ppa:opencontrail/ppa
+          - ppa:opencontrail/trunk-20160812
       to:
 {% for unit_id in to_select() %}
         - "lxc:nodes={{ unit_id }}"
