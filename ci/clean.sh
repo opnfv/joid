@@ -7,6 +7,11 @@ if [ ! -d environments.yaml ]; then
     cp ~/.juju/environments.yaml ./environments.yaml || true
 fi
 
+if [ ! -d deployment.yaml ]; then
+    cp ~/joid_config/deployment.yaml ./deployment.yaml || true
+    cp ~/.juju/deployment.yaml ./deployment.yaml || true
+fi
+
 jujuver=`juju --version`
 
 if [[ "$jujuver" > "2" ]]; then
