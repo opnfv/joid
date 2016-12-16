@@ -18,6 +18,10 @@ sudo apt-get install openssh-server bzr git maas-deployer juju juju-deployer \
              maas-cli python-pip python-psutil python-openstackclient \
              python-congressclient gsutil charm-tools pastebinit -y
 
+sudo apt-get purge juju -y
+wget https://launchpad.net/~juju/+archive/ubuntu/stable/+files/juju-core_1.25.5-0ubuntu1~14.04.2~juju1_amd64.deb
+sudo dpkg -i juju-core_1.25.5-0ubuntu1~14.04.2~juju1_amd64.deb
+
 #first parameter should be custom and second should be either
 # absolute location of file (including file name) or url of the
 # file to download.
