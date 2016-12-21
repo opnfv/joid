@@ -1,0 +1,6 @@
+    etcd:
+      charm: "./{{ ubuntu.release }}/etcd"
+      num_units: 1
+      to:
+        - "nodes/0"
+

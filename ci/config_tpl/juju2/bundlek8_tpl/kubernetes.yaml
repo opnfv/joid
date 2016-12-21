@@ -1,0 +1,15 @@
+    kubernetes-master:
+      charm: "./{{ ubuntu.release }}/kubernetes-master"
+      num_units: 1
+      expose: true
+      to:
+        - "nodes/0"
+
+    kubernetes-worker:
+      charm: "./{{ ubuntu.release }}/kubernetes-worker"
+      num_units: {{ opnfv.units - 1 }}
+      expose: true
+      to:
+{% for unit_id in range(1, opnfv.units) %}
+        - "nodes/{{ unit_id }}"
+{% endfor %}

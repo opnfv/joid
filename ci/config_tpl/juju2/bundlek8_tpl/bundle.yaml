@@ -1,0 +1,22 @@
+# vim: set ts=2 et:
+# The machine constraints for each service in this bundle
+# have been commented out so you don't run into quota
+# problems on public clouds. Modify and uncomment the
+# constraints: lines for each service to reflect your
+# deployment before moving to production.
+#
+  series: {{ ubuntu.release }}
+  services:
+    nodes:
+      charm: "cs:{{ ubuntu.release }}/ubuntu"
+      num_units: {{ opnfv.units }}
+    ntp:
+      charm: "./{{ ubuntu.release }}/ntp"
+{% include 'kubernetes.yaml' %}
+{% include 'easyrsa.yaml' %}
+{% include 'etcd.yaml' %}
+{% include 'subordinate.yaml' %}
+
+  relations:
+    - [ 'ntp:juju-info', 'nodes:juju-info' ]
+{% include 'relations.yaml' %}

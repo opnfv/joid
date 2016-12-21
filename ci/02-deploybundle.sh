@@ -10,9 +10,14 @@ opnfvlab=$3
 opnfvsdn=$4
 opnfvfeature=$5
 opnfvdistro=$6
+opnfvmodel=$7
 
-#copy and download charms
-cp $opnfvsdn/fetch-charms.sh ./fetch-charms.sh
+if [[ "$opnfvmodel" = "openstack" ]]; then
+    #copy and download charms
+    cp $opnfvsdn/fetch-charms.sh ./fetch-charms.sh
+else
+    cp kubernates/fetch-charms.sh ./fetch-charms.sh
+fi
 
 jujuver=`juju --version`
 
@@ -21,9 +26,10 @@ sed -i -- "s|distro=trusty|distro=$opnfvdistro|g" ./fetch-charms.sh
 
 ./fetch-charms.sh $opnfvdistro
 
-tar xvf common/scaleio.tar -C ./$opnfvdistro/ --strip=2 juju-scaleio/trusty/
-
-osdomname=''
+if [[ "$opnfvmodel" = "openstack" ]]; then
+    tar xvf common/scaleio.tar -C ./$opnfvdistro/ --strip=2 juju-scaleio/trusty/
+    osdomname=''
+fi
 
 #check whether charms are still executing the code even juju-deployer says installed.
 check_status() {
@@ -47,32 +53,34 @@ check_status() {
 
 #read the value from deployment.yaml
 
-if [ -e ./deployment.yaml ]; then
-   if [ -e ./deployconfig.yaml ]; then
-      extport=`grep "ext-port" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
-      datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-      admnet=`grep "admNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-      cephdisk=`grep "ceph-disk" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
-      osdomname=`grep "os-domain-name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
-   fi
+if [[ "$opnfvmodel" = "openstack" ]]; then
+    if [ -e ./deployment.yaml ]; then
+       if [ -e ./deployconfig.yaml ]; then
+          extport=`grep "ext-port" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
+          datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+          admnet=`grep "admNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+          cephdisk=`grep "ceph-disk" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+          osdomname=`grep "os-domain-name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+       fi
 
-    workmutiple=`maas maas nodes list | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
-    max=0
-    for v in ${workmutiple[@]}; do
-        if (( $v > $max )); then max=$v; fi;
-    done
-    echo $max
+        workmutiple=`maas maas nodes list | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
+        max=0
+        for v in ${workmutiple[@]}; do
+            if (( $v > $max )); then max=$v; fi;
+        done
+        echo $max
 
-    if [ "$max" -lt 4 ];then
-        workmutiple=1.1
-    elif [ "$max" -lt 33 ]; then
-        workmutiple=0.25
-    elif [ "$max" -lt 73 ]; then
-        workmutiple=0.1
-    else
-        workmutiple=0.05
+        if [ "$max" -lt 4 ];then
+            workmutiple=1.1
+        elif [ "$max" -lt 33 ]; then
+            workmutiple=0.25
+        elif [ "$max" -lt 73 ]; then
+            workmutiple=0.1
+        else
+            workmutiple=0.05
+        fi
+        sed -i "s/worker_multiplier: 1.0/worker_multiplier: ${workmutiple}/g" default_deployment_config.yaml
     fi
-    sed -i "s/worker_multiplier: 1.0/worker_multiplier: ${workmutiple}/g" default_deployment_config.yaml
 fi
 
 case "$opnfvlab" in
@@ -96,15 +104,23 @@ for feature in $opnfvfeature; do
     fi
 done
 
-#update source if trusty is target distribution
-var=os-$opnfvsdn-$fea-$opnfvtype"-"$opnfvdistro"_"$openstack
+if [[ "$opnfvmodel" = "openstack" ]]; then
+    #update source if trusty is target distribution
+    var=os-$opnfvsdn-$fea-$opnfvtype"-"$opnfvdistro"_"$openstack
 
-if [ "$osdomname" != "None" ]; then
-    var=$var"_"publicapi
+    if [ "$osdomname" != "None" ]; then
+        var=$var"_"publicapi
+    fi
 fi
 
-#lets generate the bundle for all target using genBundle.py
-python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
+if [[ "$opnfvmodel" = "openstack" ]]; then
+    #lets generate the bundle for all target using genBundle.py
+    python genBundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
+else
+    #lets generate the bundle for k8 target using genK8Bundle.py
+    python genK8Bundle.py  -l deployconfig.yaml  -s $var > bundles.yaml
+fi
+
 #keep the back in cloud for later debugging.
 pastebinit bundles.yaml || true
 

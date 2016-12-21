@@ -13,6 +13,7 @@ opnfvrel=c
 opnfvfeature=none
 opnfvdistro=xenial
 opnfvarch=amd64
+opnfvmodel=openstack
 
 jujuver=`juju --version`
 
@@ -31,9 +32,10 @@ usage() { echo "Usage: $0 [-s <nosdn|odl|opencontrail>]
                          [-f <ipv6,dpdk,lxd,dvr>]
                          [-d <trusty|xenial>]
                          [-a <amd64>]
+                         [-m <openstack|kubernates>]
                          [-r <a|b>]" 1>&2 exit 1; }
 
-while getopts ":s:t:o:l:h:r:f:d:a:" opt; do
+while getopts ":s:t:o:l:h:r:f:d:a:m:" opt; do
     case "${opt}" in
         s)
             opnfvsdn=${OPTARG}
@@ -58,6 +60,9 @@ while getopts ":s:t:o:l:h:r:f:d:a:" opt; do
             ;;
         a)
             opnfvarch=${OPTARG}
+            ;;
+        m)
+            opnfvmodel=${OPTARG}
             ;;
         h)
             usage
@@ -145,7 +150,7 @@ deploy() {
     fi
 
     #case default deploy the opnfv platform:
-    ./02-deploybundle.sh $opnfvtype $openstack $opnfvlab $opnfvsdn $opnfvfeature $opnfvdistro
+    ./02-deploybundle.sh $opnfvtype $openstack $opnfvlab $opnfvsdn $opnfvfeature $opnfvdistro $opnfvmodel
 }
 
 #check whether charms are still executing the code even juju-deployer says installed.
@@ -166,9 +171,10 @@ check_status() {
        fi
     done
 
-    juju expose ceph-radosgw
-    #juju ssh ceph/0 \ 'sudo radosgw-admin user create --uid="ubuntu" --display-name="Ubuntu Ceph"'
-
+    if [[ "$opnfvmodel" = "openstack" ]]; then
+        juju expose ceph-radosgw || true
+        #juju ssh ceph/0 \ 'sudo radosgw-admin user create --uid="ubuntu" --display-name="Ubuntu Ceph"'
+    fi
     echo "...... deployment finishing ......."
 }
 
@@ -179,20 +185,23 @@ check_status
 
 echo "...... deployment finished  ......."
 
-./openstack.sh "$opnfvsdn" "$opnfvlab" "$opnfvdistro" "$openstack" || true
+if [[ "$opnfvmodel" = "openstack" ]]; then
+    ./openstack.sh "$opnfvsdn" "$opnfvlab" "$opnfvdistro" "$openstack" || true
 
-# creating heat domain after puching the public API into /etc/hosts
+    # creating heat domain after puching the public API into /etc/hosts
 
-if [[ "$jujuver" > "2" ]]; then
-    status=`juju run-action heat/0 domain-setup`
-    echo $status
-else
-    status=`juju action do heat/0 domain-setup`
-    echo $status
+    if [[ "$jujuver" > "2" ]]; then
+        status=`juju run-action heat/0 domain-setup`
+        echo $status
+    else
+        status=`juju action do heat/0 domain-setup`
+        echo $status
+    fi
+
+
+    sudo ../juju/get-cloud-images || true
+    ../juju/joid-configure-openstack || true
+
 fi
-
-
-sudo ../juju/get-cloud-images || true
-../juju/joid-configure-openstack || true
 
 echo "...... finished  ......."

@@ -1,0 +1,6 @@
+    easyrsa:
+      charm: "./{{ ubuntu.release }}/easyrsa"
+      num_units: 1
+      to:
+        - "lxd:nodes/0"
+
