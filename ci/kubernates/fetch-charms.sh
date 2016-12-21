@@ -10,8 +10,9 @@ function build {
 }
 
 # openstack
+bzr branch lp:~narindergupta/opnfv/ntp $distro/ntp
 charm pull cs:~containers/kubernetes-master $distro/kubernetes-master
 charm pull cs:~containers/kubernetes-worker $distro/kubernetes-worker
 charm pull cs:~containers/flannel $distro/flannel
 charm pull cs:~containers/etcd $distro/etcd
-charm pull cs:~containers/easyrca $distro/easyrca
+charm pull cs:~containers/easyrsa $distro/easyrsa

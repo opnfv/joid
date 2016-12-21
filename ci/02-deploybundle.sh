@@ -63,7 +63,7 @@ if [[ "$opnfvmodel" = "openstack" ]]; then
           osdomname=`grep "os-domain-name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
        fi
 
-        workmutiple=`maas maas nodes list | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
+        workmutiple=`maas maas nodes read | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
         max=0
         for v in ${workmutiple[@]}; do
             if (( $v > $max )); then max=$v; fi;
@@ -111,6 +111,8 @@ if [[ "$opnfvmodel" = "openstack" ]]; then
     if [ "$osdomname" != "None" ]; then
         var=$var"_"publicapi
     fi
+else
+    var=k8-$opnfvsdn-$fea-baremetal-core
 fi
 
 if [[ "$opnfvmodel" = "openstack" ]]; then
