@@ -1,11 +1,24 @@
     keystone:
       charm: "./{{ ubuntu.release }}/keystone"
       num_units: {{ unit_qty() }}
+      bindings:
+        internal: internal
+{% if opnfv.spaces_dict.data is defined %}
+        admin: admin
+{% else %}
+        admin: internal
+{% endif %}
+{% if opnfv.spaces_dict.public is defined %}
+        public: public
+{% else %}
+        public: internal
+{% endif %}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
         region: {{ os.region }}
         admin-role: {{ os.admin.role }}
         keystone-admin-role: {{ os.admin.role }}
+        preferred-api-version: 3
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}

@@ -164,14 +164,14 @@ fi
 mkdir ~/joid_config/ || true
 mkdir ~/.juju/ || true
 
-sudo mkdir -p ~maas || true
-sudo chown maas:maas ~maas
-if [ ! -e ~maas/.ssh/id_rsa ]; then
-    sudo -u maas ssh-keygen -N '' -f ~maas/.ssh/id_rsa -y
+sudo mkdir -p ~/maas || true
+sudo chown maas:maas ~/maas
+if [ ! -e ~/maas/.ssh/id_rsa ]; then
+    sudo -u maas ssh-keygen -N '' -f ~/maas/.ssh/id_rsa -y
 fi
 
 # Ensure virsh can connect without ssh auth
-sudo cat ~maas/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+sudo cat ~/maas/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 sudo cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 
 #
@@ -213,7 +213,7 @@ configuremaas(){
     maas $PROFILE tags create name='storage'
 }
 
-enablesubnetand dhcp(){
+enablesubnetanddhcp(){
 
     SUBNET_PREFIX="192.168.122"
     SUBNET_CIDR="($SUBNET_PREFIX).0/24"
@@ -242,7 +242,6 @@ enablesubnetand dhcp(){
     MY_NAMESERVER=192.168.122.1
     maas $PROFILE subnet update $SUBNET_CIDR gateway_ip=$MY_GATEWAY
     maas $PROFILE subnet update $SUBNET_CIDR dns_servers=$MY_NAMESERVER
-
 
 }
 
@@ -458,6 +457,8 @@ if [ -e ./deployconfig.yaml ]; then
 
   # split EXTERNAL_NETWORK=first ip;last ip; gateway;network
 
+  maas maas spaces create internal "Using for pxe network within the lab"
+
   if [ "$datanet" != "''" ]; then
       EXTNET=(${enableiflist//,/ })
       i="0"
@@ -466,6 +467,8 @@ if [ -e ./deployconfig.yaml ]; then
           enableautomode ${EXTNET[i]} AUTO $datanet || true
           i=$[$i+1]
       done
+      maas maas spaces create admin "Using for admin network within the lab"
+
   fi
   if [ "$stornet" != "''" ]; then
       EXTNET=(${enableiflist//,/ })
@@ -484,6 +487,7 @@ if [ -e ./deployconfig.yaml ]; then
           enableautomode ${EXTNET[i]} AUTO $pubnet || true
           i=$[$i+1]
       done
+      maas maas spaces create public "Using for public network within the lab"
   fi
 fi
 

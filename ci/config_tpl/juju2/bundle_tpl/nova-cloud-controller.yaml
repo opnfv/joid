@@ -1,6 +1,18 @@
     nova-cloud-controller:
       charm: "./{{ ubuntu.release }}/nova-cloud-controller"
       num_units: {{ unit_qty() }}
+      bindings:
+        internal: internal
+{% if opnfv.spaces_dict.data is defined %}
+        admin: admin
+{% else %}
+        admin: internal
+{% endif %}
+{% if opnfv.spaces_dict.public is defined %}
+        public: public
+{% else %}
+        public: internal
+{% endif %}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
         region: {{ os.region }}
