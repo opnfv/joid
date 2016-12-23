@@ -162,10 +162,14 @@ except ValueError as err:
 
 if 'dpdk' in features:
     config['os']['network']['dpdk'] = True
+if 'lb' in features:
+    config['os']['kubernetes']['loadbalancer'] = True
 
 # Set beta option from extra
 if 'hugepages' in extra:
     config['os']['beta']['huge_pages'] = True
+if 'lb' in extra:
+    config['os']['kubernetes']['loadbalancer'] = True
 if 'mitaka' in extra:
     config['os']['release'] = 'mitaka'
 if 'xenial' in extra:

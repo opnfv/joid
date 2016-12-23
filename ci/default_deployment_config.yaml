@@ -30,3 +30,5 @@ os:
     service:
         congress: True
         promise: True
+    kubernetes:
+        loadbalancer: False

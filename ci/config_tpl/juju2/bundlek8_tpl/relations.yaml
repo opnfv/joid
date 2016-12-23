@@ -1,9 +1,19 @@
-    - [ "kubernetes-master:kube-api-endpoint", "kubernetes-worker:kube-api-endpoint" ]
-    - [ "kubernetes-master:cluster-dns", "kubernetes-worker:kube-dns" ]
-    - [ "kubernetes-master:certificates", "easyrsa:client" ]
-    - [ "kubernetes-master:etcd", "etcd:db" ]
-    - [ "kubernetes-worker:certificates", "easyrsa:client" ]
-    - [ "flannel:etcd", "etcd:db" ]
-    - [ "flannel:cni", "kubernetes-master:cni" ]
-    - [ "flannel:cni", "kubernetes-worker:cni" ]
-    - [ "etcd:certificates", "easyrsa:client" ]
+{% if os.kubernetes.loadbalancer %}
+    - [ 'kubernetes-master:kube-api-endpoint', 'kubeapi-load-balancer:apiserver' ]
+{% else %}
+    - [ 'kubernetes-master:kube-api-endpoint', 'kubernetes-worker:kube-api-endpoint' ]
+{% endif %}
+    - [ 'kubernetes-master:cluster-dns', 'kubernetes-worker:kube-dns' ]
+    - [ 'kubernetes-master:certificates', 'easyrsa:client' ]
+    - [ 'kubernetes-master:etcd', 'etcd:db' ]
+    - [ 'kubernetes-worker:certificates', 'easyrsa:client' ]
+    - [ 'flannel:etcd', 'etcd:db' ]
+    - [ 'flannel:cni', 'kubernetes-master:cni' ]
+    - [ 'flannel:cni', 'kubernetes-worker:cni' ]
+    - [ 'etcd:certificates', 'easyrsa:client' ]
+{% if os.kubernetes.loadbalancer %}
+    - [ 'kubernetes-master:loadbalancer', 'kubeapi-load-balancer:loadbalancer' ]
+    - [ 'kubernetes-worker:kube-api-endpoint', 'kubeapi-load-balancer:website' ]
+    - [ 'kubeapi-load-balancer:certificates', 'easyrsa:client' ]
+{% endif %}
+

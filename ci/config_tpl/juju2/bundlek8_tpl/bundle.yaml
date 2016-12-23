@@ -16,6 +16,10 @@
 {% include 'easyrsa.yaml' %}
 {% include 'etcd.yaml' %}
 {% include 'subordinate.yaml' %}
+{% if os.kubernetes.loadbalancer %}
+{% include 'kubeapi-load-balancer.yaml' %}
+{% endif %}
+
 
   relations:
     - [ 'ntp:juju-info', 'nodes:juju-info' ]
