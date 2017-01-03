@@ -1,0 +1,133 @@
+lab:
+  location: huawei
+  racks:
+  - rack: pod12
+    nodes:
+    - name: rack-12-m1
+      architecture: x86_64
+      roles: [network,control]
+      nics:
+      - ifname: eth1
+        spaces: [admin]
+        mac: ["88:cf:98:83:31:d8"]
+      - ifname: eth4
+        spaces: [data]
+        mac: ["88:cf:98:e9:9a:99"]
+      - ifname: eth5
+        spaces: [public]
+        mac: ["88:cf:98:e9:9a:9a"]
+      power:
+        type: ipmi
+        address: 192.168.120.19
+        user: root
+        pass: Huawei12#$
+    - name: rack-12-m2
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: eth1
+        spaces: [admin]
+        mac: ["88:cf:98:61:66:0b"]
+      - ifname: eth4
+        spaces: [data]
+        mac: ["88:cf:98:e9:9a:c3"]
+      - ifname: eth5
+        spaces: [public]
+        mac: ["88:cf:98:e9:9a:c4"]
+      power:
+        type: ipmi
+        address: 192.168.120.20
+        user: root
+        pass: Huawei12#$
+    - name: rack-12-m3
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: eth1
+        spaces: [admin]
+        mac: ["88:cf:98:61:66:d9"]
+      - ifname: eth4
+        spaces: [data]
+        mac: ["88:cf:98:e9:9a:9b"]
+      - ifname: eth5
+        spaces: [public]
+        mac: ["88:cf:98:e9:9a:9c"]
+      power:
+        type: ipmi
+        address: 192.168.120.21
+        user: root
+        pass: Huawei12#$
+    - name: rack-12-m4
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: eth1
+        spaces: [admin]
+        mac: ["88:cf:98:83:30:b4"]
+      - ifname: eth4
+        spaces: [data]
+        mac: ["88:cf:98:e9:9a:9b"]
+      - ifname: eth5
+        spaces: [public]
+        mac: ["88:cf:98:e9:9a:9c"]
+      power:
+        type: ipmi
+        address: 192.168.120.22
+        user: root
+        pass: Huawei12#$
+    - name: rack-12-m5
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: eth1
+        spaces: [admin]
+        mac: ["88:cf:98:83:31:db"]
+      - ifname: eth4
+        spaces: [data]
+        mac: ["88:cf:98:e9:9a:a5"]
+      - ifname: eth5
+        spaces: [public]
+        mac: ["88:cf:98:e9:9a:a6"]
+      power:
+        type: ipmi
+        address: 192.168.120.23
+        user: root
+        pass: Huawei12#$
+    floating-ip-range: 10.6.15.7,10.6.15.250,10.6.15.1,10.6.15.0/24
+    ext-port: "eth5"
+    dns: 8.8.8.8
+    public-api-ip:
+    osdomainname:
+opnfv:
+  release: d
+  distro: xenial
+  type: nonha
+  openstack: newton
+  sdncontroller:
+  - type: nosdn
+  storage:
+  - type: ceph
+    disk: /dev/sdb
+  feature: odl_l2
+  spaces:
+  - type: admin
+    bridge: brAdm
+    cidr: 10.6.1.0/24
+    gateway: 10.6.1.1
+    vlan:
+  - type: data
+    bridge: brData
+    cidr: 10.6.12.0/24
+    gateway:
+    vlan: 31
+  - type: public
+    bridge: brPublic
+    cidr: 10.6.15.0/24
+    gateway:
+    vlan: 31
+  - type: external
+    bridge: brExt
+    cidr:
+    gateway: 192.168.30.250
+    ipaddress: 192.168.30.2
+    vlan:

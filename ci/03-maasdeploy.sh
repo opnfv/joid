@@ -164,14 +164,15 @@ fi
 mkdir ~/joid_config/ || true
 mkdir ~/.juju/ || true
 
-sudo mkdir -p ~/maas || true
-sudo chown maas:maas ~/maas
-if [ ! -e ~/maas/.ssh/id_rsa ]; then
-    sudo -u maas ssh-keygen -N '' -f ~/maas/.ssh/id_rsa -y
+if [ ! -e ~maas/.ssh/id_rsa ]; then
+    sudo -u maas mkdir ~maas/.ssh/
+    sudo -u maas touch ~maas/.ssh/id_rsa
+    sudo -u maas chmod 600 ~maas/.ssh/id_rsa
+    sudo -u maas ssh-keygen  -t rsa -f ~maas/.ssh/id_rsa -q -N "" -y
 fi
 
 # Ensure virsh can connect without ssh auth
-sudo cat ~/maas/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+sudo cat ~maas/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 sudo cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 
 #
@@ -188,7 +189,7 @@ installmaas(){
 configuremaas(){
     sudo maas createadmin --username=ubuntu --email=ubuntu@ubuntu.com --password=ubuntu
     API_KEY=`sudo maas-region apikey --username=ubuntu`
-    maas login $PROFILE $API_SERVER $API_KEY
+    maas login $PROFILE $API_SERVERMAAS $API_KEY
     maas $PROFILE maas set-config name='main_archive' value=$MAIN_ARCHIVE
     maas $PROFILE maas set-config name=upstream_dns value=$MY_UPSTREAM_DNS
     maas $PROFILE maas set-config name='maas_name' value=$MAAS_NAME
@@ -220,12 +221,16 @@ enablesubnetanddhcp(){
 
     IP_STATIC_RANGE_LOW="192.168.122.1"
     IP_STATIC_RANGE_HIGH="192.168.122.49"
+
+    API_KEY=`sudo maas-region apikey --username=ubuntu`
+    maas login $PROFILE $API_SERVERMAAS $API_KEY
+
     maas $PROFILE ipranges create type=reserved \
          start_ip=$IP_STATIC_RANGE_LOW end_ip=$IP_STATIC_RANGE_HIGH \
          comment='This is a reserved range'
 
     IP_DYNAMIC_RANGE_LOW="192.168.122.50"
-    IP_DYNAMIC_RANGE_HIGH="192.168.122.240"
+    IP_DYNAMIC_RANGE_HIGH="192.168.122.150"
     maas $PROFILE ipranges create type=dynamic \
         start_ip=$IP_DYNAMIC_RANGE_LOW end_ip=$IP_DYNAMIC_RANGE_HIGH \
         comment='This is a reserved dynamic range'
@@ -284,6 +289,9 @@ addnodes(){
                  power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' \
                  architecture='amd64/generic' power_parameters_power_id='bootstrap' | grep system_id | cut -d '"' -f 4 `
 
+    API_KEY=`sudo maas-region apikey --username=ubuntu`
+    maas login $PROFILE $API_SERVERMAAS $API_KEY
+
     maas $PROFILE tag update-nodes bootstrap add=$bootstrapid
 }
 
@@ -331,6 +339,9 @@ if [ "$virtinstall" -eq 1 ]; then
     sudo virsh -c qemu:///system define --file node2-compute
     sudo virsh -c qemu:///system define --file node5-compute
 
+    API_KEY=`sudo maas-region apikey --username=ubuntu`
+    maas login $PROFILE $API_SERVERMAAS $API_KEY
+
     controlnodeid=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node1-control' tags='control' hostname='node1-control' power_type='virsh' mac_addresses=$node1controlmac power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node1-control' | grep system_id | cut -d '"' -f 4 `
 
     maas $PROFILE tag update-nodes control add=$controlnodeid
@@ -350,7 +361,10 @@ fi
 
 #Below function will mark the interfaces in Auto mode to enbled by MAAS
 enableautomode() {
-    listofnodes=`maas maas nodes list | grep system_id | cut -d '"' -f 4`
+    API_KEY=`sudo maas-region apikey --username=ubuntu`
+    maas login $PROFILE $API_SERVERMAAS $API_KEY
+
+    listofnodes=`maas maas nodes read | grep system_id | cut -d '"' -f 4`
     for nodes in $listofnodes
     do
         maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3
@@ -360,10 +374,13 @@ enableautomode() {
 #Below function will mark the interfaces in Auto mode to enbled by MAAS
 # using hostname of the node added into MAAS
 enableautomodebyname() {
+    API_KEY=`sudo maas-region apikey --username=ubuntu`
+    maas login $PROFILE $API_SERVERMAAS $API_KEY
+
     if [ ! -z "$4" ]; then
         for i in `seq 1 7`;
         do
-            nodes=`maas maas nodes list | grep system_id | cut -d '"' -f 4`
+            nodes=`maas maas nodes read | grep system_id | cut -d '"' -f 4`
             if [ ! -z "$nodes" ]; then
                 maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3
             fi
@@ -374,6 +391,9 @@ enableautomodebyname() {
 #Below function will create vlan and update interface with the new vlan
 # will return the vlan id created
 crvlanupdsubnet() {
+    API_KEY=`sudo maas-region apikey --username=ubuntu`
+    maas login $PROFILE $API_SERVERMAAS $API_KEY
+
     newvlanid=`maas maas vlans create $2 name=$3 vid=$4 | grep resource | cut -d '/' -f 6 `
     maas maas subnet update $5 vlan=$newvlanid
     eval "$1"="'$newvlanid'"
@@ -381,7 +401,10 @@ crvlanupdsubnet() {
 
 #Below function will create interface with new vlan and bind to physical interface
 crnodevlanint() {
-    listofnodes=`maas maas nodes list | grep system_id | cut -d '"' -f 4`
+    API_KEY=`sudo maas-region apikey --username=ubuntu`
+    maas login $PROFILE $API_SERVERMAAS $API_KEY
+
+    listofnodes=`maas maas nodes read | grep system_id | cut -d '"' -f 4`
 
     for nodes in $listofnodes
     do
