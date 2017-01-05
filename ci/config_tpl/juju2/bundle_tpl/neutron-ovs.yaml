@@ -2,7 +2,8 @@
       charm: ./{{ ubuntu.release }}/neutron-openvswitch
       options:
 {% if opnfv.spaces_dict.data is defined %}
-        os-data-network: {{ opnfv.spaces_dict.data.cidr }}
+      bindings:
+        data: admin
 {% endif %}
 {% if os.network.dpdk %}
         enable-dpdk: true
@@ -12,7 +13,6 @@
         #default-socket-cores: 1
 {% endif %}
 {% if opnfv.ext_port is defined  %}
-{% if os.network.dvr %}
 {% if os.network.controller == 'nosdn' %}
 {% if opnfv.data_port is defined  %}
         bridge-mappings: physnet1:br-ex physnet2:br-data
@@ -23,7 +23,6 @@
 {% endif %}
 {% else %}
          ext-port: {{ opnfv.ext_port }}
-{% endif %}
 {% endif %}
 {% endif %}
 {# Empty block to avoid bad block trim #}
