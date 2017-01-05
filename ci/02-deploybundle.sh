@@ -53,6 +53,12 @@ check_status() {
 
 #read the value from deployment.yaml
 
+PROFILE=maas
+MAAS_IP=$(grep " ip_address" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //')
+API_SERVERMAAS="http://$MAAS_IP/MAAS/"
+API_KEY=`sudo maas-region apikey --username=ubuntu`
+maas login $PROFILE $API_SERVERMAAS $API_KEY
+
 if [[ "$opnfvmodel" = "openstack" ]]; then
     if [ -e ./deployment.yaml ]; then
        if [ -e ./deployconfig.yaml ]; then

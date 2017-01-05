@@ -79,7 +79,7 @@ lab:
         user: ADMIN
         pass: ADMIN
     floating-ip-range: 10.10.10.6,10.10.10.250,10.10.10.1,10.10.10.0/24
-    ext-port: "eth1"
+    ext-port: "br-eth1"
     dns: 8.8.8.8
     osdomainname:
 opnfv:

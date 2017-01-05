@@ -112,7 +112,7 @@ lab:
 #        user: root
 #        pass: root
     floating-ip-range: 10.6.15.7,10.6.15.250,10.6.15.1,10.6.15.0/24
-    ext-port: "eth5"
+    ext-port: "br-eth5"
     dns: 8.8.8.8
     public-api-ip: 10.6.15.6
     osdomainname: api.maas

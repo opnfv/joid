@@ -94,7 +94,7 @@ lab:
         user: root
         pass: Huawei12#$
     floating-ip-range: 10.6.15.7,10.6.15.250,10.6.15.1,10.6.15.0/24
-    ext-port: "eth5"
+    ext-port: "br-enp4s0d1"
     dns: 8.8.8.8
     public-api-ip:
     osdomainname:

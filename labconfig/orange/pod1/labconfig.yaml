@@ -95,7 +95,7 @@ lab:
         pass: pod1Admin
     floating-ip-range: 10.0.1.5,10.0.1.254,10.0.1.1,10.0.1.0/24
     public-api-ip: 10.0.1.4
-    ext-port: "eth1"
+    ext-port: "br-eth1"
     dns: 192.168.1.1
     osdomainname: pod1.opnfv.fr
 opnfv:

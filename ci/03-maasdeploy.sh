@@ -275,7 +275,7 @@ parse_yaml2() {
 }
 
 addnodes(){
-    sudo virt-install --connect qemu:///system --name bootstrap --ram 2048 --vcpus 2 --video \
+    sudo virt-install --connect qemu:///system --name bootstrap --ram 4098 --cpu host --vcpus 2 --video \
                  cirrus --arch x86_64 --disk size=20,format=qcow2,bus=virtio,io=native,pool=default \
                  --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole \
                  --vnc --print-xml | tee bootstrap
@@ -325,11 +325,11 @@ fi
 #adding compute and control nodes VM to MAAS for virtual deployment purpose.
 if [ "$virtinstall" -eq 1 ]; then
     # create two more VMs to do the deployment.
-    sudo virt-install --connect qemu:///system --name node1-control --ram 8192 --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node1-control
+    sudo virt-install --connect qemu:///system --name node1-control --ram 8192 --cpu host --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node1-control
 
-    sudo virt-install --connect qemu:///system --name node2-compute --ram 8192 --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node2-compute
+    sudo virt-install --connect qemu:///system --name node2-compute --ram 8192 --cpu host --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node2-compute
 
-    sudo virt-install --connect qemu:///system --name node5-compute --ram 8192 --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node5-compute
+    sudo virt-install --connect qemu:///system --name node5-compute --ram 8192 --cpu host --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node5-compute
 
     node1controlmac=`grep  "mac address" node1-control | head -1 | cut -d '"' -f 2`
     node2computemac=`grep  "mac address" node2-compute | head -1 | cut -d '"' -f 2`

@@ -110,7 +110,7 @@ lab:
     floating-ip-range: 172.16.120.20,172.16.120.62,172.16.120.254,172.16.120.0/24
     # Mutiple MACs seperated by space where MACs are from ext-ports across all network nodes.
     # eth1 of m4 since tags for networking are not yet implemented.
-    ext-port: "eth1"
+    ext-port: "br-eth1"
     dns: 8.8.8.8
     osdomainname:
 
