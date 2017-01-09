@@ -6,6 +6,7 @@
     ceilometer:
       charm: "./{{ ubuntu.release }}/ceilometer"
       num_units: {{ unit_qty() }}
+{% if os.service.bindings %}
       bindings:
         internal: internal
 {% if opnfv.spaces_dict.data is defined %}
@@ -17,6 +18,7 @@
         public: public
 {% else %}
         public: internal
+{% endif %}
 {% endif %}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"

@@ -1,6 +1,10 @@
     rabbitmq-server:
       charm: "./{{ ubuntu.release }}/rabbitmq-server"
       num_units: {{ unit_qty() }}
+{% if os.service.bindings %}
+      bindings:
+        amqp: internal
+{% endif %}
       options:
 {% if opnfv.storage_dict.ceph is defined %}
         ceph-osd-replication-count: {{ unit_ceph_qty() }}

@@ -2,8 +2,10 @@
       charm: ./{{ ubuntu.release }}/neutron-openvswitch
       options:
 {% if opnfv.spaces_dict.data is defined %}
+{% if os.service.bindings %}
       bindings:
         data: admin
+{% endif %}
 {% endif %}
 {% if os.network.dpdk %}
         enable-dpdk: true

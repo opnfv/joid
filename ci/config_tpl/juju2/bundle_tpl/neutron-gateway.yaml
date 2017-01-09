@@ -2,8 +2,10 @@
       charm: "./{{ ubuntu.release }}/neutron-gateway"
       num_units: 1
 {% if opnfv.spaces_dict.data is defined %}
+{% if os.service.bindings %}
       bindings:
         data: admin
+{% endif %}
 {% endif %}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"

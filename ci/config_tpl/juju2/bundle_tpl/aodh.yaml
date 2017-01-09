@@ -1,6 +1,7 @@
     aodh:
       charm: "./{{ ubuntu.release }}/aodh"
       num_units: 1
+{% if os.service.bindings %}
       bindings:
         internal: internal
 {% if opnfv.spaces_dict.data is defined %}
@@ -12,6 +13,7 @@
         public: public
 {% else %}
         public: internal
+{% endif %}
 {% endif %}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"

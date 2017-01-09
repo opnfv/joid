@@ -36,7 +36,11 @@
     ceph-osd:
       charm: "./{{ ubuntu.release }}/ceph-osd"
 {% if os.hyperconverged %}
+{% if opnfv.units >= 3 %}
+      num_units: {{ unit_ceph_qty() }}
+{% else %}
       num_units: {{ opnfv.units }}
+{% endif %}
 {% else %}
       num_units: 3
 {% endif %}
@@ -53,9 +57,15 @@
 {% endif %}
       to:
 {% if os.hyperconverged %}
-{% for unit_id in range(0, opnfv.units) %}
+{% if opnfv.units >= 3 %}
+{% for unit_id in range(0, 3) %}
         - "nodes/{{ unit_id }}"
 {% endfor %}
+{% else %}
+ {% for unit_id in range(0, opnfv.units) %}
+         - "nodes/{{ unit_id }}"
+ {% endfor %}
+{% endif %}
 {% else %}
 {% if os.ha.mode == 'ha' %}
 {% for unit_id in range(0, 3) %}
@@ -70,6 +80,7 @@
     ceph-radosgw:
       charm: "./{{ ubuntu.release }}/ceph-radosgw"
       num_units: {{ unit_qty() if os.beta.hacluster_ceph_radosgw else 1 }}
+{% if os.service.bindings %}
       bindings:
         internal: internal
 {% if opnfv.spaces_dict.data is defined %}
@@ -81,6 +92,7 @@
         public: public
 {% else %}
         public: internal
+{% endif %}
 {% endif %}
       options:
         region: {{ os.region }}
