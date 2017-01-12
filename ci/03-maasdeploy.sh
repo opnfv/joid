@@ -25,7 +25,7 @@ sudo apt-get update -y
 sudo apt-get dist-upgrade -y
 sudo apt-get install openssh-server bzr git juju virtinst qemu-kvm libvirt-bin \
              maas maas-region-controller python-pip python-psutil python-openstackclient \
-             python-congressclient gsutil charm-tools pastebinit python-jinja2 -y
+             python-congressclient gsutil charm-tools pastebinit python-jinja2 sshpass -y
 
 sudo pip install --upgrade pip
 
