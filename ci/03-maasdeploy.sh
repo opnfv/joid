@@ -25,7 +25,8 @@ sudo apt-get update -y
 sudo apt-get dist-upgrade -y
 sudo apt-get install openssh-server bzr git juju virtinst qemu-kvm libvirt-bin \
              maas maas-region-controller python-pip python-psutil python-openstackclient \
-             python-congressclient gsutil charm-tools pastebinit python-jinja2 sshpass -y
+             python-congressclient gsutil charm-tools pastebinit python-jinja2 sshpass \
+             openssh-server vlan -y
 
 sudo pip install --upgrade pip
 
@@ -185,6 +186,8 @@ installmaas(){
 
 #
 # MAAS config
+# https://insights.ubuntu.com/2016/01/23/maas-setup-deploying-openstack-on-maas-1-9-with-juju/
+# http://blog.naydenov.net/2016/01/nodes-networking-deploying-openstack-on-maas-1-9-with-juju/
 #
 configuremaas(){
     sudo maas createadmin --username=ubuntu --email=ubuntu@ubuntu.com --password=ubuntu
@@ -212,6 +215,26 @@ configuremaas(){
     maas $PROFILE tags create name='compute'
     maas $PROFILE tags create name='control'
     maas $PROFILE tags create name='storage'
+
+    #create the required spaces.
+    maas $PROFILE space update 0 name=default
+    maas $PROFILE spaces create name=unused
+    maas $PROFILE spaces create name=admin-api
+    maas $PROFILE spaces create name=internal-api
+    maas $PROFILE spaces create name=public-api
+    maas $PROFILE spaces create name=compute-data
+    maas $PROFILE spaces create name=compute-external
+    maas $PROFILE spaces create name=storage-data
+    maas $PROFILE spaces create name=storage-cluster
+
+    #maas $PROFILE subnet update vlan:<vlan id> name=internal-api space=<0> gateway_ip=10.5.1.1
+    #maas $PROFILE subnet update vlan:<vlan id> name=admin-api space=<2> gateway_ip=10.5.12.1
+    #maas $PROFILE subnet update vlan:<vlan id> name=public-api space=<1> gateway_ip=10.5.15.1
+    #maas $PROFILE subnet update vlan:<vlan id> name=compute-data space=<3> gateway_ip=10.5.17.1
+    #maas $PROFILE subnet update vlan:<vlan id> name=compute-external space=<4> gateway_ip=10.5.19.1
+    #maas $PROFILE subnet update vlan:<vlan id> name=storage-data space=<5> gateway_ip=10.5.20.1
+    #maas $PROFILE subnet update vlan:<vlan id> name=storage-cluster space=<6> gateway_ip=10.5.21.1
+
 }
 
 enablesubnetanddhcp(){

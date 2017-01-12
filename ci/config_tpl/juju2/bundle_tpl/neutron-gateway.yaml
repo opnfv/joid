@@ -4,7 +4,7 @@
 {% if opnfv.spaces_dict.data is defined %}
 {% if os.service.bindings %}
       bindings:
-        data: admin
+        data: admin-api
 {% endif %}
 {% endif %}
       options:

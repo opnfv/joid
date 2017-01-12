@@ -3,16 +3,16 @@
       num_units: 1
 {% if os.service.bindings %}
       bindings:
-        internal: internal
+        internal: internal-api
 {% if opnfv.spaces_dict.data is defined %}
-        admin: admin
+        admin: admin-api
 {% else %}
-        admin: internal
+        admin: internal-api
 {% endif %}
 {% if opnfv.spaces_dict.public is defined %}
-        public: public
+        public: public-api
 {% else %}
-        public: internal
+        public: internal-api
 {% endif %}
 {% endif %}
       options:

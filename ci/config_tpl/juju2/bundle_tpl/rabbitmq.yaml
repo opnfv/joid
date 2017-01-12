@@ -3,7 +3,7 @@
       num_units: {{ unit_qty() }}
 {% if os.service.bindings %}
       bindings:
-        amqp: internal
+        amqp: internal-api
 {% endif %}
       options:
 {% if opnfv.storage_dict.ceph is defined %}
