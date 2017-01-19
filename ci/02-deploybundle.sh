@@ -16,7 +16,7 @@ if [[ "$opnfvmodel" = "openstack" ]]; then
     #copy and download charms
     cp $opnfvsdn/fetch-charms.sh ./fetch-charms.sh
 else
-    cp kubernates/fetch-charms.sh ./fetch-charms.sh
+    cp kubernetes/fetch-charms.sh ./fetch-charms.sh
 fi
 
 jujuver=`juju --version`

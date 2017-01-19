@@ -32,7 +32,7 @@ usage() { echo "Usage: $0 [-s <nosdn|odl|opencontrail>]
                          [-f <ipv6,dpdk,lxd,dvr>]
                          [-d <trusty|xenial>]
                          [-a <amd64>]
-                         [-m <openstack|kubernates>]
+                         [-m <openstack|kubernetes>]
                          [-r <a|b>]" 1>&2 exit 1; }
 
 while getopts ":s:t:o:l:h:r:f:d:a:m:" opt; do

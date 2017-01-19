@@ -31,5 +31,6 @@ os:
         congress: True
         promise: True
         bindings: False
-    kubernetes:
+k8:
+    feature:
         loadbalancer: False
