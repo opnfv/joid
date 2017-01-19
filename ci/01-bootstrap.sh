@@ -18,5 +18,5 @@ if [[ "$jujuver" < "2" ]]; then
 else
   controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
   cloudname=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
-  juju bootstrap $controllername $cloudname --debug --to bootstrap.maas
+  juju bootstrap --config agent-version=2.1-beta4 $controllername $cloudname --debug --to bootstrap.maas
 fi

@@ -32,11 +32,11 @@
     - [ 'nova-compute:ephemeral-backend', 'scaleio-openstack:ephemeral-backend' ]
 {% else %}
     - [ 'cinder-ceph:storage-backend', 'cinder:storage-backend' ]
-    - [ 'ceph:client', 'nova-compute:ceph' ]
-    - [ 'ceph:client', 'cinder-ceph:ceph' ]
-    - [ 'ceph:client', 'glance:ceph' ]
-    - [ 'ceph-osd:mon', 'ceph:osd' ]
-    - [ 'ceph-radosgw:mon', 'ceph:radosgw' ]
+    - [ 'ceph-mon:client', 'nova-compute:ceph' ]
+    - [ 'ceph-mon:client', 'cinder-ceph:ceph' ]
+    - [ 'ceph-mon:client', 'glance:ceph' ]
+    - [ 'ceph-osd:mon', 'ceph-mon:osd' ]
+    - [ 'ceph-radosgw:mon', 'ceph-mon:radosgw' ]
     - [ 'ceph-radosgw:identity-service', 'keystone:identity-service' ]
 {% if os.service.congress %}
     - [ 'congress:shared-db', 'mysql:shared-db' ]

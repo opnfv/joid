@@ -1,13 +1,17 @@
     mysql:
       charm: "./{{ ubuntu.release }}/percona-cluster"
       num_units: {{ unit_qty() }}
+{% if os.service.bindings %}
+      bindings:
+        shared-db: internal-api
+{% endif %}
       options:
 {% if os.ha.mode == 'ha' %}
         innodb-buffer-pool-size: 10G
 {% else %}
         innodb-buffer-pool-size: 1G
 {% endif %}
-        max-connections: 20000
+        max-connections: 2000
         root-password: {{ get_password('mysql_root') }}
         sst-password: {{ get_password('mysql_sst') }}
 {% if os.network.ipv6 %}

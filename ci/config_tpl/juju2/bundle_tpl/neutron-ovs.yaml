@@ -1,11 +1,15 @@
     neutron-openvswitch:
       charm: ./{{ ubuntu.release }}/neutron-openvswitch
-      options:
 {% if opnfv.spaces_dict.data is defined %}
 {% if os.service.bindings %}
       bindings:
         data: admin-api
+      options:
+{% else %}
+      options:
 {% endif %}
+{% else %}
+      options:
 {% endif %}
 {% if os.network.dpdk %}
         enable-dpdk: true
@@ -24,7 +28,7 @@
         data-port: br-ex:{{ opnfv.ext_port }}
 {% endif %}
 {% else %}
-         ext-port: {{ opnfv.ext_port }}
+        ext-port: {{ opnfv.ext_port }}
 {% endif %}
 {% endif %}
 {# Empty block to avoid bad block trim #}

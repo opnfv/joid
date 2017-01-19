@@ -1,11 +1,24 @@
 {% if opnfv.storage_dict.ceph is defined %}
-    ceph:
-      charm: "./{{ ubuntu.release }}/ceph"
+    ceph-mon:
+      charm: "./{{ ubuntu.release }}/ceph-mon"
       num_units: {{ unit_ceph_qty() }}
+{% if os.service.bindings %}
+      bindings:
+{% if opnfv.spaces_dict.public is defined %}
+        public: public-api
+{% else %}
+        public: internal-api
+{% endif %}
+{% if opnfv.spaces_dict.storage is defined %}
+        cluster: cluster-stor
+{% else %}
+        cluster: internal-api
+{% endif %}
+{% endif %}
       options:
         monitor-count: {{ unit_ceph_qty() }}
-        fsid: 5a791d94-980b-11e4-b6f6-3c970e8b1cf7
-        monitor-secret: AQAi5a9UeJXUExAA+By9u+GPhl8/XiUQ4nwI3A==
+        fsid: ecbb8960-0e21-11e2-b495-83a88f44db01
+        monitor-secret: AQD1P2xQiKglDhAA4NGUF5j38Mhq56qwz+45wg==
 {% if ubuntu.release == 'trusty' and os.release < 'newton' %}
         source: "cloud:{{ ubuntu.release }}-updates/{{ os.release }}"
 {% elif ubuntu.release == 'xenial' and os.release >= 'newton' %}
@@ -13,9 +26,6 @@
 {% endif %}
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
-{% endif %}
-{% if opnfv.spaces_dict.storage is defined %}
-        #ceph-cluster-network: {{ opnfv.spaces_dict.storage.cidr }}
 {% endif %}
       to:
 {% if os.hyperconverged %}
@@ -43,6 +53,19 @@
 {% endif %}
 {% else %}
       num_units: 3
+{% endif %}
+{% if os.service.bindings %}
+      bindings:
+{% if opnfv.spaces_dict.public is defined %}
+        public: public-api
+{% else %}
+        public: internal-api
+{% endif %}
+{% if opnfv.spaces_dict.storage is defined %}
+        cluster: cluster-stor
+{% else %}
+        cluster: internal-api
+{% endif %}
 {% endif %}
       options:
         osd-devices: {{ opnfv.storage_dict.ceph.disk }}
@@ -96,7 +119,6 @@
 {% endif %}
       options:
         region: {{ os.region }}
-        use-embedded-webserver: true
         operator-roles: "Member,admin"
 {% if ubuntu.release == 'trusty' and os.release < 'newton' %}
         source: "cloud:{{ ubuntu.release }}-updates/{{ os.release }}"
