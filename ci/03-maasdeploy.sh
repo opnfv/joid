@@ -168,7 +168,7 @@ mkdir ~/.juju/ || true
 if [ ! -e ~maas/.ssh/id_rsa.pub ]; then
     sudo su - $USER -c "echo |ssh-keygen -t rsa -f $HOME/id_rsa_maas"
     sudo -u maas mkdir ~maas/.ssh/ || true
-    sudo cp $HOME/id_rsa_maas* ~maas/.ssh/id_rsa
+    sudo cp $HOME/id_rsa_maas ~maas/.ssh/id_rsa
     sudo cp $HOME/id_rsa_maas.pub ~maas/.ssh/id_rsa.pub
 fi
 

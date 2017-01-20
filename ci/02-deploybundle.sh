@@ -40,7 +40,7 @@ check_status() {
        juju status > status.txt
        if [ "$(grep -c "waiting" status.txt )" -ge 4 ]; then
            echo " still waiting for machines ..."
-           if [ $timeoutiter -ge 360 ]; then
+           if [ $timeoutiter -ge 240 ]; then
                retval=1
            fi
            timeoutiter=$((timeoutiter+1))
