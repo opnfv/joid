@@ -1,12 +1,12 @@
     etcd:
       charm: "./{{ ubuntu.release }}/etcd"
-{% if os.kubernetes.loadbalancer %}
+{% if k8.feature.loadbalancer %}
       num_units: 3
 {% else %}
       num_units: 1
 {% endif %}
       to:
-{% if os.kubernetes.loadbalancer %}
+{% if k8.feature.loadbalancer %}
 {% for unit_id in to_select() %}
         - "nodes/{{ unit_id }}"
 {% endfor %}

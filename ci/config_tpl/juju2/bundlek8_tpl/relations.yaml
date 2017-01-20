@@ -1,4 +1,4 @@
-{% if os.kubernetes.loadbalancer %}
+{% if k8.feature.loadbalancer %}
     - [ 'kubernetes-master:kube-api-endpoint', 'kubeapi-load-balancer:apiserver' ]
 {% else %}
     - [ 'kubernetes-master:kube-api-endpoint', 'kubernetes-worker:kube-api-endpoint' ]
@@ -11,7 +11,7 @@
     - [ 'flannel:cni', 'kubernetes-master:cni' ]
     - [ 'flannel:cni', 'kubernetes-worker:cni' ]
     - [ 'etcd:certificates', 'easyrsa:client' ]
-{% if os.kubernetes.loadbalancer %}
+{% if k8.feature.loadbalancer %}
     - [ 'kubernetes-master:loadbalancer', 'kubeapi-load-balancer:loadbalancer' ]
     - [ 'kubernetes-worker:kube-api-endpoint', 'kubeapi-load-balancer:website' ]
     - [ 'kubeapi-load-balancer:certificates', 'easyrsa:client' ]

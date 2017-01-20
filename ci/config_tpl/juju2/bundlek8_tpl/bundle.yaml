@@ -16,7 +16,7 @@
 {% include 'easyrsa.yaml' %}
 {% include 'etcd.yaml' %}
 {% include 'subordinate.yaml' %}
-{% if os.kubernetes.loadbalancer %}
+{% if k8.feature.loadbalancer %}
 {% include 'kubeapi-load-balancer.yaml' %}
 {% endif %}
 
