@@ -190,42 +190,42 @@ installmaas(){
 # http://blog.naydenov.net/2016/01/nodes-networking-deploying-openstack-on-maas-1-9-with-juju/
 #
 configuremaas(){
-    sudo maas createadmin --username=ubuntu --email=ubuntu@ubuntu.com --password=ubuntu
+    sudo maas createadmin --username=ubuntu --email=ubuntu@ubuntu.com --password=ubuntu || true
     API_KEY=`sudo maas-region apikey --username=ubuntu`
     maas login $PROFILE $API_SERVERMAAS $API_KEY
-    maas $PROFILE maas set-config name='main_archive' value=$MAIN_ARCHIVE
-    maas $PROFILE maas set-config name=upstream_dns value=$MY_UPSTREAM_DNS
-    maas $PROFILE maas set-config name='maas_name' value=$MAAS_NAME
-    maas $PROFILE maas set-config name='ntp_server' value='ntp.ubuntu.com'
-    maas $PROFILE sshkeys create "key=$SSH_KEY"
+    maas $PROFILE maas set-config name='main_archive' value=$MAIN_ARCHIVE || true
+    maas $PROFILE maas set-config name=upstream_dns value=$MY_UPSTREAM_DNS || true
+    maas $PROFILE maas set-config name='maas_name' value=$MAAS_NAME || true
+    maas $PROFILE maas set-config name='ntp_server' value='ntp.ubuntu.com' || true
+    maas $PROFILE sshkeys create "key=$SSH_KEY" || true
     maas $PROFILE boot-source update $SOURCE_ID \
-         url=$URL keyring_filename=$KEYRING_FILE
+         url=$URL keyring_filename=$KEYRING_FILE || true
     maas $PROFILE boot-source-selections create 1 \
          release='trusty' arches='amd64' labels='daily' \
-         os='ubuntu' subarches='*'
-    maas $PROFILE boot-resources import
+         os='ubuntu' subarches='*' || true
+    maas $PROFILE boot-resources import || true
 
     while [ "$(maas $PROFILE boot-resources read | grep trusty | wc -l )" -le 0 ];
     do
-        maas $PROFILE boot-resources import
+        maas $PROFILE boot-resources import || true
         sleep 20
     done
 
-    maas $PROFILE tags create name='bootstrap'
-    maas $PROFILE tags create name='compute'
-    maas $PROFILE tags create name='control'
-    maas $PROFILE tags create name='storage'
+    maas $PROFILE tags create name='bootstrap' || true
+    maas $PROFILE tags create name='compute' || true
+    maas $PROFILE tags create name='control' || true
+    maas $PROFILE tags create name='storage' || true
 
     #create the required spaces.
-    maas $PROFILE space update 0 name=default
-    maas $PROFILE spaces create name=unused
-    maas $PROFILE spaces create name=admin-api
-    maas $PROFILE spaces create name=internal-api
-    maas $PROFILE spaces create name=public-api
-    maas $PROFILE spaces create name=compute-data
-    maas $PROFILE spaces create name=compute-external
-    maas $PROFILE spaces create name=storage-data
-    maas $PROFILE spaces create name=storage-cluster
+    maas $PROFILE space update 0 name=default || true
+    maas $PROFILE spaces create name=unused || true
+    maas $PROFILE spaces create name=admin-api || true
+    maas $PROFILE spaces create name=internal-api || true
+    maas $PROFILE spaces create name=public-api || true
+    maas $PROFILE spaces create name=compute-data || true
+    maas $PROFILE spaces create name=compute-external || true
+    maas $PROFILE spaces create name=storage-data || true
+    maas $PROFILE spaces create name=storage-cluster || true
 
     #maas $PROFILE subnet update vlan:<vlan id> name=internal-api space=<0> gateway_ip=10.5.1.1
     #maas $PROFILE subnet update vlan:<vlan id> name=admin-api space=<2> gateway_ip=10.5.12.1
@@ -250,13 +250,13 @@ enablesubnetanddhcp(){
 
     maas $PROFILE ipranges create type=reserved \
          start_ip=$IP_STATIC_RANGE_LOW end_ip=$IP_STATIC_RANGE_HIGH \
-         comment='This is a reserved range'
+         comment='This is a reserved range' || true
 
     IP_DYNAMIC_RANGE_LOW="192.168.122.50"
     IP_DYNAMIC_RANGE_HIGH="192.168.122.150"
     maas $PROFILE ipranges create type=dynamic \
         start_ip=$IP_DYNAMIC_RANGE_LOW end_ip=$IP_DYNAMIC_RANGE_HIGH \
-        comment='This is a reserved dynamic range'
+        comment='This is a reserved dynamic range' || true
 
 
     FABRIC_ID=$(maas $PROFILE subnet read $SUBNET_CIDR \
@@ -264,12 +264,12 @@ enablesubnetanddhcp(){
 
     PRIMARY_RACK_CONTROLLER=`maas $PROFILE rack-controllers read  | grep system_id | cut -d '"' -f 4`
 
-    maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER
+    maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
 
     MY_GATEWAY="192.168.122.1"
     MY_NAMESERVER=192.168.122.1
-    maas $PROFILE subnet update $SUBNET_CIDR gateway_ip=$MY_GATEWAY
-    maas $PROFILE subnet update $SUBNET_CIDR dns_servers=$MY_NAMESERVER
+    maas $PROFILE subnet update $SUBNET_CIDR gateway_ip=$MY_GATEWAY || true
+    maas $PROFILE subnet update $SUBNET_CIDR dns_servers=$MY_NAMESERVER || true
 
 }
 
@@ -378,9 +378,9 @@ addnodes(){
                  power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
                  architecture='amd64/generic' power_parameters_power_id='node5-compute' | grep system_id | cut -d '"' -f 4 `
 
-        maas $PROFILE tag update-nodes control add=$controlnodeid
-        maas $PROFILE tag update-nodes compute add=$compute2nodeid
-        maas $PROFILE tag update-nodes compute add=$compute5nodeid
+        maas $PROFILE tag update-nodes control add=$controlnodeid || true
+        maas $PROFILE tag update-nodes compute add=$compute2nodeid || true
+        maas $PROFILE tag update-nodes compute add=$compute5nodeid || true
     fi
 }
 
@@ -423,7 +423,7 @@ enableautomode() {
     listofnodes=`maas maas nodes read | grep system_id | cut -d '"' -f 4`
     for nodes in $listofnodes
     do
-        maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3
+        maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3 || true
     done
 }
 
@@ -438,7 +438,7 @@ enableautomodebyname() {
         do
             nodes=`maas maas nodes read | grep system_id | cut -d '"' -f 4`
             if [ ! -z "$nodes" ]; then
-                maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3
+                maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3 || true
             fi
        done
     fi
@@ -536,8 +536,6 @@ if [ -e ./deployconfig.yaml ]; then
 
   # split EXTERNAL_NETWORK=first ip;last ip; gateway;network
 
-  maas maas spaces create internal "Using for pxe network within the lab"
-
   if [ "$datanet" != "''" ]; then
       EXTNET=(${enableiflist//,/ })
       i="0"
@@ -546,7 +544,6 @@ if [ -e ./deployconfig.yaml ]; then
           enableautomode ${EXTNET[i]} AUTO $datanet || true
           i=$[$i+1]
       done
-      maas maas spaces create admin "Using for admin network within the lab"
 
   fi
   if [ "$stornet" != "''" ]; then
@@ -566,7 +563,6 @@ if [ -e ./deployconfig.yaml ]; then
           enableautomode ${EXTNET[i]} AUTO $pubnet || true
           i=$[$i+1]
       done
-      maas maas spaces create public "Using for public network within the lab"
   fi
 fi
 
