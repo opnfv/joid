@@ -26,7 +26,7 @@ sudo apt-get dist-upgrade -y
 sudo apt-get install openssh-server bzr git juju virtinst qemu-kvm libvirt-bin \
              maas maas-region-controller python-pip python-psutil python-openstackclient \
              python-congressclient gsutil charm-tools pastebinit python-jinja2 sshpass \
-             openssh-server vlan -y
+             openssh-server vlan ipmitool -y
 
 sudo pip install --upgrade pip
 
@@ -165,11 +165,11 @@ fi
 mkdir ~/joid_config/ || true
 mkdir ~/.juju/ || true
 
-if [ ! -e ~maas/.ssh/id_rsa ]; then
-    sudo -u maas mkdir ~maas/.ssh/
-    sudo -u maas touch ~maas/.ssh/id_rsa
-    sudo -u maas chmod 600 ~maas/.ssh/id_rsa
-    sudo -u maas ssh-keygen  -t rsa -f ~maas/.ssh/id_rsa -q -N "" -y
+if [ ! -e ~maas/.ssh/id_rsa.pub ]; then
+    sudo su - $USER -c "echo |ssh-keygen -t rsa -f $HOME/id_rsa_maas"
+    sudo -u maas mkdir ~maas/.ssh/ || true
+    sudo cp $HOME/id_rsa_maas* ~maas/.ssh/id_rsa
+    sudo cp $HOME/id_rsa_maas.pub ~maas/.ssh/id_rsa.pub
 fi
 
 # Ensure virsh can connect without ssh auth
@@ -298,24 +298,65 @@ parse_yaml2() {
 }
 
 addnodes(){
+if [ "$virtinstall" -eq 1 ]; then
     sudo virt-install --connect qemu:///system --name bootstrap --ram 4098 --cpu host --vcpus 2 --video \
                  cirrus --arch x86_64 --disk size=20,format=qcow2,bus=virtio,io=native,pool=default \
                  --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole \
                  --vnc --print-xml | tee bootstrap
 
+    sudo virt-install --connect qemu:///system --name node1-control --ram 8192 --cpu host --vcpus 4 \
+                 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default \
+                 --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio \
+                 --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node1-control
+
+    sudo virt-install --connect qemu:///system --name node2-compute --ram 8192 --cpu host --vcpus 4 \
+                --disk size=120,format=qcow2,bus=virtio,io=native,pool=default \
+                --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio \
+                --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node2-compute
+
+    sudo virt-install --connect qemu:///system --name node5-compute --ram 8192 --cpu host --vcpus 4 \
+               --disk size=120,format=qcow2,bus=virtio,io=native,pool=default \
+               --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio \
+               --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node5-compute
+
+
     bootstrapmac=`grep  "mac address" bootstrap | head -1 | cut -d '"' -f 2`
+    node1controlmac=`grep  "mac address" node1-control | head -1 | cut -d '"' -f 2`
+    node2computemac=`grep  "mac address" node2-compute | head -1 | cut -d '"' -f 2`
+    node5computemac=`grep  "mac address" node5-compute | head -1 | cut -d '"' -f 2`
 
     sudo virsh -c qemu:///system define --file bootstrap
+    sudo virsh -c qemu:///system define --file node1-control
+    sudo virsh -c qemu:///system define --file node2-compute
+    sudo virsh -c qemu:///system define --file node5-compute
+
+    API_KEY=`sudo maas-region apikey --username=ubuntu`
+    maas login $PROFILE $API_SERVERMAAS $API_KEY
 
     bootstrapid=`maas $PROFILE machines create autodetect_nodegroup='yes' name='bootstrap' \
                  tags='bootstrap' hostname='bootstrap' power_type='virsh' mac_addresses=$bootstrapmac \
                  power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' \
                  architecture='amd64/generic' power_parameters_power_id='bootstrap' | grep system_id | cut -d '"' -f 4 `
-
-    API_KEY=`sudo maas-region apikey --username=ubuntu`
-    maas login $PROFILE $API_SERVERMAAS $API_KEY
+    controlnodeid=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node1-control' \
+                 tags='control' hostname='node1-control' power_type='virsh' mac_addresses=$node1controlmac \
+                 power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' \
+                 architecture='amd64/generic' power_parameters_power_id='node1-control' | grep system_id | cut -d '"' -f 4 `
+    computenode2id=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node2-compute' \
+                 tags='compute' hostname='node2-compute' power_type='virsh' mac_addresses=$node2computemac \
+                 power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' \
+                 architecture='amd64/generic' power_parameters_power_id='node2-compute' | grep system_id | cut -d '"' -f 4 `
+    computenode5id=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node5-compute' \
+                 tags='compute' hostname='node5-compute' power_type='virsh' mac_addresses=$node5computemac \
+                 power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' \
+                 architecture='amd64/generic' power_parameters_power_id='node5-compute' | grep system_id | cut -d '"' -f 4 `
 
     maas $PROFILE tag update-nodes bootstrap add=$bootstrapid
+    maas $PROFILE tag update-nodes control add=$controlnodeid
+    maas $PROFILE tag update-nodes compute add=$compute2nodeid
+    maas $PROFILE tag update-nodes compute add=$compute5nodeid
+
+fi
+
 }
 
 configuremaas
@@ -344,39 +385,6 @@ fi
 #Added the Qtip public to run the Qtip test after install on bare metal nodes.
 #maas $PROFILE sshkeys new key="`cat ./maas/sshkeys/QtipKey.pub`"
 #maas $PROFILE sshkeys new key="`cat ./maas/sshkeys/DominoKey.pub`"
-
-#adding compute and control nodes VM to MAAS for virtual deployment purpose.
-if [ "$virtinstall" -eq 1 ]; then
-    # create two more VMs to do the deployment.
-    sudo virt-install --connect qemu:///system --name node1-control --ram 8192 --cpu host --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node1-control
-
-    sudo virt-install --connect qemu:///system --name node2-compute --ram 8192 --cpu host --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node2-compute
-
-    sudo virt-install --connect qemu:///system --name node5-compute --ram 8192 --cpu host --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node5-compute
-
-    node1controlmac=`grep  "mac address" node1-control | head -1 | cut -d '"' -f 2`
-    node2computemac=`grep  "mac address" node2-compute | head -1 | cut -d '"' -f 2`
-    node5computemac=`grep  "mac address" node5-compute | head -1 | cut -d '"' -f 2`
-
-    sudo virsh -c qemu:///system define --file node1-control
-    sudo virsh -c qemu:///system define --file node2-compute
-    sudo virsh -c qemu:///system define --file node5-compute
-
-    API_KEY=`sudo maas-region apikey --username=ubuntu`
-    maas login $PROFILE $API_SERVERMAAS $API_KEY
-
-    controlnodeid=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node1-control' tags='control' hostname='node1-control' power_type='virsh' mac_addresses=$node1controlmac power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node1-control' | grep system_id | cut -d '"' -f 4 `
-
-    maas $PROFILE tag update-nodes control add=$controlnodeid
-
-    computenodeid=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node2-compute' tags='compute' hostname='node2-compute' power_type='virsh' mac_addresses=$node2computemac power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node2-compute' | grep system_id | cut -d '"' -f 4 `
-
-    maas $PROFILE tag update-nodes compute add=$computenodeid
-
-    computenodeid=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node5-compute' tags='compute' hostname='node5-compute' power_type='virsh' mac_addresses=$node5computemac power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node5-compute' | grep system_id | cut -d '"' -f 4 `
-
-    maas $PROFILE tag update-nodes compute add=$computenodeid
-fi
 
 #
 # Functions for MAAS network customization
