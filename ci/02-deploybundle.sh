@@ -20,6 +20,7 @@ else
 fi
 
 jujuver=`juju --version`
+maasver=`apt-cache policy maas | grep Installed | cut -d ':' -f 2 | sed -e 's/ //'`
 
 #modify the ubuntu series wants to deploy
 sed -i -- "s|distro=trusty|distro=$opnfvdistro|g" ./fetch-charms.sh
@@ -56,10 +57,19 @@ check_status() {
 PROFILE=maas
 MAAS_IP=$(grep " ip_address" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //')
 API_SERVERMAAS="http://$MAAS_IP/MAAS/"
-API_KEY=`sudo maas-region apikey --username=ubuntu || true`
+if [ "$maasver" > "2" ]; then
+    API_KEY=`sudo maas-region apikey --username=ubuntu || true`
+else
+    API_KEY=`sudo maas-region-admin apikey --username=ubuntu || true`
+fi
+
 
 if [[ "$API_KEY" = "" ]]; then
-    API_KEY=`sshpass -p ubuntu ssh ubuntu@$MAAS_IP 'sudo maas-region apikey --username=ubuntu'`
+    if [ "$maasver" > "2" ]; then
+        API_KEY=`sshpass -p ubuntu ssh ubuntu@$MAAS_IP 'sudo maas-region apikey --username=ubuntu'`
+    else
+        API_KEY=`sshpass -p ubuntu ssh ubuntu@$MAAS_IP 'sudo maas-region-admin apikey --username=ubuntu'`
+    fi
 fi
 
 maas login $PROFILE $API_SERVERMAAS $API_KEY
@@ -74,7 +84,11 @@ if [[ "$opnfvmodel" = "openstack" ]]; then
           osdomname=`grep "os-domain-name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
        fi
 
-        workmutiple=`maas maas nodes read | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
+        if [ "$maasver" > "2" ]; then
+            workmutiple=`maas maas nodes read | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
+        else
+            workmutiple=`maas maas nodes list | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
+        fi
         max=0
         for v in ${workmutiple[@]}; do
             if (( $v > $max )); then max=$v; fi;
