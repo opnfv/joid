@@ -309,9 +309,9 @@ addnodes(){
         netw=""
         for feature in $brid; do
             if [ "$feature" == "" ]; then
-                netw=$feature
+                netw=$netw
             else
-                netw=$fea" --network bridge="$feature",model=virtio"
+                netw=$netw" --network bridge="$feature",model=virtio"
             fi
         done
     fi
@@ -342,17 +342,17 @@ addnodes(){
 
         sudo virt-install --connect qemu:///system --name node1-control --ram 8192 --cpu host --vcpus 4 \
                      --disk size=120,format=qcow2,bus=virtio,io=native,pool=default \
-                     --network bridge=virbr0,model=virtio $ntew \
+                     --network bridge=virbr0,model=virtio $netw \
                      --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node1-control
 
         sudo virt-install --connect qemu:///system --name node2-compute --ram 8192 --cpu host --vcpus 4 \
                     --disk size=120,format=qcow2,bus=virtio,io=native,pool=default \
-                    --network bridge=virbr0,model=virtio $ntew \
+                    --network bridge=virbr0,model=virtio $netw \
                     --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node2-compute
 
         sudo virt-install --connect qemu:///system --name node5-compute --ram 8192 --cpu host --vcpus 4 \
                    --disk size=120,format=qcow2,bus=virtio,io=native,pool=default \
-                   --network bridge=virbr0,model=virtio $ntew \
+                   --network bridge=virbr0,model=virtio $netw \
                    --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node5-compute
 
 
