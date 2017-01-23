@@ -3,6 +3,7 @@
       num_units: {{ unit_qty() }}
 {% if os.service.bindings %}
       bindings:
+        access: internal-api
         shared-db: internal-api
 {% endif %}
       options:

@@ -1,15 +1,20 @@
     neutron-openvswitch:
       charm: ./{{ ubuntu.release }}/neutron-openvswitch
-{% if opnfv.spaces_dict.data is defined %}
 {% if os.service.bindings %}
+{% if opnfv.spaces_dict.data is defined %}
       bindings:
         data: admin-api
       options:
 {% else %}
+      bindings:
+        data: internal-api
       options:
 {% endif %}
 {% else %}
       options:
+{% if opnfv.spaces_dict.data is defined %}
+        os-data-network: {{ opnfv.spaces_dict.data.cidr }}
+{% endif %}
 {% endif %}
 {% if os.network.dpdk %}
         enable-dpdk: true

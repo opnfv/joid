@@ -8,6 +8,7 @@
 {% if os.service.bindings %}
       bindings:
         internal: internal-api
+        shared-db: internal-api
 {% if opnfv.spaces_dict.data is defined %}
         admin: admin-api
 {% else %}

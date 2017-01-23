@@ -8,6 +8,7 @@
       num_units: {{ unit_qty() }}
 {% if os.service.bindings %}
       bindings:
+        shared-db: internal-api
         internal: internal-api
 {% if opnfv.spaces_dict.data is defined %}
         admin: admin-api

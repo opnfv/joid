@@ -5,7 +5,7 @@
 {% if os.service.bindings %}
       bindings:
 {% if opnfv.spaces_dict.public is defined %}
-        public: public-api
+        public: internal-api
 {% else %}
         public: internal-api
 {% endif %}
@@ -57,7 +57,7 @@
 {% if os.service.bindings %}
       bindings:
 {% if opnfv.spaces_dict.public is defined %}
-        public: public-api
+        public: internal-api
 {% else %}
         public: internal-api
 {% endif %}
