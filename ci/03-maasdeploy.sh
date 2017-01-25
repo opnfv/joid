@@ -170,6 +170,8 @@ if [ ! -e ~maas/.ssh/id_rsa.pub ]; then
     sudo -u maas mkdir ~maas/.ssh/ || true
     sudo cp $HOME/id_rsa_maas ~maas/.ssh/id_rsa
     sudo cp $HOME/id_rsa_maas.pub ~maas/.ssh/id_rsa.pub
+    sudo chown maas:maas ~maas/.ssh/id_rsa
+    sudo chown maas:maas ~maas/.ssh/id_rsa.pub
 fi
 
 # Ensure virsh can connect without ssh auth
@@ -301,6 +303,12 @@ addnodes(){
     API_KEY=`sudo maas-region apikey --username=ubuntu`
     maas login $PROFILE $API_SERVERMAAS $API_KEY
 
+    # make sure there is no machine entry in maas
+    for m in `maas $PROFILE machines read | grep system_id | cut -d '"' -f4 | sort | uniq`
+    do
+        maas ubuntu machine delete $m
+    done
+
     if [ "$virtinstall" -eq 1 ]; then
         ntew=virbr0
     else
@@ -331,10 +339,11 @@ addnodes(){
     fi
     sudo virsh -c qemu:///system define --file bootstrap
 
-    bootstrapid=`maas $PROFILE machines create autodetect_nodegroup='yes' name='bootstrap' \
-                 tags='bootstrap' hostname='bootstrap' power_type='virsh' $bootstrapmac \
+    bootstrap=`maas $PROFILE machines create autodetect_nodegroup='yes' name='bootstrap' \
+                 tags='bootstrap' hostname='bootstrap' power_type='virsh' mac_addresses=$bootstrapmac \
                  power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
-                 architecture='amd64/generic' power_parameters_power_id='bootstrap' | grep system_id | cut -d '"' -f 4 `
+                 architecture='amd64/generic' power_parameters_power_id='bootstrap'`
+    bootstrapid=`echo "$bootstrap" | grep -m1 'system_id' | cut -d '"' -f 4`
 
     maas $PROFILE tag update-nodes bootstrap add=$bootstrapid
 
@@ -365,18 +374,21 @@ addnodes(){
         sudo virsh -c qemu:///system define --file node5-compute
 
 
-        controlnodeid=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node1-control' \
+        controlnode=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node1-control' \
                  tags='control' hostname='node1-control' power_type='virsh' mac_addresses=$node1controlmac \
                  power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
-                 architecture='amd64/generic' power_parameters_power_id='node1-control' | grep system_id | cut -d '"' -f 4 `
-        computenode2id=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node2-compute' \
+                 architecture='amd64/generic' power_parameters_power_id='node1-control'`
+        controlnodeid=`echo "$controlnode" | grep -m1 'system_id' | cut -d '"' -f 4`
+        computenode2=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node2-compute' \
                  tags='compute' hostname='node2-compute' power_type='virsh' mac_addresses=$node2computemac \
                  power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
-                 architecture='amd64/generic' power_parameters_power_id='node2-compute' | grep system_id | cut -d '"' -f 4 `
-        computenode5id=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node5-compute' \
+                 architecture='amd64/generic' power_parameters_power_id='node2-compute'`
+        computenode2id=`echo "$computenode2" | grep -m1 'system_id' | cut -d '"' -f 4`
+        computenode5=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node5-compute' \
                  tags='compute' hostname='node5-compute' power_type='virsh' mac_addresses=$node5computemac \
                  power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
-                 architecture='amd64/generic' power_parameters_power_id='node5-compute' | grep system_id | cut -d '"' -f 4 `
+                 architecture='amd64/generic' power_parameters_power_id='node5-compute'`
+        computenode5id=`echo "$computenode5" | grep -m1 'system_id' | cut -d '"' -f 4`
 
         maas $PROFILE tag update-nodes control add=$controlnodeid || true
         maas $PROFILE tag update-nodes compute add=$compute2nodeid || true
@@ -385,6 +397,9 @@ addnodes(){
 }
 
 configuremaas
+if [ "$virtinstall" -eq 1 ]; then
+    enablesubnetanddhcp
+fi
 addnodes
 #sudo chown $USER:$USER environments.yaml
 
