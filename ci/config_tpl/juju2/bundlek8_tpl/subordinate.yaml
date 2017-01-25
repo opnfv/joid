@@ -1,4 +1,4 @@
 
     flannel:
-      charm: ./{{ ubuntu.release }}/flannel
+      charm: cs:~containers/flannel
 

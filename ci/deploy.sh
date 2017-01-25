@@ -203,5 +203,8 @@ if [[ "$opnfvmodel" = "openstack" ]]; then
     ../juju/joid-configure-openstack || true
 
 fi
+if [[ "$opnfvmodel" = "kubernetes" ]]; then
+    ./k8.sh
+fi
 
 echo "...... finished  ......."

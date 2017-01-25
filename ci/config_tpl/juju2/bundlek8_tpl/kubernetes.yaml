@@ -1,12 +1,12 @@
     kubernetes-master:
-      charm: "./{{ ubuntu.release }}/kubernetes-master"
+      charm: "cs:~containers/kubernetes-master"
       num_units: 1
       expose: true
       to:
         - "nodes/0"
 
     kubernetes-worker:
-      charm: "./{{ ubuntu.release }}/kubernetes-worker"
+      charm: "cs:~containers/kubernetes-worker"
       num_units: {{ opnfv.units - 1 }}
       expose: true
       to:

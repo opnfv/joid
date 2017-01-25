@@ -1,5 +1,5 @@
     etcd:
-      charm: "./{{ ubuntu.release }}/etcd"
+      charm: "cs:~containers/etcd"
 {% if k8.feature.loadbalancer %}
       num_units: 3
 {% else %}

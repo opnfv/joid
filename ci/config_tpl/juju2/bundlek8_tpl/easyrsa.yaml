@@ -1,5 +1,5 @@
     easyrsa:
-      charm: "./{{ ubuntu.release }}/easyrsa"
+      charm: "cs:~containers/easyrsa"
       num_units: 1
       to:
         - "lxd:nodes/0"

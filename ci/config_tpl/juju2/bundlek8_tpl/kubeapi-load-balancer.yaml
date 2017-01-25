@@ -1,6 +1,6 @@
 
     kubeapi-load-balancer:
-      charm: "./{{ ubuntu.release }}/kubeapi-load-balancer"
+      charm: "cs:~containers/kubeapi-load-balancer"
       num_units: 1
       expose: true
       to:
