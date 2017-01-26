@@ -26,7 +26,7 @@ sudo apt-get dist-upgrade -y
 sudo apt-get install openssh-server bzr git juju virtinst qemu-kvm libvirt-bin \
              maas maas-region-controller python-pip python-psutil python-openstackclient \
              python-congressclient gsutil charm-tools pastebinit python-jinja2 sshpass \
-             openssh-server vlan ipmitool -y
+             openssh-server vlan ipmitool jq -y
 
 sudo pip install --upgrade pip
 
@@ -258,7 +258,7 @@ configuremaas(){
 enablesubnetanddhcp(){
 
     SUBNET_PREFIX="192.168.122"
-    SUBNET_CIDR="($SUBNET_PREFIX).0/24"
+    SUBNET_CIDR="$SUBNET_PREFIX.0/24"
 
     IP_STATIC_RANGE_LOW="192.168.122.1"
     IP_STATIC_RANGE_HIGH="192.168.122.49"
@@ -277,10 +277,9 @@ enablesubnetanddhcp(){
         comment='This is a reserved dynamic range' || true
 
 
-    FABRIC_ID=$(maas $PROFILE subnet read $SUBNET_CIDR \
-                | grep fabric | cut -d ' ' -f 10 | cut -d '"' -f 2)
+    FABRIC_ID=$(maas $PROFILE subnet read $SUBNET_CIDR | jq '.vlan.fabric_id')
 
-    PRIMARY_RACK_CONTROLLER=`maas $PROFILE rack-controllers read  | grep system_id | cut -d '"' -f 4`
+    PRIMARY_RACK_CONTROLLER=$(maas $PROFILE rack-controllers read | jq -r '.[0].system_id')
 
     maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
 
@@ -320,7 +319,7 @@ addnodes(){
     maas login $PROFILE $API_SERVERMAAS $API_KEY
 
     # make sure there is no machine entry in maas
-    for m in `maas $PROFILE machines read | grep system_id | cut -d '"' -f4 | sort | uniq`
+    for m in $(maas $PROFILE machines read | jq -r '.[].system_id')
     do
         maas ubuntu machine delete $m
     done
@@ -350,16 +349,16 @@ addnodes(){
         bootstrapmac=""
         bootstrapmacs=`grep  "mac address" bootstrap| cut -d "'" -f 2`
         for mac in $bootstrapmacs; do
-            bootstrapmac=$bootstrapmac" mac_addresses="$mac 
+            bootstrapmac=$bootstrapmac" mac_addresses="$mac
         done
     fi
     sudo virsh -c qemu:///system define --file bootstrap
 
-    bootstrap=`maas $PROFILE machines create autodetect_nodegroup='yes' name='bootstrap' \
-                 tags='bootstrap' hostname='bootstrap' power_type='virsh' mac_addresses=$bootstrapmac \
-                 power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
-                 architecture='amd64/generic' power_parameters_power_id='bootstrap'`
-    bootstrapid=`echo "$bootstrap" | grep -m1 'system_id' | cut -d '"' -f 4`
+    maas $PROFILE machines create autodetect_nodegroup='yes' name='bootstrap' \
+        tags='bootstrap' hostname='bootstrap' power_type='virsh' mac_addresses=$bootstrapmac \
+        power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
+        architecture='amd64/generic' power_parameters_power_id='bootstrap'
+    bootstrapid=$(maas $PROFILE machines read | jq -r 'select(.[].hostname == "bootstrap")[0].system_id')
 
     maas $PROFILE tag update-nodes bootstrap add=$bootstrapid
 
@@ -390,21 +389,21 @@ addnodes(){
         sudo virsh -c qemu:///system define --file node5-compute
 
 
-        controlnode=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node1-control' \
-                 tags='control' hostname='node1-control' power_type='virsh' mac_addresses=$node1controlmac \
-                 power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
-                 architecture='amd64/generic' power_parameters_power_id='node1-control'`
-        controlnodeid=`echo "$controlnode" | grep -m1 'system_id' | cut -d '"' -f 4`
-        computenode2=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node2-compute' \
-                 tags='compute' hostname='node2-compute' power_type='virsh' mac_addresses=$node2computemac \
-                 power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
-                 architecture='amd64/generic' power_parameters_power_id='node2-compute'`
-        computenode2id=`echo "$computenode2" | grep -m1 'system_id' | cut -d '"' -f 4`
-        computenode5=`maas $PROFILE machines create autodetect_nodegroup='yes' name='node5-compute' \
-                 tags='compute' hostname='node5-compute' power_type='virsh' mac_addresses=$node5computemac \
-                 power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
-                 architecture='amd64/generic' power_parameters_power_id='node5-compute'`
-        computenode5id=`echo "$computenode5" | grep -m1 'system_id' | cut -d '"' -f 4`
+        maas $PROFILE machines create autodetect_nodegroup='yes' name='node1-control' \
+            tags='control' hostname='node1-control' power_type='virsh' mac_addresses=$node1controlmac \
+            power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
+            architecture='amd64/generic' power_parameters_power_id='node1-control'
+        controlnodeid=$(maas $PROFILE machines read | jq -r 'select(.[].hostname == "node1-control")[0].system_id')
+        maas $PROFILE machines create autodetect_nodegroup='yes' name='node2-compute' \
+            tags='compute' hostname='node2-compute' power_type='virsh' mac_addresses=$node2computemac \
+            power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
+            architecture='amd64/generic' power_parameters_power_id='node2-compute'
+        compute2nodeid=$(maas $PROFILE machines read | jq -r 'select(.[].hostname == "node2-compute")[0].system_id')
+        maas $PROFILE machines create autodetect_nodegroup='yes' name='node5-compute' \
+            tags='compute' hostname='node5-compute' power_type='virsh' mac_addresses=$node5computemac \
+            power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
+            architecture='amd64/generic' power_parameters_power_id='node5-compute'
+        compute5nodeid=$(maas $PROFILE machines read | jq -r 'select(.[].hostname == "node5-compute")[0].system_id')
 
         maas $PROFILE tag update-nodes control add=$controlnodeid || true
         maas $PROFILE tag update-nodes compute add=$compute2nodeid || true
@@ -434,10 +433,9 @@ enableautomode() {
     API_KEY=`sudo maas-region apikey --username=ubuntu`
     maas login $PROFILE $API_SERVERMAAS $API_KEY
 
-    listofnodes=`maas maas nodes read | grep system_id | cut -d '"' -f 4`
-    for nodes in $listofnodes
+    for node in $(maas $PROFILE nodes read | jq -r '.[].system_id')
     do
-        maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3 || true
+        maas $PROFILE interface link-subnet $node $1  mode=$2 subnet=$3 || true
     done
 }
 
@@ -450,9 +448,9 @@ enableautomodebyname() {
     if [ ! -z "$4" ]; then
         for i in `seq 1 7`;
         do
-            nodes=`maas maas nodes read | grep system_id | cut -d '"' -f 4`
+            nodes=$(maas $PROFILE nodes read | jq -r '.[].system_id')
             if [ ! -z "$nodes" ]; then
-                maas maas interface link-subnet $nodes $1  mode=$2 subnet=$3 || true
+                maas $PROFILE interface link-subnet $nodes $1  mode=$2 subnet=$3 || true
             fi
        done
     fi
@@ -464,8 +462,9 @@ crvlanupdsubnet() {
     API_KEY=`sudo maas-region apikey --username=ubuntu`
     maas login $PROFILE $API_SERVERMAAS $API_KEY
 
-    newvlanid=`maas maas vlans create $2 name=$3 vid=$4 | grep resource | cut -d '/' -f 6 `
-    maas maas subnet update $5 vlan=$newvlanid
+    # TODO: fix subnet creation and use 'jq'
+    newvlanid=`maas $PROFILE vlans create $2 name=$3 vid=$4 | grep resource | cut -d '/' -f 6 `
+    maas $PROFILE subnet update $5 vlan=$newvlanid
     eval "$1"="'$newvlanid'"
 }
 
@@ -474,12 +473,10 @@ crnodevlanint() {
     API_KEY=`sudo maas-region apikey --username=ubuntu`
     maas login $PROFILE $API_SERVERMAAS $API_KEY
 
-    listofnodes=`maas maas nodes read | grep system_id | cut -d '"' -f 4`
-
-    for nodes in $listofnodes
+    for node in $(maas $PROFILE nodes read | jq -r '.[].system_id')
     do
-        parentid=`maas maas interface read $nodes $2 | grep interfaces | cut -d '/' -f 8`
-        maas maas interfaces create-vlan $nodes vlan=$1 parent=$parentid
+        interface=$(maas $PROFILE interface read $node $2 | jq -r '.id')
+        maas $PROFILE interfaces create-vlan $node vlan=$1 parent=$interface
      done
  }
 
