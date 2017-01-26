@@ -2,17 +2,21 @@
 
 set -ex
 
-if [ ! -d environments.yaml ]; then
-    cp ~/joid_config/environments.yaml ./environments.yaml || true
-    cp ~/.juju/environments.yaml ./environments.yaml || true
-fi
-
-if [ ! -d deployment.yaml ]; then
-    cp ~/joid_config/deployment.yaml ./deployment.yaml || true
-    cp ~/.juju/deployment.yaml ./deployment.yaml || true
-fi
-
 jujuver=`juju --version`
+
+if [[ "$jujuver" > "2" ]]; then
+    if [ ! -d labconfig.yaml ]; then
+        cp ~/joid_config/deployment.yaml ./deployment.yaml || true
+        cp ~/joid_config/labconfig.yaml ./labconfig.yaml || true
+        cp ~/joid_config/deployconfig.yaml ./deployconfig.yaml || true
+    fi
+else
+    if [ ! -d environments.yaml ]; then
+        cp ~/joid_config/environments.yaml ./environments.yaml || true
+        cp ~/.juju/environments.yaml ./environments.yaml || true
+    fi
+fi
+
 
 if [[ "$jujuver" > "2" ]]; then
     controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`

@@ -68,6 +68,10 @@ case "$labname" in
         fi
         if [ ! -e ./labconfig.yaml ]; then
             virtinstall=1
+            labname="default"
+            cp ../labconfig/default/deployment.yaml ./
+            cp ../labconfig/default/labconfig.yaml ./
+            cp ../labconfig/default/deployconfig.yaml ./
         else
             python genMAASConfig.py -l labconfig.yaml > deployment.yaml
             python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
@@ -76,6 +80,10 @@ case "$labname" in
         ;;
     * )
         virtinstall=1
+        labname="default"
+        cp ../labconfig/default/deployment.yaml ./
+        cp ../labconfig/default/labconfig.yaml ./
+        cp ../labconfig/default/deployconfig.yaml ./
         ;;
 esac
 
@@ -98,16 +106,27 @@ VLAN_TAG="untagged"
 
 # In the case of a virtual deployment get deployment.yaml and deployconfig.yaml
 if [ "$virtinstall" -eq 1 ]; then
-    labname="default"
     MAAS_IP="192.168.122.1"
     API_SERVER="http://$MAAS_IP/MAAS/api/2.0"
     API_SERVERMAAS="http://$MAAS_IP/MAAS/"
     PRIMARY_RACK_CONTROLLER="$MAAS_IP"
     ./cleanvm.sh || true
-    cp ../labconfig/default/deployment.yaml ./
-    cp ../labconfig/default/labconfig.yaml ./
-    cp ../labconfig/default/deployconfig.yaml ./
 fi
+
+#create backup directory
+mkdir ~/joid_config/ || true
+
+# Backup deployment.yaml and deployconfig.yaml in joid_config folder
+
+if [ -e ./deployconfig.yaml ]; then
+    cp ./deployconfig.yaml ~/joid_config/
+    cp ./labconfig.yaml ~/joid_config/
+fi
+
+if [ -e ./deployment.yaml ]; then
+    cp ./deployment.yaml ~/joid_config/
+fi
+
 
 #
 # Prepare local environment to avoid password asking
@@ -161,9 +180,6 @@ if [ $(pip list |grep google-api-python-client |wc -l) == 1 ]; then
     sudo pip uninstall google-api-python-client
 fi
 
-#create backup directory
-mkdir ~/joid_config/ || true
-mkdir ~/.juju/ || true
 
 if [ ! -e ~maas/.ssh/id_rsa.pub ]; then
     sudo su - $USER -c "echo |ssh-keygen -t rsa -f $HOME/id_rsa_maas"
@@ -405,23 +421,6 @@ addnodes
 
 echo "... Deployment of maas finish ...."
 
-# Backup deployment.yaml and deployconfig.yaml in .juju folder
-
-#cp ./environments.yaml ~/.juju/
-#cp ./environments.yaml ~/joid_config/
-
-if [ -e ./deployconfig.yaml ]; then
-    cp ./deployconfig.yaml ~/.juju/
-    cp ./labconfig.yaml ~/.juju/
-    cp ./deployconfig.yaml ~/joid_config/
-    cp ./labconfig.yaml ~/joid_config/
-fi
-
-if [ -e ./deployment.yaml ]; then
-    cp ./deployment.yaml ~/.juju/
-    cp ./deployment.yaml ~/joid_config/
-fi
-
 #Added the Qtip public to run the Qtip test after install on bare metal nodes.
 #maas $PROFILE sshkeys new key="`cat ./maas/sshkeys/QtipKey.pub`"
 #maas $PROFILE sshkeys new key="`cat ./maas/sshkeys/DominoKey.pub`"
@@ -537,11 +536,6 @@ esac
 #
 
 #read interface needed in Auto mode and enable it. Will be rmeoved once auto enablement will be implemented in the maas-deployer.
-if [ -e ~/joid_config/deployconfig.yaml ]; then
-  cp ~/joid_config/deployconfig.yaml ./deployconfig.yaml
-elif [ -e ~/.juju/deployconfig.yaml ]; then
-  cp ~/.juju/deployconfig.yaml ./deployconfig.yaml
-fi
 
 if [ -e ./deployconfig.yaml ]; then
   enableiflist=`grep "interface-enable" deployconfig.yaml | cut -d ' ' -f 4 `
