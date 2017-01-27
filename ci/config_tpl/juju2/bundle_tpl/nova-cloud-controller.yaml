@@ -19,7 +19,7 @@
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
         region: {{ os.region }}
-        #console-access-protocol: novnc
+        console-access-protocol: novnc
         neutron-external-network: ext-net
         service-guard: true
 {% if os.beta.public_api %}
