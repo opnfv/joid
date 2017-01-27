@@ -35,7 +35,7 @@
         vip: {{ opnfv.vip.nova }}
 {% endif %}
 {% if opnfv.domain is defined %}
-        console-proxy-ip: {{ opnfv.domain }}
+        #console-proxy-ip: {{ opnfv.domain }}
 {% endif %}
         network-manager: Neutron
 {% if os.beta.public_api %}
