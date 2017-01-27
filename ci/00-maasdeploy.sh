@@ -2,6 +2,12 @@
 #placeholder for deployment script.
 set -ex
 
+echo "Note: This script is deprecated. Use 03-maasdeploy.sh instead."
+echo "Are you sure you want to execute this script? [y/N] "
+read a
+[[ "$a" = "y" ]] || exit
+
+
 virtinstall=0
 labname=$1
 

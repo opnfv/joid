@@ -59,7 +59,7 @@ demo-maas:
 
         # Defines the IP Address that the configuration script will use to
         # to access the MAAS controller via SSH.
-        ip_address: 192.168.122.2
+        ip_address: 192.168.122.1
 
         # This section allows the user to set a series of options on the
         # MAAS server itself. The list of config options can be found in

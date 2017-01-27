@@ -2,14 +2,6 @@
 #placeholder for deployment script.
 set -ex
 
-maasver=`apt-cache policy maas | grep Installed | cut -d ':' -f 2 | sed -e 's/ //'`
-
-if [[ "$maasver" > "2" ]]; then
-    echo "removing existing maas ..."
-    #sudo apt-get purge maas maas-cli maas-common maas-dhcp maas-dns maas-proxy maas-rack-controller maas-region-api maas-region-controller  -y
-    #sudo rm -rf /var/lib/maas
-fi
-
 virtinstall=0
 labname=$1
 
@@ -182,7 +174,10 @@ fi
 
 
 if [ ! -e ~maas/.ssh/id_rsa.pub ]; then
-    sudo su - $USER -c "echo |ssh-keygen -t rsa -f $HOME/id_rsa_maas"
+    if [ ! -e $HOME/id_rsa_maas.pub ]; then
+        [ -e $HOME/id_rsa_maas ] && rm -f $HOME/id_rsa_maas
+        sudo su - $USER -c "echo |ssh-keygen -t rsa -f $HOME/id_rsa_maas"
+    fi
     sudo -u maas mkdir ~maas/.ssh/ || true
     sudo cp $HOME/id_rsa_maas ~maas/.ssh/id_rsa
     sudo cp $HOME/id_rsa_maas.pub ~maas/.ssh/id_rsa.pub

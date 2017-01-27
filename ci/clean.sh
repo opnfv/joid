@@ -46,6 +46,3 @@ elif [ -d $HOME/.juju/environments ]; then
     rm -rf $HOME/.juju/ssh
     sudo sysctl -w vm.drop_caches=3
 fi
-
-#sudo apt-get purge maas maas-cli maas-common maas-dhcp maas-dns maas-proxy maas-rack-controller maas-region-api maas-region-controller  -y
-#sudo rm -rf /var/lib/maas
