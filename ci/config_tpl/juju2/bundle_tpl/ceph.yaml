@@ -10,7 +10,7 @@
         public: internal-api
 {% endif %}
 {% if opnfv.spaces_dict.storage is defined %}
-        cluster: cluster-stor
+        cluster: internal-api
 {% else %}
         cluster: internal-api
 {% endif %}
@@ -62,7 +62,7 @@
         public: internal-api
 {% endif %}
 {% if opnfv.spaces_dict.storage is defined %}
-        cluster: cluster-stor
+        cluster: internal-api
 {% else %}
         cluster: internal-api
 {% endif %}

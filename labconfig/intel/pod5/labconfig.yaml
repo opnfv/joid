@@ -137,10 +137,20 @@ opnfv:
       cidr: 10.5.12.0/24
       gateway:
       vlan:
+    - type: storage
+      bridge: brStor
+      cidr: 10.5.13.0/24
+      gateway:
+      vlan:
+    - type: mgmt
+      bridge: brMgmt
+      cidr: 10.5.14.0/24
+      gateway:
+      vlan:
     - type: public
       bridge: brPublic
       cidr: 10.5.15.0/24
-      gateway: 10.5.15.254
+      gateway:
       vlan:
     - type: external
       bridge: brExt
