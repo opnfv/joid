@@ -30,7 +30,7 @@ os:
     service:
         congress: True
         promise: True
-        bindings: False
+        bindings: True
 k8:
     feature:
         loadbalancer: False
