@@ -10,8 +10,10 @@ Parameters:
 
 from optparse import OptionParser
 from jinja2 import Environment, FileSystemLoader
+from distutils.version import LooseVersion, StrictVersion
 import os
 import yaml
+import subprocess
 
 #
 # Parse parameters
@@ -27,7 +29,13 @@ labconfig_file = options.lab
 #
 
 # Capture our current directory
-TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl'
+jujuver = subprocess.check_output(["juju", "--version"])
+
+if LooseVersion(jujuver) >= LooseVersion('2'):
+    TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl/juju2'
+else:
+    TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl'
+
 HOME = os.environ['HOME']
 USER = os.environ['USER']
 
