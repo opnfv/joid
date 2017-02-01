@@ -13,7 +13,7 @@
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
 {% if os.ha.mode == 'ha' %}
-        vip: {{ opnfv.vip.rabbitmq }}
+        #vip: {{ opnfv.vip.rabbitmq }}
         min-cluster-size: {{ unit_qty() }}
 {% endif %}
       to:
