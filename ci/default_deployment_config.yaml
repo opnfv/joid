@@ -31,6 +31,7 @@ os:
         congress: True
         promise: True
         bindings: True
+        openbaton: False
 k8:
     feature:
         loadbalancer: False

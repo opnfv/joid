@@ -46,6 +46,9 @@
 {% include 'congress.yaml' %}
 {% endif %}
 {% endif %}
+{% if os.service.openbaton %}
+{% include 'openbaton.yaml' %}
+{% endif %}
 {% include 'keystone.yaml' %}
 {% include 'nova-cloud-controller.yaml' %}
 {% include 'nova-compute.yaml' %}

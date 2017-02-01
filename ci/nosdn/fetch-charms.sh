@@ -37,6 +37,7 @@ git clone   https://github.com/openstack/charm-openstack-dashboard.git $distro/o
 git clone   https://github.com/openstack/charm-rabbitmq-server.git $distro/rabbitmq-server
 git clone   https://github.com/openstack/charm-heat.git $distro/heat
 git clone   https://github.com/openstack/charm-lxd.git xenial/lxd
+#git clone   https://github.com/openstack/openbaton.git xenial/openbaton
 
 charm pull cs:$distro/aodh $distro/aodh
 charm pull cs:~free.ekanayaka/xenial/haproxy-1 $distro/haproxy

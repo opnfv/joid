@@ -1,0 +1,6 @@
+    openbaton:
+      charm: "./{{ ubuntu.release }}/openbaton"
+      num_units: 1
+      to:
+        - "lxd:nodes/0"
+{# Empty block to avoid bad block trim #}

@@ -92,7 +92,7 @@ create_openrc() {
         adminPasswd=$(juju config keystone | grep admin-password -A 5 | grep value | awk '{print $2}' 2> /dev/null)
     fi
 
-    configOpenrc admin $adminPasswd admin http://$keystoneIp:35357/v2.0 RegionOne > ~/joid_config/admin-openrc
+    configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v2.0 RegionOne > ~/joid_config/admin-openrc
     chmod 0600 ~/joid_config/admin-openrc
 }
 
