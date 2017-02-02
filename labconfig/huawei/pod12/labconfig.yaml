@@ -94,7 +94,7 @@ lab:
         user: root
         pass: Huawei12#$
     floating-ip-range: 10.6.15.7,10.6.15.250,10.6.15.1,10.6.15.0/24
-    ext-port: "br-enp4s0d1"
+    ext-port: "enp4s0d1"
     dns: 8.8.8.8
     public-api-ip:
     osdomainname:
@@ -107,7 +107,7 @@ opnfv:
   - type: nosdn
   storage:
   - type: ceph
-    disk: /dev/sdb
+    disk: /srv
   feature: odl_l2
   spaces:
   - type: admin
@@ -120,14 +120,14 @@ opnfv:
     cidr: 10.6.12.0/24
     gateway:
     vlan: 31
-  - type: public
+  - type: floating
     bridge: brPublic
     cidr: 10.6.15.0/24
     gateway:
     vlan: 31
   - type: external
     bridge: brExt
-    cidr:
+    cidr: 192.168.30.0/24
     gateway: 192.168.30.250
     ipaddress: 192.168.30.2
     vlan:

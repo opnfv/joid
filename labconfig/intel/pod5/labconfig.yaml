@@ -142,12 +142,12 @@ opnfv:
       cidr: 10.5.13.0/24
       gateway:
       vlan:
-    - type: mgmt
+    - type: public
       bridge: brMgmt
       cidr: 10.5.14.0/24
       gateway:
       vlan:
-    - type: public
+    - type: floating
       bridge: brPublic
       cidr: 10.5.15.0/24
       gateway:
