@@ -8,7 +8,7 @@
 {% endif %}
       options:
 {% if os.ha.mode == 'ha' %}
-        innodb-buffer-pool-size: 10G
+        innodb-buffer-pool-size: 1G
 {% else %}
         innodb-buffer-pool-size: 1G
 {% endif %}

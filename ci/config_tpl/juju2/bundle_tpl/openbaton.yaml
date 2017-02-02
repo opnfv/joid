@@ -1,5 +1,5 @@
     openbaton:
-      charm: "./{{ ubuntu.release }}/openbaton"
+      charm: "./trusty/openbaton"
       num_units: 1
       to:
         - "lxd:nodes/0"

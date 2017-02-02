@@ -5,15 +5,16 @@
       bindings:
         internal: internal-api
         shared-db: internal-api
+{% if opnfv.spaces_dict.public is defined %}
+        public: public-api
 {% if opnfv.spaces_dict.data is defined %}
         admin: admin-api
 {% else %}
         admin: internal-api
 {% endif %}
-{% if opnfv.spaces_dict.public is defined %}
-        public: public-api
 {% else %}
         public: internal-api
+        admin: internal-api
 {% endif %}
 {% endif %}
       options:
