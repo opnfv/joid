@@ -1,6 +1,22 @@
     mongodb:
       charm: ./{{ ubuntu.release }}/mongodb
       num_units: 1
+{% if os.service.bindings %}
+      bindings:
+        shared-db: internal-api
+        internal: internal-api
+{% if opnfv.spaces_dict.public is defined %}
+        public: public-api
+{% if opnfv.spaces_dict.data is defined %}
+        admin: admin-api
+{% else %}
+        admin: internal-api
+{% endif %}
+{% else %}
+        admin: internal-api
+        public: internal-api
+{% endif %}
+{% endif %}
       to:
         - "lxd:nodes/0"
     ceilometer:

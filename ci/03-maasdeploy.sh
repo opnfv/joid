@@ -10,15 +10,18 @@ if [ ! -e $HOME/.ssh/id_rsa ]; then
 fi
 
 #install the packages needed
-sudo apt-add-repository ppa:juju/stable -y
+sudo apt-add-repository ppa:juju/dev -y
 sudo apt-add-repository ppa:maas/stable -y
 sudo apt-add-repository cloud-archive:newton -y
 sudo apt-get update -y
-sudo apt-get dist-upgrade -y
-sudo apt-get install openssh-server bzr git juju virtinst qemu-kvm libvirt-bin \
+#sudo apt-get dist-upgrade -y
+sudo apt-get install openssh-server bzr git virtinst qemu-kvm libvirt-bin \
              maas maas-region-controller python-pip python-psutil python-openstackclient \
              python-congressclient gsutil charm-tools pastebinit python-jinja2 sshpass \
              openssh-server vlan ipmitool jq -y
+
+wget https://launchpad.net/~juju/+archive/ubuntu/devel/+files/juju-2.0_2.1~beta4-0ubuntu1~16.04.1~juju1_amd64.deb
+sudo dpkg -i juju-2.0_2.1~beta4-0ubuntu1~16.04.1~juju1_amd64.deb
 
 sudo pip install --upgrade pip
 
@@ -320,13 +323,15 @@ addnodes(){
     done
 
     if [ "$virtinstall" -eq 1 ]; then
-        ntew=virbr0
+        ntew=" --network bridge=virbr0,model=virtio"
     else
         brid=`brctl show | grep 8000 | cut -d "8" -f 1 |  tr "\n" " " | tr "\t" " " | tr -s " "`
 
         netw=""
         for feature in $brid; do
             if [ "$feature" == "" ]; then
+                netw=$netw
+            elif [ "$feature" == "virbr0" ]; then
                 netw=$netw
             else
                 netw=$netw" --network bridge="$feature",model=virtio"
@@ -338,11 +343,12 @@ addnodes(){
                  cirrus --arch x86_64 --disk size=20,format=qcow2,bus=virtio,io=native,pool=default \
                  $netw --boot network,hd,menu=off --noautoconsole \
                  --vnc --print-xml | tee bootstrap
+
     if [ "$virtinstall" -eq 1 ]; then
         bootstrapmac=`grep  "mac address" bootstrap | head -1 | cut -d '"' -f 2`
     else
         bootstrapmac=""
-        bootstrapmacs=`grep  "mac address" bootstrap| cut -d "'" -f 2`
+        bootstrapmacs=`grep  "mac address" bootstrap| cut -d '"' -f 2`
         for mac in $bootstrapmacs; do
             bootstrapmac=$bootstrapmac" mac_addresses="$mac
         done
@@ -353,6 +359,7 @@ addnodes(){
         tags='bootstrap' hostname='bootstrap' power_type='virsh' mac_addresses=$bootstrapmac \
         power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
         architecture='amd64/generic' power_parameters_power_id='bootstrap'
+
     bootstrapid=$(maas $PROFILE machines read | jq -r 'select(.[].hostname == "bootstrap")[0].system_id')
 
     maas $PROFILE tag update-nodes bootstrap add=$bootstrapid
@@ -361,18 +368,15 @@ addnodes(){
 
         sudo virt-install --connect qemu:///system --name node1-control --ram 8192 --cpu host --vcpus 4 \
                      --disk size=120,format=qcow2,bus=virtio,io=native,pool=default \
-                     --network bridge=virbr0,model=virtio $netw \
-                     --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node1-control
+                     $netw $netw --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node1-control
 
         sudo virt-install --connect qemu:///system --name node2-compute --ram 8192 --cpu host --vcpus 4 \
                     --disk size=120,format=qcow2,bus=virtio,io=native,pool=default \
-                    --network bridge=virbr0,model=virtio $netw \
-                    --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node2-compute
+                    $netw $netw --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node2-compute
 
         sudo virt-install --connect qemu:///system --name node5-compute --ram 8192 --cpu host --vcpus 4 \
                    --disk size=120,format=qcow2,bus=virtio,io=native,pool=default \
-                   --network bridge=virbr0,model=virtio $netw \
-                   --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node5-compute
+                   $netw $netw --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node5-compute
 
 
         node1controlmac=`grep  "mac address" node1-control | head -1 | cut -d '"' -f 2`
@@ -410,8 +414,12 @@ configuremaas
 if [ "$virtinstall" -eq 1 ]; then
     enablesubnetanddhcp
 fi
+
+# lets sleep for around 5 more minutes to make sure all images are in sync.
+sleep(300)
+
+#lets add the nodes now. Currently works only for virtual deploymnet.
 addnodes
-#sudo chown $USER:$USER environments.yaml
 
 echo "... Deployment of maas finish ...."
 

@@ -1,6 +1,22 @@
     odl-controller:
       charm: ./{{ ubuntu.release }}/odl-controller
       num_units: 1
+{% if os.service.bindings %}
+      bindings:
+        shared-db: internal-api
+        internal: internal-api
+{% if opnfv.spaces_dict.public is defined %}
+        public: public-api
+{% if opnfv.spaces_dict.data is defined %}
+        admin: admin-api
+{% else %}
+        admin: internal-api
+{% endif %}
+{% else %}
+        admin: internal-api
+        public: internal-api
+{% endif %}
+{% endif %}
       options:
         install-url: "https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.5.2-Boron-SR2/distribution-karaf-0.5.2-Boron-SR2.tar.gz"
 {% if os.network.sfc %}

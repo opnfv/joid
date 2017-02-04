@@ -1,6 +1,22 @@
     openstack-dashboard:
       charm: "./{{ ubuntu.release }}/openstack-dashboard"
       num_units: {{ unit_qty() }}
+{% if os.service.bindings %}
+      bindings:
+        shared-db: internal-api
+        internal: internal-api
+{% if opnfv.spaces_dict.public is defined %}
+        public: public-api
+{% if opnfv.spaces_dict.data is defined %}
+        admin: admin-api
+{% else %}
+        admin: internal-api
+{% endif %}
+{% else %}
+        admin: internal-api
+        public: internal-api
+{% endif %}
+{% endif %}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
         secret: admin
