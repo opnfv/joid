@@ -75,9 +75,9 @@ keystoneIp() {
         unitAddress keystone 0
     else
         if [[ "$jujuver" < "2" ]]; then
-            juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['vip']['value']"
+            juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['vip']['value']" | cut -d " " -f 1
         else
-            juju config keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['vip']['value']"
+            juju config keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['vip']['value']" | cut -d " " -f 1
         fi
     fi
 }
