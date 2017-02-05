@@ -1,6 +1,10 @@
     openbaton:
       charm: "./trusty/openbaton"
       num_units: 1
+{% if os.service.bindings %}
+      bindings:
+        "": internal-api
+{% endif %}
       to:
         - "lxd:nodes/0"
 {# Empty block to avoid bad block trim #}
