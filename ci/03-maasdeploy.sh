@@ -15,13 +15,10 @@ sudo apt-add-repository ppa:maas/stable -y
 sudo apt-add-repository cloud-archive:newton -y
 sudo apt-get update -y
 #sudo apt-get dist-upgrade -y
-sudo apt-get install openssh-server bzr git virtinst qemu-kvm libvirt-bin \
+sudo apt-get install openssh-server bzr git virtinst qemu-kvm libvirt-bin juju \
              maas maas-region-controller python-pip python-psutil python-openstackclient \
              python-congressclient gsutil charm-tools pastebinit python-jinja2 sshpass \
              openssh-server vlan ipmitool jq -y
-
-wget https://launchpad.net/~juju/+archive/ubuntu/devel/+files/juju-2.0_2.1~beta4-0ubuntu1~16.04.1~juju1_amd64.deb
-sudo dpkg -i juju-2.0_2.1~beta4-0ubuntu1~16.04.1~juju1_amd64.deb
 
 sudo pip install --upgrade pip
 
