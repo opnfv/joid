@@ -14,6 +14,9 @@ from distutils.version import LooseVersion, StrictVersion
 import os
 import yaml
 import subprocess
+import socket
+import fcntl
+import struct
 
 #
 # Parse parameters
@@ -59,6 +62,21 @@ def load_yaml(filepath):
         except yaml.YAMLError as exc:
             print(exc)
 
+
+def get_ip_address(ifname):
+    """Get local IP"""
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(fcntl.ioctl(
+        s.fileno(),
+        0x8915,  # SIOCGIFADDR
+        struct.pack('256s', bytes(ifname.encode('utf-8')[:15]))
+    )[20:24])
+
+
+#
+# Config import
+#
+
 #
 # Config import
 #
@@ -79,7 +97,8 @@ for storage in config['opnfv']['storage']:
 # Add some OS environment variables
 config['os'] = {'home': HOME,
                 'user': USER,
-                }
+                'brAdmIP': get_ip_address(config['opnfv']['spaces_dict']
+                                                ['admin']['bridge'])}
 
 # Prepare interface-enable, more easy to do it here
 ifnamelist = set()

@@ -16,7 +16,7 @@ if [[ "$jujuver" < "2" ]]; then
   juju set-constraints tags=
 
 else
-  controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
-  cloudname=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
+  controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployconfig.yaml`
+  cloudname=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployconfig.yaml`
   juju bootstrap $controllername $cloudname --debug --to bootstrap.maas
 fi

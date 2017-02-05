@@ -31,21 +31,16 @@ sudo pip install --upgrade pip
 # Config preparation
 #
 
-# Get labconfig and generate deployment.yaml for MAAS and deployconfig.yaml
+# Get labconfig and generate deployconfig.yaml
 case "$labname" in
     intelpod[569]|orangepod[12]|cengnpod[12] )
         array=(${labname//pod/ })
         cp ../labconfig/${array[0]}/pod${array[1]}/labconfig.yaml .
-        python genMAASConfig.py -l labconfig.yaml > deployment.yaml
         python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
         ;;
     'attvirpod1' )
         cp ../labconfig/att/virpod1/labconfig.yaml .
-        python genMAASConfig.py -l labconfig.yaml > deployment.yaml
         python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
-        ;;
-    'juniperpod1' )
-        cp maas/juniper/pod1/deployment.yaml ./deployment.yaml
         ;;
     'custom')
         labfile=$2
@@ -61,32 +56,29 @@ case "$labname" in
         if [ ! -e ./labconfig.yaml ]; then
             virtinstall=1
             labname="default"
-            cp ../labconfig/default/deployment.yaml ./
             cp ../labconfig/default/labconfig.yaml ./
             cp ../labconfig/default/deployconfig.yaml ./
         else
-            python genMAASConfig.py -l labconfig.yaml > deployment.yaml
             python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
-            labname=`grep "maas_name" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+            labname=`grep "maas_name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
         fi
         ;;
     * )
         virtinstall=1
         labname="default"
-        cp ../labconfig/default/deployment.yaml ./
         cp ../labconfig/default/labconfig.yaml ./
-        cp ../labconfig/default/deployconfig.yaml ./
+        python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
         ;;
 esac
 
-MAAS_IP=$(grep " ip_address" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //')
-MAAS_NAME=`grep "maas_name" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+MAAS_IP=$(grep " ip_address" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //')
+MAAS_NAME=`grep "maas_name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
 API_SERVER="http://$MAAS_IP/MAAS/api/2.0"
 API_SERVERMAAS="http://$MAAS_IP/MAAS/"
 PROFILE=ubuntu
-MY_UPSTREAM_DNS=`grep "upstream_dns" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+MY_UPSTREAM_DNS=`grep "upstream_dns" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
 SSH_KEY=`cat ~/.ssh/id_rsa.pub`
-MAIN_ARCHIVE=`grep "main_archive" deployment.yaml | cut -d ':' -f 2-3 | sed -e 's/ //'`
+MAIN_ARCHIVE=`grep "main_archive" deployconfig.yaml | cut -d ':' -f 2-3 | sed -e 's/ //'`
 URL=https://images.maas.io/ephemeral-v2/daily/
 KEYRING_FILE=/usr/share/keyrings/ubuntu-cloudimage-keyring.gpg
 SOURCE_ID=1
@@ -96,7 +88,7 @@ PRIMARY_RACK_CONTROLLER="$MAAS_IP"
 SUBNET_CIDR="192.168.122.0/24"
 VLAN_TAG="untagged"
 
-# In the case of a virtual deployment get deployment.yaml and deployconfig.yaml
+# In the case of a virtual deployment get deployconfig.yaml
 if [ "$virtinstall" -eq 1 ]; then
     MAAS_IP="192.168.122.1"
     API_SERVER="http://$MAAS_IP/MAAS/api/2.0"
@@ -108,17 +100,12 @@ fi
 #create backup directory
 mkdir ~/joid_config/ || true
 
-# Backup deployment.yaml and deployconfig.yaml in joid_config folder
+# Backup deployconfig.yaml in joid_config folder
 
 if [ -e ./deployconfig.yaml ]; then
     cp ./deployconfig.yaml ~/joid_config/
     cp ./labconfig.yaml ~/joid_config/
 fi
-
-if [ -e ./deployment.yaml ]; then
-    cp ./deployment.yaml ~/joid_config/
-fi
-
 
 #
 # Prepare local environment to avoid password asking
@@ -484,8 +471,8 @@ crnodevlanint() {
 
 addcredential() {
     API_KEY=`sudo maas-region apikey --username=ubuntu`
-    controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
-    cloudname=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
+    controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployconfig.yaml`
+    cloudname=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployconfig.yaml`
 
     echo  "credentials:" > credential.yaml
     echo  "  $controllername:" >> credential.yaml
@@ -497,8 +484,8 @@ addcredential() {
 }
 
 addcloud() {
-    controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
-    cloudname=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
+    controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployconfig.yaml`
+    cloudname=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployconfig.yaml`
 
     echo "clouds:" > maas-cloud.yaml
     echo "   $cloudname:" >> maas-cloud.yaml

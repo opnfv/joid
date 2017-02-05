@@ -1,12 +1,18 @@
+opnfv-{{ lab.location }}{{ lab.racks[0].rack }}-maas:
 opnfv:
 {% set net_prefix = opnfv.spaces_dict.admin.cidr[:-4] %}
   admNetgway: {{ opnfv.spaces_dict.admin.gateway }}
   admNetwork: {{ net_prefix }}2
   admin_password: openstack
+  ip_address: {{ os.brAdmIP }}
+  maas_name: {{ lab.location }}{{ lab.racks[0].rack }}
+  main_archive: http://archive.ubuntu.com/ubuntu
+  upstream_dns: {{ lab.racks[0].dns }}
 {% if opnfv.storage_dict.ceph is defined %}
   ceph-disk: {{ opnfv.storage_dict.ceph.disk }}
 {% endif %}
 {% if opnfv.spaces_dict.data is defined %}
+{% set netdata_prefix = opnfv.spaces_dict.data.cidr[:-4] %}
   dataNetwork: {{ opnfv.spaces_dict.data.cidr }}
 {% endif %}
   domain: {{ lab.racks[0].osdomainname }}
@@ -16,6 +22,7 @@ opnfv:
   interface-enable: {{ lab.racks[0].ifnamelist }}
   os-domain-name: {{ lab.racks[0].osdomainname }}
 {% if opnfv.spaces_dict.public is defined %}
+{% set netpublic_prefix = opnfv.spaces_dict.public.cidr[:-4] %}
   publicNetwork: {{ opnfv.spaces_dict.public.cidr }}
 {% endif %}
   spaces:
@@ -36,6 +43,29 @@ opnfv:
 {% endif %}
   units: {{ lab.racks[0].nodes|count }}
   vip:
+{% if opnfv.spaces_dict.public is defined %}
+{% if opnfv.spaces_dict.data is defined %}
+    ceilometer: {{ net_prefix }}24 {{ netdata_prefix }}24 {{ netpublic_prefix }}24
+    cinder: {{ net_prefix }}29 {{ netdata_prefix }}29 {{ netpublic_prefix }}29
+    dashboard: {{ net_prefix }}21 {{ netdata_prefix }}21 {{ netpublic_prefix }}21
+    glance: {{ net_prefix }}22 {{ netdata_prefix }}22 {{ netpublic_prefix }}22
+    heat: {{ net_prefix }}28 {{ netdata_prefix }}28 {{ netpublic_prefix }}28
+    keystone: {{ net_prefix }}23 {{ netdata_prefix }}23 {{ netpublic_prefix }}23
+    mysql: {{ net_prefix }}25
+    neutron: {{ net_prefix }}27 {{ netdata_prefix }}27 {{ netpublic_prefix }}27
+    nova: {{ net_prefix }}26 {{ netdata_prefix }}27 {{ netpublic_prefix }}26
+{% else %}
+    ceilometer: {{ net_prefix }}24 {{ netpublic_prefix }}24
+    cinder: {{ net_prefix }}29 {{ netpublic_prefix }}29
+    dashboard: {{ net_prefix }}21 {{ netpublic_prefix }}21
+    glance: {{ net_prefix }}22 {{ netpublic_prefix }}22
+    heat: {{ net_prefix }}28 {{ netpublic_prefix }}28
+    keystone: {{ net_prefix }}23 {{ netpublic_prefix }}23
+    mysql: {{ net_prefix }}25
+    neutron: {{ net_prefix }}27 {{ netpublic_prefix }}27
+    nova: {{ net_prefix }}26 {{ netpublic_prefix }}26
+{% endif %}
+{% else %}
     ceilometer: {{ net_prefix }}24
     cinder: {{ net_prefix }}29
     dashboard: {{ net_prefix }}21
@@ -45,4 +75,4 @@ opnfv:
     mysql: {{ net_prefix }}25
     neutron: {{ net_prefix }}27
     nova: {{ net_prefix }}26
-    rabbitmq: {{ net_prefix }}20
+{% endif %}

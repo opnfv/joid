@@ -6,7 +6,6 @@ jujuver=`juju --version`
 
 if [[ "$jujuver" > "2" ]]; then
     if [ ! -d labconfig.yaml ]; then
-        cp ~/joid_config/deployment.yaml ./deployment.yaml || true
         cp ~/joid_config/labconfig.yaml ./labconfig.yaml || true
         cp ~/joid_config/deployconfig.yaml ./deployconfig.yaml || true
     fi
@@ -19,8 +18,8 @@ fi
 
 
 if [[ "$jujuver" > "2" ]]; then
-    controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
-    cloudname=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployment.yaml`
+    controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployconfig.yaml`
+    cloudname=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployconfig.yaml`
     juju kill-controller $controllername --timeout 10s -y || true
     rm -rf precise
     rm -rf trusty

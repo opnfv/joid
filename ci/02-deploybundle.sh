@@ -52,10 +52,10 @@ check_status() {
     echo "...... deployment finishing ......."
 }
 
-#read the value from deployment.yaml
+#read the value from deployconfig.yaml
 
 PROFILE=maas
-MAAS_IP=$(grep " ip_address" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //')
+MAAS_IP=$(grep " ip_address" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //')
 API_SERVERMAAS="http://$MAAS_IP/MAAS/"
 if [ "$maasver" > "2" ]; then
     API_KEY=`sudo maas-region apikey --username=ubuntu || true`
@@ -75,37 +75,35 @@ fi
 maas login $PROFILE $API_SERVERMAAS $API_KEY
 
 if [[ "$opnfvmodel" = "openstack" ]]; then
-    if [ -e ./deployment.yaml ]; then
-       if [ -e ./deployconfig.yaml ]; then
-          extport=`grep "ext-port" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
-          datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-          admnet=`grep "admNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-          cephdisk=`grep "ceph-disk" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
-          osdomname=`grep "os-domain-name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
-       fi
-
-        if [ "$maasver" > "2" ]; then
-            workmutiple=`maas maas nodes read | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
-        else
-            workmutiple=`maas maas nodes list | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
-        fi
-        max=0
-        for v in ${workmutiple[@]}; do
-            if (( $v > $max )); then max=$v; fi;
-        done
-        echo $max
-
-        if [ "$max" -lt 4 ];then
-            workmutiple=1.1
-        elif [ "$max" -lt 33 ]; then
-            workmutiple=0.25
-        elif [ "$max" -lt 73 ]; then
-            workmutiple=0.1
-        else
-            workmutiple=0.05
-        fi
-        sed -i "s/worker_multiplier: 1.0/worker_multiplier: ${workmutiple}/g" default_deployment_config.yaml
+    if [ -e ./deployconfig.yaml ]; then
+       extport=`grep "ext-port" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
+       datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+       admnet=`grep "admNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
+       cephdisk=`grep "ceph-disk" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+       osdomname=`grep "os-domain-name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
     fi
+
+    if [ "$maasver" > "2" ]; then
+        workmutiple=`maas maas nodes read | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
+    else
+        workmutiple=`maas maas nodes list | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
+    fi
+    max=0
+    for v in ${workmutiple[@]}; do
+        if (( $v > $max )); then max=$v; fi;
+    done
+    echo $max
+
+    if [ "$max" -lt 4 ];then
+        workmutiple=1.1
+    elif [ "$max" -lt 33 ]; then
+        workmutiple=0.25
+    elif [ "$max" -lt 73 ]; then
+        workmutiple=0.1
+    else
+        workmutiple=0.05
+    fi
+    sed -i "s/worker_multiplier: 1.0/worker_multiplier: ${workmutiple}/g" default_deployment_config.yaml
 fi
 
 case "$opnfvlab" in

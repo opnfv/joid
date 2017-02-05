@@ -180,7 +180,7 @@ if ([ "$opnfvlab" == "orangepod1" ] \
             # The public network exists on MAAS, so we push the dns record to it
 
             # Recover maas ips and login to it
-            maas_ip=$(grep " ip_address" deployment.yaml | cut -d ':' -f 2 | sed -e 's/ //')
+            maas_ip=$(grep " ip_address" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //')
             maas_pubip=$(grep floating-ip-range ./labconfig.yaml |cut -d, -f4 |perl -pe 's!^(.*)\.\d+/\d+$!$1.5!')
             apikey=$(grep maas-oauth: environments.yaml | cut -d "'" -f 2)
             maas login maas http://${maas_ip}/MAAS/api/1.0 ${apikey}

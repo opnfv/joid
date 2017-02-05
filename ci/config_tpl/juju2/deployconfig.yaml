@@ -1,8 +1,13 @@
+opnfv-{{ lab.location }}{{ lab.racks[0].rack }}-maas:
 opnfv:
 {% set net_prefix = opnfv.spaces_dict.admin.cidr[:-4] %}
   admNetgway: {{ opnfv.spaces_dict.admin.gateway }}
   admNetwork: {{ net_prefix }}2
   admin_password: openstack
+  ip_address: {{ os.brAdmIP }}
+  maas_name: {{ lab.location }}{{ lab.racks[0].rack }}
+  main_archive: http://archive.ubuntu.com/ubuntu
+  upstream_dns: {{ lab.racks[0].dns }}
 {% if opnfv.storage_dict.ceph is defined %}
   ceph-disk: {{ opnfv.storage_dict.ceph.disk }}
 {% endif %}

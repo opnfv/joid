@@ -74,7 +74,7 @@ done
 
 #by default maas creates two VMs in case of three more VM needed.
 createresource() {
-    maas_ip=`grep " ip_address" deployment.yaml | cut -d " "  -f 10`
+    maas_ip=`grep " ip_address" deployconfig.yaml | cut -d " "  -f 10`
     apikey=`grep maas-oauth: environments.yaml | cut -d "'" -f 2`
     maas login maas http://${maas_ip}/MAAS/api/1.0 ${apikey}
 
@@ -105,37 +105,34 @@ createresource() {
 #copy the files and create extra resources needed for HA deployment
 # in case of default VM labs.
 deploy() {
-  if [ ! -f ./deployment.yaml ] && [ -e ~/.juju/deployment.yaml ]; then
-      cp ~/.juju/deployment.yaml ./deployment.yaml
-  elif [ ! -f ./deployment.yaml ] && [ -e ~/joid_config/deployment.yaml ]; then
-      cp ~/joid_config/deployment.yaml ./deployment.yaml
-  fi
+    if [[ "$jujuver" > "2" ]]; then
+        if [ ! -f ./labconfig.yaml ] && [ -e ~/joid_config/labconfig.yaml ]; then
+            cp ~/joid_config/labconfig.yaml ./labconfig.yaml
 
-  if [[ "$jujuver" > "2" ]]; then
-    if [ ! -f ./labconfig.yaml ] && [ -e ~/joid_config/labconfig.yaml ]; then
-        cp ~/joid_config/labconfig.yaml ./labconfig.yaml
+            if [ ! -f ./deployconfig.yaml ] && [ -e ~/joid_config/deployconfig.yaml ]; then
+                cp ~/joid_config/deployconfig.yaml ./deployconfig.yaml
+            else
+                python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
+            fi
+        else
+            echo " MAAS not deployed please deploy MAAS first."
+        fi
+    else
+        if [ ! -f ./environments.yaml ] && [ -e ~/.juju/environments.yaml ]; then
+            cp ~/.juju/environments.yaml ./environments.yaml
+        elif [ ! -f ./environments.yaml ] && [ -e ~/joid_config/environments.yaml ]; then
+            cp ~/joid_config/environments.yaml ./environments.yaml
+        fi
+        #copy the script which needs to get deployed as part of ofnfv release
+        echo "...... deploying now ......"
+        echo "   " >> environments.yaml
+        echo "        enable-os-refresh-update: false" >> environments.yaml
+        echo "        enable-os-upgrade: false" >> environments.yaml
+        echo "        admin-secret: admin" >> environments.yaml
+        echo "        default-series: $opnfvdistro" >> environments.yaml
+        cp environments.yaml ~/.juju/
+        cp environments.yaml ~/joid_config/
     fi
-    if [ ! -f ./deployconfig.yaml ] && [ -e ~/joid_config/deployconfig.yaml ]; then
-        cp ~/joid_config/deployconfig.yaml ./deployconfig.yaml
-    fi
-  else
-    if [ ! -f ./environments.yaml ] && [ -e ~/.juju/environments.yaml ]; then
-        cp ~/.juju/environments.yaml ./environments.yaml
-    elif [ ! -f ./environments.yaml ] && [ -e ~/joid_config/environments.yaml ]; then
-        cp ~/joid_config/environments.yaml ./environments.yaml
-    fi
-    #copy the script which needs to get deployed as part of ofnfv release
-    echo "...... deploying now ......"
-    echo "   " >> environments.yaml
-    echo "        enable-os-refresh-update: false" >> environments.yaml
-    echo "        enable-os-upgrade: false" >> environments.yaml
-    echo "        admin-secret: admin" >> environments.yaml
-    echo "        default-series: $opnfvdistro" >> environments.yaml
-    cp environments.yaml ~/.juju/
-    cp environments.yaml ~/joid_config/
-  fi
-
-
 
     if [[ "$opnfvtype" = "ha" && "$opnfvlab" = "default" ]]; then
         createresource
