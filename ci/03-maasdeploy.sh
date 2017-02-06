@@ -112,16 +112,14 @@ fi
 #
 
 # make sure no password asked during the deployment.
-echo "$USER ALL=(ALL) NOPASSWD:ALL" > 90-joid-init
-
-if [ -e /etc/sudoers.d/90-joid-init ]; then
-    sudo cp /etc/sudoers.d/90-joid-init 91-joid-init
-    sudo chown $USER:$USER 91-joid-init
-    sudo chmod 660 91-joid-init
-    sudo cat 90-joid-init >> 91-joid-init
-    sudo chown root:root 91-joid-init
-    sudo mv 91-joid-init /etc/sudoers.d/
+sudoer_file=/etc/sudoers.d/90-joid-init
+sudoer_entry="$USER ALL=(ALL) NOPASSWD:ALL"
+if [ -e $sudoer_file ]; then
+    if ! sudo grep -q "$sudoer_entry" $sudoer_file; then
+        sudo sed -i -e "1i$sudoer_entry" $sudoer_file
+    fi
 else
+    echo "$sudoer_entry" > 90-joid-init
     sudo chown root:root 90-joid-init
     sudo mv 90-joid-init /etc/sudoers.d/
 fi
@@ -147,6 +145,7 @@ if [ "$virtinstall" -eq 1 ]; then
     sudo virsh net-define default-net-org.xml
     sudo virsh net-destroy default
     sudo virsh net-start default
+    rm -f default-net-org.xml
 fi
 
 #
@@ -338,6 +337,7 @@ addnodes(){
         done
     fi
     sudo virsh -c qemu:///system define --file bootstrap
+    rm -f bootstrap
 
     maas $PROFILE machines create autodetect_nodegroup='yes' name='bootstrap' \
         tags='bootstrap' hostname='bootstrap' power_type='virsh' mac_addresses=$bootstrapmac \
@@ -370,6 +370,7 @@ addnodes(){
         sudo virsh -c qemu:///system define --file node1-control
         sudo virsh -c qemu:///system define --file node2-compute
         sudo virsh -c qemu:///system define --file node5-compute
+        rm -f node1-control node2-compute node5-compute
 
 
         maas $PROFILE machines create autodetect_nodegroup='yes' name='node1-control' \
@@ -563,7 +564,7 @@ fi
 # Add the cloud and controller credentials for MAAS for that lab.
 jujuver=`juju --version`
 
-if [ "$jujuver" > "2" ]; then
+if [[ "$jujuver" > "2" ]]; then
     addcloud
     addcredential
 fi

@@ -12,24 +12,16 @@ opnfvfeature=$5
 opnfvdistro=$6
 opnfvmodel=$7
 
-if [[ "$opnfvmodel" = "openstack" ]]; then
-    #copy and download charms
-    cp $opnfvsdn/fetch-charms.sh ./fetch-charms.sh
-else
-    cp kubernetes/fetch-charms.sh ./fetch-charms.sh
-fi
-
 jujuver=`juju --version`
 maasver=`apt-cache policy maas | grep Installed | cut -d ':' -f 2 | sed -e 's/ //'`
 
-#modify the ubuntu series wants to deploy
-sed -i -- "s|distro=trusty|distro=$opnfvdistro|g" ./fetch-charms.sh
-
-./fetch-charms.sh $opnfvdistro
-
 if [[ "$opnfvmodel" = "openstack" ]]; then
+    #copy and download charms
+    ./opnfvsdn/fetch-charms.sh $opnfvdistro
     tar xvf common/scaleio.tar -C ./$opnfvdistro/ --strip=2 juju-scaleio/trusty/
     osdomname=''
+else
+    ./kubernetes/fetch-charms.sh $opnfvdistro
 fi
 
 #check whether charms are still executing the code even juju-deployer says installed.
@@ -65,7 +57,7 @@ fi
 
 
 if [[ "$API_KEY" = "" ]]; then
-    if [ "$maasver" > "2" ]; then
+    if [[ "$maasver" > "2" ]]; then
         API_KEY=`sshpass -p ubuntu ssh ubuntu@$MAAS_IP 'sudo maas-region apikey --username=ubuntu'`
     else
         API_KEY=`sshpass -p ubuntu ssh ubuntu@$MAAS_IP 'sudo maas-region-admin apikey --username=ubuntu'`
@@ -83,7 +75,7 @@ if [[ "$opnfvmodel" = "openstack" ]]; then
        osdomname=`grep "os-domain-name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
     fi
 
-    if [ "$maasver" > "2" ]; then
+    if [[ "$maasver" > "2" ]]; then
         workmutiple=`maas maas nodes read | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
     else
         workmutiple=`maas maas nodes list | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`

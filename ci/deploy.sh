@@ -74,32 +74,43 @@ done
 
 #by default maas creates two VMs in case of three more VM needed.
 createresource() {
-    maas_ip=`grep " ip_address" deployconfig.yaml | cut -d " "  -f 10`
-    apikey=`grep maas-oauth: environments.yaml | cut -d "'" -f 2`
-    maas login maas http://${maas_ip}/MAAS/api/1.0 ${apikey}
+    # TODO: make sure this function run with the same parameters used in 03-maasdeploy.sh
+    PROFILE=${PROFILE:-ubuntu}
+    MAAS_IP=$(grep " ip_address" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //')
+    API_SERVER="http://$MAAS_IP/MAAS/api/2.0"
+    API_KEY=`sudo maas-region apikey --username=ubuntu`
+    maas login $PROFILE $API_SERVER $API_KEY
 
-    nodeexist=`maas maas nodes list hostname=node3-control`
+    for node in node3-control node4-control
+    do
+        node_id=$(maas $PROFILE machines read | \
+                  jq -r "select(.[].hostname == \"$node\")[0].system_id")
+        if [[ -z "$node_id" ]]; then
+            sudo virt-install --connect qemu:///system --name $node \
+                --ram 8192 --cpu host --vcpus 4 \
+                --disk size=120,format=qcow2,bus=virtio,io=native,pool=default \
+                --network bridge=virbr0,model=virtio \
+                --network bridge=virbr0,model=virtio \
+                --boot network,hd,menu=off \
+                --noautoconsole --vnc --print-xml | tee _node.xml
+            node_mac=$(grep "mac address" _node.xml | head -1 | cut -d "'" -f 2)
+            sudo virsh -c qemu:///system define --file _node.xml
+            rm -f _node.xml
 
-    if [ $nodeexist != *node3* ]; then
-        sudo virt-install --connect qemu:///system --name node3-control --ram 8192 --cpu host --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node3-control
-
-        sudo virt-install --connect qemu:///system --name node4-control --ram 8192 --cpu host --vcpus 4 --disk size=120,format=qcow2,bus=virtio,io=native,pool=default --network bridge=virbr0,model=virtio --network bridge=virbr0,model=virtio --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node4-control
-
-        node3controlmac=`grep  "mac address" node3-control | head -1 | cut -d "'" -f 2`
-        node4controlmac=`grep  "mac address" node4-control | head -1 | cut -d "'" -f 2`
-
-        sudo virsh -c qemu:///system define --file node3-control
-        sudo virsh -c qemu:///system define --file node4-control
-
-        controlnodeid=`maas maas nodes new autodetect_nodegroup='yes' name='node3-control' tags='control' hostname='node3-control' power_type='virsh' mac_addresses=$node3controlmac power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node3-control' | grep system_id | cut -d '"' -f 4 `
-
-        maas maas tag update-nodes control add=$controlnodeid
-
-        controlnodeid=`maas maas nodes new autodetect_nodegroup='yes' name='node4-control' tags='control' hostname='node4-control' power_type='virsh' mac_addresses=$node4controlmac power_parameters_power_address='qemu+ssh://'$USER'@192.168.122.1/system' architecture='amd64/generic' power_parameters_power_id='node4-control' | grep system_id | cut -d '"' -f 4 `
-
-        maas maas tag update-nodes control add=$controlnodeid
-
-    fi
+            maas $PROFILE nodes new autodetect_nodegroup='yes' name=$node \
+                tags='control' hostname=$name power_type='virsh' \
+                mac_addresses=$node3controlmac \
+                power_parameters_power_address="qemu+ssh://$USER@192.168.122.1/system" \
+                architecture='amd64/generic' power_parameters_power_id='node3-control'
+            node_id=$(maas $PROFILE machines read | \
+                  jq -r "select(.[].hostname == \"$node\")[0].system_id")
+        fi
+        if [[ -z "$node_id" ]]; then
+            echo "Error: failed to create node $node ."
+            exit 1
+        fi
+        maas $PROFILE tag update-nodes control add=$node_id || true
+    done
 }
 
 #copy the files and create extra resources needed for HA deployment
@@ -153,16 +164,19 @@ deploy() {
 check_status() {
     retval=0
     timeoutiter=0
+
+    echo -n "executing the reltionship within charms ."
     while [ $retval -eq 0 ]; do
        sleep 30
-       juju status > status.txt
-       if [ "$(grep -c "executing" status.txt )" -ge 1 ]; then
-           echo " still executing the reltionship within charms ..."
+       if juju status | grep -q "executing"; then
+           echo -n '.'
            if [ $timeoutiter -ge 120 ]; then
+               echo 'timed out'
                retval=1
            fi
            timeoutiter=$((timeoutiter+1))
        else
+           echo 'done'
            retval=1
        fi
     done
