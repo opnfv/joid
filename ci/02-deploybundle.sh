@@ -17,7 +17,7 @@ maasver=`apt-cache policy maas | grep Installed | cut -d ':' -f 2 | sed -e 's/ /
 
 if [[ "$opnfvmodel" = "openstack" ]]; then
     #copy and download charms
-    ./opnfvsdn/fetch-charms.sh $opnfvdistro
+    ./$opnfvsdn/fetch-charms.sh $opnfvdistro
     tar xvf common/scaleio.tar -C ./$opnfvdistro/ --strip=2 juju-scaleio/trusty/
     osdomname=''
 else
