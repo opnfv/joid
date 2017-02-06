@@ -1,12 +1,12 @@
 #!/bin/bash
 
-set -ex
+set -x
 
 echo " Cleanup Started ..."
 
 #use the below commands if you needs to delete the virtual machine
 # also along with envuronment destroy.
-./clean.sh || true
+./clean.sh
 
 vm_list=$(sudo virsh list --all)
 

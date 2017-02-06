@@ -10,7 +10,7 @@ if [ ! -e $HOME/.ssh/id_rsa ]; then
 fi
 
 #install the packages needed
-sudo apt-add-repository ppa:juju/dev -y
+sudo apt-add-repository ppa:juju/devel -y
 sudo apt-add-repository ppa:maas/stable -y
 sudo apt-add-repository cloud-archive:newton -y
 sudo apt-get update -y
@@ -401,7 +401,7 @@ if [ "$virtinstall" -eq 1 ]; then
 fi
 
 # lets sleep for around 5 more minutes to make sure all images are in sync.
-sleep(300)
+sleep 300
 
 #lets add the nodes now. Currently works only for virtual deploymnet.
 addnodes
