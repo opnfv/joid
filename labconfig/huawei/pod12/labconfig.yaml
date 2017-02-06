@@ -107,7 +107,7 @@ opnfv:
   - type: nosdn
   storage:
   - type: ceph
-    disk: /dev/sdb
+    disk: /srv
   feature: odl_l2
   spaces:
   - type: admin

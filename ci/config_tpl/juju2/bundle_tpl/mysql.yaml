@@ -13,6 +13,9 @@
         innodb-buffer-pool-size: 1G
 {% endif %}
         max-connections: 4000
+        #performance-schema: true
+        #source: "deb http://repo.percona.com/apt xenial main"
+        #key: "8507EFA5"
         root-password: {{ get_password('mysql_root') }}
         sst-password: {{ get_password('mysql_sst') }}
 {% if os.network.ipv6 %}
