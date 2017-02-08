@@ -126,7 +126,15 @@ deploy() {
                 python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
             fi
         else
-            echo " MAAS not deployed please deploy MAAS first."
+            if [ -e ./labconfig.yaml ]; then
+                if [ ! -f ./deployconfig.yaml ] && [ -e ~/joid_config/deployconfig.yaml ]; then
+                    cp ~/joid_config/deployconfig.yaml ./deployconfig.yaml
+                else
+                    python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
+                fi
+            else
+                echo " MAAS not deployed please deploy MAAS first."
+            fi
         fi
     else
         if [ ! -f ./environments.yaml ] && [ -e ~/.juju/environments.yaml ]; then

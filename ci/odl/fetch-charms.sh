@@ -13,6 +13,7 @@ function build {
 bzr branch lp:~narindergupta/charms/trusty/promise/trunk $distro/promise
 bzr branch lp:~billy-olsen/charms/xenial/mongodb/trunk $distro/mongodb
 bzr branch lp:~narindergupta/opnfv/ntp $distro/ntp
+bzr branch lp:~narindergupta/opnfv/neutron-gateway $distro/neutron-gateway
 
 git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
 build congress
@@ -29,7 +30,7 @@ git clone  https://github.com/openstack/charm-glance.git $distro/glance
 git clone  https://github.com/openstack/charm-keystone.git $distro/keystone
 git clone  https://github.com/openstack/charm-percona-cluster.git $distro/percona-cluster
 git clone  https://github.com/openstack/charm-neutron-api.git $distro/neutron-api
-git clone  https://github.com/openstack/charm-neutron-gateway.git $distro/neutron-gateway
+#git clone  https://github.com/openstack/charm-neutron-gateway.git $distro/neutron-gateway
 git clone  https://github.com/openstack/charm-neutron-openvswitch.git $distro/neutron-openvswitch
 git clone  https://github.com/openstack/charm-nova-cloud-controller.git $distro/nova-cloud-controller
 git clone  https://github.com/openstack/charm-nova-compute.git $distro/nova-compute

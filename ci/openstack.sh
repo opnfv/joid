@@ -238,7 +238,8 @@ elif [ "nosdn" == "$opnfvsdn" ]; then
 elif [ "odl" == "$opnfvsdn" ]; then
     neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net \
                                                    --router:external=True \
-                                                   --provider:network_type vxlan
+                                                   --provider:network_type vxlan \
+                                                   --provider:physical_network physnet1
 
     neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net \
         --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
