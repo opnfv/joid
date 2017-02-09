@@ -219,42 +219,18 @@ echo "...... deploy end public api proxy ......"
 
 if [ "onos" == "$opnfvsdn" ]; then
     launch_eth
-    neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net --router:external=True
-    neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net \
-       --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
-       --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
-    #neutron subnet-create ext-net --name ext-subnet $EXTNET_NET
-    #update_gw_mac
-elif [ "nosdn" == "$opnfvsdn" ]; then
+    neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net \
+                                                   --router:external=True
+else ([ "nosdn" == "$opnfvsdn" ] || [ "odl" == "$opnfvsdn" ]); then
     neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net \
                                                    --router:external=True \
                                                    --provider:network_type flat \
                                                    --provider:physical_network physnet1
-
-    neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net \
-       --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
-       --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
-
-elif [ "odl" == "$opnfvsdn" ]; then
-    neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net \
-                                                   --router:external=True \
-                                                   --provider:network_type vxlan \
-                                                   --provider:physical_network physnet1
-
-    neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net \
-        --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
-        --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
- else
-    neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net \
-                                                   --router:external=True \
-                                                   --provider:network_type flat \
-                                                   --provider:physical_network physnet1
-
-    neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net \
-       --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
-       --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
 fi
 
+neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net \
+   --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
+   --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
 
 # Create Congress datasources
 sudo apt-get install -y python-congressclient
