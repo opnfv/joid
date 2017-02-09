@@ -221,7 +221,7 @@ if [ "onos" == "$opnfvsdn" ]; then
     launch_eth
     neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net \
                                                    --router:external=True
-else ([ "nosdn" == "$opnfvsdn" ] || [ "odl" == "$opnfvsdn" ]); then
+else
     neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net \
                                                    --router:external=True \
                                                    --provider:network_type flat \
