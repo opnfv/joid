@@ -13,7 +13,7 @@ function build {
 bzr branch lp:~narindergupta/charms/trusty/promise/trunk $distro/promise
 bzr branch lp:~billy-olsen/charms/xenial/mongodb/trunk $distro/mongodb
 bzr branch lp:~narindergupta/opnfv/ntp $distro/ntp
-bzr branch lp:~narindergupta/opnfv/neutron-gateway $distro/neutron-gateway
+charm pull cs:~narindergupta/charm-neutron-gateway-0 $distro/neutron-gateway
 
 git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
 build congress
@@ -65,4 +65,4 @@ charm pull cs:$distro/aodh $distro/aodh
 #odl controller specific charm
 charm pull cs:$distro/odl-controller $distro/odl-controller
 charm pull cs:$distro/neutron-api-odl $distro/neutron-api-odl
-charm pull cs:$distro/openvswitch-odl $distro/openvswitch-odl
+charm pull cs:~narindergupta/openvswitch-odl-1 $distro/openvswitch-odl
