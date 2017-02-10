@@ -3,95 +3,110 @@ lab:
   racks:
   - rack: pod1
     nodes:
-    - name: rack-1-m1
+    - name: rack-IRA2-SymKloudBlade1
       architecture: x86_64
       roles: [network,control]
       nics:
-      - ifname: eth0
+      - ifname: enp11s0
         spaces: [admin]
-        mac: ["00:a0:a5:90:89:a8"]
-      - ifname: eth3
+        mac: ["00:A0:A5:90:89:66"]
+      - ifname: enp12s0
+        spaces: [public]
+        mac: ["00:A0:A5:90:89:67"]
+      - ifname: enp3s0f1
         spaces: [data]
-        mac: ["00:a0:a5:90:89:a7"]
+        mac: ["00:A0:A5:90:89:65"]
+      power:
+        type: ipmi
+        address: 10.21.5.11
+        user: admin
+        pass: admin
+    - name: rack-IRA2-SymKloudBlade2
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: enp11s0
+        spaces: [admin]
+        mac: ["00:A0:A5:90:89:A8"]
+      - ifname: enp12s0
+        spaces: [public]
+        mac: ["00:A0:A5:90:89:A9"]
+      - ifname: enp3s0f1
+        spaces: [data]
+        mac: ["00:A0:A5:90:89:A7"]
       power:
         type: ipmi
         address: 10.21.5.12
         user: admin
         pass: admin
-    - name: rack-1-m2
+    - name: rack-IRA2-SymKloudBlade3
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: eth0
+      - ifname: enp11s0
         spaces: [admin]
-        mac: ["00:a0:a5:90:89:28"]
-      - ifname: eth3
+        mac: ["00:A0:A5:90:89:28"]
+      - ifname: enp12s0
+        spaces: [public]
+        mac: ["00:A0:A5:90:89:29"]
+      - ifname: enp3s0f1
         spaces: [data]
-        mac: ["00:a0:a5:90:89:27"]
+        mac: ["00:A0:A5:90:89:27"]
       power:
         type: ipmi
         address: 10.21.5.13
         user: admin
         pass: admin
-    - name: rack-1-m3
+    - name: rack-IRA2-SymKloudBlade4
       architecture: x86_64
-      roles: [compute,control,storage]
+      roles: [compute,storage]
       nics:
-      - ifname: eth0
+      - ifname: enp11s0
         spaces: [admin]
-        mac: ["00:a0:a5:89:30:c6"]
-      - ifname: eth3
+        mac: ["00:A0:A5:89:30:C6"]
+      - ifname: enp12s0
+        spaces: [public]
+        mac: ["00:A0:A5:89:30:C7"]
+      - ifname: enp3s0f1
         spaces: [data]
-        mac: ["00:a0:a5:89:30:c5"]
+        mac: ["00:A0:A5:89:30:C5"]
       power:
         type: ipmi
         address: 10.21.5.14
         user: admin
         pass: admin
-    - name: rack-1-m4
+    - name: rack-IRA2-SymKloudBlade5
       architecture: x86_64
       roles: [compute,storage]
       nics:
-      - ifname: eth0
+      - ifname: enp11s0
         spaces: [admin]
-        mac: ["00:a0:a5:90:89:94"]
-      - ifname: eth3
+        mac: ["00:A0:A5:90:89:94"]
+      - ifname: enp12s0
+        spaces: [public]
+        mac: ["00:A0:A5:90:89:95"]
+      - ifname: enp3s0f1
         spaces: [data]
-        mac: ["00:a0:a5:90:89:93"]
+        mac: ["00:A0:A5:90:89:93"]
       power:
         type: ipmi
         address: 10.21.5.15
         user: admin
         pass: admin
-    - name: rack-1-m5
-      architecture: x86_64
-      roles: [compute,storage]
-      nics:
-      - ifname: eth0
-        spaces: [admin]
-        mac: ["00:a0:a5:90:89:0e"]
-      - ifname: eth3
-        spaces: [data]
-        mac: ["00:a0:a5:90:89:0d"]
-      power:
-        type: ipmi
-        address: 10.21.5.16
-        user: admin
-        pass: admin
     floating-ip-range: 10.21.6.6,10.21.6.250,10.21.6.254,10.21.6.0/24
-    ext-port: "br-eth1"
+    ext-port: "enp12s0"
     dns: 8.8.8.8
     osdomainname:
 opnfv:
   release: c
-  distro: trusty
+  distro: xenial
   type: nonha
   openstack: mitaka
   sdncontroller:
   - type: nosdn
   storage:
   - type: ceph
-    disk: /srv
+    disk: /dev/sdb /dev/sdc
   feature: odl_l2
   spaces:
   - type: admin
@@ -99,13 +114,13 @@ opnfv:
     cidr: 10.21.0.0/24
     gateway: 10.21.0.254
     vlan:
-  - type: public
+  - type: floating
     bridge: brPublic
     cidr: 10.21.6.0/24
-    gateway:
+    gateway: 10.21.6.254
     vlan:
   - type: data
     bridge: brData
-    cidr: 172.16.20.0/24
-    gateway:
+    cidr: 192.168.20.0/24
+    gateway: 192.168.20.1
     vlan:
