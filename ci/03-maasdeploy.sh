@@ -400,11 +400,19 @@ if [ "$virtinstall" -eq 1 ]; then
     enablesubnetanddhcp
 fi
 
+#reconfigure maas with correct MAAS address.
+#Below code is needed as MAAS have issue in commisoning without restart.
+sudo ./maas-reconfigure-rack.sh $MAAS_IP
+sudo ./maas-reconfigure-region.sh $MAAS_IP
+
 # lets sleep for around 5 more minutes to make sure all images are in sync.
 sleep 300
 
 #lets add the nodes now. Currently works only for virtual deploymnet.
 addnodes
+
+#take another 5 minutes to commision the nodes.
+sleep 300
 
 echo "... Deployment of maas finish ...."
 
