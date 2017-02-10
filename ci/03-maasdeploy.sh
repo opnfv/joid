@@ -306,7 +306,7 @@ addnodes(){
     done
 
     if [ "$virtinstall" -eq 1 ]; then
-        ntew=" --network bridge=virbr0,model=virtio"
+        netw=" --network bridge=virbr0,model=virtio"
     else
         brid=`brctl show | grep 8000 | cut -d "8" -f 1 |  tr "\n" " " | tr "\t" " " | tr -s " "`
 
