@@ -37,12 +37,12 @@ opnfv:
   feature: odl_l2
   spaces:
   - type: admin
-    bridge: brAdm
+    bridge: virbr0
     cidr: 192.168.122.0/24
     gateway: 192.168.122.1
     vlan:
   - type: floating
-    bridge: brPublic
+    bridge: virbr0
     cidr: 192.168.122.0/24
     gateway: 192.168.122.1
     vlan:
