@@ -25,9 +25,9 @@
     openvswitch-odl:
       charm: ./{{ ubuntu.release }}/openvswitch-odl
       options:
-+{% if opnfv.ext_port is defined  %}
-+        provider_mappings: "physnet1:{{ opnfv.ext_port }}"
-+{% endif %}
+{% if opnfv.ext_port is defined  %}
+        provider_mappings: "physnet1:{{ opnfv.ext_port }}"
+{% endif %}
 {% if opnfv.spaces_dict.data is defined %}
         os-data-network: {{ opnfv.spaces_dict.data.cidr }}
 {% endif %}

@@ -7,28 +7,28 @@ lab:
       architecture: x86_64
       roles: [network,control]
       nics:
-      - ifname: eth0
+      - ifname: ens3
         spaces: [admin]
-      - ifname: eth1
+      - ifname: ens4
         spaces: [floating]
     - name: rack-vir-m2
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: eth0
+      - ifname: ens3
         spaces: [admin]
-      - ifname: eth1
+      - ifname: ens4
         spaces: [floating]
     - name: rack-vir-m3
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: eth1
+      - ifname: ens3
         spaces: [admin]
-      - ifname: eth1
+      - ifname: ens4
         spaces: [floating]
     floating-ip-range: 192.168.122.31,192.168.122.49,192.168.122.1,192.168.122.0/24
-    ext-port: "eth1"
+    ext-port: "ens4"
     dns: 8.8.8.8
 opnfv:
   release: d
