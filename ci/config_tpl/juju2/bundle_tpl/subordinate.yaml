@@ -30,6 +30,8 @@
 {% endif %}
 {% if opnfv.spaces_dict.data is defined %}
         os-data-network: {{ opnfv.spaces_dict.data.cidr }}
+{% else %}
+        os-data-network: {{ opnfv.spaces_dict.admin.cidr }}
 {% endif %}
 {% elif os.network.controller == 'onos' %}
     neutron-api-onos:
