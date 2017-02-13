@@ -7,7 +7,11 @@ jujuver=`juju --version`
 if [[ "$jujuver" > "2" ]]; then
     if [ ! -d labconfig.yaml ]; then
         cp ~/joid_config/labconfig.yaml ./labconfig.yaml || true
-        cp ~/joid_config/deployconfig.yaml ./deployconfig.yaml || true
+        if [ -d $HOME/joid_config/deployconfig.yaml ]; then
+            cp ~/joid_config/deployconfig.yaml ./deployconfig.yaml || true
+        else
+            python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
+        fi
     fi
 else
     if [ ! -d environments.yaml ]; then
