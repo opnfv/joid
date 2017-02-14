@@ -8,11 +8,12 @@
 {% endif %}
       options:
 {% if os.ha.mode == 'ha' %}
-        innodb-buffer-pool-size: 1G
+        innodb-buffer-pool-size: 16M
+        max-connections: 200
 {% else %}
         innodb-buffer-pool-size: 1G
-{% endif %}
         max-connections: 4000
+{% endif %}
         #performance-schema: true
         #source: "deb http://repo.percona.com/apt xenial main"
         #key: "8507EFA5"
