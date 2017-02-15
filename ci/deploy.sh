@@ -7,9 +7,9 @@ set -ex
 
 opnfvsdn=nosdn
 opnfvtype=nonha
-openstack=mitaka
+openstack=newton
 opnfvlab=default
-opnfvrel=c
+opnfvrel=d
 opnfvfeature=none
 opnfvdistro=xenial
 opnfvarch=amd64
