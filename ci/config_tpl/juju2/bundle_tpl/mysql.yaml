@@ -9,7 +9,7 @@
       options:
 {% if os.ha.mode == 'ha' %}
         innodb-buffer-pool-size: 128M
-        max-connections: 128M
+        max-connections: 600
 {% else %}
         innodb-buffer-pool-size: 1G
         max-connections: 4000
