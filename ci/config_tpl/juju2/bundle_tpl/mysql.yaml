@@ -8,8 +8,8 @@
 {% endif %}
       options:
 {% if os.ha.mode == 'ha' %}
-        innodb-buffer-pool-size: 128M
-        max-connections: 600
+        innodb-buffer-pool-size: 1G
+        max-connections: 4000
 {% else %}
         innodb-buffer-pool-size: 1G
         max-connections: 4000
@@ -19,6 +19,7 @@
         #key: "8507EFA5"
         root-password: {{ get_password('mysql_root') }}
         sst-password: {{ get_password('mysql_sst') }}
+        sst-method: rsync
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}

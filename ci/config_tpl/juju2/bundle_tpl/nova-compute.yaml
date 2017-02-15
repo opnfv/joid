@@ -23,6 +23,7 @@
 {% if opnfv.storage_dict.ceph is defined %}
         ceph-osd-replication-count: {{ unit_ceph_qty() }}
 {% endif %}
+{% if os.beta.huge_pages %}
         hugepages: "2048"
 {% endif %}
 {% if os.beta.cpu_pin %}
