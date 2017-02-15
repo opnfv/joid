@@ -197,18 +197,6 @@ configuremaas(){
     maas $PROFILE maas set-config name='maas_name' value=$MAAS_NAME || true
     maas $PROFILE maas set-config name='ntp_server' value='ntp.ubuntu.com' || true
     maas $PROFILE sshkeys create "key=$SSH_KEY" || true
-    maas $PROFILE boot-source update $SOURCE_ID \
-         url=$URL keyring_filename=$KEYRING_FILE || true
-    maas $PROFILE boot-source-selections create 1 \
-         release='trusty' arches='amd64' labels='daily' \
-         os='ubuntu' subarches='*' || true
-    maas $PROFILE boot-resources import || true
-
-    while [ "$(maas $PROFILE boot-resources read | grep trusty | wc -l )" -le 0 ];
-    do
-        maas $PROFILE boot-resources import || true
-        sleep 20
-    done
 
     maas $PROFILE tags create name='bootstrap' || true
     maas $PROFILE tags create name='compute' || true
@@ -225,6 +213,17 @@ configuremaas(){
     maas $PROFILE spaces create name=compute-external || true
     maas $PROFILE spaces create name=storage-data || true
     maas $PROFILE spaces create name=storage-cluster || true
+
+    maas $PROFILE boot-source update $SOURCE_ID \
+         url=$URL keyring_filename=$KEYRING_FILE || true
+
+    maas $PROFILE boot-resources import || true
+    sleep 10
+
+    while [ "$(maas $PROFILE boot-resources is-importing)" == "true" ];
+    do
+        sleep 60
+    done
 
     #maas $PROFILE subnet update vlan:<vlan id> name=internal-api space=<0> gateway_ip=10.5.1.1
     #maas $PROFILE subnet update vlan:<vlan id> name=admin-api space=<2> gateway_ip=10.5.12.1
@@ -374,6 +373,13 @@ addnodes(){
         maas $PROFILE tag update-nodes compute add=$compute2nodeid || true
         maas $PROFILE tag update-nodes compute add=$compute5nodeid || true
     fi
+
+    # make sure nodes are added into MAAS and none of them is in commisoning state
+    while [ "$(maas $PROFILE nodes read | grep  Commissioning )" ];
+    do
+        sleep 60
+    done
+
 }
 
 #configure MAAS with the different options.
@@ -383,21 +389,18 @@ if [ "$virtinstall" -eq 1 ]; then
     enablesubnetanddhcp
 fi
 
-sleep 60
+#just make sure rack controller has been synced and import only
+# just whether images have been imported or not.
+sleep 120
 
 #reconfigure maas with correct MAAS address.
 #Below code is needed as MAAS have issue in commisoning without restart.
 sudo ./maas-reconfigure-rack.sh $MAAS_IP
 sudo ./maas-reconfigure-region.sh $MAAS_IP
 
-# lets sleep for around 5 more minutes to make sure all images are in sync.
-sleep 240
-
+sleep 30
 #lets add the nodes now. Currently works only for virtual deploymnet.
 addnodes
-
-#take another 5 minutes to commision the nodes.
-sleep 300
 
 echo "... Deployment of maas finish ...."
 
