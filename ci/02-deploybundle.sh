@@ -96,6 +96,12 @@ if [[ "$opnfvmodel" = "openstack" ]]; then
         workmutiple=0.05
     fi
     sed -i "s/worker_multiplier: 1.0/worker_multiplier: ${workmutiple}/g" default_deployment_config.yaml
+
+    if [ "$opnfvlab" != "default" ]; then
+        sed -i "s/cpu_pin_set: all/cpu_pin_set: 2-${max},^${max}/g" default_deployment_config.yaml
+    else
+        sed -i "s/cpu_pin_set: all/cpu_pin_set: 1/g" default_deployment_config.yaml
+    fi
 fi
 
 case "$opnfvlab" in

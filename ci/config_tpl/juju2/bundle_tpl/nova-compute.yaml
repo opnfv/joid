@@ -23,8 +23,10 @@
 {% if opnfv.storage_dict.ceph is defined %}
         ceph-osd-replication-count: {{ unit_ceph_qty() }}
 {% endif %}
-{% if os.beta.huge_pages %}
-        hugepages: "50%"
+        hugepages: "2048"
+{% endif %}
+{% if os.beta.cpu_pin %}
+        vcpu-pin-set: "{{ os.beta.cpu_pin_set }}"
 {% endif %}
 {% if os.lxd %}
         virt-type: lxd

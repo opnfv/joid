@@ -182,12 +182,18 @@ if 'sfc' in features:
     config['os']['network']['sfc'] = True
 if 'dpdk' in features:
     config['os']['network']['dpdk'] = True
+    config['os']['beta']['huge_pages'] = True
+    config['os']['beta']['cpu_pin'] = True
 if 'bgpvpn' in features:
     config['os']['network']['bgpvpn'] = True
 if 'odll3' in features:
     config['os']['network']['odll3'] = True
 if 'dishypcon' in features:
     config['os']['hyperconverged'] = False
+if 'hugepages' in features:
+    config['os']['beta']['huge_pages'] = True
+    config['os']['beta']['cpu_pin'] = True
+
 
 # Set beta option from extra
 if 'publicapi' in extra:
@@ -196,6 +202,7 @@ if 'radosgwcluster' in extra:
     config['os']['beta']['hacluster_ceph_radosgw'] = True
 if 'hugepages' in extra:
     config['os']['beta']['huge_pages'] = True
+    config['os']['beta']['cpu_pin'] = True
 if 'mitaka' in extra:
     config['os']['release'] = 'mitaka'
 if 'trusty' in extra:

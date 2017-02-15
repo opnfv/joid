@@ -27,6 +27,8 @@ os:
         hacluster_ceph_radosgw: False
         public_api: False
         huge_pages: False
+        cpu_pin: False
+        cpu_pin_set: all
     service:
         congress: True
         promise: True

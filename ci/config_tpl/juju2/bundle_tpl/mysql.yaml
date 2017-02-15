@@ -8,8 +8,8 @@
 {% endif %}
       options:
 {% if os.ha.mode == 'ha' %}
-        innodb-buffer-pool-size: 16M
-        max-connections: 200
+        innodb-buffer-pool-size: 128M
+        max-connections: 128M
 {% else %}
         innodb-buffer-pool-size: 1G
         max-connections: 4000
