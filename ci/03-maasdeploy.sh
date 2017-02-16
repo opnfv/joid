@@ -71,6 +71,9 @@ case "$labname" in
         ;;
 esac
 
+python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < labconfig.yaml > labconfig.json
+python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < deployconfig.yaml > deployconfig.json
+
 MAAS_IP=$(grep " ip_address" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //')
 MAAS_NAME=`grep "maas_name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
 API_SERVER="http://$MAAS_IP/MAAS/api/2.0"
@@ -85,15 +88,11 @@ SOURCE_ID=1
 FABRIC_ID=1
 VLAN_TAG=""
 PRIMARY_RACK_CONTROLLER="$MAAS_IP"
-SUBNET_CIDR="192.168.122.0/24"
+SUBNET_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="admin")'.cidr | cut -d \" -f 2 `
 VLAN_TAG="untagged"
 
 # In the case of a virtual deployment get deployconfig.yaml
 if [ "$virtinstall" -eq 1 ]; then
-    MAAS_IP="192.168.122.1"
-    API_SERVER="http://$MAAS_IP/MAAS/api/2.0"
-    API_SERVERMAAS="http://$MAAS_IP/MAAS/"
-    PRIMARY_RACK_CONTROLLER="$MAAS_IP"
     ./cleanvm.sh || true
 fi
 
@@ -189,6 +188,11 @@ installmaas(){
 # http://blog.naydenov.net/2016/01/nodes-networking-deploying-openstack-on-maas-1-9-with-juju/
 #
 configuremaas(){
+    #reconfigure maas with correct MAAS address.
+    #Below code is needed as MAAS have issue in commisoning without restart.
+    sudo ./maas-reconfigure-region.sh $MAAS_IP
+    sudo maas-rack config --region-url http://$MAAS_IP:5240/MAAS
+
     sudo maas createadmin --username=ubuntu --email=ubuntu@ubuntu.com --password=ubuntu || true
     API_KEY=`sudo maas-region apikey --username=ubuntu`
     maas login $PROFILE $API_SERVERMAAS $API_KEY
@@ -236,22 +240,21 @@ configuremaas(){
 }
 
 enablesubnetanddhcp(){
+    SUBNET_PREFIX=${SUBNET_CIDR::-5}
 
-    SUBNET_PREFIX="192.168.122"
-    SUBNET_CIDR="$SUBNET_PREFIX.0/24"
-
-    IP_STATIC_RANGE_LOW="192.168.122.1"
-    IP_STATIC_RANGE_HIGH="192.168.122.49"
+    IP_RES_RANGE_LOW="$SUBNET_PREFIX.1"
+    IP_RES_RANGE_HIGH="$SUBNET_PREFIX.39"
 
     API_KEY=`sudo maas-region apikey --username=ubuntu`
     maas login $PROFILE $API_SERVERMAAS $API_KEY
 
     maas $PROFILE ipranges create type=reserved \
-         start_ip=$IP_STATIC_RANGE_LOW end_ip=$IP_STATIC_RANGE_HIGH \
+         start_ip=$IP_RES_RANGE_LOW end_ip=$IP_RES_RANGE_HIGH \
          comment='This is a reserved range' || true
 
-    IP_DYNAMIC_RANGE_LOW="192.168.122.50"
-    IP_DYNAMIC_RANGE_HIGH="192.168.122.150"
+    IP_DYNAMIC_RANGE_LOW="$SUBNET_PREFIX.40"
+    IP_DYNAMIC_RANGE_HIGH="$SUBNET_PREFIX.150"
+
     maas $PROFILE ipranges create type=dynamic \
         start_ip=$IP_DYNAMIC_RANGE_LOW end_ip=$IP_DYNAMIC_RANGE_HIGH \
         comment='This is a reserved dynamic range' || true
@@ -263,8 +266,8 @@ enablesubnetanddhcp(){
 
     maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
 
-    MY_GATEWAY="192.168.122.1"
-    MY_NAMESERVER=192.168.122.1
+    MY_GATEWAY=`cat deployconfig.json | jq '.opnfv.admNetgway' | cut -d \" -f 2`
+    MY_NAMESERVER=`cat deployconfig.json | jq '.opnfv.upstream_dns' | cut -d \" -f 2`
     maas $PROFILE subnet update $SUBNET_CIDR gateway_ip=$MY_GATEWAY || true
     maas $PROFILE subnet update $SUBNET_CIDR dns_servers=$MY_NAMESERVER || true
 
@@ -393,12 +396,6 @@ fi
 # just whether images have been imported or not.
 sleep 120
 
-#reconfigure maas with correct MAAS address.
-#Below code is needed as MAAS have issue in commisoning without restart.
-sudo ./maas-reconfigure-rack.sh $MAAS_IP
-sudo ./maas-reconfigure-region.sh $MAAS_IP
-
-sleep 30
 #lets add the nodes now. Currently works only for virtual deploymnet.
 addnodes
 
