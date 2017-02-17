@@ -9,7 +9,7 @@ lab:
       nics:
       - ifname: ens1f0
         spaces: [admin]
-        mac: ["00:1E:67:CF:BB:54"]
+        mac: ["24:8a:07:3f:84:ac"]
       - ifname: ens1f1
         spaces: [public]
         mac: ["90:E2:BA:85:4E:2D"]
@@ -24,7 +24,7 @@ lab:
       nics:
       - ifname: ens1f0
         spaces: [admin]
-        mac: ["00:1E:67:CF:B8:93"]
+        mac: ["24:8a:07:3f:96:86"]
       - ifname: ens1f1
         spaces: [public]
         mac: ["90:E2:BA:84:08:B9"]
@@ -39,7 +39,7 @@ lab:
       nics:
       - ifname: ens1f0
         spaces: [admin]
-        mac: ["00:1E:67:E0:08:7F"]
+        mac: ["24:8a:07:3f:95:b6"]
       - ifname: ens1f1
         spaces: [public]
         mac: ["90:E2:BA:84:07:0E"]
@@ -54,7 +54,7 @@ lab:
       nics:
       - ifname: ens1f0
         spaces: [admin]
-        mac: ["00:1E:67:E0:08:B1"]
+        mac: ["24:8a:07:3f:96:4e"]
       - ifname: ens1f1
         spaces: [public]
         mac: ["90:E2:BA:83:FD:81"]
