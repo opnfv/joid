@@ -375,6 +375,24 @@ addnodes(){
         maas $PROFILE tag update-nodes control add=$controlnodeid || true
         maas $PROFILE tag update-nodes compute add=$compute2nodeid || true
         maas $PROFILE tag update-nodes compute add=$compute5nodeid || true
+    else
+       untis=`cat deployconfig.json | jq .opnfv.units`
+
+       until [ $(($units)) -lt 1 ]; do
+           NODE_NAME=`cat labconfig.json | jq '.lab.racks[].nodes[i].name' | cut -d \" -f 2 `
+           MAC_ADDRESS=`cat labconfig.json | jq '.lab.racks[].nodes[i].nics[] | select(.spaces[]=="admin").mac'[0] | cut -d \" -f 2 `
+           POWER_TYPE=`cat labconfig.json | jq '.lab.racks[].nodes[i].power.type' | cut -d \" -f 2 `
+           POWER_IP=`cat labconfig.json |  jq '.lab.racks[].nodes[i].power.address' | cut -d \" -f 2 `
+           POWER_USER=`cat labconfig.json |  jq '.lab.racks[].nodes[i].power.user' | cut -d \" -f 2 `
+           POWER_PASS=`cat labconfig.json |  jq '.lab.racks[].nodes[i].power.pass' | cut -d \" -f 2 `
+
+           maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
+               hostname=$NODE_NAME power_type=$POWER_TYPE power_parameters_power_address=$POWER_IP \
+               power_parameters_power_user=$POWER_USER power_parameters_power_pass=$POWER_PASS mac_addresses=$MAC_ADDRESS \
+               architecture='amd64/generic'
+
+           units=$(($units - 1));
+       done
     fi
 
     # make sure nodes are added into MAAS and none of them is in commisoning state
@@ -388,9 +406,8 @@ addnodes(){
 #configure MAAS with the different options.
 configuremaas
 
-if [ "$virtinstall" -eq 1 ]; then
-    enablesubnetanddhcp
-fi
+#not virtual lab only. Can be done using any physical pod now.
+enablesubnetanddhcp
 
 #just make sure rack controller has been synced and import only
 # just whether images have been imported or not.
