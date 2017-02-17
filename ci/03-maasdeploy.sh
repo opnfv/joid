@@ -327,7 +327,7 @@ addnodes(){
         power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
         architecture='amd64/generic' power_parameters_power_id='bootstrap'
 
-    bootstrapid=$(maas $PROFILE machines read | jq -r 'select(.[].hostname == "bootstrap")[0].system_id')
+    bootstrapid=$(maas $PROFILE machines read | jq -r '.[] | select(.hostname == "bootstrap").system_id')
 
     maas $PROFILE tag update-nodes bootstrap add=$bootstrapid
 
@@ -360,17 +360,17 @@ addnodes(){
             tags='control' hostname='node1-control' power_type='virsh' mac_addresses=$node1controlmac \
             power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
             architecture='amd64/generic' power_parameters_power_id='node1-control'
-        controlnodeid=$(maas $PROFILE machines read | jq -r 'select(.[].hostname == "node1-control")[0].system_id')
+        controlnodeid=$(maas $PROFILE machines read | jq -r '.[] | select(.hostname == "node1-control").system_id')
         maas $PROFILE machines create autodetect_nodegroup='yes' name='node2-compute' \
             tags='compute' hostname='node2-compute' power_type='virsh' mac_addresses=$node2computemac \
             power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
             architecture='amd64/generic' power_parameters_power_id='node2-compute'
-        compute2nodeid=$(maas $PROFILE machines read | jq -r 'select(.[].hostname == "node2-compute")[0].system_id')
+        compute2nodeid=$(maas $PROFILE machines read | jq -r '.[] | select(.hostname == "node2-compute").system_id')
         maas $PROFILE machines create autodetect_nodegroup='yes' name='node5-compute' \
             tags='compute' hostname='node5-compute' power_type='virsh' mac_addresses=$node5computemac \
             power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
             architecture='amd64/generic' power_parameters_power_id='node5-compute'
-        compute5nodeid=$(maas $PROFILE machines read | jq -r 'select(.[].hostname == "node5-compute")[0].system_id')
+        compute5nodeid=$(maas $PROFILE machines read | jq -r '.[] | select(.hostname == "node5-compute").system_id')
 
         maas $PROFILE tag update-nodes control add=$controlnodeid || true
         maas $PROFILE tag update-nodes compute add=$compute2nodeid || true

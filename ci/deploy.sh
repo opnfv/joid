@@ -84,7 +84,7 @@ createresource() {
     for node in node3-control node4-control
     do
         node_id=$(maas $PROFILE machines read | \
-                  jq -r "select(.[].hostname == \"$node\")[0].system_id")
+                  jq -r ".[] | select(.hostname == \"$node\").system_id")
         if [[ -z "$node_id" ]]; then
             sudo virt-install --connect qemu:///system --name $node \
                 --ram 8192 --cpu host --vcpus 4 \
@@ -103,7 +103,7 @@ createresource() {
                 power_parameters_power_address="qemu+ssh://$USER@192.168.122.1/system" \
                 architecture='amd64/generic' power_parameters_power_id='node3-control'
             node_id=$(maas $PROFILE machines read | \
-                  jq -r "select(.[].hostname == \"$node\")[0].system_id")
+                  jq -r ".[] | select(.hostname == \"$node\").system_id")
         fi
         if [[ -z "$node_id" ]]; then
             echo "Error: failed to create node $node ."
