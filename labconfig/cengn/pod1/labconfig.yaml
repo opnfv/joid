@@ -11,7 +11,7 @@ lab:
         spaces: [admin]
         mac: ["00:A0:A5:90:89:66"]
       - ifname: enp12s0
-        spaces: [public]
+        spaces: [floating]
         mac: ["00:A0:A5:90:89:67"]
       - ifname: enp3s0f1
         spaces: [data]
@@ -29,7 +29,7 @@ lab:
         spaces: [admin]
         mac: ["00:A0:A5:90:89:A8"]
       - ifname: enp12s0
-        spaces: [public]
+        spaces: [floating]
         mac: ["00:A0:A5:90:89:A9"]
       - ifname: enp3s0f1
         spaces: [data]
@@ -47,7 +47,7 @@ lab:
         spaces: [admin]
         mac: ["00:A0:A5:90:89:28"]
       - ifname: enp12s0
-        spaces: [public]
+        spaces: [floating]
         mac: ["00:A0:A5:90:89:29"]
       - ifname: enp3s0f1
         spaces: [data]
@@ -65,7 +65,7 @@ lab:
         spaces: [admin]
         mac: ["00:A0:A5:89:30:C6"]
       - ifname: enp12s0
-        spaces: [public]
+        spaces: [floating]
         mac: ["00:A0:A5:89:30:C7"]
       - ifname: enp3s0f1
         spaces: [data]
@@ -83,7 +83,7 @@ lab:
         spaces: [admin]
         mac: ["00:A0:A5:90:89:94"]
       - ifname: enp12s0
-        spaces: [public]
+        spaces: [floating]
         mac: ["00:A0:A5:90:89:95"]
       - ifname: enp3s0f1
         spaces: [data]
@@ -122,5 +122,5 @@ opnfv:
   - type: data
     bridge: brData
     cidr: 192.168.20.0/24
-    gateway: 192.168.20.1
+    gateway: 192.168.20.254
     vlan:
