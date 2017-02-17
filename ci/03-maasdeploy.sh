@@ -380,12 +380,12 @@ addnodes(){
 
        until [ $(($units)) -lt 1 ]; do
            units=$(($units - 1));
-           NODE_NAME=`cat labconfig.json | jq ".lab.racks[].nodes[i].name" | cut -d \" -f 2 `
-           MAC_ADDRESS=`cat labconfig.json | jq ".lab.racks[].nodes[i].nics[] | select(.spaces[]==\"admin\").mac"[0] | cut -d \" -f 2 `
-           POWER_TYPE=`cat labconfig.json | jq ".lab.racks[].nodes[i].power.type" | cut -d \" -f 2 `
-           POWER_IP=`cat labconfig.json |  jq ".lab.racks[].nodes[i].power.address" | cut -d \" -f 2 `
-           POWER_USER=`cat labconfig.json |  jq ".lab.racks[].nodes[i].power.user" | cut -d \" -f 2 `
-           POWER_PASS=`cat labconfig.json |  jq ".lab.racks[].nodes[i].power.pass" | cut -d \" -f 2 `
+           NODE_NAME=`cat labconfig.json | jq ".lab.racks[].nodes[$units].name" | cut -d \" -f 2 `
+           MAC_ADDRESS=`cat labconfig.json | jq ".lab.racks[].nodes[$units].nics[] | select(.spaces[]==\"admin\").mac"[0] | cut -d \" -f 2 `
+           POWER_TYPE=`cat labconfig.json | jq ".lab.racks[].nodes[$units].power.type" | cut -d \" -f 2 `
+           POWER_IP=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.address" | cut -d \" -f 2 `
+           POWER_USER=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.user" | cut -d \" -f 2 `
+           POWER_PASS=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.pass" | cut -d \" -f 2 `
 
            maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
                hostname=$NODE_NAME power_type=$POWER_TYPE power_parameters_power_address=$POWER_IP \
