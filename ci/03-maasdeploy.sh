@@ -86,9 +86,10 @@ URL=https://images.maas.io/ephemeral-v2/daily/
 KEYRING_FILE=/usr/share/keyrings/ubuntu-cloudimage-keyring.gpg
 SOURCE_ID=1
 FABRIC_ID=1
-VLAN_TAG=""
 PRIMARY_RACK_CONTROLLER="$MAAS_IP"
 SUBNET_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="admin")'.cidr | cut -d \" -f 2 `
+SUBNETDATA_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data")'.cidr | cut -d \" -f 2 `
+SUBNETPUB_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="public")'.cidr | cut -d \" -f 2 `
 VLAN_TAG="untagged"
 
 # In the case of a virtual deployment get deployconfig.yaml
@@ -228,19 +229,14 @@ configuremaas(){
     do
         sleep 60
     done
-
-    #maas $PROFILE subnet update vlan:<vlan id> name=internal-api space=<0> gateway_ip=10.5.1.1
-    #maas $PROFILE subnet update vlan:<vlan id> name=admin-api space=<2> gateway_ip=10.5.12.1
-    #maas $PROFILE subnet update vlan:<vlan id> name=public-api space=<1> gateway_ip=10.5.15.1
-    #maas $PROFILE subnet update vlan:<vlan id> name=compute-data space=<3> gateway_ip=10.5.17.1
-    #maas $PROFILE subnet update vlan:<vlan id> name=compute-external space=<4> gateway_ip=10.5.19.1
-    #maas $PROFILE subnet update vlan:<vlan id> name=storage-data space=<5> gateway_ip=10.5.20.1
-    #maas $PROFILE subnet update vlan:<vlan id> name=storage-cluster space=<6> gateway_ip=10.5.21.1
-
 }
 
 enablesubnetanddhcp(){
-    SUBNET_PREFIX=${SUBNET_CIDR::-5}
+    TEMP_CIDR=$1
+    enabledhcp=$2
+    space=$3
+
+    SUBNET_PREFIX=${TEMP_CIDR::-5}
 
     IP_RES_RANGE_LOW="$SUBNET_PREFIX.1"
     IP_RES_RANGE_HIGH="$SUBNET_PREFIX.39"
@@ -259,23 +255,44 @@ enablesubnetanddhcp(){
         start_ip=$IP_DYNAMIC_RANGE_LOW end_ip=$IP_DYNAMIC_RANGE_HIGH \
         comment='This is a reserved dynamic range' || true
 
-
-    FABRIC_ID=$(maas $PROFILE subnet read $SUBNET_CIDR | jq '.vlan.fabric_id')
+    FABRIC_ID=$(maas $PROFILE subnet read $TEMP_CIDR | jq '.vlan.fabric_id')
 
     PRIMARY_RACK_CONTROLLER=$(maas $PROFILE rack-controllers read | jq -r '.[0].system_id')
 
-    maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
-
-    MY_GATEWAY=`cat deployconfig.json | jq '.opnfv.admNetgway' | cut -d \" -f 2`
-    MY_NAMESERVER=`cat deployconfig.json | jq '.opnfv.upstream_dns' | cut -d \" -f 2`
-    maas $PROFILE subnet update $SUBNET_CIDR gateway_ip=$MY_GATEWAY || true
-    maas $PROFILE subnet update $SUBNET_CIDR dns_servers=$MY_NAMESERVER || true
-
-    #below command will enable the interface with internal-api space.
-
-    SPACEID=$(maas $PROFILE space read internal-api | jq '.id')
-    maas $PROFILE subnet update $SUBNET_CIDR space=$SPACEID || true
-
+    if [ "$space" == "admin" ]; then
+        MY_GATEWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="admin")'.gateway | cut -d \" -f 2 `
+        #MY_NAMESERVER=`cat deployconfig.json | jq '.opnfv.upstream_dns' | cut -d \" -f 2`
+        maas $PROFILE subnet update $TEMP_CIDR gateway_ip=$MY_GATEWAY || true
+        #maas $PROFILE subnet update $TEMP_CIDR dns_servers=$MY_NAMESERVER || true
+        #below command will enable the interface with internal-api space.
+        SPACEID=$(maas $PROFILE space read internal-api | jq '.id')
+        maas $PROFILE subnet update $TEMP_CIDR space=$SPACEID || true
+        if [ "$enabledhcp" == "true" ]; then
+            maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
+        fi
+    elif [ "$space" == "data" ]; then
+        MY_GATEWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data")'.gateway | cut -d \" -f 2 `
+        if [ $MY_GATEWAY ]; then
+            maas $PROFILE subnet update $TEMP_CIDR gateway_ip=$MY_GATEWAY || true
+        fi
+        #below command will enable the interface with data-api space for data network.
+        SPACEID=$(maas $PROFILE space read data-api | jq '.id')
+        maas $PROFILE subnet update $TEMP_CIDR space=$SPACEID || true
+        if [ "$enabledhcp" == "true" ]; then
+            maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
+        fi
+    elif [ "$space" == "public" ]; then
+        MY_GATEWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data")'.public | cut -d \" -f 2 `
+        if [ $MY_GATEWAY ]; then
+            maas $PROFILE subnet update $TEMP_CIDR gateway_ip=$MY_GATEWAY || true
+        fi
+        #below command will enable the interface with public-api space for data network.
+        SPACEID=$(maas $PROFILE space read public-api | jq '.id')
+        maas $PROFILE subnet update $TEMP_CIDR space=$SPACEID || true
+        if [ "$enabledhcp" == "true" ]; then
+            maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
+        fi
+    fi
 }
 
 addnodes(){
@@ -405,8 +422,23 @@ addnodes(){
 #configure MAAS with the different options.
 configuremaas
 
-#not virtual lab only. Can be done using any physical pod now.
-enablesubnetanddhcp
+# functioncall with subnetid to add and second parameter is dhcp enable
+# third parameter will define the space. It is required to have admin
+
+if [ $SUBNET_CIDR ]; then
+    enablesubnetanddhcp $SUBNET_CIDR true admin
+else
+    echo "atleast admin network should be defined"
+    echo "MAAS configuration can not continue"
+    exit 2
+fi
+
+if [ $SUBNETDATA_CIDR ]; then
+    enablesubnetanddhcp $SUBNETDATA_CIDR false data
+fi
+if [ $SUBNETPUB_CIDR ]; then
+    enablesubnetanddhcp $SUBNETPUB_CIDR false public
+fi
 
 #just make sure rack controller has been synced and import only
 # just whether images have been imported or not.
