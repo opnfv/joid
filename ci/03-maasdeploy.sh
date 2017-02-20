@@ -203,21 +203,19 @@ configuremaas(){
     maas $PROFILE maas set-config name='ntp_server' value='ntp.ubuntu.com' || true
     maas $PROFILE sshkeys create "key=$SSH_KEY" || true
 
-    maas $PROFILE tags create name='bootstrap' || true
-    maas $PROFILE tags create name='compute' || true
-    maas $PROFILE tags create name='control' || true
-    maas $PROFILE tags create name='storage' || true
+    for tag in bootstrap compute control storage
+    do
+        maas $PROFILE tags create name=$tag || true
+    done
 
     #create the required spaces.
     maas $PROFILE space update 0 name=default || true
-    maas $PROFILE spaces create name=unused || true
-    maas $PROFILE spaces create name=admin-api || true
-    maas $PROFILE spaces create name=internal-api || true
-    maas $PROFILE spaces create name=public-api || true
-    maas $PROFILE spaces create name=compute-data || true
-    maas $PROFILE spaces create name=compute-external || true
-    maas $PROFILE spaces create name=storage-data || true
-    maas $PROFILE spaces create name=storage-cluster || true
+    for space in unused admin-api internal-api public-api compute-data \
+                 compute-external storage-data storage-cluster
+    do
+        echo "Creating the space $space"
+        maas $PROFILE spaces create name=$space || true
+    done
 
     maas $PROFILE boot-source update $SOURCE_ID \
          url=$URL keyring_filename=$KEYRING_FILE || true
@@ -349,49 +347,27 @@ addnodes(){
     maas $PROFILE tag update-nodes bootstrap add=$bootstrapid
 
     if [ "$virtinstall" -eq 1 ]; then
+        units=`cat deployconfig.json | jq .opnfv.units`
 
-        sudo virt-install --connect qemu:///system --name node1-control --ram 8192 --cpu host --vcpus 4 \
+        until [ $(($units)) -lt 1 ]; do
+           units=$(($units - 1));
+           NODE_NAME=`cat labconfig.json | jq ".lab.racks[].nodes[$units].name" | cut -d \" -f 2 `
+
+            sudo virt-install --connect qemu:///system --name $NODE_NAME --ram 8192 --cpu host --vcpus 4 \
                      --disk size=120,format=qcow2,bus=virtio,io=native,pool=default \
-                     $netw $netw --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node1-control
+                     $netw $netw --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee $NODE_NAME
 
-        sudo virt-install --connect qemu:///system --name node2-compute --ram 8192 --cpu host --vcpus 4 \
-                    --disk size=120,format=qcow2,bus=virtio,io=native,pool=default \
-                    $netw $netw --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node2-compute
-
-        sudo virt-install --connect qemu:///system --name node5-compute --ram 8192 --cpu host --vcpus 4 \
-                   --disk size=120,format=qcow2,bus=virtio,io=native,pool=default \
-                   $netw $netw --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee node5-compute
-
-
-        node1controlmac=`grep  "mac address" node1-control | head -1 | cut -d '"' -f 2`
-        node2computemac=`grep  "mac address" node2-compute | head -1 | cut -d '"' -f 2`
-        node5computemac=`grep  "mac address" node5-compute | head -1 | cut -d '"' -f 2`
-
-        sudo virsh -c qemu:///system define --file node1-control
-        sudo virsh -c qemu:///system define --file node2-compute
-        sudo virsh -c qemu:///system define --file node5-compute
-        rm -f node1-control node2-compute node5-compute
-
-
-        maas $PROFILE machines create autodetect_nodegroup='yes' name='node1-control' \
-            tags='control' hostname='node1-control' power_type='virsh' mac_addresses=$node1controlmac \
-            power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
-            architecture='amd64/generic' power_parameters_power_id='node1-control'
-        controlnodeid=$(maas $PROFILE machines read | jq -r '.[] | select(.hostname == "node1-control").system_id')
-        maas $PROFILE machines create autodetect_nodegroup='yes' name='node2-compute' \
-            tags='compute' hostname='node2-compute' power_type='virsh' mac_addresses=$node2computemac \
-            power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
-            architecture='amd64/generic' power_parameters_power_id='node2-compute'
-        compute2nodeid=$(maas $PROFILE machines read | jq -r '.[] | select(.hostname == "node2-compute").system_id')
-        maas $PROFILE machines create autodetect_nodegroup='yes' name='node5-compute' \
-            tags='compute' hostname='node5-compute' power_type='virsh' mac_addresses=$node5computemac \
-            power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
-            architecture='amd64/generic' power_parameters_power_id='node5-compute'
-        compute5nodeid=$(maas $PROFILE machines read | jq -r '.[] | select(.hostname == "node5-compute").system_id')
-
-        maas $PROFILE tag update-nodes control add=$controlnodeid || true
-        maas $PROFILE tag update-nodes compute add=$compute2nodeid || true
-        maas $PROFILE tag update-nodes compute add=$compute5nodeid || true
+            nodemac=`grep  "mac address" $NODE_NAME | head -1 | cut -d '"' -f 2`
+            sudo virsh -c qemu:///system define --file $NODE_NAME
+            rm -f $NODE_NAME
+            maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
+                tags='control compute' hostname=$NODE_NAME power_type='virsh' mac_addresses=$nodemac \
+                power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
+                architecture='amd64/generic' power_parameters_power_id=$NODE_NAME
+            nodeid=$(maas $PROFILE machines read | jq -r '.[] | select(.hostname == '\"$NODE_NAME\"').system_id')
+            maas $PROFILE tag update-nodes control add=$nodeid || true
+            maas $PROFILE tag update-nodes compute add=$nodeid || true
+        done
     else
        units=`cat deployconfig.json | jq .opnfv.units`
 
