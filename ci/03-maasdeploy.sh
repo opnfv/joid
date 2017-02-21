@@ -193,6 +193,7 @@ configuremaas(){
     #reconfigure maas with correct MAAS address.
     #Below code is needed as MAAS have issue in commisoning without restart.
     sudo ./maas-reconfigure-region.sh $MAAS_IP
+    sleep 30
     sudo maas-rack config --region-url http://$MAAS_IP:5240/MAAS
 
     sudo maas createadmin --username=ubuntu --email=ubuntu@ubuntu.com --password=ubuntu || true
@@ -220,9 +221,8 @@ configuremaas(){
 
     maas $PROFILE boot-source update $SOURCE_ID \
          url=$URL keyring_filename=$KEYRING_FILE || true
-
     maas $PROFILE boot-resources import || true
-    sleep 10
+    sleep 60
 
     while [ "$(maas $PROFILE boot-resources is-importing)" == "true" ];
     do
@@ -261,7 +261,9 @@ enablesubnetanddhcp(){
     if [ "$space" == "admin" ]; then
         MY_GATEWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="admin")'.gateway | cut -d \" -f 2 `
         #MY_NAMESERVER=`cat deployconfig.json | jq '.opnfv.upstream_dns' | cut -d \" -f 2`
-        maas $PROFILE subnet update $TEMP_CIDR gateway_ip=$MY_GATEWAY || true
+        if ([ $MY_GATEWAY ] && [ "$MY_GATEWAY" != "null" ]); then
+            maas $PROFILE subnet update $TEMP_CIDR gateway_ip=$MY_GATEWAY || true
+        fi
         #maas $PROFILE subnet update $TEMP_CIDR dns_servers=$MY_NAMESERVER || true
         #below command will enable the interface with internal-api space.
         SPACEID=$(maas $PROFILE space read internal-api | jq '.id')
@@ -271,18 +273,18 @@ enablesubnetanddhcp(){
         fi
     elif [ "$space" == "data" ]; then
         MY_GATEWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data")'.gateway | cut -d \" -f 2 `
-        if [ $MY_GATEWAY ]; then
+        if ([ $MY_GATEWAY ] && [ "$MY_GATEWAY" != "null" ]); then
             maas $PROFILE subnet update $TEMP_CIDR gateway_ip=$MY_GATEWAY || true
         fi
         #below command will enable the interface with data-api space for data network.
-        SPACEID=$(maas $PROFILE space read data-api | jq '.id')
+        SPACEID=$(maas $PROFILE space read admin-api | jq '.id')
         maas $PROFILE subnet update $TEMP_CIDR space=$SPACEID || true
         if [ "$enabledhcp" == "true" ]; then
             maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
         fi
     elif [ "$space" == "public" ]; then
         MY_GATEWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data")'.public | cut -d \" -f 2 `
-        if [ $MY_GATEWAY ]; then
+        if ([ $MY_GATEWAY ] && [ "$MY_GATEWAY" != "null" ]); then
             maas $PROFILE subnet update $TEMP_CIDR gateway_ip=$MY_GATEWAY || true
         fi
         #below command will enable the interface with public-api space for data network.
@@ -293,7 +295,7 @@ enablesubnetanddhcp(){
         fi
     elif [ "$space" == "storage" ]; then
         MY_GATEWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data")'.storage | cut -d \" -f 2 `
-        if [ $MY_GATEWAY ]; then
+        if ([ $MY_GATEWAY ] && [ "$MY_GATEWAY" != "null" ]); then
             maas $PROFILE subnet update $TEMP_CIDR gateway_ip=$MY_GATEWAY || true
         fi
         #below command will enable the interface with public-api space for data network.
