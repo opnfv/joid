@@ -90,6 +90,7 @@ PRIMARY_RACK_CONTROLLER="$MAAS_IP"
 SUBNET_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="admin")'.cidr | cut -d \" -f 2 `
 SUBNETDATA_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data")'.cidr | cut -d \" -f 2 `
 SUBNETPUB_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="public")'.cidr | cut -d \" -f 2 `
+SUBNETSTOR_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="storage")'.cidr | cut -d \" -f 2 `
 VLAN_TAG="untagged"
 
 # In the case of a virtual deployment get deployconfig.yaml
@@ -290,6 +291,17 @@ enablesubnetanddhcp(){
         if [ "$enabledhcp" == "true" ]; then
             maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
         fi
+    elif [ "$space" == "storage" ]; then
+        MY_GATEWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data")'.storage | cut -d \" -f 2 `
+        if [ $MY_GATEWAY ]; then
+            maas $PROFILE subnet update $TEMP_CIDR gateway_ip=$MY_GATEWAY || true
+        fi
+        #below command will enable the interface with public-api space for data network.
+        SPACEID=$(maas $PROFILE space read storage-data | jq '.id')
+        maas $PROFILE subnet update $TEMP_CIDR space=$SPACEID || true
+        if [ "$enabledhcp" == "true" ]; then
+            maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
+        fi
     fi
 }
 
@@ -416,6 +428,10 @@ if [ $SUBNETPUB_CIDR ]; then
     enablesubnetanddhcp $SUBNETPUB_CIDR false public
 fi
 
+if [ $SUBNETSTOR_CIDR ]; then
+    enablesubnetanddhcp $SUBNETSTOR_CIDR false storage
+fi
+
 #just make sure rack controller has been synced and import only
 # just whether images have been imported or not.
 sleep 120
@@ -437,9 +453,11 @@ echo "... Deployment of maas finish ...."
 enableautomode() {
     API_KEY=`sudo maas-region apikey --username=ubuntu`
     maas login $PROFILE $API_SERVERMAAS $API_KEY
+    vlanid=$(maas $PROFILE subnet read $3 | jq -r '.vlan.id')
 
     for node in $(maas $PROFILE nodes read | jq -r '.[].system_id')
     do
+        maas $PROFILE interface update $node $1 vlan=$vlanid
         maas $PROFILE interface link-subnet $node $1  mode=$2 subnet=$3 || true
     done
 }
@@ -514,7 +532,6 @@ addcloud() {
     juju add-cloud $cloudname maas-cloud.yaml --replace
 }
 
-
 #
 # VLAN customization
 #
@@ -540,38 +557,30 @@ esac
 #read interface needed in Auto mode and enable it. Will be rmeoved once auto enablement will be implemented in the maas-deployer.
 
 if [ -e ./deployconfig.yaml ]; then
-  enableiflist=`grep "interface-enable" deployconfig.yaml | cut -d ' ' -f 4 `
-  datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-  stornet=`grep "storageNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-  pubnet=`grep "publicNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-
-  # split EXTERNAL_NETWORK=first ip;last ip; gateway;network
-
-  if [ "$datanet" != "''" ]; then
-      EXTNET=(${enableiflist//,/ })
+  if [ $SUBNETDATA_CIDR ]; then
+      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="data")'.ifname | sort -u`
       i="0"
       while [ ! -z "${EXTNET[i]}" ];
       do
-          enableautomode ${EXTNET[i]} AUTO $datanet || true
-          i=$[$i+1]
-      done
-
-  fi
-  if [ "$stornet" != "''" ]; then
-      EXTNET=(${enableiflist//,/ })
-      i="0"
-      while [ ! -z "${EXTNET[i]}" ];
-      do
-          enableautomode ${EXTNET[i]} AUTO $stornet || true
+          enableautomode ${EXTNET[i]} AUTO $SUBNETDATA_CIDR || true
           i=$[$i+1]
       done
   fi
-  if [ "$pubnet" != "''" ]; then
-      EXTNET=(${enableiflist//,/ })
+  if [ $SUBNETPUB_CIDR ]; then
+      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="public")'.ifname | sort -u`
       i="0"
       while [ ! -z "${EXTNET[i]}" ];
       do
-          enableautomode ${EXTNET[i]} AUTO $pubnet || true
+          enableautomode ${EXTNET[i]} AUTO $SUBNETPUB_CIDR || true
+          i=$[$i+1]
+      done
+  fi
+  if [ $SUBNETSTOR_CIDR ]; then
+      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="storage")'.ifname | sort -u`
+      i="0"
+      while [ ! -z "${EXTNET[i]}" ];
+      do
+          enableautomode ${EXTNET[i]} AUTO $SUBNETSTOR_CIDR || true
           i=$[$i+1]
       done
   fi
