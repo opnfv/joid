@@ -7,13 +7,13 @@ lab:
       architecture: x86_64
       roles: [network,control]
       nics:
-      - ifname: eth1
+      - ifname: enp4s0f3
         spaces: [admin]
         mac: ["00:1E:67:CF:BB:54"]
-      - ifname: eth4
+      - ifname: ens785f0
         spaces: [data]
         mac: ["90:E2:BA:85:4E:2C"]
-      - ifname: eth5
+      - ifname: ens785f1.504
         spaces: [public]
         mac: ["90:E2:BA:85:4E:2D"]
       power:
@@ -25,13 +25,13 @@ lab:
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: eth1
+      - ifname: enp4s0f3
         spaces: [admin]
         mac: ["00:1E:67:CF:B8:93"]
-      - ifname: eth4
+      - ifname: ens785f0
         spaces: [data]
         mac: ["90:E2:BA:84:08:B8"]
-      - ifname: eth5
+      - ifname: ens785f1.504
         spaces: [public]
         mac: ["90:E2:BA:84:08:B9"]
       power:
@@ -43,13 +43,13 @@ lab:
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: eth1
+      - ifname: enp4s0f3
         spaces: [admin]
         mac: ["00:1E:67:E0:08:7F"]
-      - ifname: eth4
+      - ifname: ens785f0
         spaces: [data]
         mac: ["90:E2:BA:84:07:0D"]
-      - ifname: eth5
+      - ifname: ens785f1.504
         spaces: [public]
         mac: ["90:E2:BA:84:07:0E"]
       power:
@@ -61,13 +61,13 @@ lab:
       architecture: x86_64
       roles: [compute,storage]
       nics:
-      - ifname: eth1
+      - ifname: enp4s0f3
         spaces: [admin]
         mac: ["00:1E:67:E0:08:B1"]
-      - ifname: eth4
+      - ifname: ens785f0
         spaces: [data]
         mac: ["90:E2:BA:83:FD:80"]
-      - ifname: eth5
+      - ifname: ens785f1.504
         spaces: [public]
         mac: ["90:E2:BA:83:FD:81"]
       power:
@@ -79,13 +79,13 @@ lab:
       architecture: x86_64
       roles: [compute,storage]
       nics:
-      - ifname: eth1
+      - ifname: enp4s0f3
         spaces: [admin]
         mac: ["00:1E:67:E0:0A:4B"]
-      - ifname: eth4
+      - ifname: ens785f0
         spaces: [data]
         mac: ["90:E2:BA:75:22:74"]
-      - ifname: eth5
+      - ifname: ens785f1.504
         spaces: [public]
         mac: ["90:E2:BA:75:22:75"]
       power:
@@ -97,13 +97,13 @@ lab:
 #      architecture: x86_64
 #      roles: [compute,storage]
 #      nics:
-#      - ifname: eth1
+#      - ifname: enp4s0f3
 #        spaces: [admin]
 #        mac: ["98:4F:EE:10:03:43"]
-#      - ifname: eth4
+#      - ifname: ens785f0
 #        spaces: [data]
 #        mac: ["00:1E:67:9C:3E:54"]
-#      - ifname: eth5
+#      - ifname: ens785f1.504
 #        spaces: [public]
 #        mac: ["00:1E:67:9C:3E:55"]
 #      power:
@@ -146,12 +146,12 @@ opnfv:
       bridge: brMgmt
       cidr: 10.5.14.0/24
       gateway:
-      vlan:
+      vlan: 504
     - type: floating
       bridge: brPublic
       cidr: 10.5.15.0/24
       gateway:
-      vlan:
+      vlan: 505
     - type: external
       bridge: brExt
       cidr:
