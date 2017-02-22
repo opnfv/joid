@@ -13,7 +13,7 @@ function build {
 bzr branch lp:~narindergupta/charms/trusty/promise/trunk $distro/promise
 bzr branch lp:~billy-olsen/charms/xenial/mongodb/trunk $distro/mongodb
 bzr branch lp:~narindergupta/opnfv/ntp $distro/ntp
-charm pull cs:~narindergupta/charm-neutron-gateway-0 $distro/neutron-gateway
+charm pull cs:~narindergupta/neutron-gateway-0 $distro/neutron-gateway
 
 git clone https://github.com/gnuoy/charm-congress.git $distro/charm-congress
 build congress

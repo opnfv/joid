@@ -16,6 +16,12 @@ lab:
       - ifname: ens785f1.504
         spaces: [public]
         mac: ["90:E2:BA:85:4E:2D"]
+      - ifname: ens785f0.505
+        spaces: [floating]
+        mac: ["90:E2:BA:85:4E:2C"]
+      - ifname: ens785f1
+        spaces: [storage]
+        mac: ["90:E2:BA:85:4E:2D"]
       power:
         type: ipmi
         address: 10.2.117.85
@@ -34,6 +40,12 @@ lab:
       - ifname: ens785f1.504
         spaces: [public]
         mac: ["90:E2:BA:84:08:B9"]
+      - ifname: ens785f0.505
+        spaces: [floating]
+        mac: ["90:E2:BA:85:4E:2C"]
+      - ifname: ens785f1
+        spaces: [storage]
+        mac: ["90:E2:BA:85:4E:2D"]
       power:
         type: ipmi
         address: 10.2.117.86
@@ -52,6 +64,12 @@ lab:
       - ifname: ens785f1.504
         spaces: [public]
         mac: ["90:E2:BA:84:07:0E"]
+      - ifname: ens785f0.505
+        spaces: [floating]
+        mac: ["90:E2:BA:85:4E:2C"]
+      - ifname: ens785f1
+        spaces: [storage]
+        mac: ["90:E2:BA:85:4E:2D"]
       power:
         type: ipmi
         address: 10.2.117.87
@@ -70,6 +88,12 @@ lab:
       - ifname: ens785f1.504
         spaces: [public]
         mac: ["90:E2:BA:83:FD:81"]
+      - ifname: ens785f0.505
+        spaces: [floating]
+        mac: ["90:E2:BA:85:4E:2C"]
+      - ifname: ens785f1
+        spaces: [storage]
+        mac: ["90:E2:BA:85:4E:2D"]
       power:
         type: ipmi
         address: 10.2.117.88
@@ -88,6 +112,12 @@ lab:
       - ifname: ens785f1.504
         spaces: [public]
         mac: ["90:E2:BA:75:22:75"]
+      - ifname: ens785f0.505
+        spaces: [floating]
+        mac: ["90:E2:BA:85:4E:2C"]
+      - ifname: ens785f1
+        spaces: [storage]
+        mac: ["90:E2:BA:85:4E:2D"]
       power:
         type: ipmi
         address: 10.2.117.89

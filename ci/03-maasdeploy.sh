@@ -91,6 +91,7 @@ SUBNET_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="admin")'.
 SUBNETDATA_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data")'.cidr | cut -d \" -f 2 `
 SUBNETPUB_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="public")'.cidr | cut -d \" -f 2 `
 SUBNETSTOR_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="storage")'.cidr | cut -d \" -f 2 `
+SUBNETFLOAT_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="floating")'.cidr | cut -d \" -f 2 `
 VLAN_TAG="untagged"
 
 # In the case of a virtual deployment get deployconfig.yaml
@@ -219,10 +220,10 @@ configuremaas(){
         maas $PROFILE spaces create name=$space || true
     done
 
-    maas $PROFILE boot-source update $SOURCE_ID \
-         url=$URL keyring_filename=$KEYRING_FILE || true
-    maas $PROFILE boot-resources import || true
-    sleep 60
+    #maas $PROFILE boot-source update $SOURCE_ID \
+    #     url=$URL keyring_filename=$KEYRING_FILE || true
+    #maas $PROFILE boot-resources import || true
+    #sleep 60
 
     while [ "$(maas $PROFILE boot-resources is-importing)" == "true" ];
     do
@@ -500,8 +501,10 @@ crnodevlanint() {
 
     for node in $(maas $PROFILE nodes read | jq -r '.[].system_id')
     do
-        interface=$(maas $PROFILE interface read $node $2 | jq -r '.id')
-        maas $PROFILE interfaces create-vlan $node vlan=$1 parent=$interface
+        vlanid=$(maas $PROFILE subnets read | jq '.[].vlan | select(.vid=='$1')'.id)
+        fabricid=`maas $PROFILE subnets read | jq '.[].vlan | select(.vid=='$1')'.fabric_id`
+        interface=`maas $PROFILE interfaces read $node | jq '.[] | select(.vlan.fabric_id=='$fabricid')'.id`
+        maas $PROFILE interfaces create-vlan $node vlan=$vlanid parent=$interface || true
      done
  }
 
@@ -557,14 +560,16 @@ esac
 #
 
 #read interface needed in Auto mode and enable it. Will be rmeoved once auto enablement will be implemented in the maas-deployer.
-
-if [ -e ./deployconfig.yaml ]; then
+# Enable only non vlan interfaces first.
+if [ -e ./labconfig.json ]; then
   if [ $SUBNETDATA_CIDR ]; then
       EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="data")'.ifname | sort -u`
       i="0"
       while [ ! -z "${EXTNET[i]}" ];
       do
-          enableautomode ${EXTNET[i]} AUTO $SUBNETDATA_CIDR || true
+          if ([ -z $VLAN ] || [ "$VLAN" == "null" ]); then
+              enableautomode ${EXTNET[i]} AUTO $SUBNETDATA_CIDR || true
+          fi
           i=$[$i+1]
       done
   fi
@@ -573,7 +578,9 @@ if [ -e ./deployconfig.yaml ]; then
       i="0"
       while [ ! -z "${EXTNET[i]}" ];
       do
-          enableautomode ${EXTNET[i]} AUTO $SUBNETPUB_CIDR || true
+          if ([ -z $VLAN ] || [ "$VLAN" == "null" ]); then
+              enableautomode ${EXTNET[i]} AUTO $SUBNETPUB_CIDR || true
+          fi
           i=$[$i+1]
       done
   fi
@@ -582,7 +589,77 @@ if [ -e ./deployconfig.yaml ]; then
       i="0"
       while [ ! -z "${EXTNET[i]}" ];
       do
-          enableautomode ${EXTNET[i]} AUTO $SUBNETSTOR_CIDR || true
+          if ([ -z $VLAN ] || [ "$VLAN" == "null" ]); then
+              enableautomode ${EXTNET[i]} AUTO $SUBNETSTOR_CIDR || true
+          fi
+          i=$[$i+1]
+      done
+  fi
+  if [ $SUBNETFLOAT_CIDR ]; then
+      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="floating")'.ifname | sort -u`
+      i="0"
+      while [ ! -z "${EXTNET[i]}" ];
+      do
+          if ([ -z $VLAN ] || [ "$VLAN" == "null" ]); then
+              enableautomode ${EXTNET[i]} link_up $SUBNETFLOAT_CIDR || true
+          fi
+          i=$[$i+1]
+      done
+  fi
+fi
+
+#enable only the vlan interfaces which were ignore in previous run.
+
+if [ -e ./labconfig.json ]; then
+  if [ $SUBNETDATA_CIDR ]; then
+      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="data")'.ifname | sort -u`
+      VLAN=`cat labconfig.json | jq --raw-output '.opnfv.spaces[] | select(.type=="data")'.vlan`
+      i="0"
+      while [ ! -z "${EXTNET[i]}" ];
+      do
+          if ([ $VLAN ] && [ "$VLAN" != "null" ]); then
+              crnodevlanint $VLAN || true
+              enableautomode ${EXTNET[i]} AUTO $SUBNETDATA_CIDR || true
+          fi
+          i=$[$i+1]
+      done
+  fi
+  if [ $SUBNETPUB_CIDR ]; then
+      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="public")'.ifname | sort -u`
+      VLAN=`cat labconfig.json | jq --raw-output '.opnfv.spaces[] | select(.type=="public")'.vlan`
+      i="0"
+      while [ ! -z "${EXTNET[i]}" ];
+      do
+          if ([ $VLAN ] && [ "$VLAN" != "null" ]); then
+              crnodevlanint $VLAN || true
+              enableautomode ${EXTNET[i]} AUTO $SUBNETPUB_CIDR || true
+          fi
+          i=$[$i+1]
+      done
+  fi
+  if [ $SUBNETSTOR_CIDR ]; then
+      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="storage")'.ifname | sort -u`
+      VLAN=`cat labconfig.json | jq --raw-output '.opnfv.spaces[] | select(.type=="storage")'.vlan`
+      i="0"
+      while [ ! -z "${EXTNET[i]}" ];
+      do
+          if ([ $VLAN ] && [ "$VLAN" != "null" ]); then
+              crnodevlanint $VLAN || true
+              enableautomode ${EXTNET[i]} AUTO $SUBNETSTOR_CIDR || true
+          fi
+          i=$[$i+1]
+      done
+  fi
+  if [ $SUBNETFLOAT_CIDR ]; then
+      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="floating")'.ifname | sort -u`
+      VLAN=`cat labconfig.json | jq --raw-output '.opnfv.spaces[] | select(.type=="floating")'.vlan`
+      i="0"
+      while [ ! -z "${EXTNET[i]}" ];
+      do
+          if ([ $VLAN ] && [ "$VLAN" != "null" ]); then
+              crnodevlanint $VLAN || true
+              enableautomode ${EXTNET[i]} link_up $SUBNETFLOAT_CIDR || true
+          fi
           i=$[$i+1]
       done
   fi
