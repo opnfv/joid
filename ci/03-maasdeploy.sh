@@ -10,12 +10,12 @@ if [ ! -e $HOME/.ssh/id_rsa ]; then
 fi
 
 #install the packages needed
-sudo apt-add-repository ppa:juju/devel -y
+sudo apt-add-repository ppa:juju/stable -y
 sudo apt-add-repository ppa:maas/stable -y
 sudo apt-add-repository cloud-archive:newton -y
 sudo apt-get update -y
 #sudo apt-get dist-upgrade -y
-sudo apt-get install openssh-server bzr git virtinst qemu-kvm libvirt-bin juju \
+sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvirt-bin juju \
              maas maas-region-controller python-pip python-psutil python-openstackclient \
              python-congressclient gsutil charm-tools pastebinit python-jinja2 sshpass \
              openssh-server vlan ipmitool jq expect -y
