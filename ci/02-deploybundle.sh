@@ -18,7 +18,6 @@ maasver=`apt-cache policy maas | grep Installed | cut -d ':' -f 2 | sed -e 's/ /
 if [[ "$opnfvmodel" = "openstack" ]]; then
     #copy and download charms
     ./$opnfvsdn/fetch-charms.sh $opnfvdistro
-    tar xvf common/scaleio.tar -C ./$opnfvdistro/ --strip=2 juju-scaleio/trusty/
     osdomname=''
 else
     ./kubernetes/fetch-charms.sh $opnfvdistro
@@ -31,7 +30,7 @@ check_status() {
     while [ $retval -eq 0 ]; do
        sleep 30
        juju status > status.txt
-       if [ "$(grep -c "waiting" status.txt )" -ge 4 ]; then
+       if [ "$(grep -c "waiting" status.txt )" -ge 2 ]; then
            echo " still waiting for machines ..."
            if [ $timeoutiter -ge 240 ]; then
                retval=1
