@@ -9,10 +9,10 @@ Networking:
 
 **Minimum 2 networks**
 
-| ``1. First for Admin network with gateway to access external network``
-| ``2. Second for public network to consume by tenants for floating ips``
+| ``1. First for Admin/Management network with gateway to access external network``
+| ``2. Second for floating ip network to consume by tenants for floating ips``
 
-**NOTE: JOID support multiple isolated networks for data as well as storage.
+**NOTE: JOID support multiple isolated networks for API, data as well as storage.
 Based on your network options for Openstack.**
 
 **Minimum 6 physical servers**
@@ -23,15 +23,15 @@ Based on your network options for Openstack.**
 | ``  CPU cores: 16``
 | ``  Memory: 32 GB``
 | ``  Hard Disk: 1(250 GB)``
-| ``  NIC: eth0(Admin, Management), eth1 (external network)``
+| ``  NIC: if0(Admin, Management), if1 (external network)``
 
 2. Node servers (minimum 5):
 
 | ``  Minimum H/W Spec``
 | ``  CPU cores: 16``
 | ``  Memory: 32 GB``
-| ``  Hard Disk: 1(1 TB) this includes the space for ceph as well``
-| ``  NIC: eth0(Admin, Management), eth1 (external network)``
+| ``  Hard Disk: 2(1 TB preferred SSD) this includes the space for ceph as well``
+| ``  NIC: if0 (Admin, Management), if1 (external network)``
 
 
 **NOTE: Above configuration is minimum and for better performance and usage of
@@ -43,7 +43,7 @@ Make sure all servers are connected to top of rack switch and config
 Jump node configuration:
 ------------------------
 
-1. Install Ubuntu 14.04 LTS server version of OS on the nodes.
+1. Install Ubuntu 16.04.1 LTS server version of OS on the nodes.
 2. Install the git and bridge-utils packages on the server and configure minimum two bridges on jump host:
 
 brAdm and brPublic cat /etc/network/interfaces
@@ -54,21 +54,16 @@ brAdm and brPublic cat /etc/network/interfaces
 | ``   iface eth0 inet manual``
 | ``   auto brAdm ``
 | ``   iface brAdm inet static``
-| ``       address 10.4.1.1``
-| ``       netmask 255.255.248.0``
-| ``       network 10.4.0.0``
-| ``       broadcast 10.4.7.255``
-| ``       gateway 10.4.0.1``
-| ``       # dns-* options are implemented by the resolvconf package, if installed``
-| ``       dns-nameservers 10.4.0.2``
-| ``       bridge_ports eth0``
+| ``       address 10.5.1.1``
+| ``       netmask 255.255.255.0``
+| ``       bridge_ports if0``
 | ``   auto brPublic``
 | ``   iface brPublic inet static``
-| ``       address 10.2.66.2``
-| Seperate yaml fi ``       netmask 255.255.255.0``
-| ``       bridge_ports eth2``
+| ``       address 10.5.15.1``
+| ``       netmask 255.255.255.0``
+| ``       bridge_ports if1``
 
-**NOTE: If you choose to use the separate network for management, data and
+**NOTE: If you choose to use the separate network for management, pulic , data and
 storage then you need to create bridge for each interface. In case of VLAN tags
 use the appropriate network on jump-host depend upon VLAN ID on the interface.**
 
@@ -78,7 +73,7 @@ Configure JOID for your lab
 
 **Get the joid code from gerritt**
 
-*git clone https://gerrit.opnfv.org/gerrit/p/joid.git*
+*git clone https://gerrit.opnfv.org/gerrit/joid.git*
 
 **Enable MAAS (labconfig.yaml is must and base for MAAS installation and scenario deployment)**
 

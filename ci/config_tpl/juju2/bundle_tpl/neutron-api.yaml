@@ -37,6 +37,9 @@
         flat-network-providers: physnet1
 {% if os.network.dvr %}
         overlay-network-type: vxlan
+{% else %}
+        overlay-network-type: vxlan gre
+        default-tenant-network-type: vxlan
 {% endif %}
 {% elif os.network.controller == 'odl' %}
         manage-neutron-plugin-legacy-mode: False
