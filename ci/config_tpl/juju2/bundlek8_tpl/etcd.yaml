@@ -8,7 +8,7 @@
       to:
 {% if k8.feature.loadbalancer %}
 {% for unit_id in to_select() %}
-        - "nodes/{{ unit_id }}"
+        - "lxd:nodes/0"
 {% endfor %}
 {% else %}
         - "nodes/0"
