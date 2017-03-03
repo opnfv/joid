@@ -225,4 +225,9 @@ if [[ "$opnfvmodel" = "kubernetes" ]]; then
     ./k8.sh
 fi
 
+# expose the juju gui-url to login into juju gui
+
+echo " ...... JUJU GUI can be access using the below URL ...... "
+juju gui --show-credentials --no-browser
+
 echo "...... finished  ......."
