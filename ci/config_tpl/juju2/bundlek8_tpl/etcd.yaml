@@ -5,6 +5,10 @@
 {% else %}
       num_units: 1
 {% endif %}
+{% if os.service.bindings %}
+      bindings:
+        "": internal-api
+{% endif %}
       to:
 {% if k8.feature.loadbalancer %}
 {% for unit_id in to_select() %}
