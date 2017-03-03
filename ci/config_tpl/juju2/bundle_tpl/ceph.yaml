@@ -68,7 +68,11 @@
 {% endif %}
 {% endif %}
       options:
+{% if os.lxd %}
+        osd-devices: /srv/ceph-osd
+{% else %}
         osd-devices: {{ opnfv.storage_dict.ceph.disk }}
+{% endif %}
         osd-reformat: 'yes'
 {% if ubuntu.release == 'trusty' and os.release < 'newton' %}
         source: "cloud:{{ ubuntu.release }}-updates/{{ os.release }}"

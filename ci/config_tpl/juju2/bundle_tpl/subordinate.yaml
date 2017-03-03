@@ -73,6 +73,11 @@
     lxd:
       charm: ./{{ ubuntu.release }}/lxd
       options:
+{% if 'srv' not in opnfv.storage_dict.ceph.disk %}
+        block-devices: {{ opnfv.storage_dict.ceph.disk }}
+        overwrite: true
+        storage-type: zfs
+{% endif %}
 {% endif %}
 {% if opnfv.storage_dict.scaleio is defined %}
     scaleio-openstack:
