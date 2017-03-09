@@ -14,7 +14,7 @@
 {% elif os.network.odll3 %}
         profile: "openvswitch-odl-beryllium-l3"
 {% else %}
-        profile: "openvswitch-odl-boron"
+        profile: "openvswitch-odl-beryllium"
 {% endif %}
         http-proxy: "http://squid.internal:3128"
         https-proxy: "http://squid.internal:3128"

@@ -69,7 +69,7 @@ charm pull cs:~cloudscaling/scaleio-gui $distro/scaleio-gui
 
 #odl controller specific charm
 charm pull cs:$distro/odl-controller $distro/odl-controller
-charm pull cs:~narindergupta/neutron-api-odl-8 $distro/neutron-api-odl
-charm pull cs:~narindergupta/openvswitch-odl-2 $distro/openvswitch-odl
-charm pull cs:~narindergupta/neutron-gateway-3 $distro/neutron-gateway
+charm pull cs:~narindergupta/neutron-api-odl-11 $distro/neutron-api-odl
+charm pull cs:~narindergupta/openvswitch-odl-3 $distro/openvswitch-odl
+charm pull cs:~narindergupta/neutron-gateway-5 $distro/neutron-gateway
 charm pull cs:~narindergupta/congress-0 $distro/congress
