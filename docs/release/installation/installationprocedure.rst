@@ -43,22 +43,23 @@ Make sure all servers are connected to top of rack switch and config
 Jump node configuration:
 ------------------------
 
-1. Install Ubuntu 16.04.1 LTS server version of OS on the nodes.
+1. Install Ubuntu 16.04.1 LTS server version of OS on the first server.
 2. Install the git and bridge-utils packages on the server and configure minimum two bridges on jump host:
 
-brAdm and brPublic cat /etc/network/interfaces
+brAdm and brExt cat /etc/network/interfaces
 
 | ``   # The loopback network interface``
 | ``   auto lo``
 | ``   iface lo inet loopback``
-| ``   iface eth0 inet manual``
+| ``   iface if0 inet manual``
 | ``   auto brAdm ``
 | ``   iface brAdm inet static``
 | ``       address 10.5.1.1``
 | ``       netmask 255.255.255.0``
 | ``       bridge_ports if0``
-| ``   auto brPublic``
-| ``   iface brPublic inet static``
+| ``   iface if1 inet manual``
+| ``   auto brExt``
+| ``   iface brExt inet static``
 | ``       address 10.5.15.1``
 | ``       netmask 255.255.255.0``
 | ``       bridge_ports if1``
@@ -79,20 +80,7 @@ Configure JOID for your lab
 
 If you have already enabled maas for your environment and installed it then there is no need to enabled it again or install it. If you have patches from previous MAAS enablement then you can apply it here.
 
-NOTE: If MAAS is pre installed without 00-maasdeploy.sh then please do the following and skip rest of the step to enable MAAS.
-
-1.  Copy MAAS API key and paste in ~/.juju/environments.yaml at appropriate place.
-2.  Run command cp ~/.juju/environments.yaml ./joid/ci/
-3.  Generate labconfig.yaml for your lab and copy it to joid.
-    a. cp joid/labconfig/<company name>/<pod number>/labconfig.yaml joid/ci/ or
-    b. cp <newly generated labconfig.yaml> joid/ci
-4.  cd joid/ci
-5.  python genMAASConfig.py -l labconfig.yaml > deployment.yaml
-6.  python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
-7.  cp ./environments.yaml ~/.juju/
-8.  cp ./deployment.yaml ~/.juju/
-9.  cp ./labconfig.yaml ~/.juju/
-10. cp ./deployconfig.yaml ~/.juju/
+NOTE: If MAAS is pre installed without 03-maasdeploy.sh not supported. We strongly suggest to use 03-maaseploy.sh to deploy the MAAS and JuJu environment.
 
 If enabling first time then follow it further.
 - Create a directory in joid/labconfig/<company name>/<pod number>/ for example
@@ -111,9 +99,9 @@ Prerequisite:
 
 1. Make sure Jump host node has been configured with bridges on each interface,
 so that appropriate MAAS and JUJU bootstrap VM can be created. For example if
-you have three network admin, data and public then I would suggest to give names
-like brAdm, brData and brPublic.
-2. You have information about the node MAC address and power management details (IPMI IP, username, password) of the nodes used for control and compute node.
+you have three network admin, data and floating ip then I would suggest to give names
+like brAdm, brData and brExt etc.
+2. You have information about the node MAC address and power management details (IPMI IP, username, password) of the nodes used for deployment.
 
 ---------------------
 modify labconfig.yaml
@@ -128,9 +116,9 @@ https://gerrit.opnfv.org/gerrit/gitweb?p=joid.git;a=blob;f=labconfig/intel/pod6/
 *lab:
   location: intel
   racks:
-  - rack: pod5
+  - rack: pod6
     nodes:
-    - name: rack-5-m1
+    - name: rack-6-m1
       architecture: x86_64
       roles: [network,control]
       nics:
@@ -142,7 +130,7 @@ https://gerrit.opnfv.org/gerrit/gitweb?p=joid.git;a=blob;f=labconfig/intel/pod6/
         address: xx.xx.xx.xx
         user: xxxx
         pass: xxxx
-    - name: rack-5-m1
+    - name: rack-6-m1
       architecture: x86_64
       roles: [network,control]
       nics:
@@ -154,7 +142,7 @@ https://gerrit.opnfv.org/gerrit/gitweb?p=joid.git;a=blob;f=labconfig/intel/pod6/
         address: xx.xx.xx.xx
         user: xxxx
         pass: xxxx
-    - name: rack-5-m1
+    - name: rack-6-m1
       architecture: x86_64
       roles: [network,control]
       nics:
@@ -166,7 +154,7 @@ https://gerrit.opnfv.org/gerrit/gitweb?p=joid.git;a=blob;f=labconfig/intel/pod6/
         address: xx.xx.xx.xx
         user: xxxx
         pass: xxxx
-    - name: rack-5-m1
+    - name: rack-6-m1
       architecture: x86_64
       roles: [network,control]
       nics:
@@ -178,7 +166,7 @@ https://gerrit.opnfv.org/gerrit/gitweb?p=joid.git;a=blob;f=labconfig/intel/pod6/
         address: xx.xx.xx.xx
         user: xxxx
         pass: xxxx
-    - name: rack-5-m1
+    - name: rack-6-m1
       architecture: x86_64
       roles: [network,control]
       nics:
@@ -194,36 +182,27 @@ https://gerrit.opnfv.org/gerrit/gitweb?p=joid.git;a=blob;f=labconfig/intel/pod6/
     ext-port: "eth1"
     dns: 8.8.8.8
 opnfv:
-    release: c
-    distro: trusty
+    release: d
+    distro: xenial
     type: nonha
-    openstack: liberty
+    openstack: newton
     sdncontroller:
     - type: nosdn
     storage:
     - type: ceph
-      disk: /srv
+      disk: /dev/sdb
     feature: odl_l2
     spaces:
-    - type: public
-      bridge: brPublic
+    - type: floating
+      bridge: brEx
       cidr: 10.5.15.0/24
       gateway: 10.5.15.254
       vlan:
-    - type: external
-      bridge: brExt
-      cidr:
+    - type: admin
+      bridge: brAdm
+      cidr: 10.5.1.0/24
       gateway:
-      ipaddress: 10.2.117.92
       vlan:*
-
-NOTE: If you are using VLAN tagged network then make sure you modify the case $1 section under Enable vlan interface with maas appropriately.
-
-*'intelpod7' )
-    maas refresh
-    enableautomodebyname eth2 AUTO "10.4.9.0/24" compute || true
-    enableautomodebyname eth2 AUTO "10.4.9.0/24" control || true
-    ;;*
 
 Deployment of OPNFV using JOID:
 ===============================
@@ -237,26 +216,30 @@ MAAS Install
 After integrating the changes as mentioned above run the MAAS install.
 then run the below commands to start the MAAS deployment.
 
-``   ./00-maasdeploy.sh custom <absolute path of config>/labconfig.yaml ``
+``   ./03-maasdeploy.sh custom <absolute path of config>/labconfig.yaml ``
 or
-``   ./00-maasdeploy.sh custom http://<web site location>/labconfig.yaml ``
+``   ./03-maasdeploy.sh custom http://<web site location>/labconfig.yaml ``
+
+For deployment of Danbue release on KVM please use the following command.
+
+``   ./03-maasdeploy.sh default ``
 
 -------------
 OPNFV Install
 -------------
 
-| ``   ./deploy.sh -o mitaka -s odl -t ha -l custom -f none -d xenial``
+| ``   ./deploy.sh -o newton -s nosdn -t nonha -l custom -f none -d xenial -m openstack``
 | ``   ``
 
-./deploy.sh -o mitaka -s odl -t ha -l custom -f none -d xenial
+./deploy.sh -o newton -s nosdn -t nonha -l custom -f none -d xenial -m openstack
 
 NOTE: Possible options are as follows:
 
 choose which sdn controller to use.
   [-s <nosdn|odl|opencontrail|onos>]
   nosdn: openvswitch only and no other SDN.
-  odl: OpenDayLight Lithium version.
-  opencontrail: OpenContrail SDN can be installed with Juno Openstack today.
+  odl: OpenDayLight Boron version.
+  opencontrail: OpenContrail SDN.
   onos: ONOS framework as SDN.
 
 Mode of Openstack deployed.
@@ -265,18 +248,14 @@ Mode of Openstack deployed.
   ha: HA mode of openstack.
 
 Wihch version of Openstack deployed.
-  [-o <liberty|Mitaka>]
-  liberty: Liberty version of openstack.
+  [-o <Newton|Mitaka>]
+  Newton: Newton version of openstack.
   Mitaka: Mitaka version of openstack.
 
 Where to deploy
-  [-l <custom | default | intelpod5 >] etc...
+  [-l <custom | default>] etc...
   custom: For bare metal deployment where labconfig.yaml provided externally and not part of JOID.
-  default: For virtual deployment where installation will be done on KVM created using ./00-maasdeploy.sh
-  intelpod5: Install on bare metal OPNFV pod5 of Intel lab.
-  intelpod6
-  orangepod2
-  custom
+  default: For virtual deployment where installation will be done on KVM created using 03-maasdeploy.sh
 
 what feature to deploy. Comma seperated list
   [-f <lxd|dvr|sfc|dpdk|ipv6|none>]
@@ -290,17 +269,25 @@ what feature to deploy. Comma seperated list
 which Ubuntu distro to use.
   [ -d <trusty|xenial> ]
 
+Which model to deploy
+JOID introduces the various model to deploy apart from openstack for docker based container workloads.
+[-m <openstack|kubernetes>]
+  openstack: Openstack which will be used for KVM/LXD container based workloads.
+  kubernetes: Kubernes model will be used for docker based workloads.
+
 OPNFV Scenarios in JOID
 Following OPNFV scenarios can be deployed using JOID. Seperate yaml bundle will be created to deploy the individual scenario.
 
 Scenario	         Owner	        Known Issues
 os-nosdn-nofeature-ha	 Joid
 os-nosdn-nofeature-noha	 Joid
-os-odl_l2-nofeature-ha	 Joid
+os-odl_l2-nofeature-ha	 Joid           Floating ips are not working on this deployment.
 os-nosdn-lxd-ha          Joid           Yardstick team is working to support.
 os-nosdn-lxd-noha        Joid           Yardstick team is working to support.
 os-onos-nofeature-ha	 ONOSFW
 os-onos-sfc-ha	         ONOSFW
+k8-nosdn-nofeature-nonha Joid	        No support from Functest and Yardstick
+k8-nosdn-lb-nonha	 Joid	        No support from Functest and Yardstick
 
 ------------
 Troubleshoot
@@ -309,12 +296,14 @@ Troubleshoot
 By default debug is enabled in script and error messages will be printed on ssh terminal where you are running the scripts.
 
 To Access of any control or compute nodes.
-juju ssh <service name>
+juju ssh <service name>/<instance id>
 for example to login into openstack-dashboard container.
 
 juju ssh openstack-dashboard/0
 juju ssh nova-compute/0
 juju ssh neutron-gateway/0
 
-By default juju will add the Ubuntu user keys for authentication into the deployed server and only ssh access will be available.
+All charm jog files are availble under /var/log/juju
+
+By default juju will add the current user keys for authentication into the deployed server and only ssh access will be available.
 
