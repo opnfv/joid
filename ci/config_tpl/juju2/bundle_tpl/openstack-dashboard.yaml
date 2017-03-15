@@ -4,7 +4,11 @@
 {% if os.service.bindings %}
       bindings:
         shared-db: internal-api
+{% if opnfv.spaces_dict.public is defined %}
+        website: public-api
+{% else %}
         website: internal-api
+{% endif %}
 {% if os.ha.mode == 'ha' %}
         cluster: internal-api
 {% endif %}

@@ -5,157 +5,142 @@ lab:
     nodes:
     - name: rack-2-m1
       architecture: x86_64
-      roles: [compute,storage]
+      roles: [compute]
       nics:
-      - ifname: eth0
-        spaces: [admin]
-        mac: ["38:63:bb:3f:bc:c8"]
-      - ifname: eth5
-        spaces: [data]
-        mac: ["a0:36:9f:4e:88:5e"]
-      - ifname: eth4
-        spaces: [storage]
-        mac: ["a0:36:9f:4e:88:5c"]
-      power:
-        type: ipmi
-        address: 192.168.2.11
-        user: Administrator
-        pass: pod2Admin
-    - name: rack-2-m2
-      architecture: x86_64
-      roles: [compute,storage]
-      nics:
-      - ifname: eth0
-        spaces: [admin]
-        mac: ["38:63:bb:44:34:84"]
-      - ifname: eth5
-        spaces: [data]
-        mac: ["a0:36:9f:4e:8b:0e"]
-      - ifname: eth4
-        spaces: [storage]
-        mac: ["a0:36:9f:4e:8b:0c"]
-      power:
-        type: ipmi
-        address: 192.168.2.12
-        user: Administrator
-        pass: pod2Admin
-    - name: rack-2-m3
-      architecture: x86_64
-      roles: [compute,storage]
-      nics:
-      - ifname: eth0
+      - ifname: eno1
         spaces: [admin]
         mac: ["38:63:bb:3f:1d:8c"]
-      - ifname: eth5
+      - ifname: ens3f0.2056
+        spaces: [public]
+        mac: ["a0:36:9f:4e:88:38"]
+      - ifname: ens3f0
+        spaces: [floating]
+        mac: ["a0:36:9f:4e:88:38"]
+      - ifname: ens3f1
         spaces: [data]
         mac: ["a0:36:9f:4e:88:3a"]
-      - ifname: eth4
-        spaces: [storage]
-        mac: ["a0:36:9f:4e:88:38"]
       power:
         type: ipmi
-        address: 192.168.2.13
+        address: 10.0.0.16
         user: Administrator
-        pass: pod2Admin
+        pass: opnfv2017
+    - name: rack-2-m2
+      architecture: x86_64
+      roles: [compute]
+      nics:
+      - ifname: eno1
+        spaces: [admin]
+        mac: ["38:63:bb:44:34:84"]
+      - ifname: ens3f0.2056
+        spaces: [public]
+        mac: ["a0:36:9f:4e:8b:0c"]
+      - ifname: ens3f0
+        spaces: [floating]
+        mac: ["a0:36:9f:4e:8b:0c"]
+      - ifname: ens3f1
+        spaces: [data]
+        mac: ["a0:36:9f:4e:8b:0e"]
+      power:
+        type: ipmi
+        address: 10.0.0.17
+        user: Administrator
+        pass: opnfv2017
+    - name: rack-2-m3
+      architecture: x86_64
+      roles: [compute]
+      nics:
+      - ifname: eno1
+        spaces: [admin]
+        mac: ["38:63:bb:3f:bc:c8"]
+      - ifname: ens3f0.2056
+        spaces: [public]
+        mac: ["a0:36:9f:4e:88:5c"]
+      - ifname: ens3f0
+        spaces: [floating]
+        mac: ["a0:36:9f:4e:88:5c"]
+      - ifname: ens3f1
+        spaces: [data]
+        mac: ["a0:36:9f:4e:88:5e"]
+      power:
+        type: ipmi
+        address: 10.0.0.18
+        user: Administrator
+        pass: opnfv2017
     - name: rack-2-m4
       architecture: x86_64
-      roles: [compute,storage]
+      roles: [compute]
       nics:
-      - ifname: eth0
+      - ifname: eno1
         spaces: [admin]
-        mac: ["38:63:bb:3f:2d:a8"]
-      - ifname: eth5
+        mac: ["1c:98:ec:1c:5d:88"]
+      - ifname: ens3f0.2056
+        spaces: [public]
+        mac: ["a0:36:9f:1f:67:1c"]
+      - ifname: ens3f0
+        spaces: [floating]
+        mac: ["a0:36:9f:1f:67:1c"]
+      - ifname: ens3f1
         spaces: [data]
-        mac: ["a0:36:9f:4e:8b:18"]
-      - ifname: eth4
-        spaces: [storage]
-        mac: ["a0:36:9f:4e:8b:1a"]
+        mac: ["a0:36:9f:1f:67:1e"]
       power:
         type: ipmi
-        address: 192.168.2.14
+        address: 10.0.0.29
         user: Administrator
-        pass: pod2Admin
+        pass: opnfv2017
     - name: rack-2-m5
       architecture: x86_64
       roles: [network,control]
       nics:
-      - ifname: eth0
+      - ifname: eno1
         spaces: [admin]
-        mac: ["94:57:a5:52:c9:48"]
-      - ifname: eth3
+        mac: ["1c:98:ec:1d:84:7c"]
+      - ifname: ens3f0.2056
+        spaces: [public]
+        mac: ["a0:36:9f:1f:66:a4"]
+      - ifname: ens3f0
+        spaces: [floating]
+        mac: ["a0:36:9f:1f:66:a4"]
+      - ifname: ens3f1
         spaces: [data]
-        mac: ["94:57:a5:52:c9:4b"]
-      - ifname: eth2
-        spaces: [storage]
-        mac: ["94:57:a5:52:c9:4a"]
+        mac: ["a0:36:9f:1f:66:a6"]
       power:
         type: ipmi
-        address: 192.168.2.15
+        address: 10.0.0.30
         user: Administrator
-        pass: pod2Admin
-    - name: rack-2-m6
-      architecture: x86_64
-      roles: [control,compute]
-      nics:
-      - ifname: eth0
-        spaces: [admin]
-        mac: ["94:57:a5:52:63:b0"]
-      - ifname: eth3
-        spaces: [data]
-        mac: ["94:57:a5:52:63:b3"]
-      - ifname: eth2
-        spaces: [storage]
-        mac: ["94:57:a5:52:63:b2"]
-      power:
-        type: ipmi
-        address: 192.168.2.16
-        user: Administrator
-        pass: pod2Admin
-    - name: rack-2-m7
-      architecture: x86_64
-      roles: [control,compute]
-      nics:
-      - ifname: eth0
-        spaces: [admin]
-        mac: ["94:57:a5:52:f1:80"]
-      - ifname: eth3
-        spaces: [data]
-        mac: ["94:57:a5:52:f1:83"]
-      - ifname: eth2
-        spaces: [storage]
-        mac: ["94:57:a5:52:f1:82"]
-      power:
-         type: ipmi
-         address: 192.168.2.17
-         user: Administrator
-         pass: pod2Admin
-    floating-ip-range: 161.105.231.2,161.105.231.62,161.105.231.1,161.105.231.0/26
-    ext-port: "br-eth1"
-    dns: 192.168.2.1
-    osdomainname: pod2.opnfv.fr
+        pass: opnfv2017
+    floating-ip-range: 161.105.231.4,161.105.231.62,161.105.231.1,161.105.231.0/26
+    ext-port: "ens3f0"
+    dns: 10.2.0.1
+    osdomainname:
 opnfv:
     release: c
-    distro: trusty
+    distro: xenial
     type: nonha
-    openstack: liberty
+    openstack: newton
     sdncontroller:
     - type: nosdn
     storage:
     - type: ceph
-      disk: /dev/sdb /dev/sdc
+      disk: /dev/sdb
     feature: odl_l2
     spaces:
     - type: admin
       bridge: brAdm
-      cidr: 192.168.2.0/24
-      gateway: 192.168.2.1
+      cidr: 10.2.0.0/24
+      gateway: 10.2.0.1
       vlan:
     - type: data
       bridge: brData
-      cidr: 192.168.12.0/24
+      cidr: 10.2.3.0/24
       gateway:
       vlan:
-    - type: storage
-      bridge: brStorage
-      cidr: 192.168.22.0/24
+    - type: public
+      bridge: brApi
+      cidr: 10.2.1.0/24
       gateway:
+      vlan:
+    - type: floating
+      bridge: brFloating
+      cidr:
+      gateway:
+      vlan:
