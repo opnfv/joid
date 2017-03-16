@@ -33,7 +33,7 @@ git clone -b stable/17.02 https://github.com/openstack/charm-nova-compute.git $d
 git clone -b stable/17.02 https://github.com/openstack/charm-openstack-dashboard.git $distro/openstack-dashboard
 git clone -b stable/17.02 https://github.com/openstack/charm-rabbitmq-server.git $distro/rabbitmq-server
 git clone -b stable/17.02 https://github.com/openstack/charm-heat.git $distro/heat
-git clone -b stable/17.02 https://github.com/openstack/charm-lxd.git xenial/lxd
+git clone https://github.com/openstack/charm-lxd.git xenial/lxd
 #git clone https://github.com/openstack/openbaton.git xenial/openbaton
 
 charm pull cs:$distro/aodh $distro/aodh
