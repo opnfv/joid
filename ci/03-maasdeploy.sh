@@ -453,19 +453,6 @@ echo "... Deployment of maas finish ...."
 #
 
 #Below function will mark the interfaces in Auto mode to enbled by MAAS
-enableautomode() {
-    API_KEY=`sudo maas-region apikey --username=ubuntu`
-    maas login $PROFILE $API_SERVERMAAS $API_KEY
-    vlanid=$(maas $PROFILE subnet read $3 | jq -r '.vlan.id')
-
-    for node in $(maas $PROFILE nodes read | jq -r '.[].system_id')
-    do
-        maas $PROFILE interface update $node $1 vlan=$vlanid
-        maas $PROFILE interface link-subnet $node $1  mode=$2 subnet=$3 || true
-    done
-}
-
-#Below function will mark the interfaces in Auto mode to enbled by MAAS
 # using hostname of the node added into MAAS
 enableautomodebyname() {
     API_KEY=`sudo maas-region apikey --username=ubuntu`
@@ -558,113 +545,68 @@ esac
 #
 # Enable MAAS nodes interfaces
 #
-
-#read interface needed in Auto mode and enable it. Will be rmeoved once auto enablement will be implemented in the maas-deployer.
-# Enable only non vlan interfaces first.
-if [ -e ./labconfig.json ]; then
-  if [ $SUBNETDATA_CIDR ]; then
-      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="data")'.ifname | sort -u`
-      i="0"
-      while [ ! -z "${EXTNET[i]}" ];
-      do
-          if ([ -z $VLAN ] || [ "$VLAN" == "null" ]); then
-              enableautomode ${EXTNET[i]} AUTO $SUBNETDATA_CIDR || true
-          fi
-          i=$[$i+1]
-      done
-  fi
-  if [ $SUBNETPUB_CIDR ]; then
-      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="public")'.ifname | sort -u`
-      i="0"
-      while [ ! -z "${EXTNET[i]}" ];
-      do
-          if ([ -z $VLAN ] || [ "$VLAN" == "null" ]); then
-              enableautomode ${EXTNET[i]} AUTO $SUBNETPUB_CIDR || true
-          fi
-          i=$[$i+1]
-      done
-  fi
-  if [ $SUBNETSTOR_CIDR ]; then
-      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="storage")'.ifname | sort -u`
-      i="0"
-      while [ ! -z "${EXTNET[i]}" ];
-      do
-          if ([ -z $VLAN ] || [ "$VLAN" == "null" ]); then
-              enableautomode ${EXTNET[i]} AUTO $SUBNETSTOR_CIDR || true
-          fi
-          i=$[$i+1]
-      done
-  fi
-  if [ $SUBNETFLOAT_CIDR ]; then
-      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="floating")'.ifname | sort -u`
-      i="0"
-      while [ ! -z "${EXTNET[i]}" ];
-      do
-          if ([ -z $VLAN ] || [ "$VLAN" == "null" ]); then
-              enableautomode ${EXTNET[i]} link_up $SUBNETFLOAT_CIDR || true
-          fi
-          i=$[$i+1]
-      done
-  fi
-fi
-
-#enable only the vlan interfaces which were ignore in previous run.
+API_KEY=`sudo maas-region apikey --username=ubuntu`
+maas login $PROFILE $API_SERVERMAAS $API_KEY
 
 if [ -e ./labconfig.json ]; then
-  if [ $SUBNETDATA_CIDR ]; then
-      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="data")'.ifname | sort -u`
-      VLAN=`cat labconfig.json | jq --raw-output '.opnfv.spaces[] | select(.type=="data")'.vlan`
-      i="0"
-      while [ ! -z "${EXTNET[i]}" ];
-      do
-          if ([ $VLAN ] && [ "$VLAN" != "null" ]); then
-              crnodevlanint $VLAN || true
-              enableautomode ${EXTNET[i]} AUTO $SUBNETDATA_CIDR || true
-          fi
-          i=$[$i+1]
-      done
-  fi
-  if [ $SUBNETPUB_CIDR ]; then
-      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="public")'.ifname | sort -u`
-      VLAN=`cat labconfig.json | jq --raw-output '.opnfv.spaces[] | select(.type=="public")'.vlan`
-      i="0"
-      while [ ! -z "${EXTNET[i]}" ];
-      do
-          if ([ $VLAN ] && [ "$VLAN" != "null" ]); then
-              crnodevlanint $VLAN || true
-              enableautomode ${EXTNET[i]} AUTO $SUBNETPUB_CIDR || true
-          fi
-          i=$[$i+1]
-      done
-  fi
-  if [ $SUBNETSTOR_CIDR ]; then
-      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="storage")'.ifname | sort -u`
-      VLAN=`cat labconfig.json | jq --raw-output '.opnfv.spaces[] | select(.type=="storage")'.vlan`
-      i="0"
-      while [ ! -z "${EXTNET[i]}" ];
-      do
-          if ([ $VLAN ] && [ "$VLAN" != "null" ]); then
-              crnodevlanint $VLAN || true
-              enableautomode ${EXTNET[i]} AUTO $SUBNETSTOR_CIDR || true
-          fi
-          i=$[$i+1]
-      done
-  fi
-  if [ $SUBNETFLOAT_CIDR ]; then
-      EXTNET=`cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[].nics[] | select(.spaces[]=="floating")'.ifname | sort -u`
-      VLAN=`cat labconfig.json | jq --raw-output '.opnfv.spaces[] | select(.type=="floating")'.vlan`
-      i="0"
-      while [ ! -z "${EXTNET[i]}" ];
-      do
-          if ([ $VLAN ] && [ "$VLAN" != "null" ]); then
-              crnodevlanint $VLAN || true
-              enableautomode ${EXTNET[i]} link_up $SUBNETFLOAT_CIDR || true
-          fi
-          i=$[$i+1]
-      done
-  fi
-fi
+    # We will configure all node, so we need the qty, and loop on it
+    NODE_QTY=$(cat labconfig.json | jq --raw-output '.lab.racks[0].nodes[]'.name | wc -l)
+    NODE_QTY=$((NODE_QTY-1))
+    for NODE_ID in $(seq 0 $NODE_QTY); do
+        # Get the NAME/SYS_ID of this node
+        NODE_NAME=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].name")
+        NODE_SYS_ID=$(maas $PROFILE nodes read | jq -r ".[] |  select(.hostname==\"$NODE_NAME\")".system_id)
+        echo ">>> Configuring node $NODE_NAME [$NODE_ID][$NODE_SYS_ID]"
+        # Recover the network interfaces list and configure each one
+        #   with sorting the list, we have hardware interface first the vlan interfaces
+        IF_LIST=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] ".ifname | sort -u)
+        for IF_NAME in $IF_LIST; do
+            IF_SPACE=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] | select(.ifname==\"$IF_NAME\") ".spaces[])
+            case "$IF_SPACE" in
+                'data') SUBNET_CIDR=$SUBNETDATA_CIDR; IF_MODE='AUTO' ;;
+                'public') SUBNET_CIDR=$SUBNETPUB_CIDR; IF_MODE='AUTO' ;;
+                'storage') SUBNET_CIDR=$SUBNETSTOR_CIDR; IF_MODE='AUTO' ;;
+                'floating') SUBNET_CIDR=$SUBNETFLOAT_CIDR; IF_MODE='link_up' ;;
+                *) SUBNET_CIDR='null'; IF_MODE='null'; echo "      >>> Unknown SPACE" ;;
+            esac
+            echo "   >>> Configuring interface $IF_NAME [$IF_SPACE][$SUBNET_CIDR]"
 
+            # if we have a vlan parameter in the space config
+            IF_VLAN=$(cat labconfig.json | jq --raw-output ".opnfv.spaces[] | select(.type==\"$IF_SPACE\")".vlan)
+            if ([ -z $IF_VLAN ] && [ $IF_NAME =~ \. ]); then
+                # We have no vlan specified on spaces, but we have a vlan subinterface
+                IF_VLAN = ${IF_NAME##*.}; fi
+
+            # In case of a VLAN interface
+            if ([ $IF_VLAN ] && [ "$IF_VLAN" != "null" ]); then
+                echo "      >>> Configuring VLAN $IF_VLAN"
+                VLANID=$(maas $PROFILE subnets read | jq ".[].vlan | select(.vid==$IF_VLAN)".id)
+                FABRICID=$(maas $PROFILE subnets read | jq ".[].vlan | select(.vid==$IF_VLAN)".fabric_id)
+                INTERFACE=$(maas $PROFILE interfaces read $NODE_SYS_ID | jq ".[] | select(.vlan.fabric_id==$FABRICID)".id)
+                if [[ -z $INTERFACE ]]; then
+                    # parent interface is not set because it does not have a SUBNET_CIDR
+                    PARENT_VLANID=$(maas $PROFILE fabrics read | jq ".[].vlans[] | select(.fabric_id==$FABRICID and .name==\"untagged\")".id)
+                    # We set the physical interface to the targeted fabric
+                    PARENT_IF_NAME=${IF_NAME%%.*}
+                    maas $PROFILE interface update $NODE_SYS_ID $PARENT_IF_NAME vlan=$PARENT_VLANID
+                    sleep 3
+                    INTERFACE=$(maas $PROFILE interfaces read $NODE_SYS_ID | jq ".[] | select(.vlan.fabric_id==$FABRICID)".id)
+                fi
+                maas $PROFILE interfaces create-vlan $NODE_SYS_ID vlan=$VLANID parent=$INTERFACE || true
+            fi
+
+            # Configure the interface
+            if ([ $SUBNET_CIDR ] && [ "$SUBNET_CIDR" != "null" ]); then
+                VLANID=$(maas $PROFILE subnet read $SUBNET_CIDR | jq -r '.vlan.id')
+                maas $PROFILE interface update $NODE_SYS_ID $IF_NAME vlan=$VLANID
+                maas $PROFILE interface link-subnet $NODE_SYS_ID $IF_NAME  mode=$IF_MODE subnet=$SUBNET_CIDR || true
+                sleep 5
+            else
+                echo "      >>> Not configuring, we have an empty Subnet CIDR"
+            fi
+        done
+    done
+fi
 
 # Add the cloud and controller credentials for MAAS for that lab.
 jujuver=`juju --version`

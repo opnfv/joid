@@ -9,19 +9,19 @@ lab:
       nics:
       - ifname: eno1
         spaces: [admin]
-        mac: ["38:63:bb:3f:1d:8c"]
-      - ifname: ens3f0.2056
+        mac: ["1c:98:ec:11:ad:08"]
+      - ifname: eno2.2056
         spaces: [public]
-        mac: ["a0:36:9f:4e:88:38"]
-      - ifname: ens3f0
+        mac: ["1c:98:ec:11:ad:09"]
+      - ifname: eno2
         spaces: [floating]
-        mac: ["a0:36:9f:4e:88:38"]
-      - ifname: ens3f1
+        mac: ["1c:98:ec:11:ad:09"]
+      - ifname: eno3
         spaces: [data]
-        mac: ["a0:36:9f:4e:88:3a"]
+        mac: ["1c:98:ec:11:ad:0a"]
       power:
         type: ipmi
-        address: 10.0.0.16
+        address: 10.0.0.22
         user: Administrator
         pass: opnfv2017
     - name: rack-2-m2
@@ -30,19 +30,19 @@ lab:
       nics:
       - ifname: eno1
         spaces: [admin]
-        mac: ["38:63:bb:44:34:84"]
-      - ifname: ens3f0.2056
+        mac: ["1c:98:ec:11:c2:c4"]
+      - ifname: eno2.2056
         spaces: [public]
-        mac: ["a0:36:9f:4e:8b:0c"]
-      - ifname: ens3f0
+        mac: ["1c:98:ec:11:c2:c5"]
+      - ifname: eno2
         spaces: [floating]
-        mac: ["a0:36:9f:4e:8b:0c"]
-      - ifname: ens3f1
+        mac: ["1c:98:ec:11:c2:c5"]
+      - ifname: eno3
         spaces: [data]
-        mac: ["a0:36:9f:4e:8b:0e"]
+        mac: ["1c:98:ec:11:c2:c6"]
       power:
         type: ipmi
-        address: 10.0.0.17
+        address: 10.0.0.23
         user: Administrator
         pass: opnfv2017
     - name: rack-2-m3
@@ -51,19 +51,19 @@ lab:
       nics:
       - ifname: eno1
         spaces: [admin]
-        mac: ["38:63:bb:3f:bc:c8"]
-      - ifname: ens3f0.2056
+        mac: ["1c:98:ec:11:9d:c4"]
+      - ifname: eno2.2056
         spaces: [public]
-        mac: ["a0:36:9f:4e:88:5c"]
-      - ifname: ens3f0
+        mac: ["1c:98:ec:11:9c:c5"]
+      - ifname: eno2
         spaces: [floating]
-        mac: ["a0:36:9f:4e:88:5c"]
-      - ifname: ens3f1
+        mac: ["1c:98:ec:11:9c:c5"]
+      - ifname: eno3
         spaces: [data]
-        mac: ["a0:36:9f:4e:88:5e"]
+        mac: ["1c:98:ec:11:9c:c6"]
       power:
         type: ipmi
-        address: 10.0.0.18
+        address: 10.0.0.24
         user: Administrator
         pass: opnfv2017
     - name: rack-2-m4
@@ -121,7 +121,7 @@ opnfv:
     - type: nosdn
     storage:
     - type: ceph
-      disk: /dev/sdb
+      disk: /dev/sdb /deb/sdc
     feature: odl_l2
     spaces:
     - type: admin
@@ -138,7 +138,7 @@ opnfv:
       bridge: brApi
       cidr: 10.2.1.0/24
       gateway:
-      vlan:
+      vlan: 2056
     - type: floating
       bridge: brFloating
       cidr:
