@@ -28,6 +28,7 @@ if [[ "$jujuver" > "2" ]]; then
     rm -rf precise
     rm -rf trusty
     rm -rf xenial
+    rm -rf ~/joid_config/admin-openrc
     sleep 30
     sudo sysctl -w vm.drop_caches=3
 elif [ -d $HOME/.juju/environments ]; then
