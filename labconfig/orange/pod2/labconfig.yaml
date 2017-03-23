@@ -11,9 +11,11 @@ lab:
         spaces: [admin]
         mac: ["1c:98:ec:11:ad:08"]
       - ifname: eno2.2056
+        rename: eno99.2056
         spaces: [public]
         mac: ["1c:98:ec:11:ad:09"]
       - ifname: eno2
+        rename: eno99
         spaces: [floating]
         mac: ["1c:98:ec:11:ad:09"]
       - ifname: eno3
@@ -32,9 +34,11 @@ lab:
         spaces: [admin]
         mac: ["1c:98:ec:11:c2:c4"]
       - ifname: eno2.2056
+        rename: eno99.2056
         spaces: [public]
         mac: ["1c:98:ec:11:c2:c5"]
       - ifname: eno2
+        rename: eno99
         spaces: [floating]
         mac: ["1c:98:ec:11:c2:c5"]
       - ifname: eno3
@@ -53,9 +57,11 @@ lab:
         spaces: [admin]
         mac: ["1c:98:ec:11:9d:c4"]
       - ifname: eno2.2056
+        rename: eno99.2056
         spaces: [public]
         mac: ["1c:98:ec:11:9c:c5"]
       - ifname: eno2
+        rename: eno99
         spaces: [floating]
         mac: ["1c:98:ec:11:9c:c5"]
       - ifname: eno3
@@ -74,9 +80,11 @@ lab:
         spaces: [admin]
         mac: ["1c:98:ec:1c:5d:88"]
       - ifname: ens3f0.2056
+        rename: eno99.2056
         spaces: [public]
         mac: ["a0:36:9f:1f:67:1c"]
       - ifname: ens3f0
+        rename: eno99
         spaces: [floating]
         mac: ["a0:36:9f:1f:67:1c"]
       - ifname: ens3f1
@@ -95,9 +103,11 @@ lab:
         spaces: [admin]
         mac: ["1c:98:ec:1d:84:7c"]
       - ifname: ens3f0.2056
+        rename: eno99.2056
         spaces: [public]
         mac: ["a0:36:9f:1f:66:a4"]
       - ifname: ens3f0
+        rename: eno99
         spaces: [floating]
         mac: ["a0:36:9f:1f:66:a4"]
       - ifname: ens3f1
@@ -109,7 +119,7 @@ lab:
         user: Administrator
         pass: opnfv2017
     floating-ip-range: 161.105.231.4,161.105.231.62,161.105.231.1,161.105.231.0/26
-    ext-port: "ens3f0"
+    ext-port: "eno99"
     dns: 10.2.0.1
     osdomainname:
 opnfv:
@@ -141,6 +151,6 @@ opnfv:
       vlan: 2056
     - type: floating
       bridge: brFloating
-      cidr:
+      cidr: 
       gateway:
-      vlan:
+      vlan: 
