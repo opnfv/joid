@@ -577,6 +577,9 @@ if [ -e ./labconfig.json ]; then
                 # We have no vlan specified on spaces, but we have a vlan subinterface
                 IF_VLAN = ${IF_NAME##*.}; fi
 
+            # in case of interface renaming
+            IF_NEWNAME=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] | select(.ifname==\"$IF_NAME\") ".rename)
+
             # In case of a VLAN interface
             if ([ $IF_VLAN ] && [ "$IF_VLAN" != "null" ]); then
                 echo "      >>> Configuring VLAN $IF_VLAN"
@@ -586,24 +589,37 @@ if [ -e ./labconfig.json ]; then
                 if [[ -z $INTERFACE ]]; then
                     # parent interface is not set because it does not have a SUBNET_CIDR
                     PARENT_VLANID=$(maas $PROFILE fabrics read | jq ".[].vlans[] | select(.fabric_id==$FABRICID and .name==\"untagged\")".id)
+                    # If we need to rename the interface, use new interface name
+                    if ([ $IF_NEWNAME ] && [ "$IF_NEWNAME" != "null" ]); then
+                        PARENT_IF_NAME=${IF_NEWNAME%%.*}
+                        IF_NAME=$IF_NEWNAME
+                    else
+                        PARENT_IF_NAME=${IF_NAME%%.*}
+                    fi
                     # We set the physical interface to the targeted fabric
-                    PARENT_IF_NAME=${IF_NAME%%.*}
                     maas $PROFILE interface update $NODE_SYS_ID $PARENT_IF_NAME vlan=$PARENT_VLANID
-                    sleep 3
+                    sleep 2
                     INTERFACE=$(maas $PROFILE interfaces read $NODE_SYS_ID | jq ".[] | select(.vlan.fabric_id==$FABRICID)".id)
                 fi
                 maas $PROFILE interfaces create-vlan $NODE_SYS_ID vlan=$VLANID parent=$INTERFACE || true
+            elif ([ $IF_NEWNAME ] && [ "$IF_NEWNAME" != "null" ]); then
+                # rename interface if needed
+                maas $PROFILE interface update $NODE_SYS_ID $IF_NAME name=$IF_NEWNAME
+                IF_NAME=$IF_NEWNAME
             fi
-
             # Configure the interface
             if ([ $SUBNET_CIDR ] && [ "$SUBNET_CIDR" != "null" ]); then
                 VLANID=$(maas $PROFILE subnet read $SUBNET_CIDR | jq -r '.vlan.id')
-                maas $PROFILE interface update $NODE_SYS_ID $IF_NAME vlan=$VLANID
+                if !([ $IF_VLAN ] && [ "$IF_VLAN" != "null" ]); then
+                    # If this interface is not a VLAN (done withe create-vlan)
+                    maas $PROFILE interface update $NODE_SYS_ID $IF_NAME vlan=$VLANID
+                fi
                 maas $PROFILE interface link-subnet $NODE_SYS_ID $IF_NAME  mode=$IF_MODE subnet=$SUBNET_CIDR || true
-                sleep 5
+                sleep 2
             else
                 echo "      >>> Not configuring, we have an empty Subnet CIDR"
             fi
+
         done
     done
 fi
