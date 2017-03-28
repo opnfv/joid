@@ -220,7 +220,7 @@ then run the below commands to start the MAAS deployment.
 or
 ``   ./03-maasdeploy.sh custom http://<web site location>/labconfig.yaml ``
 
-For deployment of Danbue release on KVM please use the following command.
+For deployment of Danube release on KVM please use the following command.
 
 ``   ./03-maasdeploy.sh default ``
 

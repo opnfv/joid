@@ -6,16 +6,16 @@
 Abstract
 ========
 
-This document compiles the release notes for the Denbue release of
+This document compiles the release notes for the Danube release of
 OPNFV when using JOID as a deployment tool.
 
 Introduction
 ============
 
 These notes provides release information for the use of joid as deployment
-tool for the Denbue release of OPNFV.
+tool for the Danube release of OPNFV.
 
-The goal of the Denbue release and this JOID based deployment process is
+The goal of the Danube release and this JOID based deployment process is
 to establish a lab ready platform accelerating further development
 of the OPNFV infrastructure.
 
@@ -25,11 +25,11 @@ OPNFV using JOID which is based on MAAS and Juju.
 Summary
 =======
 
-    Denbue release with the JOID deployment toolchain will establish an OPNFV target system on a Pharos compliant lab infrastructure.
+The Danube release with the JOID deployment toolchain will establish an OPNFV target system on a Pharos compliant lab infrastructure.
 The current definition of an OPNFV target system is and OpenStack Newton combined with OpenDaylight Boron.
 
-    The system is deployed with OpenStack High Availability (HA) for most OpenStack services.
-Ceph storage is used as Cinder backend, and is the only supported storage for Denbue. Ceph is setup as 3 OSDs and 3 Monitors, one radosgw.
+The system is deployed with OpenStack High Availability (HA) for most OpenStack services.
+Ceph storage is used as Cinder backend, and is the only supported storage for Danube. Ceph is setup as 3 OSDs and 3 Monitors, one radosgw.
 
     User has following choices to make to do the deployment.
 
@@ -54,15 +54,15 @@ Release Data
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Repo/tag**                         | gerrit.opnfv.org/gerrit/joid.git     |
-|                                      | stable/denbue                      |
+|                                      | stable/danube                      |
 +--------------------------------------+--------------------------------------+
 | **Release designation**              | Denbue release                     |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Release date**                     | March 22 2017                      |
+| **Release date**                     | March 31 2017                      |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Purpose of the delivery**          | Denbue release                     |
+| **Purpose of the delivery**          | Danube release                     |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 
@@ -86,14 +86,14 @@ Version change
 
 Module version change
 ~~~~~~~~~~~~~~~~~~~~~
-  Denbue release with the JOID deployment toolchain.
+  - Danube release with the JOID deployment toolchain.
   - OpenStack (Newton release)
   - OpenDaylight (Boron release)
   - Ubuntu 16.04 LTS
 
 Document version change
 ~~~~~~~~~~~~~~~~~~~~~~~
-- OPNFV Installation instructions for the Denbue release using JOID deployment
+- OPNFV Installation instructions for the Danube release using JOID deployment
   toolchain - ver. 1.0.0
 - OPNFV Release Notes with the JOID deployment toolchain - ver. 1.0.0 (this document)
 
@@ -173,7 +173,7 @@ See JIRA: <link>
 
 Test Result
 ===========
-Denbue test result using JOID as deployment tool.
+Danube test result using JOID as deployment tool.
 - `https://build.opnfv.org/ci/view/joid/job/functest-joid-baremetal-daily-colorado/>`_
 - `https://build.opnfv.org/ci/view/joid/job/yardstick-joid-baremetal-daily-colorado/>`_
 
@@ -217,8 +217,8 @@ Notes:
 
 References
 ==========
-For more information on the OPNFV Denbue release, please visit
-- `OPNFV Denbue release <http://www.opnfv.org/colorado>`_
+For more information on the OPNFV Danube release, please visit
+- `OPNFV Danube release <http://www.opnfv.org/danube>`_
 
 Juju
 ----
@@ -234,8 +234,8 @@ JOID
 ----
 - `OPNFV JOID wiki <https://wiki.opnfv.org/joid>`_
 - `OPNFV JOID User Guide <https://wiki.opnfv.org/joid/b_userguide>`_
-- `OPNFV Release Notes <https://wiki.opnfv.org/display/joid/Denbue+Release+Notes>`_
-- `OPNFV JOID Install Guide <https://wiki.opnfv.org/display/joid/Denbue+installation+Guide>`_
+- `OPNFV Release Notes <https://wiki.opnfv.org/display/joid/Danube+Release+Notes>`_
+- `OPNFV JOID Install Guide <https://wiki.opnfv.org/display/joid/Danube+installation+Guide>`_
 
 OpenStack
 ---------
