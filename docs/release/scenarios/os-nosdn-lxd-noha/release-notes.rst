@@ -6,17 +6,17 @@
 Abstract
 ========
 
-This document compiles the release notes for the Colorado release of
+This document compiles the release notes for the Danube release of
 OPNFV when using JOID as a deployment tool with LXD container hypervisor.
 
 Introduction
 ============
 
 These notes provides release information for the use of joid as deployment
-tool for the Colorado release of OPNFV with LXD hypervisor for containers
+tool for the Danube release of OPNFV with LXD hypervisor for containers
 scenario.
 
-The goal of the Colorado release and this JOID based deployment process is
+The goal of the Danube release and this JOID based deployment process is
 to establish a lab ready platform accelerating further development
 of the OPNFV infrastructure.
 
@@ -32,16 +32,16 @@ the container will look and feel like a regular VM – but will act like a
 container. LXD uses the same container technology found in the Linux kernel
 (cgroups, namespaces, LSM, etc).
 
-Colorado release with the JOID deployment with LXD hypervisor will establish an
+Danube release with the JOID deployment with LXD hypervisor will establish an
 OPNFV target system on a Pharos compliant lab infrastructure.
-The current definition of an OPNFV target system is and OpenStack Mitaka combined
+The current definition of an OPNFV target system is and OpenStack Newton combined
 with LXD Hypervisor.
 
     The system is deployed with OpenStack High Availability (HA) for most OpenStack services.
 
     User has following choices to make to do the deployment.
 
-    - Openstack      -- Mitaka
+    - Openstack      -- Newton
     - Type           -- HA, nonHA, tip (stable git branch of respective openstack)
     - Feature        -- LXD (container hypervisor)
 
@@ -49,10 +49,10 @@ NOTE: Detailed information on how to install in your lab can be find in installa
 command to deploy lxd feature is:
 
 #LXD deployment with HA Openstack
-./deploy.sh -o mitaka -f lxd -t ha -l custom -s nosdn
+./deploy.sh -o newton -f lxd -t ha -l custom -s nosdn
 
 #LXD deployment with no HA Openstack
-./deploy.sh -o mitaka -f lxd -t nonha -l custom -s nosdn
+./deploy.sh -o newton -f lxd -t nonha -l custom -s nosdn
 
 Using LXD with Openstack
 ========================
@@ -79,15 +79,15 @@ Release Data
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Repo/tag**                         | gerrit.opnfv.org/gerrit/joid.git     |
-|                                      | stable/colorado                      |
+|                                      | stable/danube                        |
 +--------------------------------------+--------------------------------------+
-| **Release designation**              | Colorado release                     |
+| **Release designation**              | Danube release                       |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Release date**                     | September 22 2016                    |
+| **Release date**                     | April 01 2017                        |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Purpose of the delivery**          | Colorado release                     |
+| **Purpose of the delivery**          | Danube release                       |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 
@@ -120,11 +120,11 @@ Known issues
 Scenario Releases
 =================
 Name:      joid-os-nosdn-lxd-ha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-lxd-ha-baremetal-daily-colorado/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-lxd-ha-baremetal-daily-danube/
 Notes:
 
 Name:      joid-os-nosdn-lxd-noha
-Test Link: https://build.opnfv.org/ci/user/narindergupta/my-views/view/joid/job/joid-os-nosdn-lxd-noha-baremetal-daily-colorado/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-lxd-noha-baremetal-daily-danube/
 Notes:
 
 References
@@ -148,12 +148,10 @@ MAAS
 JOID
 ----
 - `OPNFV JOID wiki <https://wiki.opnfv.org/joid>`_
-- `OPNFV JOID User Guide <https://wiki.opnfv.org/joid/b_userguide>`_
-- `OPNFV Release Notes <https://wiki.opnfv.org/display/joid/Colorado+Release+Notes>`_
-- `OPNFV JOID Install Guide <https://wiki.opnfv.org/display/joid/Colorado+installation+Guide>`_
+- `OPNFV JOID Get Started <https://wiki.opnfv.org/display/joid/JOID+Get+Started>`_
 
 OpenStack
 ---------
-- `OpenStack Mitaka Release artifacts <http://www.openstack.org/software/mitaka>`_
+- `OpenStack Newton Release artifacts <http://www.openstack.org/software/newton>`_
 - `OpenStack documentation <http://docs.openstack.org>`_
 

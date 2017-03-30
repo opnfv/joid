@@ -7,13 +7,13 @@ Abstract
 ========
 
 This document compiles the release notes for the Danube release of
-OPNFV when using JOID as a deployment tool with LXD container hypervisor.
+OPNFV when using JOID as a deployment tool with KVM hypervisor.
 
 Introduction
 ============
 
 These notes provides release information for the use of joid as deployment
-tool for the Danube release of OPNFV with LXD hypervisor for containers
+tool for the Danube release of OPNFV with KVM hypervisor for containers
 scenario.
 
 The goal of the Danube release and this JOID based deployment process is
@@ -26,16 +26,15 @@ OPNFV using JOID which is based on MAAS and Juju.
 Summary
 =======
 
-    LXD is a lightweight container hypervisor for full system containers,
-unlike Docker and Rocket which is for application containers. This means that
-the container will look and feel like a regular VM – but will act like a
-container. LXD uses the same container technology found in the Linux kernel
-(cgroups, namespaces, LSM, etc).
+    KVM (for Kernel-based Virtual Machine) is a full virtualization solution
+for Linux on x86 hardware containing virtualization extensions (Intel VT or AMD-V).
+It consists of a loadable kernel module, kvm.ko, that provides the core
+virtualization infrastructure and a processor specific module, kvm-intel.ko or kvm-amd.ko.
 
-Danube release with the JOID deployment with LXD hypervisor will establish an
+Danube release with the JOID deployment with KVM hypervisor will establish an
 OPNFV target system on a Pharos compliant lab infrastructure.
-The current definition of an OPNFV target system is and OpenStack Newton combined
-with LXD Hypervisor.
+
+The current definition of an OPNFV target system is and OpenStack Newton.
 
     The system is deployed with OpenStack High Availability (HA) for most OpenStack services.
 
@@ -43,32 +42,22 @@ with LXD Hypervisor.
 
     - Openstack      -- Newton
     - Type           -- HA, nonHA, tip (stable git branch of respective openstack)
-    - Feature        -- LXD (container hypervisor)
+    - Feature        -- KVM (hypervisor)
 
 NOTE: Detailed information on how to install in your lab can be find in installation guide
 command to deploy lxd feature is:
 
-#LXD deployment with HA Openstack
-./deploy.sh -o newton -f lxd -t ha -l custom -s nosdn
+#KVM deployment with HA Openstack
+./deploy.sh -o newton -f none -t ha -l custom -s nosdn
 
 #LXD deployment with no HA Openstack
-./deploy.sh -o newton -f lxd -t nonha -l custom -s nosdn
+./deploy.sh -o newton -f none -t nonha -l custom -s nosdn
 
-Using LXD with Openstack
-========================
+Using Openstack
+===============
 
-Once you have finished installinf the JOID with LXD container hypervisor you can use the
-following to uplod your lxd image to the glance server that LXD can use.
-In order to do that you simply have to do the following:
-
-wget -O xenial-server-cloudimg-amd64-root.tar.gz \
-https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-root.tar.gz
-
-glance image-create --name="Xenial LXC x86_64" --visibility=public --container-format=bare \
---disk-format=root-tar --property architecture="x86_64" xenial-server-cloudimg-amd64-root.tar.gz
-
-After you upload the image to glance then you will be ready to go. If you have any questions
-please don’t hesitate to ask on the LXC mailing, #lxcontainers IRC channel on freenode
+admin-openrc file have been placed under ~/joid_config/
+Please source the same and use OpenStack API to do rest of the configuration.
 
 
 Release Data
@@ -110,9 +99,6 @@ Known issues
 | **JIRA REFERENCE**                   | **SLOGAN**                           |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| JIRA: YARDSTICK-325                  | Provide raw format yardstick vm image|
-|                                      | for nova-lxd scenario(OPNFV)         |
-+--------------------------------------+--------------------------------------+
 | JIRA:                                |                                      |
 +--------------------------------------+--------------------------------------+
 
@@ -129,11 +115,10 @@ Notes:
 
 References
 ==========
-LXD
+KVM
 ---
-- `JUJU LXD charm <https://jujucharms.com/lxd/xenial/2>`_
-- `LXD hypervisor <https://help.ubuntu.com/lts/serverguide/lxd.html>`_
-- `LXD Story <http://insights.ubuntu.com/2016/03/14/the-lxd-2-0-story-prologue/>`_
+- `JUJU Openstack charm <https://jujucharms.com/openstack-telemetry/>`_
+- `KVM hypervisor <https://help.ubuntu.com/community/KVM/Installation>`_
 
 Juju
 ----
