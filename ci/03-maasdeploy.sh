@@ -558,9 +558,10 @@ if [ -e ./labconfig.json ]; then
         NODE_SYS_ID=$(maas $PROFILE nodes read | jq -r ".[] |  select(.hostname==\"$NODE_NAME\")".system_id)
         echo ">>> Configuring node $NODE_NAME [$NODE_ID][$NODE_SYS_ID]"
         # Recover the network interfaces list and configure each one
-        #   with sorting the list, we have hardware interface first the vlan interfaces
+        #   with sorting the list, we have hardware interface first, than the vlan interfaces
         IF_LIST=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] ".ifname | sort -u)
         for IF_NAME in $IF_LIST; do
+            # get the space of the interface
             IF_SPACE=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] | select(.ifname==\"$IF_NAME\") ".spaces[])
             case "$IF_SPACE" in
                 'data') SUBNET_CIDR=$SUBNETDATA_CIDR; IF_MODE='AUTO' ;;

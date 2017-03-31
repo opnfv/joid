@@ -147,10 +147,10 @@ opnfv:
     - type: public
       bridge: brApi
       cidr: 10.2.1.0/24
-      gateway:
+      gateway: 10.2.1.1
       vlan: 2056
     - type: floating
       bridge: brFloating
-      cidr: 
+      cidr:
       gateway:
-      vlan: 
+      vlan:

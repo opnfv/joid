@@ -203,6 +203,32 @@ check_status
 
 echo "...... deployment finished  ......."
 
+
+echo "...... configuring public access  ......."
+
+# translate bundle.yaml to json
+python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < bundles.yaml > bundles.json
+# get services list having a public interface
+srv_list=$(cat bundles.json | jq -r ".services | to_entries[] | {\"key\": .key, \"value\": .value[\"bindings\"]} | select (.value!=null) | select(.value[] | contains(\"public-api\"))".key)
+# get cnt list from service list
+cnt_list=$(for cnt in $srv_list; do juju status $cnt --format=json | jq -r ".machines[].containers | to_entries[]".key; done)
+# get public network gateway (supposing it is the first ip of the network)
+public_api_gw=$(cat labconfig.json | jq --raw-output ".opnfv.spaces[] | select(.type==\"public\")".gateway)
+admin_gw=$(cat labconfig.json | jq --raw-output ".opnfv.spaces[] | select(.type==\"admin\")".gateway)
+# set default gateway to public api gateway
+for cnt in $cnt_list; do
+    echo "changing default gw on $cnt"
+    juju ssh $cnt "sudo ip r d default && sudo ip r a default via $public_api_gw";
+    juju ssh $cnt "gw_dev=\$(ip  r l | grep 'via $public_api_gw' | cut -d \  -f5) &&\
+                   sudo cp /etc/network/interfaces /etc/network/interfaces.bak &&\
+                   echo 'removing old default gateway' &&\
+                   sudo perl -i -pe 's/^\ *gateway $admin_gw\n$//' /etc/network/interfaces &&\
+                   sudo perl -i -pe \"s/iface \$gw_dev inet static/iface \$gw_dev inet static\\n  gateway $public_api_gw/\" /etc/network/interfaces \
+                   ";
+done
+
+echo "...... configure  ......."
+
 if [[ "$opnfvmodel" = "openstack" ]]; then
     ./openstack.sh "$opnfvsdn" "$opnfvlab" "$opnfvdistro" "$openstack" || true
 
