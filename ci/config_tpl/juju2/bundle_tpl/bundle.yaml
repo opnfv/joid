@@ -36,15 +36,15 @@
 {% else %}
 {% include 'ceph.yaml' %}
 {% endif %}
+{% if opnfv.storage_dict.ceph is defined %}
 {% include 'cinder.yaml' %}
 {% include 'glance.yaml' %}
-{% if opnfv.storage_dict.ceph is defined %}
+{% endif %}
 {% if os.service.promise %}
 {% include 'opnfv-promise.yaml' %}
 {% endif %}
 {% if os.service.congress %}
 {% include 'congress.yaml' %}
-{% endif %}
 {% endif %}
 {% if os.service.openbaton %}
 {% include 'openbaton.yaml' %}
@@ -83,3 +83,6 @@
 {% include 'harelations.yaml' %}
 {% endif %}
 {% include 'relations.yaml' %}
+{% if os.mano.mode == 'ha' %}
+{% include 'harelations.yaml' %}
+{% endif %}

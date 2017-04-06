@@ -33,12 +33,12 @@ git clone -b stable/17.02 https://github.com/openstack/charm-nova-compute.git $d
 git clone -b stable/17.02 https://github.com/openstack/charm-openstack-dashboard.git $distro/openstack-dashboard
 git clone -b stable/17.02 https://github.com/openstack/charm-rabbitmq-server.git $distro/rabbitmq-server
 git clone -b stable/17.02 https://github.com/openstack/charm-heat.git $distro/heat
-git clone https://github.com/openstack/charm-lxd.git xenial/lxd
-#git clone https://github.com/openstack/openbaton.git xenial/openbaton
+git clone https://github.com/openstack/charm-lxd.git $distro/lxd
+git clone https://github.com/openbaton/juju-charm.git $distro/openbaton
 
 charm pull cs:$distro/aodh $distro/aodh
 charm pull cs:~free.ekanayaka/xenial/haproxy-1 $distro/haproxy
-charm pull cs:~narindergupta/congress-0 $distro/congress
+charm pull cs:~narindergupta/congress-1 $distro/congress
 
 #pulling scaleio charms.
 charm pull cs:~cloudscaling/scaleio-mdm $distro/scaleio-mdm

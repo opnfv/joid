@@ -1,5 +1,5 @@
     openbaton:
-      charm: "./trusty/openbaton"
+      charm: ./{{ ubuntu.release }}/openbaton
       num_units: 1
 {% if os.service.bindings %}
       bindings:

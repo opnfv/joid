@@ -33,7 +33,8 @@ git clone -b stable/17.02 https://github.com/openstack/charm-nova-compute.git $d
 git clone -b stable/17.02 https://github.com/openstack/charm-openstack-dashboard.git $distro/openstack-dashboard
 git clone -b stable/17.02 https://github.com/openstack/charm-rabbitmq-server.git $distro/rabbitmq-server
 git clone -b stable/17.02 https://github.com/openstack/charm-heat.git $distro/heat
-git clone https://github.com/openstack/charm-lxd.git xenial/lxd
+git clone https://github.com/openstack/charm-lxd.git $distro/lxd
+git clone https://github.com/openbaton/juju-charm.git $distro/openbaton
 
 charm pull cs:$distro/aodh $distro/aodh
 
@@ -72,4 +73,4 @@ charm pull cs:$distro/odl-controller $distro/odl-controller
 charm pull cs:~narindergupta/neutron-api-odl-11 $distro/neutron-api-odl
 charm pull cs:~narindergupta/openvswitch-odl-3 $distro/openvswitch-odl
 charm pull cs:~narindergupta/neutron-gateway-6 $distro/neutron-gateway
-charm pull cs:~narindergupta/congress-0 $distro/congress
+charm pull cs:~narindergupta/congress-1 $distro/congress
