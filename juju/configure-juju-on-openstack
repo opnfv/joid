@@ -115,7 +115,7 @@ do
 done
 
 ## Generate tools (needed if windows is in).
-$SSH "juju metadata generate-tools -d juju-meta/ "
+#$SSH "juju metadata generate-tools -d juju-meta/ "
 
 ## upload images and tools streams to swift and make public
 $SSH swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME  --os-password $OS_PASSWORD \
@@ -125,9 +125,9 @@ $SSH "cd ~/juju-meta/ && swift --os-auth-url $OS_AUTH_URL --os-username $OS_USER
  --os-password $OS_PASSWORD --os-tenant-name $OS_TENANT_NAME \
 upload juju-meta images"
 
-$SSH "cd ~/juju-meta/ && swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME \
- --os-password $OS_PASSWORD --os-tenant-name $OS_TENANT_NAME \
-upload juju-meta tools"
+#$SSH "cd ~/juju-meta/ && swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME \
+# --os-password $OS_PASSWORD --os-tenant-name $OS_TENANT_NAME \
+#upload juju-meta tools"
 
 ## collect the URL for getting the images
 $($SSH swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME  --os-password $OS_PASSWORD \
@@ -140,7 +140,7 @@ $($SSH swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME  --os-passwor
 my_ip=`ip route | grep src| grep -v virb|grep -v lxcb| head -1| cut -d " " -f 12 `
 #Bootstrap Juju
 ##$SSH "juju bootstrap openstack openstack --metadata-source=/var/www/html/juju-meta/ --upload-tools"
-$SSH "juju bootstrap openstack openstack --config image-metadata-url=$OS_STORAGE_URL/juju-meta/images/ --config tools-metadata-url=$OS_STORAGE_URL/juju-meta/tools/ --config network=private"
+$SSH "juju bootstrap openstack openstack --config image-metadata-url=$OS_STORAGE_URL/juju-meta/images/ --config network=private"
 
 
 
@@ -158,6 +158,6 @@ echo "Pass: $OS_PASSWORD"
 echo "OR Log in to openstack Jumpserver2 to deploy from command line"
 echo "ssh ubuntu@$FLOAT_IP"
 echo " You must set the following if creating a new model:"
-echo " juju set-model-config image-metadata-url=$OS_STORAGE_URL/juju-meta/images/ tools-metadata-url=$OS_STORAGE_URL/juju-meta/tools/ network=private"
+echo " juju set-model-config image-metadata-url=$OS_STORAGE_URL/juju-meta/images/ network=private"
 exit
 

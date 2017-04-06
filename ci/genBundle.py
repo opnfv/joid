@@ -193,6 +193,8 @@ if 'dishypcon' in features:
 if 'hugepages' in features:
     config['os']['beta']['huge_pages'] = True
     config['os']['beta']['cpu_pin'] = True
+if 'openbaton' in features:
+    config['os']['service']['openbaton'] = True
 
 
 # Set beta option from extra
@@ -213,6 +215,8 @@ if 'xenial' in extra:
     config['ubuntu']['release'] = 'xenial'
 if 'dishypcon' in extra:
     config['os']['hyperconverged'] = False
+if 'openbaton' in features:
+    config['os']['service']['openbaton'] = True
 
 #
 # Transform template to bundle.yaml according to config

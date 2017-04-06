@@ -83,6 +83,3 @@
 {% include 'harelations.yaml' %}
 {% endif %}
 {% include 'relations.yaml' %}
-{% if os.mano.mode == 'ha' %}
-{% include 'harelations.yaml' %}
-{% endif %}

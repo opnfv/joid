@@ -24,6 +24,7 @@ fi
 if [[ "$jujuver" > "2" ]]; then
     controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployconfig.yaml`
     cloudname=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployconfig.yaml`
+    juju destroy-controller $controllername --destroy-all-models -y || true
     juju kill-controller $controllername --timeout 10s -y || true
     rm -rf precise
     rm -rf trusty
