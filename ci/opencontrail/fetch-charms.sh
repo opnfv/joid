@@ -16,7 +16,7 @@ charm pull cs:trusty/mongodb $distro/mongodb
 charm pull cs:$distro/haproxy $distro/haproxy
 charm pull cs:$distro/ntp $distro/ntp
 charm pull cs:$distro/aodh $distro/aodh
-charm pull cs:~narindergupta/congress-0 $distro/congress
+charm pull cs:~narindergupta/congress-1 $distro/congress
 
 git clone -b stable/17.02 https://github.com/openstack/charm-hacluster.git $distro/hacluster
 #bzr branch lp:~sdn-charmers/charms/$distro/ceilometer/ceilometer-plugin $distro/ceilometer
@@ -38,6 +38,7 @@ git clone -b stable/17.02 https://github.com/openstack/charm-openstack-dashboard
 git clone -b stable/17.02 https://github.com/openstack/charm-rabbitmq-server.git $distro/rabbitmq-server
 git clone -b stable/17.02 https://github.com/openstack/charm-heat.git $distro/heat
 git clone -b stable/17.02 https://github.com/openstack/charm-neutron-api.git $distro/neutron-api
+git clone https://github.com/openbaton/juju-charm.git $distro/openbaton
 
 #pulling scaleio charms.
 charm pull cs:~cloudscaling/scaleio-mdm $distro/scaleio-mdm
