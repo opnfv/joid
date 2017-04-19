@@ -2,7 +2,7 @@
 
 set -ex
 
-maasver=$(apt-cache policy maas | grep Installed | cut -d ':' -f 2 | sed -e 's/^.*: //')
+maasver=$(apt-cache policy maas | grep Installed | cut -d ':' -f 2 | sed -e 's/^[ ]*//')
 
 if [[ "$maasver" > "2" ]]; then
     echo "removing existing maas ..."
