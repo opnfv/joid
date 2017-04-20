@@ -25,139 +25,108 @@ set -ex
 ## openstack server show -c status --format value my-instance-name
 
 
-echo "This command is run to launch the first instance on a new Orange box Openstack deployment"
+#Set up a Private OpenStack Cloud using Simplestreams
 
-source ~/joid_config/admin-openrc
-associated=0
+#Overview
 
-#Create a floating IP for the instance
-if ( openstack server list | grep jumpserver2 >/dev/null )
-then
-    associated=1
-    FLOAT_IP="$(openstack server list | grep jumpserver2 | awk '{ print $13 }')"
-else
-    FLOAT_IP="$(openstack floating ip create ext-net -c floating_ip_address -f value)"
-fi
+#When Juju bootstraps a cloud, it needs two critical pieces of information:
 
-#Launch an instance
-NET_UUID="$(openstack network list | grep private | awk '{ print $2 }')"
-IMAGE_UUID="$(openstack image list | grep "Xenial x86_64" | awk '{ print $2 }')"
-IMAGE_LXD_UUID="$(openstack image list | grep "Xenial LXC x86_64" | awk '{ print $2 }')"
-openstack server list | grep jumpserver2 ||openstack server create --flavor m1.small --key-name default --image $IMAGE_UUID --nic net-id=$NET_UUID --security-group default jumpserver2
-# checking jumpserver2 state until active ..
-INST_STATE=` openstack server show jumpserver2 | grep status | awk '{print $4}'`
-while [ $INST_STATE != "ACTIVE" ];
-do
-    INST_STATE=` openstack server show jumpserver2 | grep status | awk '{print $4}'`
-    echo "Jumpserver2 instance state is: "$INST_STATE" waiting to be active"
-    sleep 1
-done
-sleep 6
+#The UUID of the image to use when starting new compute instances.
+#The URL from which to download the correct version of a tools tarball.
+#This necessary information is stored in a json metadata format called "Simplestreams". For supported public cloud services such as Amazon Web Services, HP Cloud, Azure, etc, no action is required by the end user. However, those setting up a private cloud, or who want to change how things work (eg use a different Ubuntu image), can create their own metadata.
 
-#Associate the floating IP with the new instance
-if [ "$associated" -eq "0" ]; then
-   openstack ip floating add $FLOAT_IP jumpserver2 || true
-   sleep 90
-fi
+#This page explains how to use Juju and additional tools to generate this Simplestreams metadata and configure OpenStack to use them.
 
-sleep 90
+#Requirements
 
-### make it more Readable
-export SSH="ssh -o StrictHostKeyChecking=no ubuntu@$FLOAT_IP"
+#python-openstackclient
+#python-swiftclient
+#Generating the metadata
 
 
-#Add juju stable repo
-$SSH sudo add-apt-repository -y ppa:juju/stable
+sudo apt-get install python-openstackclient python-swiftclient
 
-#SSH into the instance and install Juju
-$SSH sudo apt-get -y update
+#To begin, create a directory to hold the generated metadata:
 
-$SSH sudo apt-get -y install juju python-novaclient python-swiftclient
+mkdir -p ~/simplestreams/images
 
+#Now, if necessary, source the nova.rc file for your cloud:
 
-#copy over SSH keys
-scp -o StrictHostKeyChecking=no ~/.ssh/id_rsa* ubuntu@$FLOAT_IP:~/.ssh/
+. ~/joid_config/admin-openrc
+
+#We can now determine the region name for the cloud by running:
+
+#OS_REGION_NAME=`openstack endpoint list -c Region -f value | head -1`
+#The output from the above command will be similar to the following:
+
+#Next, enter the following command to determine the Image ID of the cloud image in glance:
+
+X_IMAGE_ID=`openstack image list -f value | grep -i xenial | cut -f 1 -d " "`
+T_IMAGE_ID=`openstack image list -f value | grep -i trusty | cut -f 1 -d " "`
+
+#The following example output shows two images listed, Ubuntu 16.04 (Xenial) and Ubuntu 14.04 (Trusty).
+
+#Take a note of the image IDs for the images you want added to Simplestreams. These will be used in the next step.
+
+#We can now use Juju to generate the metadata:
+
+juju metadata generate-image -d ~/simplestreams -i $X_IMAGE_ID -s xenial -r $OS_REGION_NAME -u $OS_AUTH_URL
+juju metadata generate-image -d ~/simplestreams -i $T_IMAGE_ID -s trusty -r $OS_REGION_NAME -u $OS_AUTH_URL
+
+#To verify that the correct metadata files have been generated, you may run:
+#You should see .json files containing the details we just added on the images.
+
+ls ~/simplestreams/*/streams/*
+
+#Upload the Simplestreams Metadata to Swift
+
+openstack container create simplestreams
+openstack container list
+openstack container show simplestreams
+
+cd ~/simplestreams
+swift upload simplestreams *
+cd -
+
+swift stat simplestreams
+
+swift post simplestreams --read-acl .r:*
+openstack service create --name product-stream --description "Product Simple Stream" product-streams
+SWIFT_URL=`openstack endpoint show object-store -c internalurl -f value`
+
+openstack endpoint create --region $OS_REGION_NAME --publicurl $SWIFT_URL/simplestreams/images \
+   --internalurl $SWIFT_URL/simplestreams/images product-streams
 
 
 #Output a juju cloud file that works on this cloud
-$SSH \
-"echo 'clouds:
+echo "clouds:
     openstack:
       type: openstack
       auth-types: [access-key, userpass]
       regions:
         $OS_REGION_NAME:
           endpoint: $OS_AUTH_URL
-' > os-cloud.yaml"
-$SSH juju add-cloud openstack os-cloud.yaml --replace
+" > os-cloud.yaml
+juju add-cloud openstack os-cloud.yaml --replace
 
 #Output a juju cred file that works on this cloud
-$SSH \
-"echo 'credentials:
+echo "credentials:
   openstack:
     openstack:
       auth-type: userpass
       password: $OS_PASSWORD
       tenant-name: $OS_TENANT_NAME
       username: $OS_USERNAME
-' > os-creds.yaml"
+" > os-creds.yaml
 
-$SSH "juju add-credential openstack -f os-creds.yaml" --replace
+juju add-credential openstack -f os-creds.yaml --replace
 
-## Creating images metadata
-$SSH mkdir -p juju-meta
-for s in precise trusty xenial win2012r2
-do
-#Create juju metadata
-    IMAGE_UUID="$(openstack image list | grep -i "$s x86_64" | awk '{ print $2 }')"
-    IMAGE_LXC_UUID="$(openstack image list | grep -i "$s LXC x86_64" | awk '{ print $2 }')"
-    [ -n "$IMAGE_UUID" ] &&  $SSH "juju metadata generate-image -a amd64 -u $OS_AUTH_URL -i $IMAGE_UUID -r $OS_REGION_NAME -d juju-meta/ -s $s"
-done
+#Bootstrap with Juju
 
-## Generate tools (needed if windows is in).
-#$SSH "juju metadata generate-tools -d juju-meta/ "
-
-## upload images and tools streams to swift and make public
-$SSH swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME  --os-password $OS_PASSWORD \
- --os-tenant-name $OS_TENANT_NAME  post -r '.r:*' juju-meta
-
-$SSH "cd ~/juju-meta/ && swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME \
- --os-password $OS_PASSWORD --os-tenant-name $OS_TENANT_NAME \
-upload juju-meta images"
-
-#$SSH "cd ~/juju-meta/ && swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME \
-# --os-password $OS_PASSWORD --os-tenant-name $OS_TENANT_NAME \
-#upload juju-meta tools"
-
-## collect the URL for getting the images
-$($SSH swift --os-auth-url $OS_AUTH_URL --os-username $OS_USERNAME  --os-password $OS_PASSWORD \
- --os-tenant-name $OS_TENANT_NAME auth)
-
-###
-###juju bootstrap openstack openstack --config image-metadata-url=http://192.168.16.5/juju/images/ --config network=private --upload-tools --debug -v
-###
-
-my_ip=`ip route | grep src| grep -v virb|grep -v lxcb| head -1| cut -d " " -f 12 `
-#Bootstrap Juju
-##$SSH "juju bootstrap openstack openstack --metadata-source=/var/www/html/juju-meta/ --upload-tools"
-$SSH "juju bootstrap openstack openstack --config image-metadata-url=$OS_STORAGE_URL/juju-meta/images/ --config network=private"
-
-
-
-## useless if juju floating ip option on.
-#########################################
-#Create a new floating IP and associate with juju bootstrap instance
-#INSTANCE_ID="$(nova list | grep juju-openstack-machine-0 | awk '{ print $2}')"
-#FLOAT_IP2="$(nova floating-ip-create | grep ext_net | awk '{ print $2}')"
-#nova floating-ip-associate $INSTANCE_ID $FLOAT_IP2
+juju bootstrap openstack --config image-metadata-url=$SWIFT_URL/simplestreams/images --config use-floating-ip=true --config network=private
+juju gui --show-credentials --no-browser
 
 #Print the address of Juju-gui for deployments on Openstack
-echo "Now connect to the Juju-GUI at: http://$FLOAT_IP2/ to continue deployments on Openstack."
-echo "Pass: $OS_PASSWORD"
-
-echo "OR Log in to openstack Jumpserver2 to deploy from command line"
-echo "ssh ubuntu@$FLOAT_IP"
 echo " You must set the following if creating a new model:"
-echo " juju set-model-config image-metadata-url=$OS_STORAGE_URL/juju-meta/images/ network=private"
-exit
-
+echo " juju switch openstack "
+echo " juju set-model-config image-metadata-url=$SWIFT_URL/simplestreams/images network=private"
