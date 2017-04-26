@@ -231,14 +231,20 @@ configuremaas(){
     done
 }
 
+deleteexistingnetw(){
+    NETID_LIST=$(maas $PROFILE subnets read | jq ".[].id")
+    for NETID in $NETW; do
+        maas $PROFILE subnet delete $NETID_LIST
+    done
+}
+
 setopnfvfabrics(){
     # Based on first node we get the fabric mapping
     NODE_0_MAC_LIST=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[0].nics[] ".mac[] | sort -u)
     FAB_ID=1
     for MAC in $NODE_0_MAC_LIST; do
         # Create a new fabric
-        # SPACE_ID=$(maas $PROFILE fabrics create name=opnfv$FAB_ID| jq --raw-output ".id")
-        FABRIC_ID=$(maas $PROFILE fabric read opnfv$FAB_ID| jq --raw-output ".id")
+        FABRIC_ID=$(maas $PROFILE fabrics create name=opnfv$FAB_ID| jq --raw-output ".id")
         # Get the spaces attached to a mac
         IF_SPACES=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] | select(.mac[] | contains(\"$MAC\")) ".spaces[])
         # Create the network attached to a space
