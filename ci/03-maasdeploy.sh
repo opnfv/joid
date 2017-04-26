@@ -92,7 +92,7 @@ SUBNETDATA_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data"
 SUBNETPUB_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="public")'.cidr | cut -d \" -f 2 `
 SUBNETSTOR_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="storage")'.cidr | cut -d \" -f 2 `
 SUBNETFLOAT_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="floating")'.cidr | cut -d \" -f 2 `
-VLAN_TAG="untagged"
+VLAN_UNTTAGED="untagged"
 
 # In the case of a virtual deployment get deployconfig.yaml
 if [ "$virtinstall" -eq 1 ]; then
@@ -231,6 +231,68 @@ configuremaas(){
     done
 }
 
+setopnfvfabrics(){
+    # Based on first node we get the fabric mapping
+    NODE_0_MAC_LIST=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[0].nics[] ".mac[] | sort -u)
+    FAB_ID=1
+    for MAC in $NODE_0_MAC_LIST; do
+        # Create a new fabric
+        # SPACE_ID=$(maas $PROFILE fabrics create name=opnfv$FAB_ID| jq --raw-output ".id")
+        FABRIC_ID=$(maas $PROFILE fabric read opnfv$FAB_ID| jq --raw-output ".id")
+        # Get the spaces attached to a mac
+        IF_SPACES=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] | select(.mac[] | contains(\"$MAC\")) ".spaces[])
+        # Create the network attached to a space
+        for SPACE in $IF_SPACES; do
+            # First check if this space have a vlan
+            SP_VLAN=$(cat labconfig.json | jq --raw-output ".opnfv.spaces[] | select(.type==\"$SPACE\")".vlan)
+            # Create it if needed
+            if ([ $SP_VLAN ] && [ "$SP_VLAN" != "null" ]); then
+                maas $PROFILE vlans create $FABRIC_ID vid=$SP_VLAN
+                VID="vid=$SP_VLAN"
+            else
+                SP_VLAN=$VLAN_UNTTAGED
+                VID=""
+            fi
+            # Create the network
+            case "$SPACE" in
+                'admin')    SUBNET_CIDR=$SUBNET_CIDR;       JUJU_SPACE="admin";         DHCP='enabled' ;;
+                'data')     SUBNET_CIDR=$SUBNETDATA_CIDR;   JUJU_SPACE="tenant-data";   DHCP='' ;;
+                'public')   SUBNET_CIDR=$SUBNETPUB_CIDR;    JUJU_SPACE="public-api";    DHCP='' ;;
+                'storage')  SUBNET_CIDR=$SUBNETSTOR_CIDR;   JUJU_SPACE="tenant-api";    DHCP='' ;;
+                'floating') SUBNET_CIDR=$SUBNETFLOAT_CIDR;  JUJU_SPACE="tenant-public"; DHCP='' ;;
+                *) JUJU_SPACE='null'; DHCP='OFF'; echo "      >>> Unknown SPACE" ;;
+            esac
+            # If we have a network, we create it
+            if ([ $SUBNET_CIDR ] && [ "$SUBNET_CIDR" != "null" ]); then
+                maas $PROFILE subnets create fabric=$FABRIC_ID cidr=$SUBNET_CIDR $VID
+                # Add the Gateway
+                GW=$(cat labconfig.json | jq ".opnfv.spaces[] | select(.type==\"$SPACE\")".gateway | cut -d \" -f 2)
+                if ([ $GW ] && [ "$GW" != "null" ]); then
+                    maas $PROFILE subnet update $SUBNET_CIDR gateway_ip=$GW || true
+                fi
+                # Set ranges
+                SUBNET_PREFIX=${SUBNET_CIDR::-5}
+                IP_RES_RANGE_LOW="$SUBNET_PREFIX.1"
+                IP_RES_RANGE_HIGH="$SUBNET_PREFIX.39"
+                IP_DYNAMIC_RANGE_LOW="$SUBNET_PREFIX.40"
+                IP_DYNAMIC_RANGE_HIGH="$SUBNET_PREFIX.150"
+                maas $PROFILE ipranges create type=reserved \
+                     start_ip=$IP_RES_RANGE_LOW end_ip=$IP_RES_RANGE_HIGH \
+                     comment='This is a reserved range' || true
+                maas $PROFILE ipranges create type=dynamic \
+                    start_ip=$IP_DYNAMIC_RANGE_LOW end_ip=$IP_DYNAMIC_RANGE_HIGH \
+                    comment='This is a reserved dynamic range' || true
+                # Set DHCP
+                if [ $DHCP ]; then
+                    PRIMARY_RACK_CONTROLLER=$(maas $PROFILE rack-controllers read | jq -r '.[0].system_id')
+                    maas $PROFILE vlan update $FABRIC_ID $SP_VLAN dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
+                fi
+            fi
+        done
+        FAB_ID=$((FAB_ID+1))
+    done
+}
+
 enablesubnetanddhcp(){
     TEMP_CIDR=$1
     enabledhcp=$2
@@ -270,7 +332,7 @@ enablesubnetanddhcp(){
         SPACEID=$(maas $PROFILE space read internal-api | jq '.id')
         maas $PROFILE subnet update $TEMP_CIDR space=$SPACEID || true
         if [ "$enabledhcp" == "true" ]; then
-            maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
+            maas $PROFILE vlan update $FABRIC_ID $VLAN_UNTTAGED dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
         fi
     elif [ "$space" == "data" ]; then
         MY_GATEWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data")'.gateway | cut -d \" -f 2 `
@@ -281,7 +343,7 @@ enablesubnetanddhcp(){
         SPACEID=$(maas $PROFILE space read admin-api | jq '.id')
         maas $PROFILE subnet update $TEMP_CIDR space=$SPACEID || true
         if [ "$enabledhcp" == "true" ]; then
-            maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
+            maas $PROFILE vlan update $FABRIC_ID $VLAN_UNTTAGED dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
         fi
     elif [ "$space" == "public" ]; then
         MY_GATEWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data")'.public | cut -d \" -f 2 `
@@ -292,7 +354,7 @@ enablesubnetanddhcp(){
         SPACEID=$(maas $PROFILE space read public-api | jq '.id')
         maas $PROFILE subnet update $TEMP_CIDR space=$SPACEID || true
         if [ "$enabledhcp" == "true" ]; then
-            maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
+            maas $PROFILE vlan update $FABRIC_ID $VLAN_UNTTAGED dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
         fi
     elif [ "$space" == "storage" ]; then
         MY_GATEWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data")'.storage | cut -d \" -f 2 `
@@ -303,7 +365,7 @@ enablesubnetanddhcp(){
         SPACEID=$(maas $PROFILE space read storage-data | jq '.id')
         maas $PROFILE subnet update $TEMP_CIDR space=$SPACEID || true
         if [ "$enabledhcp" == "true" ]; then
-            maas $PROFILE vlan update $FABRIC_ID $VLAN_TAG dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
+            maas $PROFILE vlan update $FABRIC_ID $VLAN_UNTTAGED dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
         fi
     fi
 }
