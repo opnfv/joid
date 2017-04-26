@@ -559,7 +559,7 @@ if [ -e ./labconfig.json ]; then
         echo ">>> Configuring node $NODE_NAME [$NODE_ID][$NODE_SYS_ID]"
         # Recover the network interfaces list and configure each one
         #   with sorting the list, we have hardware interface first, than the vlan interfaces
-        IF_LIST=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] ".ifname | sort -u)
+        IF_LIST=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] ".ifname )
         for IF_NAME in $IF_LIST; do
             # get the space of the interface
             IF_SPACE=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] | select(.ifname==\"$IF_NAME\") ".spaces[])
@@ -579,7 +579,16 @@ if [ -e ./labconfig.json ]; then
                 IF_VLAN = ${IF_NAME##*.}; fi
 
             # in case of interface renaming
-            IF_NEWNAME=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] | select(.ifname==\"$IF_NAME\") ".rename)
+            IF_NEWNAME=$IF_NAME
+
+            if ([ $IF_NEWNAME ] && [ "$IF_NEWNAME" != "null" ]); then
+                # rename interface if needed
+                IF_MACLOWER=$( cat labconfig.json | jq ".lab.racks[0].nodes[$NODE_ID].nics[] | select(.ifname==\"$IF_NEWNAME\")".mac[0])
+                IF_MAC=(${IF_MACLOWER,,})
+                IF_ID=$( maas ubuntu interfaces read $NODE_SYS_ID | jq ".[] | select(.mac_address==$IF_MAC)".id)
+                maas $PROFILE interface update $NODE_SYS_ID $IF_ID name=$IF_NEWNAME
+                IF_NAME=$IF_NEWNAME
+            fi
 
             # In case of a VLAN interface
             if ([ $IF_VLAN ] && [ "$IF_VLAN" != "null" ]); then
@@ -603,10 +612,6 @@ if [ -e ./labconfig.json ]; then
                     INTERFACE=$(maas $PROFILE interfaces read $NODE_SYS_ID | jq ".[] | select(.vlan.fabric_id==$FABRICID)".id)
                 fi
                 maas $PROFILE interfaces create-vlan $NODE_SYS_ID vlan=$VLANID parent=$INTERFACE || true
-            elif ([ $IF_NEWNAME ] && [ "$IF_NEWNAME" != "null" ]); then
-                # rename interface if needed
-                maas $PROFILE interface update $NODE_SYS_ID $IF_NAME name=$IF_NEWNAME
-                IF_NAME=$IF_NEWNAME
             fi
             # Configure the interface
             if ([ $SUBNET_CIDR ] && [ "$SUBNET_CIDR" != "null" ]); then

@@ -7,13 +7,13 @@ lab:
       architecture: x86_64
       roles: [network,control]
       nics:
-      - ifname: enp11s0
+      - ifname: intf100
         spaces: [admin]
         mac: ["00:A0:A5:90:89:66"]
-      - ifname: enp12s0
+      - ifname: intf101
         spaces: [floating]
         mac: ["00:A0:A5:90:89:67"]
-      - ifname: enp3s0f1
+      - ifname: intf102
         spaces: [data]
         mac: ["00:A0:A5:90:89:65"]
       power:
@@ -25,13 +25,13 @@ lab:
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: enp11s0
+      - ifname: intf100
         spaces: [admin]
         mac: ["00:A0:A5:90:89:A8"]
-      - ifname: enp12s0
+      - ifname: intf101
         spaces: [floating]
         mac: ["00:A0:A5:90:89:A9"]
-      - ifname: enp3s0f1
+      - ifname: intf102
         spaces: [data]
         mac: ["00:A0:A5:90:89:A7"]
       power:
@@ -43,13 +43,13 @@ lab:
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: enp11s0
+      - ifname: intf100
         spaces: [admin]
         mac: ["00:A0:A5:90:89:28"]
-      - ifname: enp12s0
+      - ifname: intf101
         spaces: [floating]
         mac: ["00:A0:A5:90:89:29"]
-      - ifname: enp3s0f1
+      - ifname: intf102
         spaces: [data]
         mac: ["00:A0:A5:90:89:27"]
       power:
@@ -61,13 +61,13 @@ lab:
       architecture: x86_64
       roles: [compute,storage]
       nics:
-      - ifname: enp11s0
+      - ifname: intf100
         spaces: [admin]
         mac: ["00:A0:A5:89:30:C6"]
-      - ifname: enp12s0
+      - ifname: intf101
         spaces: [floating]
         mac: ["00:A0:A5:89:30:C7"]
-      - ifname: enp3s0f1
+      - ifname: intf102
         spaces: [data]
         mac: ["00:A0:A5:89:30:C5"]
       power:
@@ -79,13 +79,13 @@ lab:
       architecture: x86_64
       roles: [compute,storage]
       nics:
-      - ifname: enp11s0
+      - ifname: intf100
         spaces: [admin]
         mac: ["00:A0:A5:90:89:94"]
-      - ifname: enp12s0
+      - ifname: intf101
         spaces: [floating]
         mac: ["00:A0:A5:90:89:95"]
-      - ifname: enp3s0f1
+      - ifname: intf102
         spaces: [data]
         mac: ["00:A0:A5:90:89:93"]
       power:
@@ -94,7 +94,7 @@ lab:
         user: admin
         pass: admin
     floating-ip-range: 10.21.6.6,10.21.6.250,10.21.6.254,10.21.6.0/24
-    ext-port: "enp12s0"
+    ext-port: "intf101"
     dns: 8.8.8.8
     osdomainname:
 opnfv:
