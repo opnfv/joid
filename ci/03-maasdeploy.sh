@@ -231,22 +231,54 @@ configuremaas(){
     done
 }
 
+setopnfvspaces(){
+    # Create spaces
+    for sp in admin tenant-data public-api tenant-api tenant-public; do
+        maas $PROFILE spaces create name=$sp || true
+    done
+}
+
+getfabrichostingnet(){
+    SUBN_CIDR=$1
+    NET_FABRIC_NAME=$(maas $PROFILE subnets read | jq -r ".[] |  select(.cidr==\"$SUBN_CIDR\")".vlan.fabric)
+    NET_FABRIC_ID=$(maas $PROFILE fabric read $NET_FABRIC_NAME | jq -r ".id")
+}
+
 deleteexistingnetw(){
-    NETID_LIST=$(maas $PROFILE subnets read | jq ".[].id")
-    for NETID in $NETW; do
-        maas $PROFILE subnet delete $NETID_LIST
+    CIDR_LIST=$(cat labconfig.json | jq --raw-output ".opnfv.spaces[]".cidr | grep -v null)
+    for CIDR in $CIDR_LIST; do
+        NETID=$(maas $PROFILE subnets read | jq ".[] | select(.cidr==\"$CIDR\")".id)
+        maas $PROFILE subnet delete $NETID
+    done
+}
+
+deleteunusednetw(){
+    USED_CIDR_LIST=$(cat labconfig.json | jq --raw-output ".opnfv.spaces[]".cidr | grep -v null)
+    CIDR_LIST=$(maas $PROFILE networks read | jq -r ".[].description")
+    for CIDR in $CIDR_LIST; do
+        if [[ $USED_CIDR_LIST != *$CIDR* ]]; then
+            NETID=$(maas $PROFILE subnets read | jq ".[] | select(.cidr==\"$CIDR\")".id)
+            maas $PROFILE subnet delete $NETID
+        fi
     done
 }
 
 setopnfvfabrics(){
+
     # Based on first node we get the fabric mapping
     NODE_0_MAC_LIST=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[0].nics[] ".mac[] | sort -u)
     FAB_ID=1
     for MAC in $NODE_0_MAC_LIST; do
-        # Create a new fabric
-        FABRIC_ID=$(maas $PROFILE fabrics create name=opnfv$FAB_ID| jq --raw-output ".id")
         # Get the spaces attached to a mac
         IF_SPACES=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] | select(.mac[] | contains(\"$MAC\")) ".spaces[])
+        if [[ $IF_SPACES == *admin* ]]; then
+            # Reuse fabric 0 to be sure the interface i hosted by the jumphost (assuming it is the first one)
+            FABRIC_ID=$ADMIN_FABRIC_ID
+            maas $PROFILE fabric update $FABRIC_ID name=opnfv$FAB_ID
+        else
+            # Create a new fabric
+            FABRIC_ID=$(maas $PROFILE fabrics create name=opnfv$FAB_ID| jq --raw-output ".id")
+        fi
         # Create the network attached to a space
         for SPACE in $IF_SPACES; do
             # First check if this space have a vlan
@@ -254,10 +286,12 @@ setopnfvfabrics(){
             # Create it if needed
             if ([ $SP_VLAN ] && [ "$SP_VLAN" != "null" ]); then
                 maas $PROFILE vlans create $FABRIC_ID vid=$SP_VLAN
-                VID="vid=$SP_VLAN"
+                VID=$SP_VLAN
+                VID_REQ="vid=$SP_VLAN"
             else
                 SP_VLAN=$VLAN_UNTTAGED
-                VID=""
+                VID=0
+                VID_REQ=""
             fi
             # Create the network
             case "$SPACE" in
@@ -270,7 +304,15 @@ setopnfvfabrics(){
             esac
             # If we have a network, we create it
             if ([ $SUBNET_CIDR ] && [ "$SUBNET_CIDR" != "null" ]); then
-                maas $PROFILE subnets create fabric=$FABRIC_ID cidr=$SUBNET_CIDR $VID
+                JUJU_SPACE_ID=$(maas $PROFILE spaces read | jq -r ".[] |  select(.name==\"$JUJU_SPACE\")".id)
+                # If subnet exist move it, else create it (to avoid issues with network discovery by maas)
+                if maas $PROFILE subnet read $SUBNET_CIDR; then
+                    TARGET_VLAN=$(maas $PROFILE vlans read $FABRIC_ID | jq -r ".[] | select(".vid"==$VID)".id)
+                    maas $PROFILE subnet update $SUBNET_CIDR vlan=$TARGET_VLAN
+                else
+                    maas $PROFILE subnets create fabric=$FABRIC_ID cidr=$SUBNET_CIDR $VID_REQ space=$JUJU_SPACE_ID
+                fi
+
                 # Add the Gateway
                 GW=$(cat labconfig.json | jq ".opnfv.spaces[] | select(.type==\"$SPACE\")".gateway | cut -d \" -f 2)
                 if ([ $GW ] && [ "$GW" != "null" ]); then
@@ -295,85 +337,10 @@ setopnfvfabrics(){
                 fi
             fi
         done
+        # Increment the fabric ID
         FAB_ID=$((FAB_ID+1))
     done
-}
 
-enablesubnetanddhcp(){
-    TEMP_CIDR=$1
-    enabledhcp=$2
-    space=$3
-
-    SUBNET_PREFIX=${TEMP_CIDR::-5}
-
-    IP_RES_RANGE_LOW="$SUBNET_PREFIX.1"
-    IP_RES_RANGE_HIGH="$SUBNET_PREFIX.39"
-
-    API_KEY=`sudo maas-region apikey --username=ubuntu`
-    maas login $PROFILE $API_SERVERMAAS $API_KEY
-
-    maas $PROFILE ipranges create type=reserved \
-         start_ip=$IP_RES_RANGE_LOW end_ip=$IP_RES_RANGE_HIGH \
-         comment='This is a reserved range' || true
-
-    IP_DYNAMIC_RANGE_LOW="$SUBNET_PREFIX.40"
-    IP_DYNAMIC_RANGE_HIGH="$SUBNET_PREFIX.150"
-
-    maas $PROFILE ipranges create type=dynamic \
-        start_ip=$IP_DYNAMIC_RANGE_LOW end_ip=$IP_DYNAMIC_RANGE_HIGH \
-        comment='This is a reserved dynamic range' || true
-
-    FABRIC_ID=$(maas $PROFILE subnet read $TEMP_CIDR | jq '.vlan.fabric_id')
-
-    PRIMARY_RACK_CONTROLLER=$(maas $PROFILE rack-controllers read | jq -r '.[0].system_id')
-
-    if [ "$space" == "admin" ]; then
-        MY_GATEWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="admin")'.gateway | cut -d \" -f 2 `
-        #MY_NAMESERVER=`cat deployconfig.json | jq '.opnfv.upstream_dns' | cut -d \" -f 2`
-        if ([ $MY_GATEWAY ] && [ "$MY_GATEWAY" != "null" ]); then
-            maas $PROFILE subnet update $TEMP_CIDR gateway_ip=$MY_GATEWAY || true
-        fi
-        #maas $PROFILE subnet update $TEMP_CIDR dns_servers=$MY_NAMESERVER || true
-        #below command will enable the interface with internal-api space.
-        SPACEID=$(maas $PROFILE space read internal-api | jq '.id')
-        maas $PROFILE subnet update $TEMP_CIDR space=$SPACEID || true
-        if [ "$enabledhcp" == "true" ]; then
-            maas $PROFILE vlan update $FABRIC_ID $VLAN_UNTTAGED dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
-        fi
-    elif [ "$space" == "data" ]; then
-        MY_GATEWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data")'.gateway | cut -d \" -f 2 `
-        if ([ $MY_GATEWAY ] && [ "$MY_GATEWAY" != "null" ]); then
-            maas $PROFILE subnet update $TEMP_CIDR gateway_ip=$MY_GATEWAY || true
-        fi
-        #below command will enable the interface with data-api space for data network.
-        SPACEID=$(maas $PROFILE space read admin-api | jq '.id')
-        maas $PROFILE subnet update $TEMP_CIDR space=$SPACEID || true
-        if [ "$enabledhcp" == "true" ]; then
-            maas $PROFILE vlan update $FABRIC_ID $VLAN_UNTTAGED dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
-        fi
-    elif [ "$space" == "public" ]; then
-        MY_GATEWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data")'.public | cut -d \" -f 2 `
-        if ([ $MY_GATEWAY ] && [ "$MY_GATEWAY" != "null" ]); then
-            maas $PROFILE subnet update $TEMP_CIDR gateway_ip=$MY_GATEWAY || true
-        fi
-        #below command will enable the interface with public-api space for data network.
-        SPACEID=$(maas $PROFILE space read public-api | jq '.id')
-        maas $PROFILE subnet update $TEMP_CIDR space=$SPACEID || true
-        if [ "$enabledhcp" == "true" ]; then
-            maas $PROFILE vlan update $FABRIC_ID $VLAN_UNTTAGED dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
-        fi
-    elif [ "$space" == "storage" ]; then
-        MY_GATEWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="data")'.storage | cut -d \" -f 2 `
-        if ([ $MY_GATEWAY ] && [ "$MY_GATEWAY" != "null" ]); then
-            maas $PROFILE subnet update $TEMP_CIDR gateway_ip=$MY_GATEWAY || true
-        fi
-        #below command will enable the interface with public-api space for data network.
-        SPACEID=$(maas $PROFILE space read storage-data | jq '.id')
-        maas $PROFILE subnet update $TEMP_CIDR space=$SPACEID || true
-        if [ "$enabledhcp" == "true" ]; then
-            maas $PROFILE vlan update $FABRIC_ID $VLAN_UNTTAGED dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
-        fi
-    fi
 }
 
 addnodes(){
@@ -389,7 +356,7 @@ addnodes(){
     if [ "$virtinstall" -eq 1 ]; then
         netw=" --network bridge=virbr0,model=virtio"
     else
-        brid=`brctl show | grep 8000 | cut -d "8" -f 1 |  tr "\n" " " | tr "\t" " " | tr -s " "`
+        brid=`brctl show | grep 8000 | cut -d "8" -f 1 |  tr "\n" " " | tr "    " " " | tr -s " "`
 
         netw=""
         for feature in $brid; do
@@ -478,30 +445,21 @@ addnodes(){
 
 }
 
-#configure MAAS with the different options.
+# configure MAAS with the different options.
 configuremaas
+sleep 30
 
 # functioncall with subnetid to add and second parameter is dhcp enable
 # third parameter will define the space. It is required to have admin
 
-if [ $SUBNET_CIDR ]; then
-    enablesubnetanddhcp $SUBNET_CIDR true admin
-else
-    echo "atleast admin network should be defined"
-    echo "MAAS configuration can not continue"
-    exit 2
-fi
-
-if [ $SUBNETDATA_CIDR ]; then
-    enablesubnetanddhcp $SUBNETDATA_CIDR false data
-fi
-if [ $SUBNETPUB_CIDR ]; then
-    enablesubnetanddhcp $SUBNETPUB_CIDR false public
-fi
-
-if [ $SUBNETSTOR_CIDR ]; then
-    enablesubnetanddhcp $SUBNETSTOR_CIDR false storage
-fi
+setopnfvspaces
+getfabrichostingnet $SUBNET_CIDR
+ADMIN_FABRIC_ID=$NET_FABRIC_ID
+ADMIN_FABRIC_NAME=$NET_FABRIC_NAME
+deleteexistingnetw
+sleep 30
+setopnfvfabrics
+deleteunusednetw
 
 #just make sure rack controller has been synced and import only
 # just whether images have been imported or not.
@@ -627,7 +585,7 @@ if [ -e ./labconfig.json ]; then
         echo ">>> Configuring node $NODE_NAME [$NODE_ID][$NODE_SYS_ID]"
         # Recover the network interfaces list and configure each one
         #   with sorting the list, we have hardware interface first, than the vlan interfaces
-        IF_LIST=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] ".ifname )
+        IF_LIST=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] ".ifname | sort -u )
         for IF_NAME in $IF_LIST; do
             # get the space of the interface
             IF_SPACE=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] | select(.ifname==\"$IF_NAME\") ".spaces[])
@@ -648,17 +606,6 @@ if [ -e ./labconfig.json ]; then
 
             # in case of interface renaming
             IF_NEWNAME=$IF_NAME
-
-            if ([ $IF_NEWNAME ] && [ "$IF_NEWNAME" != "null" ]); then
-                # rename interface if needed
-                IF_MACLOWER=$( cat labconfig.json | jq ".lab.racks[0].nodes[$NODE_ID].nics[] | select(.ifname==\"$IF_NEWNAME\")".mac[0])
-                IF_MAC=(${IF_MACLOWER,,})
-                IF_ID=$( maas ubuntu interfaces read $NODE_SYS_ID | jq ".[] | select(.mac_address==$IF_MAC)".id)
-                if ([ $IF_ID ] && [ "$IF_ID" != "null" ]); then
-                    maas $PROFILE interface update $NODE_SYS_ID $IF_ID name=$IF_NEWNAME
-                    IF_NAME=$IF_NEWNAME
-                fi
-            fi
 
             # In case of a VLAN interface
             if ([ $IF_VLAN ] && [ "$IF_VLAN" != "null" ]); then
@@ -682,6 +629,12 @@ if [ -e ./labconfig.json ]; then
                     INTERFACE=$(maas $PROFILE interfaces read $NODE_SYS_ID | jq ".[] | select(.vlan.fabric_id==$FABRICID)".id)
                 fi
                 maas $PROFILE interfaces create-vlan $NODE_SYS_ID vlan=$VLANID parent=$INTERFACE || true
+            else
+                # rename interface if needed
+                IF_MACLOWER=$( cat labconfig.json | jq ".lab.racks[0].nodes[$NODE_ID].nics[] | select(.ifname==\"$IF_NEWNAME\")".mac[0])
+                IF_MAC=(${IF_MACLOWER,,})
+                IF_ID=$( maas ubuntu interfaces read $NODE_SYS_ID | jq ".[] | select(.mac_address==$IF_MAC)".id)
+                maas $PROFILE interface update $NODE_SYS_ID $IF_ID name=$IF_NEWNAME
             fi
             # Configure the interface
             if ([ $SUBNET_CIDR ] && [ "$SUBNET_CIDR" != "null" ]); then
