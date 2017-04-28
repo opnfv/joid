@@ -222,8 +222,8 @@ configuremaas(){
 
     #maas $PROFILE boot-source update $SOURCE_ID \
     #     url=$URL keyring_filename=$KEYRING_FILE || true
-    #maas $PROFILE boot-resources import || true
-    #sleep 60
+    maas $PROFILE boot-resources import || true
+    sleep 10
 
     while [ "$(maas $PROFILE boot-resources is-importing)" == "true" ];
     do

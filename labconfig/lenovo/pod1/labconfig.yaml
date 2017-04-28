@@ -69,10 +69,10 @@ lab:
       nics:
       - ifname: intf100
         spaces: [admin]
-        mac: ["00:1E:67:E0:0A:4B"]
+        mac: ["24:8a:07:3f:95:fe"]
       - ifname: intf101
         spaces: [floating]
-        mac: ["00:1E:67:E0:0A:4C"]
+        mac: ["24:8a:07:3f:95:ff"]
       power:
         type: ipmi
         address: 192.0.5.129
