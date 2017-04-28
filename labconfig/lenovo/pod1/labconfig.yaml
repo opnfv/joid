@@ -7,12 +7,12 @@ lab:
       architecture: x86_64
       roles: [network,control]
       nics:
-      - ifname: ens1f0
+      - ifname: intf100
         spaces: [admin]
         mac: ["24:8a:07:3f:84:ac"]
-      - ifname: ens1f1
-        spaces: [public]
-        mac: ["90:E2:BA:85:4E:2D"]
+      - ifname: intf101
+        spaces: [floating]
+        mac: ["24:8a:07:3f:84:ad"]
       power:
         type: ipmi
         address: 192.0.5.125
@@ -22,12 +22,12 @@ lab:
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: ens1f0
+      - ifname: intf100
         spaces: [admin]
         mac: ["24:8a:07:3f:96:86"]
-      - ifname: ens1f1
-        spaces: [public]
-        mac: ["90:E2:BA:84:08:B9"]
+      - ifname: intf101
+        spaces: [floating]
+        mac: ["24:8a:07:3f:96:87"]
       power:
         type: ipmi
         address: 192.0.5.126
@@ -37,12 +37,12 @@ lab:
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: ens1f0
+      - ifname: intf100
         spaces: [admin]
         mac: ["24:8a:07:3f:95:b6"]
-      - ifname: ens1f1
-        spaces: [public]
-        mac: ["90:E2:BA:84:07:0E"]
+      - ifname: intf101
+        spaces: [floating]
+        mac: ["24:8a:07:3f:95:b7"]
       power:
         type: ipmi
         address: 192.0.5.127
@@ -52,34 +52,34 @@ lab:
       architecture: x86_64
       roles: [compute,storage]
       nics:
-      - ifname: ens1f0
+      - ifname: intf100
         spaces: [admin]
         mac: ["24:8a:07:3f:96:4e"]
-      - ifname: ens1f1
-        spaces: [public]
-        mac: ["90:E2:BA:83:FD:81"]
+      - ifname: intf101
+        spaces: [floating]
+        mac: ["24:8a:07:3f:96:4f"]
       power:
         type: ipmi
         address: 192.0.5.128
         user: USERID
         pass: PASSW0RD
-#    - name: rack-1-m5
-#      architecture: x86_64
-#      roles: [compute,storage]
-#      nics:
-#      - ifname: ens1f0
-#        spaces: [admin]
-#        mac: ["00:1E:67:E0:0A:4B"]
-#      - ifname: ens1f1
-#        spaces: [public]
-#        mac: ["90:E2:BA:75:22:75"]
-#      power:
-#        type: ipmi
-#        address: 192.0.5.129
-#        user: USERID
-#        pass: PASSW0RD
+    - name: rack-1-m5
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: intf100
+        spaces: [admin]
+        mac: ["00:1E:67:E0:0A:4B"]
+      - ifname: intf101
+        spaces: [floating]
+        mac: ["00:1E:67:E0:0A:4C"]
+      power:
+        type: ipmi
+        address: 192.0.5.129
+        user: USERID
+        pass: PASSW0RD
     floating-ip-range: 172.21.159.6,172.21.159.100,172.21.159.1,172.21.159.0/24
-    ext-port: "br-ens1f1"
+    ext-port: "br-intf101"
     dns: 8.8.8.8
     osdomainname:
 opnfv:
@@ -99,7 +99,7 @@ opnfv:
       cidr: 192.0.5.0/24
       gateway: 192.0.5.5
       vlan:
-    - type: public
+    - type: floating
       bridge: brPublic
       cidr: 172.21.159.0/24
       gateway: 172.21.159.1

@@ -654,8 +654,10 @@ if [ -e ./labconfig.json ]; then
                 IF_MACLOWER=$( cat labconfig.json | jq ".lab.racks[0].nodes[$NODE_ID].nics[] | select(.ifname==\"$IF_NEWNAME\")".mac[0])
                 IF_MAC=(${IF_MACLOWER,,})
                 IF_ID=$( maas ubuntu interfaces read $NODE_SYS_ID | jq ".[] | select(.mac_address==$IF_MAC)".id)
-                maas $PROFILE interface update $NODE_SYS_ID $IF_ID name=$IF_NEWNAME
-                IF_NAME=$IF_NEWNAME
+                if ([ $IF_ID ] && [ "$IF_ID" != "null" ]); then
+                    maas $PROFILE interface update $NODE_SYS_ID $IF_ID name=$IF_NEWNAME
+                    IF_NAME=$IF_NEWNAME
+                fi
             fi
 
             # In case of a VLAN interface
