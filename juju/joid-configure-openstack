@@ -43,7 +43,7 @@ neutron subnet-show private_subnet > /dev/null 2>&1 || neutron subnet-create pri
 SUBNET_ID=$(neutron subnet-show private_subnet | grep " id" | awk '{print $4}')
 
 #Create router for external network and private network
-neutron router-show provider-router > /dev/null 2>&1 || neutron router-create --tenant-id $TENANT_ID provider-router
+openstack router list provider-router > /dev/null 2>&1 || openstack router create --project-domain=$OS_PROJECT_DOMAIN_NAME --project $OS_PROJECT_NAME provider-router
 ROUTER_ID=$(neutron router-show provider-router | grep " id" | awk '{print $4}')
 
 neutron router-gateway-clear provider-router || true

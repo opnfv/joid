@@ -92,41 +92,25 @@ create_openrc() {
         adminPasswd=$(juju config keystone | grep admin-password -A 5 | grep value | awk '{print $2}' 2> /dev/null)
     fi
 
-    configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v2.0 RegionOne > ~/joid_config/admin-openrc
+    configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v3 RegionOne > ~/joid_config/admin-openrc
+
     chmod 0600 ~/joid_config/admin-openrc
 }
 
 configOpenrc() {
-if [ "$API_FQDN" != "None" ]; then
-    cat <<-EOF
-        export SERVICE_ENDPOINT=$4
-        unset SERVICE_TOKEN
-        unset SERVICE_ENDPOINT
-        export OS_USERNAME=$1
-        export OS_PASSWORD=$2
-        export OS_TENANT_NAME=$3
-        export OS_AUTH_URL=$4
-        export OS_REGION_NAME=$5
-        export OS_ENDPOINT_TYPE='internalURL'
-        export CINDER_ENDPOINT_TYPE='internalURL'
-        export GLANCE_ENDPOINT_TYPE='internalURL'
-        export KEYSTONE_ENDPOINT_TYPE='internalURL'
-        export NEUTRON_ENDPOINT_TYPE='internalURL'
-        export NOVA_ENDPOINT_TYPE='internalURL'
+cat <<-EOF
+export OS_AUTH_URL=$4
+export OS_USERNAME=$1
+export OS_PASSWORD=$2
+export OS_USER_DOMAIN_NAME=admin_domain
+export OS_PROJECT_DOMAIN_NAME=admin_domain
+export OS_PROJECT_NAME=$3
+export OS_TENANT_NAME=$3
+export OS_REGION_NAME=$5
+export OS_IDENTITY_API_VERSION=3
+# Swift needs this:
+export OS_AUTH_VERSION=3
 EOF
-else
-    cat <<-EOF
-        export SERVICE_ENDPOINT=$4
-        unset SERVICE_TOKEN
-        unset SERVICE_ENDPOINT
-        export OS_USERNAME=$1
-        export OS_PASSWORD=$2
-        export OS_TENANT_NAME=$3
-        export OS_AUTH_URL=$4
-        export OS_REGION_NAME=$5
-EOF
-
-fi
 }
 
 if [ "$API_FQDN" != "None" ]; then
@@ -232,36 +216,38 @@ neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net
    --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
    --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
 
-# Create Congress datasources
-sudo apt-get install -y python-congressclient
+#congress team is not updating and supporting charm anymore so defer it.
 
-openstack congress datasource create nova "nova" \
-  --config username=$OS_USERNAME \
-  --config tenant_name=$OS_TENANT_NAME \
-  --config password=$OS_PASSWORD \
-  --config auth_url=http://$keystoneIp:5000/v2.0
-openstack congress datasource create neutronv2 "neutronv2" \
-  --config username=$OS_USERNAME \
-  --config tenant_name=$OS_TENANT_NAME \
-  --config password=$OS_PASSWORD \
-  --config auth_url=http://$keystoneIp:5000/v2.0
-openstack congress datasource create ceilometer "ceilometer" \
-  --config username=$OS_USERNAME \
-  --config tenant_name=$OS_TENANT_NAME \
-  --config password=$OS_PASSWORD \
-  --config auth_url=http://$keystoneIp:5000/v2.0
-openstack congress datasource create cinder "cinder" \
-  --config username=$OS_USERNAME \
-  --config tenant_name=$OS_TENANT_NAME \
-  --config password=$OS_PASSWORD \
-  --config auth_url=http://$keystoneIp:5000/v2.0
-openstack congress datasource create glancev2 "glancev2" \
-  --config username=$OS_USERNAME \
-  --config tenant_name=$OS_TENANT_NAME \
-  --config password=$OS_PASSWORD \
-  --config auth_url=http://$keystoneIp:5000/v2.0
-openstack congress datasource create keystone "keystone" \
-  --config username=$OS_USERNAME \
-  --config tenant_name=$OS_TENANT_NAME \
-  --config password=$OS_PASSWORD \
-  --config auth_url=http://$keystoneIp:5000/v2.0
+# Create Congress datasources
+#sudo apt-get install -y python-congressclient
+
+#openstack congress datasource create nova "nova" \
+#  --config username=$OS_USERNAME \
+#  --config tenant_name=$OS_TENANT_NAME \
+#  --config password=$OS_PASSWORD \
+#  --config auth_url=http://$keystoneIp:5000/v2.0
+#openstack congress datasource create neutronv2 "neutronv2" \
+#  --config username=$OS_USERNAME \
+#  --config tenant_name=$OS_TENANT_NAME \
+#  --config password=$OS_PASSWORD \
+#  --config auth_url=http://$keystoneIp:5000/v2.0
+#openstack congress datasource create ceilometer "ceilometer" \
+#  --config username=$OS_USERNAME \
+#  --config tenant_name=$OS_TENANT_NAME \
+#  --config password=$OS_PASSWORD \
+#  --config auth_url=http://$keystoneIp:5000/v2.0
+#openstack congress datasource create cinder "cinder" \
+#  --config username=$OS_USERNAME \
+#  --config tenant_name=$OS_TENANT_NAME \
+#  --config password=$OS_PASSWORD \
+#  --config auth_url=http://$keystoneIp:5000/v2.0
+#openstack congress datasource create glancev2 "glancev2" \
+#  --config username=$OS_USERNAME \
+#  --config tenant_name=$OS_TENANT_NAME \
+#  --config password=$OS_PASSWORD \
+#  --config auth_url=http://$keystoneIp:5000/v2.0
+#openstack congress datasource create keystone "keystone" \
+#  --config username=$OS_USERNAME \
+#  --config tenant_name=$OS_TENANT_NAME \
+#  --config password=$OS_PASSWORD \
+#  --config auth_url=http://$keystoneIp:5000/v2.0

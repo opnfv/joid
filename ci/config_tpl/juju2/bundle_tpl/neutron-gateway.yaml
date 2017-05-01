@@ -12,6 +12,9 @@
 {% endif %}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+{% if os.git_repo.origin_git %}
+        openstack-origin-git: "{{ os.git_repo.branch }}"
+{% endif %}
 {% if os.api.worker_multiplier %}
         worker-multiplier: {{ os.api.worker_multiplier }}
 {% endif %}

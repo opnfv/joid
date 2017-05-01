@@ -6,7 +6,7 @@ mkdir -p ~/.kube || true
 juju scp kubernetes-master/0:config ~/.kube/config || true
 
 if [ ! -f /snap/kubectl/current/kubectl ]; then
-  sudo apt-get install snapd
+  sudo apt-get install snapd -y
   sudo snap install kubectl --classic
 fi
 

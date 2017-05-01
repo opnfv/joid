@@ -12,7 +12,7 @@ fi
 #install the packages needed
 sudo apt-add-repository ppa:juju/stable -y
 sudo apt-add-repository ppa:maas/stable -y
-sudo apt-add-repository cloud-archive:newton -y
+sudo apt-add-repository cloud-archive:ocata -y
 sudo apt-get update -y
 #sudo apt-get dist-upgrade -y
 sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvirt-bin juju \
@@ -404,7 +404,7 @@ addnodes(){
     fi
 
     sudo virt-install --connect qemu:///system --name bootstrap --ram 4098 --cpu host --vcpus 2 --video \
-                 cirrus --arch x86_64 --disk size=20,format=qcow2,bus=virtio,io=native,pool=default \
+                 cirrus --arch x86_64 --disk size=20,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
                  $netw --boot network,hd,menu=off --noautoconsole \
                  --vnc --print-xml | tee bootstrap
 
@@ -437,7 +437,7 @@ addnodes(){
            NODE_NAME=`cat labconfig.json | jq ".lab.racks[].nodes[$units].name" | cut -d \" -f 2 `
 
             sudo virt-install --connect qemu:///system --name $NODE_NAME --ram 8192 --cpu host --vcpus 4 \
-                     --disk size=120,format=qcow2,bus=virtio,io=native,pool=default \
+                     --disk size=120,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
                      $netw $netw --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee $NODE_NAME
 
             nodemac=`grep  "mac address" $NODE_NAME | head -1 | cut -d '"' -f 2`

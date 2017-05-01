@@ -11,6 +11,9 @@
 {% endif %}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+{% if os.git_repo.origin_git %}
+        openstack-origin-git: "{{ os.git_repo.branch }}"
+{% endif %}
         enable-live-migration: true
         enable-resize: true
         migration-auth-type: ssh

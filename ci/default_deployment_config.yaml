@@ -1,7 +1,10 @@
 ubuntu:
     release: xenial
 os:
-    release: newton
+    release: ocata
+    git_repo:
+        origin_git: False
+        branch: ocata
     hyperconverged: True
     ha:
         mode: ha
@@ -30,7 +33,7 @@ os:
         cpu_pin: False
         cpu_pin_set: all
     service:
-        congress: True
+        congress: False
         promise: True
         bindings: True
         openbaton: False

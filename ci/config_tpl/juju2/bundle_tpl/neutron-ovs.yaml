@@ -12,6 +12,9 @@
 {% endif %}
 {% else %}
       options:
+{% if os.git_repo.origin_git %}
+        openstack-origin-git: "{{ os.git_repo.branch }}"
+{% endif %}
 {% if opnfv.spaces_dict.data is defined %}
         os-data-network: {{ opnfv.spaces_dict.data.cidr }}
 {% endif %}

@@ -14,6 +14,9 @@
 {% endif %}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+{% if os.git_repo.origin_git %}
+        openstack-origin-git: "{{ os.git_repo.branch }}"
+{% endif %}
         region: {{ os.region }}
         neutron-security-groups: true
 {% if os.beta.public_api %}

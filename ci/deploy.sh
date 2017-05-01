@@ -7,9 +7,9 @@ set -ex
 
 opnfvsdn=nosdn
 opnfvtype=nonha
-openstack=newton
+openstack=ocata
 opnfvlab=default
-opnfvrel=d
+opnfvrel=e
 opnfvfeature=none
 opnfvdistro=xenial
 opnfvarch=amd64
@@ -88,7 +88,7 @@ createresource() {
         if [[ -z "$node_id" ]]; then
             sudo virt-install --connect qemu:///system --name $node \
                 --ram 8192 --cpu host --vcpus 4 \
-                --disk size=120,format=qcow2,bus=virtio,io=native,pool=default \
+                --disk size=120,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
                 --network bridge=virbr0,model=virtio \
                 --network bridge=virbr0,model=virtio \
                 --boot network,hd,menu=off \
@@ -136,6 +136,11 @@ deploy() {
                 echo " MAAS not deployed please deploy MAAS first."
             fi
         fi
+#create json file which is missing in case of new deployment after maas and git tree cloned freshly.
+
+        python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < labconfig.yaml > labconfig.json
+        python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < deployconfig.yaml > deployconfig.json
+
     else
         if [ ! -f ./environments.yaml ] && [ -e ~/.juju/environments.yaml ]; then
             cp ~/.juju/environments.yaml ./environments.yaml

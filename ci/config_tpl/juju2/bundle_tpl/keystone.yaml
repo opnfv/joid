@@ -14,10 +14,13 @@
 {% endif %}
       options:
         openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+{% if os.git_repo.origin_git %}
+        openstack-origin-git: "{{ os.git_repo.branch }}"
+{% endif %}
         region: {{ os.region }}
         admin-role: {{ os.admin.role }}
         keystone-admin-role: {{ os.admin.role }}
-        preferred-api-version: 2
+        preferred-api-version: 3
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
