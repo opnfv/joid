@@ -10,6 +10,7 @@ if [ ! -e $HOME/.ssh/id_rsa ]; then
 fi
 
 #install the packages needed
+sudo apt-get install software-properties-common -y
 sudo apt-add-repository ppa:juju/stable -y
 sudo apt-add-repository ppa:maas/stable -y
 sudo apt-add-repository cloud-archive:ocata -y
