@@ -78,12 +78,13 @@ openstack flavor show m1.xlarge > /dev/null 2>&1 || openstack flavor create --ra
 echo "modifying default quotas for admin user"
 
 #Modify quotas for the tenant to allow large deployments
-openstack quota set --instances 400 --cores 800 --ram 404800 --secgroups 4000 --floating-ips -1 --secgroup-rules -1 $TENANT_ID
+PROJECT_ID=`openstack quota show -f value -c project`
+openstack quota set --instances 400 --cores 800 --ram 404800 --secgroups 4000 --floating-ips -1 --secgroup-rules -1 $PROJECT_ID
 
 ### need to find how to change quota for the project not the tenant
 
 ### modify default quota the same way..
-openstack quota set --class --instances 400 --cores 800 --ram 404800 --secgroups 4000 --floating-ips -1 --secgroup-rules -1 $TENANT_ID
+#openstack quota set --class --instances 400 --cores 800 --ram 404800 --secgroups 4000 --floating-ips -1 --secgroup-rules -1 $TENANT_ID
 
 echo "Uploading images to glance"
 
