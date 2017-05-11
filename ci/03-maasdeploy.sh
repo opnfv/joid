@@ -354,8 +354,23 @@ addnodes(){
         maas ubuntu machine delete $m
     done
 
+    # if we have a virshurl configuration we use it, else we use local
+    VIRSHURL=$(cat labconfig.json | jq -r '.opnfv.virshurl')
+    if ([ $VIRSHURL == "" ] || [ "$VIRSHURL" == "null" ]); then
+        VIRSHURL="qemu:///system "
+        VIRSHHOST=""
+    else
+        VIRSHHOST=$(echo $VIRSHURL| cut -d\/ -f 3 | cut -d@ -f2)
+    fi
+
     if [ "$virtinstall" -eq 1 ]; then
         netw=" --network bridge=virbr0,model=virtio"
+    elif [ $VIRSHHOST != "" ]; then
+        # Get the bridge hosting the remote virsh
+        brid=$(ssh $VIRSHHOST "ip a l | grep $VIRSHHOST | perl -pe 's/.* (.*)\$/\$1/g'")
+        netw=" --network bridge=$brid,model=virtio"
+        # prepare a file containing virsh remote url to connect without adding it n command line
+        echo "export VIRSH_DEFAULT_CONNECT_URI=$VIRSHURL" > virsh_uri.sh
     else
         brid=`brctl show | grep 8000 | cut -d "8" -f 1 |  tr "\n" " " | tr "    " " " | tr -s " "`
 
@@ -371,7 +386,7 @@ addnodes(){
         done
     fi
 
-    sudo virt-install --connect qemu:///system --name bootstrap --ram 4098 --cpu host --vcpus 2 --video \
+    virt-install --connect $VIRSHURL --name bootstrap --ram 4098 --cpu host --vcpus 2 --video \
                  cirrus --arch x86_64 --disk size=20,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
                  $netw --boot network,hd,menu=off --noautoconsole \
                  --vnc --print-xml | tee bootstrap
@@ -385,12 +400,14 @@ addnodes(){
             bootstrapmac=$bootstrapmac" mac_addresses="$mac
         done
     fi
-    sudo virsh -c qemu:///system define --file bootstrap
+    virsh -c $VIRSHURL define --file bootstrap
     rm -f bootstrap
+
+    sleep 60
 
     maas $PROFILE machines create autodetect_nodegroup='yes' name='bootstrap' \
         tags='bootstrap' hostname='bootstrap' power_type='virsh' mac_addresses=$bootstrapmac \
-        power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
+        power_parameters_power_address=$VIRSHURL \
         architecture='amd64/generic' power_parameters_power_id='bootstrap'
 
     bootstrapid=$(maas $PROFILE machines read | jq -r '.[] | select(.hostname == "bootstrap").system_id')
