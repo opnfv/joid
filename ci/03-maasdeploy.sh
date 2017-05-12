@@ -334,7 +334,7 @@ addnodes(){
     # if we have a virshurl configuration we use it, else we use local
     VIRSHURL=$(cat labconfig.json | jq -r '.opnfv.virshurl')
     if ([ $VIRSHURL == "" ] || [ "$VIRSHURL" == "null" ]); then
-        VIRSHURL="qemu:///system "
+        VIRSHURL="qemu://$USER@$MAAS_IP/system "
         VIRSHHOST=""
     else
         VIRSHHOST=$(echo $VIRSHURL| cut -d\/ -f 3 | cut -d@ -f2)
@@ -407,7 +407,7 @@ addnodes(){
             rm -f $NODE_NAME
             maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
                 tags='control compute' hostname=$NODE_NAME power_type='virsh' mac_addresses=$nodemac \
-                power_parameters_power_address='qemu+ssh://'$USER'@'$MAAS_IP'/system' \
+                power_parameters_power_address="$VIRSHURL" \
                 architecture='amd64/generic' power_parameters_power_id=$NODE_NAME
             nodeid=$(maas $PROFILE machines read | jq -r '.[] | select(.hostname == '\"$NODE_NAME\"').system_id')
             maas $PROFILE tag update-nodes control add=$nodeid || true
