@@ -83,7 +83,7 @@ PROFILE=ubuntu
 MY_UPSTREAM_DNS=`grep "upstream_dns" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
 SSH_KEY=`cat ~/.ssh/id_rsa.pub`
 MAIN_ARCHIVE=`grep "main_archive" deployconfig.yaml | cut -d ':' -f 2-3 | sed -e 's/ //'`
-URL=https://images.maas.io/ephemeral-v2/daily/
+URL=https://images.maas.io/ephemeral-v3/daily/
 KEYRING_FILE=/usr/share/keyrings/ubuntu-cloudimage-keyring.gpg
 SOURCE_ID=1
 FABRIC_ID=1
@@ -190,7 +190,7 @@ installmaas(){
 configuremaas(){
     #reconfigure maas with correct MAAS address.
     #Below code is needed as MAAS have issue in commisoning without restart.
-    sudo ./maas-reconfigure-region.sh $MAAS_IP
+    #sudo ./maas-reconfigure-region.sh $MAAS_IP
     sleep 30
     sudo maas-rack config --region-url http://$MAAS_IP:5240/MAAS
 
@@ -218,10 +218,10 @@ configuremaas(){
         maas $PROFILE spaces create name=$space || true
     done
 
-    #maas $PROFILE boot-source update $SOURCE_ID \
-    #     url=$URL keyring_filename=$KEYRING_FILE || true
+    maas $PROFILE boot-source update $SOURCE_ID \
+         url=$URL keyring_filename=$KEYRING_FILE || true
+
     maas $PROFILE boot-resources import || true
-    sleep 10
 
     while [ "$(maas $PROFILE boot-resources is-importing)" == "true" ];
     do
@@ -334,7 +334,7 @@ addnodes(){
     # if we have a virshurl configuration we use it, else we use local
     VIRSHURL=$(cat labconfig.json | jq -r '.opnfv.virshurl')
     if ([ $VIRSHURL == "" ] || [ "$VIRSHURL" == "null" ]); then
-        VIRSHURL="qemu://$USER@$MAAS_IP/system "
+        VIRSHURL="qemu+ssh://$USER@$MAAS_IP/system "
         VIRSHHOST=""
     else
         VIRSHHOST=$(echo $VIRSHURL| cut -d\/ -f 3 | cut -d@ -f2)
@@ -384,7 +384,7 @@ addnodes(){
 
     maas $PROFILE machines create autodetect_nodegroup='yes' name='bootstrap' \
         tags='bootstrap' hostname='bootstrap' power_type='virsh' mac_addresses=$bootstrapmac \
-        power_parameters_power_address='qemu+ssh://'$USER'@'$VIRSHHOST'/system' \
+        power_parameters_power_address="$VIRSHURL" \
         architecture='amd64/generic' power_parameters_power_id='bootstrap'
 
     bootstrapid=$(maas $PROFILE machines read | jq -r '.[] | select(.hostname == "bootstrap").system_id')
@@ -398,12 +398,12 @@ addnodes(){
            units=$(($units - 1));
            NODE_NAME=`cat labconfig.json | jq ".lab.racks[].nodes[$units].name" | cut -d \" -f 2 `
 
-            sudo virt-install --connect qemu:///system --name $NODE_NAME --ram 8192 --cpu host --vcpus 4 \
+            sudo virt-install --connect $VIRSHURL --name $NODE_NAME --ram 8192 --cpu host --vcpus 4 \
                      --disk size=120,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
                      $netw $netw --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee $NODE_NAME
 
             nodemac=`grep  "mac address" $NODE_NAME | head -1 | cut -d '"' -f 2`
-            sudo virsh -c qemu:///system define --file $NODE_NAME
+            sudo virsh -c $VIRSHURL --file $NODE_NAME
             rm -f $NODE_NAME
             maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
                 tags='control compute' hostname=$NODE_NAME power_type='virsh' mac_addresses=$nodemac \
@@ -451,6 +451,7 @@ setupspacenetwork
 
 #just make sure rack controller has been synced and import only
 # just whether images have been imported or not.
+sudo ./maas-reconfigure-region.sh $MAAS_IP
 sleep 120
 
 #lets add the nodes now. Currently works only for virtual deploymnet.

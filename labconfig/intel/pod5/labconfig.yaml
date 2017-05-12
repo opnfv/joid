@@ -7,19 +7,19 @@ lab:
       architecture: x86_64
       roles: [network,control]
       nics:
-      - ifname: enp4s0f3
+      - ifname: intf0
         spaces: [admin]
         mac: ["00:1E:67:CF:BB:54"]
-      - ifname: ens785f0
+      - ifname: intf1
         spaces: [data]
         mac: ["90:E2:BA:85:4E:2C"]
-      - ifname: ens785f1.504
+      - ifname: intf2.504
         spaces: [public]
         mac: ["90:E2:BA:85:4E:2D"]
-      - ifname: ens785f0.505
+      - ifname: intf1.505
         spaces: [floating]
         mac: ["90:E2:BA:85:4E:2C"]
-      - ifname: ens785f1
+      - ifname: intf2
         spaces: [storage]
         mac: ["90:E2:BA:85:4E:2D"]
       power:
@@ -31,21 +31,21 @@ lab:
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: enp4s0f3
+      - ifname: intf0
         spaces: [admin]
         mac: ["00:1E:67:CF:B8:93"]
-      - ifname: ens785f0
+      - ifname: intf1
         spaces: [data]
         mac: ["90:E2:BA:84:08:B8"]
-      - ifname: ens785f1.504
+      - ifname: intf2.504
         spaces: [public]
         mac: ["90:E2:BA:84:08:B9"]
-      - ifname: ens785f0.505
+      - ifname: intf1.505
         spaces: [floating]
-        mac: ["90:E2:BA:85:4E:2C"]
-      - ifname: ens785f1
+        mac: ["90:E2:BA:84:08:B8"]
+      - ifname: intf2
         spaces: [storage]
-        mac: ["90:E2:BA:85:4E:2D"]
+        mac: ["90:E2:BA:84:08:B9"]
       power:
         type: ipmi
         address: 10.2.117.86
@@ -55,21 +55,21 @@ lab:
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: enp4s0f3
+      - ifname: intf0
         spaces: [admin]
         mac: ["00:1E:67:E0:08:7F"]
-      - ifname: ens785f0
+      - ifname: intf1
         spaces: [data]
-        mac: ["90:E2:BA:84:07:0D"]
-      - ifname: ens785f1.504
+        mac: ["90:E2:BA:84:07:0C"]
+      - ifname: intf2.504
         spaces: [public]
-        mac: ["90:E2:BA:84:07:0E"]
-      - ifname: ens785f0.505
+        mac: ["90:E2:BA:84:07:0D"]
+      - ifname: intf1.505
         spaces: [floating]
-        mac: ["90:E2:BA:85:4E:2C"]
-      - ifname: ens785f1
+        mac: ["90:E2:BA:84:07:0C"]
+      - ifname: intf2
         spaces: [storage]
-        mac: ["90:E2:BA:85:4E:2D"]
+        mac: ["90:E2:BA:84:07:0D"]
       power:
         type: ipmi
         address: 10.2.117.87
@@ -79,21 +79,21 @@ lab:
       architecture: x86_64
       roles: [compute,storage]
       nics:
-      - ifname: enp4s0f3
+      - ifname: intf0
         spaces: [admin]
         mac: ["00:1E:67:E0:08:B1"]
-      - ifname: ens785f0
+      - ifname: intf1
         spaces: [data]
         mac: ["90:E2:BA:83:FD:80"]
-      - ifname: ens785f1.504
+      - ifname: intf2.504
         spaces: [public]
         mac: ["90:E2:BA:83:FD:81"]
-      - ifname: ens785f0.505
+      - ifname: intf1.505
         spaces: [floating]
-        mac: ["90:E2:BA:85:4E:2C"]
-      - ifname: ens785f1
+        mac: ["90:E2:BA:83:FD:80"]
+      - ifname: intf2
         spaces: [storage]
-        mac: ["90:E2:BA:85:4E:2D"]
+        mac: ["90:E2:BA:83:FD:81"]
       power:
         type: ipmi
         address: 10.2.117.88
@@ -103,21 +103,21 @@ lab:
       architecture: x86_64
       roles: [compute,storage]
       nics:
-      - ifname: enp4s0f3
+      - ifname: intf0
         spaces: [admin]
         mac: ["00:1E:67:E0:0A:4B"]
-      - ifname: ens785f0
+      - ifname: intf1
         spaces: [data]
         mac: ["90:E2:BA:75:22:74"]
-      - ifname: ens785f1.504
+      - ifname: intf2.504
         spaces: [public]
         mac: ["90:E2:BA:75:22:75"]
-      - ifname: ens785f0.505
+      - ifname: intf1.505
         spaces: [floating]
-        mac: ["90:E2:BA:85:4E:2C"]
-      - ifname: ens785f1
+        mac: ["90:E2:BA:75:22:74"]
+      - ifname: intf2
         spaces: [storage]
-        mac: ["90:E2:BA:85:4E:2D"]
+        mac: ["90:E2:BA:75:22:75"]
       power:
         type: ipmi
         address: 10.2.117.89
@@ -127,13 +127,13 @@ lab:
 #      architecture: x86_64
 #      roles: [compute,storage]
 #      nics:
-#      - ifname: enp4s0f3
+#      - ifname: intf0
 #        spaces: [admin]
 #        mac: ["98:4F:EE:10:03:43"]
-#      - ifname: ens785f0
+#      - ifname: intf1
 #        spaces: [data]
 #        mac: ["00:1E:67:9C:3E:54"]
-#      - ifname: ens785f1.504
+#      - ifname: intf2.504
 #        spaces: [public]
 #        mac: ["00:1E:67:9C:3E:55"]
 #      power:
@@ -142,7 +142,7 @@ lab:
 #        user: root
 #        pass: root
     floating-ip-range: 10.5.15.6,10.5.15.250,10.5.15.1,10.5.15.0/24
-    ext-port: "ens785f0.505"
+    xt-port: "intf1.505"
     dns: 8.8.8.8
     osdomainname:
 opnfv:
