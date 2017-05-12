@@ -240,7 +240,7 @@ setupspacenetwork(){
         SPACE_VLAN=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="'$type'")'.vlan | cut -d \" -f 2 `
         SPACE_GWAY=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="'$type'")'.gateway | cut -d \" -f 2 `
         NET_FABRIC_NAME=$(maas $PROFILE subnets read | jq -r ".[] |  select(.cidr==\"$SPACE_CIDR\")".vlan.fabric)
-        if ([ $NET_FABRIC_NAME ]); then
+        if ([ $NET_FABRIC_NAME ] && [ $NET_FABRIC_NAME != "null" ]); then
             NET_FABRIC_VID=$(maas $PROFILE subnets read | jq -r ".[] |  select(.cidr==\"$SPACE_CIDR\")".vlan.vid)
             NET_FABRIC_ID=$(maas $PROFILE fabric read $NET_FABRIC_NAME | jq -r ".id")
             if ([ $SPACE_VLAN == "null" ]); then
@@ -282,6 +282,7 @@ setupspacenetwork(){
                         maas $PROFILE subnets create fabric=$FABRIC_ID cidr=$SPACE_CIDR vid="0"
                     fi
                 fi
+                NET_FABRIC_NAME=$(maas $PROFILE subnets read | jq -r ".[] |  select(.cidr==\"$SPACE_CIDR\")".vlan.fabric)
             fi
         fi
         case "$type" in
@@ -294,8 +295,8 @@ setupspacenetwork(){
             *)                 JUJU_SPACE='default';       DHCP='OFF'; echo "      >>> Unknown SPACE" ;;
         esac
         JUJU_SPACE_ID=$(maas $PROFILE spaces read | jq -r ".[] |  select(.name==\"$JUJU_SPACE\")".id)
-        if ([ $JUJU_SPACE ] && [ $JUJU_SPACE != "null" ]); then
-            maas $PROFILE subnet update $SUBNET_CIDR space=$JUJU_SPACE_ID
+        if ([ $NET_FABRIC_NAME ] && [ $NET_FABRIC_NAME != "null" ]); then 
+            maas $PROFILE subnet update $SPACE_CIDR space=$JUJU_SPACE_ID
         fi
         if ([ $type == "admin" ]); then
                     # If we have a network, we create it
@@ -383,7 +384,7 @@ addnodes(){
 
     maas $PROFILE machines create autodetect_nodegroup='yes' name='bootstrap' \
         tags='bootstrap' hostname='bootstrap' power_type='virsh' mac_addresses=$bootstrapmac \
-        power_parameters_power_address=$VIRSHURL \
+        power_parameters_power_address='qemu+ssh://'$USER'@'$VIRSHHOST'/system' \
         architecture='amd64/generic' power_parameters_power_id='bootstrap'
 
     bootstrapid=$(maas $PROFILE machines read | jq -r '.[] | select(.hostname == "bootstrap").system_id')
@@ -447,14 +448,6 @@ sleep 30
 # third parameter will define the space. It is required to have admin
 
 setupspacenetwork
-#setopnfvspaces
-#getfabrichostingnet $SUBNET_CIDR
-#ADMIN_FABRIC_ID=$NET_FABRIC_ID
-#ADMIN_FABRIC_NAME=$NET_FABRIC_NAME
-#deleteexistingnetw
-#sleep 30
-#setopnfvfabrics
-#deleteunusednetw
 
 #just make sure rack controller has been synced and import only
 # just whether images have been imported or not.
@@ -517,11 +510,12 @@ if [ -e ./labconfig.json ]; then
         for IF_NAME in $IF_LIST; do
             # get the space of the interface
             IF_SPACE=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] | select(.ifname==\"$IF_NAME\") ".spaces[])
+            SUBNET_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="'$IF_SPACE'")'.cidr | cut -d \" -f 2 `
             case "$IF_SPACE" in
-                'data') SUBNET_CIDR=$SUBNETDATA_CIDR; IF_MODE='AUTO' ;;
-                'public') SUBNET_CIDR=$SUBNETPUB_CIDR; IF_MODE='AUTO' ;;
-                'storage') SUBNET_CIDR=$SUBNETSTOR_CIDR; IF_MODE='AUTO' ;;
-                'floating') SUBNET_CIDR=$SUBNETFLOAT_CIDR; IF_MODE='link_up' ;;
+                'data')     IF_MODE='AUTO' ;;
+                'public')   IF_MODE='AUTO' ;;
+                'storage')  IF_MODE='AUTO' ;;
+                'floating') IF_MODE='link_up' ;;
                 *) SUBNET_CIDR='null'; IF_MODE='null'; echo "      >>> Unknown SPACE" ;;
             esac
             echo "   >>> Configuring interface $IF_NAME [$IF_SPACE][$SUBNET_CIDR]"
