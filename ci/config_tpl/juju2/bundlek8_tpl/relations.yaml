@@ -5,6 +5,7 @@
 {% endif %}
     - [ 'kubernetes-master:certificates', 'easyrsa:client' ]
     - [ 'kubernetes-master:etcd', 'etcd:db' ]
+    - [ 'kubernetes-master:kube-conrol', 'kubernetes-worker:kube-control' ]
     - [ 'kubernetes-worker:certificates', 'easyrsa:client' ]
     - [ 'flannel:etcd', 'etcd:db' ]
     - [ 'flannel:cni', 'kubernetes-master:cni' ]
