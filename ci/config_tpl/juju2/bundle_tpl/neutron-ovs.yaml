@@ -3,7 +3,7 @@
 {% if os.service.bindings %}
 {% if opnfv.spaces_dict.data is defined %}
       bindings:
-        data: admin-api
+        data: tenant-data
       options:
 {% else %}
       bindings:
