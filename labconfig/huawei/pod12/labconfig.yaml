@@ -7,14 +7,14 @@ lab:
       architecture: x86_64
       roles: [network,control]
       nics:
-      - ifname: eth1
+      - ifname: intf0
         spaces: [admin]
         mac: ["88:cf:98:83:31:d8"]
-      - ifname: eth4
+      - ifname: intf1
         spaces: [data]
         mac: ["88:cf:98:e9:9a:99"]
-      - ifname: eth5
-        spaces: [public]
+      - ifname: intf2
+        spaces: [floating]
         mac: ["88:cf:98:e9:9a:9a"]
       power:
         type: ipmi
@@ -25,14 +25,14 @@ lab:
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: eth1
+      - ifname: intf0
         spaces: [admin]
         mac: ["88:cf:98:61:66:0b"]
-      - ifname: eth4
+      - ifname: intf1
         spaces: [data]
         mac: ["88:cf:98:e9:9a:c3"]
-      - ifname: eth5
-        spaces: [public]
+      - ifname: intf2
+        spaces: [floating]
         mac: ["88:cf:98:e9:9a:c4"]
       power:
         type: ipmi
@@ -43,14 +43,14 @@ lab:
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: eth1
+      - ifname: intf0
         spaces: [admin]
         mac: ["88:cf:98:61:66:d9"]
-      - ifname: eth4
+      - ifname: intf1
         spaces: [data]
         mac: ["88:cf:98:e9:9a:9b"]
-      - ifname: eth5
-        spaces: [public]
+      - ifname: intf2
+        spaces: [floating]
         mac: ["88:cf:98:e9:9a:9c"]
       power:
         type: ipmi
@@ -61,14 +61,14 @@ lab:
       architecture: x86_64
       roles: [compute,storage]
       nics:
-      - ifname: eth1
+      - ifname: intf0
         spaces: [admin]
         mac: ["88:cf:98:83:30:b4"]
-      - ifname: eth4
+      - ifname: intf1
         spaces: [data]
         mac: ["88:cf:98:e9:9a:9b"]
-      - ifname: eth5
-        spaces: [public]
+      - ifname: intf2
+        spaces: [floating]
         mac: ["88:cf:98:e9:9a:9c"]
       power:
         type: ipmi
@@ -79,14 +79,14 @@ lab:
       architecture: x86_64
       roles: [compute,storage]
       nics:
-      - ifname: eth1
+      - ifname: intf0
         spaces: [admin]
         mac: ["88:cf:98:83:31:db"]
-      - ifname: eth4
+      - ifname: intf1
         spaces: [data]
         mac: ["88:cf:98:e9:9a:a5"]
-      - ifname: eth5
-        spaces: [public]
+      - ifname: intf2
+        spaces: [floating]
         mac: ["88:cf:98:e9:9a:a6"]
       power:
         type: ipmi
@@ -119,12 +119,12 @@ opnfv:
     bridge: brData
     cidr: 10.6.12.0/24
     gateway:
-    vlan: 31
+    vlan:
   - type: floating
     bridge: brPublic
     cidr: 10.6.15.0/24
     gateway:
-    vlan: 31
+    vlan:
   - type: external
     bridge: brExt
     cidr: 192.168.30.0/24

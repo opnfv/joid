@@ -142,7 +142,7 @@ lab:
 #        user: root
 #        pass: root
     floating-ip-range: 10.5.15.6,10.5.15.250,10.5.15.1,10.5.15.0/24
-    xt-port: "intf1.505"
+    ext-port: "intf1.505"
     dns: 8.8.8.8
     osdomainname:
 opnfv:

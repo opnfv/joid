@@ -88,7 +88,6 @@ KEYRING_FILE=/usr/share/keyrings/ubuntu-cloudimage-keyring.gpg
 SOURCE_ID=1
 FABRIC_ID=1
 PRIMARY_RACK_CONTROLLER="$MAAS_IP"
-SUBNET_CIDR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="admin")'.cidr | cut -d \" -f 2 `
 VLAN_UNTTAGED="untagged"
 
 # In the case of a virtual deployment get deployconfig.yaml
@@ -328,7 +327,7 @@ addnodes(){
     # make sure there is no machine entry in maas
     for m in $(maas $PROFILE machines read | jq -r '.[].system_id')
     do
-        maas ubuntu machine delete $m
+        maas $PROFILE machine delete $m
     done
 
     # if we have a virshurl configuration we use it, else we use local
@@ -342,7 +341,7 @@ addnodes(){
 
     if [ "$virtinstall" -eq 1 ]; then
         netw=" --network bridge=virbr0,model=virtio"
-    elif [ $VIRSHHOST != "" ]; then
+    elif ([ $VIRSHHOST != "" ]); then
         # Get the bridge hosting the remote virsh
         brid=$(ssh $VIRSHHOST "ip a l | grep $VIRSHHOST | perl -pe 's/.* (.*)\$/\$1/g'")
         netw=" --network bridge=$brid,model=virtio"
@@ -556,15 +555,17 @@ if [ -e ./labconfig.json ]; then
                 # rename interface if needed
                 IF_MACLOWER=$( cat labconfig.json | jq ".lab.racks[0].nodes[$NODE_ID].nics[] | select(.ifname==\"$IF_NEWNAME\")".mac[0])
                 IF_MAC=(${IF_MACLOWER,,})
-                IF_ID=$( maas ubuntu interfaces read $NODE_SYS_ID | jq ".[] | select(.mac_address==$IF_MAC)".id)
-                maas $PROFILE interface update $NODE_SYS_ID $IF_ID name=$IF_NEWNAME
+                IF_ID=$( maas $PROFILE interfaces read $NODE_SYS_ID | jq ".[] | select(.mac_address==$IF_MAC)".id)
+                if ([ $IF_ID ] && [ "$IF_ID" != "null" ]); then
+                    maas $PROFILE interface update $NODE_SYS_ID $IF_ID name=$IF_NEWNAME
+                fi
             fi
             # Configure the interface
             if ([ $SUBNET_CIDR ] && [ "$SUBNET_CIDR" != "null" ]); then
                 VLANID=$(maas $PROFILE subnet read $SUBNET_CIDR | jq -r '.vlan.id')
                 if !([ $IF_VLAN ] && [ "$IF_VLAN" != "null" ]); then
                     # If this interface is not a VLAN (done withe create-vlan)
-                    maas $PROFILE interface update $NODE_SYS_ID $IF_NAME vlan=$VLANID
+                    maas $PROFILE interface update $NODE_SYS_ID $IF_NAME vlan=$VLANID || true
                 fi
                 maas $PROFILE interface link-subnet $NODE_SYS_ID $IF_NAME  mode=$IF_MODE subnet=$SUBNET_CIDR || true
                 sleep 2

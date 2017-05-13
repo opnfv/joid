@@ -220,25 +220,27 @@ cnt_list=$(for cnt in $srv_list; do juju status $cnt --format=json | jq -r ".mac
 # get public network gateway (supposing it is the first ip of the network)
 public_api_gw=$(cat labconfig.json | jq --raw-output ".opnfv.spaces[] | select(.type==\"public\")".gateway)
 admin_gw=$(cat labconfig.json | jq --raw-output ".opnfv.spaces[] | select(.type==\"admin\")".gateway)
-# set default gateway to public api gateway
-for cnt in $cnt_list; do
-    echo "changing default gw on $cnt"
-    juju ssh $cnt "sudo ip r d default && sudo ip r a default via $public_api_gw";
-    juju ssh $cnt "gw_dev=\$(ip  r l | grep 'via $public_api_gw' | cut -d \  -f5) &&\
+
+if ([ $admin_gw ] && [ $admin_gw != "null" ])
+    # set default gateway to public api gateway
+    for cnt in $cnt_list; do
+        echo "changing default gw on $cnt"
+        juju ssh $cnt "sudo ip r d default && sudo ip r a default via $public_api_gw";
+        juju ssh $cnt "gw_dev=\$(ip  r l | grep 'via $public_api_gw' | cut -d \  -f5) &&\
                    sudo cp /etc/network/interfaces /etc/network/interfaces.bak &&\
                    echo 'removing old default gateway' &&\
                    sudo perl -i -pe 's/^\ *gateway $admin_gw\n$//' /etc/network/interfaces &&\
                    sudo perl -i -pe \"s/iface \$gw_dev inet static/iface \$gw_dev inet static\\n  gateway $public_api_gw/\" /etc/network/interfaces \
                    ";
-done
+    done
+fi
 
 echo "...... configure  ......."
 
-if [[ "$opnfvmodel" = "openstack" ]]; then
+if ([ $opnfvmodel == "openstack" ]); then
     ./openstack.sh "$opnfvsdn" "$opnfvlab" "$opnfvdistro" "$openstack" || true
 
     # creating heat domain after puching the public API into /etc/hosts
-
     if [[ "$jujuver" > "2" ]]; then
         status=`juju run-action heat/0 domain-setup`
         echo $status
@@ -247,12 +249,10 @@ if [[ "$opnfvmodel" = "openstack" ]]; then
         echo $status
     fi
 
-
     sudo ../juju/get-cloud-images || true
     ../juju/joid-configure-openstack || true
 
-fi
-if [[ "$opnfvmodel" = "kubernetes" ]]; then
+elif ([ $opnfvmodel == "kubernetes" ]); then
     ./k8.sh
 fi
 
