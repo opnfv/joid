@@ -221,7 +221,7 @@ cnt_list=$(for cnt in $srv_list; do juju status $cnt --format=json | jq -r ".mac
 public_api_gw=$(cat labconfig.json | jq --raw-output ".opnfv.spaces[] | select(.type==\"public\")".gateway)
 admin_gw=$(cat labconfig.json | jq --raw-output ".opnfv.spaces[] | select(.type==\"admin\")".gateway)
 
-if ([ $admin_gw ] && [ $admin_gw != "null" ])
+if ([ $admin_gw ] && [ $admin_gw != "null" ]); then
     # set default gateway to public api gateway
     for cnt in $cnt_list; do
         echo "changing default gw on $cnt"
