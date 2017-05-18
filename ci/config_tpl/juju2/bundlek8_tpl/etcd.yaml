@@ -15,6 +15,6 @@
         - "lxd:nodes/0"
 {% endfor %}
 {% else %}
-        - "nodes/0"
+        - "lxd:nodes/0"
 {% endif %}
 
