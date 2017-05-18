@@ -402,7 +402,7 @@ addnodes(){
                      $netw $netw --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee $NODE_NAME
 
             nodemac=`grep  "mac address" $NODE_NAME | head -1 | cut -d '"' -f 2`
-            sudo virsh -c $VIRSHURL --file $NODE_NAME
+            sudo virsh -c $VIRSHURL define --file $NODE_NAME
             rm -f $NODE_NAME
             maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
                 tags='control compute' hostname=$NODE_NAME power_type='virsh' mac_addresses=$nodemac \
