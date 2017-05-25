@@ -18,7 +18,7 @@ lab:
         mac: ["00:A0:A5:90:89:65"]
       power:
         type: ipmi
-        address: 10.21.5.11
+        address: 10.252.40.11
         user: admin
         pass: admin
     - name: rack-IRA2-SymKloudBlade2
@@ -36,7 +36,7 @@ lab:
         mac: ["00:A0:A5:90:89:A7"]
       power:
         type: ipmi
-        address: 10.21.5.12
+        address: 10.252.40.12
         user: admin
         pass: admin
     - name: rack-IRA2-SymKloudBlade3
@@ -54,7 +54,7 @@ lab:
         mac: ["00:A0:A5:90:89:27"]
       power:
         type: ipmi
-        address: 10.21.5.13
+        address: 10.252.40.13
         user: admin
         pass: admin
     - name: rack-IRA2-SymKloudBlade4
@@ -72,7 +72,7 @@ lab:
         mac: ["00:A0:A5:89:30:C5"]
       power:
         type: ipmi
-        address: 10.21.5.14
+        address: 10.252.40.14
         user: admin
         pass: admin
     - name: rack-IRA2-SymKloudBlade5
@@ -90,10 +90,10 @@ lab:
         mac: ["00:A0:A5:90:89:93"]
       power:
         type: ipmi
-        address: 10.21.5.15
+        address: 10.252.40.15
         user: admin
         pass: admin
-    floating-ip-range: 10.21.6.6,10.21.6.250,10.21.6.254,10.21.6.0/24
+    floating-ip-range: 10.252.42.6,10.252.42.249,10.252.42.254,10.252.42.0/24
     ext-port: "intf101"
     dns: 8.8.8.8
     osdomainname:
@@ -111,13 +111,13 @@ opnfv:
   spaces:
   - type: admin
     bridge: brAdm
-    cidr: 10.21.0.0/24
-    gateway: 10.21.0.254
+    cidr: 10.252.41.0/24
+    gateway: 10.252.41.254
     vlan:
   - type: floating
     bridge: brPublic
-    cidr: 10.21.6.0/24
-    gateway: 10.21.6.254
+    cidr: 10.252.42.0/24
+    gateway: 10.252.42.254
     vlan:
   - type: data
     bridge: brData
