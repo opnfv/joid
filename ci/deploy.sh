@@ -225,13 +225,15 @@ if ([ $admin_gw ] && [ $admin_gw != "null" ]); then
     # set default gateway to public api gateway
     for cnt in $cnt_list; do
         echo "changing default gw on $cnt"
-        juju ssh $cnt "sudo ip r d default && sudo ip r a default via $public_api_gw";
-        juju ssh $cnt "gw_dev=\$(ip  r l | grep 'via $public_api_gw' | cut -d \  -f5) &&\
+        if ([ $public_api_gw ] && [ $public_api_gw != "null" ]); then
+            juju ssh $cnt "sudo ip r d default && sudo ip r a default via $public_api_gw";
+            juju ssh $cnt "gw_dev=\$(ip  r l | grep 'via $public_api_gw' | cut -d \  -f5) &&\
                    sudo cp /etc/network/interfaces /etc/network/interfaces.bak &&\
                    echo 'removing old default gateway' &&\
                    sudo perl -i -pe 's/^\ *gateway $admin_gw\n$//' /etc/network/interfaces &&\
                    sudo perl -i -pe \"s/iface \$gw_dev inet static/iface \$gw_dev inet static\\n  gateway $public_api_gw/\" /etc/network/interfaces \
                    ";
+        fi
     done
 fi
 

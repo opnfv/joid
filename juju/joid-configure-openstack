@@ -54,10 +54,12 @@ neutron router-interface-add $ROUTER_ID $SUBNET_ID || true
 
 echo "Configuring security groups for access to ICMP, SSH and RDP by default"
 
+PROJECT_ID=`openstack project list -c ID -f value --domain admin_domain`
+
 #Configure the default security group to allow ICMP and SSH
-neutron security-group-rule-list | grep "icmp" > /dev/null 2>&1 || neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
-neutron security-group-rule-list | grep "22/tcp" > /dev/null 2>&1 || neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
-neutron security-group-rule-list | grep "3389/tcp" > /dev/null 2>&1 || neutron security-group-rule-create --direction ingress --ethertype IPv4 --protocol tcp --port-range-min 3389 --port-range-max 3389 --remote-ip-prefix 0.0.0.0/0 default
+sicmpecuritygroup=`openstack security group list --project "$PROJECT_ID" -c ID -f value`
+openstack security group rule list $securitygroup | grep "icmp" > /dev/null 2>&1 || openstack security group rule create --remote-group $securitygroup --ingress --protocol icmp --prefix "0.0.0.0/0"$securitygroup
+openstack security group rule list $securitygroup | grep "22/tcp" > /dev/null 2>&1 || openstack security group rule create --remote-group $securitygroup --ingress --protocol tcp --dst-port 22:22 --prefix "0.0.0.0/0" $securitygroup
 
 echo "Uploading default SSH key"
 
