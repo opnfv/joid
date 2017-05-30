@@ -116,6 +116,8 @@ echo "credentials:
       password: $OS_PASSWORD
       tenant-name: $OS_TENANT_NAME
       username: $OS_USERNAME
+      user-domain-name: $OS_USER_DOMAIN_NAME
+      project-domain-name: $OS_PROJECT_DOMAIN_NAME
 " > os-creds.yaml
 
 juju add-credential openstack -f os-creds.yaml --replace

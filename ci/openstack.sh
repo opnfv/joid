@@ -92,13 +92,36 @@ create_openrc() {
         adminPasswd=$(juju config keystone | grep admin-password -A 5 | grep value | awk '{print $2}' 2> /dev/null)
     fi
 
-    configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v3 RegionOne > ~/joid_config/admin-openrc
+    v3api=`juju config keystone  preferred-api-version`
 
-    chmod 0600 ~/joid_config/admin-openrc
+    if [[ "$v3api" == "3" ]]; then
+        configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v3 RegionOne > ~/joid_config/admin-openrc
+        chmod 0600 ~/joid_config/admin-openrc
+        source ~/joid_config/admin-openrc
+        projectid=`openstack project show admin -c id -f value`
+        configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v3 RegionOne $projectid > ~/joid_config/admin-openrc
+    else
+        configOpenrc2 admin $adminPasswd admin http://$keystoneIp:5000/v2.0 RegionOne > ~/joid_config/admin-openrc
+        chmod 0600 ~/joid_config/admin-openrc
+    fi
+}
+
+configOpenrc2() {
+cat <<-EOF
+export SERVICE_ENDPOINT=$4
+unset SERVICE_TOKEN
+unset SERVICE_ENDPOINT
+export OS_USERNAME=$1
+export OS_PASSWORD=$2
+export OS_TENANT_NAME=$3
+export OS_AUTH_URL=$4
+export OS_REGION_NAME=$5
+EOF
 }
 
 configOpenrc() {
 cat <<-EOF
+# unsetting v3 items in case set
 export OS_AUTH_URL=$4
 export OS_USERNAME=$1
 export OS_PASSWORD=$2
@@ -106,9 +129,12 @@ export OS_USER_DOMAIN_NAME=admin_domain
 export OS_PROJECT_DOMAIN_NAME=admin_domain
 export OS_PROJECT_NAME=$3
 export OS_TENANT_NAME=$3
+export OS_TENANT_ID=$6
 export OS_REGION_NAME=$5
 export OS_IDENTITY_API_VERSION=3
 # Swift needs this:
+export OS_ENDPOINT_TYPE=publicURL
+export OS_INTERFACE=public
 export OS_AUTH_VERSION=3
 EOF
 }

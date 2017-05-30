@@ -57,9 +57,9 @@ echo "Configuring security groups for access to ICMP, SSH and RDP by default"
 PROJECT_ID=`openstack project list -c ID -f value --domain admin_domain`
 
 #Configure the default security group to allow ICMP and SSH
-sicmpecuritygroup=`openstack security group list --project "$PROJECT_ID" -c ID -f value`
-openstack security group rule list $securitygroup | grep "icmp" > /dev/null 2>&1 || openstack security group rule create --remote-group $securitygroup --ingress --protocol icmp --prefix "0.0.0.0/0"$securitygroup
-openstack security group rule list $securitygroup | grep "22/tcp" > /dev/null 2>&1 || openstack security group rule create --remote-group $securitygroup --ingress --protocol tcp --dst-port 22:22 --prefix "0.0.0.0/0" $securitygroup
+SEC_GRP=`openstack security group list --project "$PROJECT_ID" -c ID -f value`
+openstack security group rule list $SEC_GRP | grep "icmp" > /dev/null 2>&1 || openstack security group rule create --remote-group $SEC_GRP --ingress --protocol icmp --prefix "0.0.0.0/0" $SEC_GRP
+openstack security group rule list $SEC_GRP | grep "22/tcp" > /dev/null 2>&1 || openstack security group rule create --remote-group $SEC_GRP --ingress --protocol tcp --dst-port 22:22 --prefix "0.0.0.0/0" $SEC_GRP
 
 echo "Uploading default SSH key"
 
