@@ -6,7 +6,7 @@
         "": internal-api
 {% endif %}
       options:
-        install-url: "https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.5.2-Boron-SR2/distribution-karaf-0.5.2-Boron-SR2.tar.gz"
+        install-url: "https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.6.0-Carbon/distribution-karaf-0.6.0-Carbon.tar.gz"
 {% if os.network.sfc %}
         profile: "openvswitch-odl-beryllium-sfc"
 {% elif os.network.bgpvpn %}
