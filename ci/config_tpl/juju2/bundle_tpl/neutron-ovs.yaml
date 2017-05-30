@@ -27,16 +27,6 @@
         #default-socket-cores: 1
 {% endif %}
 {% if opnfv.ext_port is defined  %}
-{% if os.network.controller == 'nosdn' %}
-{% if opnfv.data_port is defined  %}
-        bridge-mappings: physnet1:br-ex physnet2:br-data
-        data-port: br-ex:{{ opnfv.ext_port }} br-data:{{ opnfv.data_port }}
-{% else %}
-        bridge-mappings: physnet1:br-ex
-        data-port: br-ex:{{ opnfv.ext_port }}
-{% endif %}
-{% else %}
-        ext-port: {{ opnfv.ext_port }}
-{% endif %}
+        bridge-mappings: physnet1:br-data
 {% endif %}
 {# Empty block to avoid bad block trim #}
