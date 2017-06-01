@@ -134,7 +134,11 @@ echo "... Deployment of maas Started ...."
 
 # define the pool and try to start even though its already exist.
 # For fresh install this may or may not there.
-sudo adduser $USER libvirtd
+#some system i am seeing libvirt and some have libvirtd looks like libvirt-bin is
+#keep switching so lets try both.
+
+sudo adduser $USER libvirtd || true
+sudo adduser $USER libvirt || true
 sudo virsh pool-define-as default --type dir --target /var/lib/libvirt/images/ || true
 sudo virsh pool-start default || true
 sudo virsh pool-autostart default || true
