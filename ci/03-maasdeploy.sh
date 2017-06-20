@@ -16,10 +16,14 @@ sudo apt-add-repository ppa:maas/stable -y
 sudo apt-add-repository cloud-archive:ocata -y
 sudo apt-get update -y
 #sudo apt-get dist-upgrade -y
-sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvirt-bin juju \
-             maas maas-region-controller python-pip python-psutil python-openstackclient \
+sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvirt-bin \
+             maas maas-region-controller juju python-pip python-psutil python-openstackclient \
              python-congressclient gsutil charm-tools pastebinit python-jinja2 sshpass \
-             openssh-server vlan ipmitool jq expect -y
+             openssh-server vlan ipmitool jq expect snap -y
+
+#sudo apt-get install snap -y
+#sudo snap install maas --classic
+#sudo snap install juju --classic
 
 sudo pip install --upgrade pip
 
@@ -142,10 +146,10 @@ sudo virsh pool-autostart default || true
 # In case of virtual install set network
 if [ "$virtinstall" -eq 1 ]; then
     sudo virsh net-dumpxml default > default-net-org.xml
-    sudo sed -i '/dhcp/d' default-net-org.xml
-    sudo sed -i '/range/d' default-net-org.xml
-    sudo virsh net-define default-net-org.xml
+    sed -i '/dhcp/d' default-net-org.xml
+    sed -i '/range/d' default-net-org.xml
     sudo virsh net-destroy default
+    sudo virsh net-define default-net-org.xml
     sudo virsh net-start default
     rm -f default-net-org.xml
 fi
@@ -298,8 +302,12 @@ setupspacenetwork(){
             *)                 JUJU_SPACE='default';       DHCP='OFF'; echo "      >>> Unknown SPACE" ;;
         esac
         JUJU_SPACE_ID=$(maas $PROFILE spaces read | jq -r ".[] |  select(.name==\"$JUJU_SPACE\")".id)
-        if ([ $NET_FABRIC_NAME ] && [ $NET_FABRIC_NAME != "null" ]); then 
-            maas $PROFILE subnet update $SPACE_CIDR space=$JUJU_SPACE_ID
+        JUJU_VLAN_VID=$(maas $PROFILE subnets read | jq -r ".[] |  select(.name==\"$SPACE_CIDR\")".vlan.vid)
+        NET_FABRIC_ID=$(maas $PROFILE fabric read $NET_FABRIC_NAME | jq -r ".id")
+        if ([ $NET_FABRIC_ID ] && [ $NET_FABRIC_ID != "null" ]); then
+            if ([ $JUJU_VLAN_VID ] && [ $JUJU_VLAN_VID != "null" ]); then
+                maas $PROFILE vlan update $NET_FABRIC_ID $JUJU_VLAN_VID space=$JUJU_SPACE_ID
+            fi
         fi
         if ([ $type == "admin" ]); then
                     # If we have a network, we create it
@@ -401,12 +409,12 @@ addnodes(){
            units=$(($units - 1));
            NODE_NAME=`cat labconfig.json | jq ".lab.racks[].nodes[$units].name" | cut -d \" -f 2 `
 
-            sudo virt-install --connect $VIRSHURL --name $NODE_NAME --ram 8192 --cpu host --vcpus 4 \
+            virt-install --connect $VIRSHURL --name $NODE_NAME --ram 8192 --cpu host --vcpus 4 \
                      --disk size=120,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
                      $netw $netw --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee $NODE_NAME
 
             nodemac=`grep  "mac address" $NODE_NAME | head -1 | cut -d '"' -f 2`
-            sudo virsh -c $VIRSHURL define --file $NODE_NAME
+            virsh -c $VIRSHURL define --file $NODE_NAME
             rm -f $NODE_NAME
             maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
                 tags='control compute' hostname=$NODE_NAME power_type='virsh' mac_addresses=$nodemac \
@@ -434,6 +442,8 @@ addnodes(){
                architecture='amd64/generic'
        done
     fi
+
+    maas $PROFILE pods create type=virsh power_address="$VIRSHURL" power_user=$USER
 
     # make sure nodes are added into MAAS and none of them is in commisoning state
     while [ "$(maas $PROFILE nodes read | grep  Commissioning )" ];

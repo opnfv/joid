@@ -48,7 +48,7 @@ opnfv:
     gateway: 192.168.122.1
     vlan:
   - type: floating
-    bridge: virbr0
-    cidr: 192.168.122.0/24
-    gateway: 192.168.122.1
+    bridge:
+    cidr:
+    gateway:
     vlan:
