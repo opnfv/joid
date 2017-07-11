@@ -7,9 +7,14 @@
     - [ 'kubernetes-master:etcd', 'etcd:db' ]
     - [ 'kubernetes-master:kube-control', 'kubernetes-worker:kube-control' ]
     - [ 'kubernetes-worker:certificates', 'easyrsa:client' ]
+{% if k8.network.controller == 'ovn' %}
+    - [ 'ovn:cni', 'kubernetes-master:cni' ]
+    - [ 'ovn:cni', 'kubernetes-worker:cni' ]
+{% else %}
     - [ 'flannel:etcd', 'etcd:db' ]
     - [ 'flannel:cni', 'kubernetes-master:cni' ]
     - [ 'flannel:cni', 'kubernetes-worker:cni' ]
+{% endif %}
     - [ 'etcd:certificates', 'easyrsa:client' ]
 {% if k8.feature.loadbalancer %}
     - [ 'kubernetes-master:loadbalancer', 'kubeapi-load-balancer:loadbalancer' ]

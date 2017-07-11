@@ -2,13 +2,32 @@
       charm: "cs:~containers/kubernetes-master"
       num_units: 1
       expose: true
+{% if os.service.bindings %}
+      bindings:
+        "": internal-api
+{% endif %}
+{% if k8.network.controller == 'ovn' %}
+      options:
+        channel: 1.5/stable
+{% endif %}
       to:
         - "nodes/0"
+
+
+
 
     kubernetes-worker:
       charm: "cs:~containers/kubernetes-worker"
       num_units: {{ opnfv.units - 1 }}
       expose: true
+{% if os.service.bindings %}
+      bindings:
+        "": internal-api
+{% endif %}
+{% if k8.network.controller == 'ovn' %}
+      options:
+        channel: 1.5/stable
+{% endif %}
       to:
 {% for unit_id in range(1, opnfv.units) %}
         - "nodes/{{ unit_id }}"

@@ -40,3 +40,5 @@ os:
 k8:
     feature:
         loadbalancer: False
+    network:
+        controller: nosdn

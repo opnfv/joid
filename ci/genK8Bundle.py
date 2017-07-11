@@ -165,6 +165,9 @@ if 'dpdk' in features:
 if 'lb' in features:
     config['k8']['feature']['loadbalancer'] = True
 
+# change ha mode
+config['k8']['network']['controller'] = sdn
+
 # Set beta option from extra
 if 'hugepages' in extra:
     config['os']['beta']['huge_pages'] = True

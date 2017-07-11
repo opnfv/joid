@@ -15,9 +15,14 @@
 {% include 'kubernetes.yaml' %}
 {% include 'easyrsa.yaml' %}
 {% include 'etcd.yaml' %}
-{% include 'subordinate.yaml' %}
 {% if k8.feature.loadbalancer %}
 {% include 'kubeapi-load-balancer.yaml' %}
+{% endif %}
+
+{% if k8.network.controller == 'ovn' %}
+{% include 'ovn.yaml' %}
+{% else %}
+{% include 'flannel.yaml' %}
 {% endif %}
 
 

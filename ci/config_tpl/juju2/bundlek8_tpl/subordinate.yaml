@@ -1,4 +1,0 @@
-
-    flannel:
-      charm: cs:~containers/flannel
-

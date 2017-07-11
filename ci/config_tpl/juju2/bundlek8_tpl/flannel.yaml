@@ -1,0 +1,7 @@
+
+    flannel:
+      charm: cs:~containers/flannel
+{% if os.service.bindings %}
+      bindings:
+        "": internal-api
+{% endif %}
