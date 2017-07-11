@@ -25,7 +25,7 @@ sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvi
 #sudo snap install maas --classic
 #sudo snap install juju --classic
 
-sudo pip install --upgrade pip
+sudo -H pip install --upgrade pip
 
 #first parameter should be custom and second should be either
 # absolute location of file (including file name) or url of the
@@ -160,7 +160,7 @@ fi
 
 # To avoid problem between apiclient/maas_client and apiclient from google
 # we remove the package google-api-python-client from yardstick installer
-if [ $(pip list |grep google-api-python-client |wc -l) == 1 ]; then
+if [ $(pip list --format=columns | grep google-api-python-client | wc -l) == 1 ]; then
     sudo pip uninstall google-api-python-client
 fi
 
