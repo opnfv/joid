@@ -13,11 +13,15 @@ fi
 
 NODE_ARCTYPE=`arch`
 NODE_ARC="amd64/generic"
+NODE_ARCHES="amd64"
 
 if [ "x86_64" == "$NODE_ARCTYPE" ]; then
     NODE_ARC="amd64/generic"
 elif  [ "ppc64le" == "$NODE_ARCTYPE" ]; then
     NODE_ARC='ppc64el'
+elif [ "aarch64" == "$NODE_ARCTYPE" ]; then
+    NODE_ARC="arm64/generic"
+    NODE_ARCHES="arm64"
 else
     NODE_ARC=$NODE_ARCTYPE
 fi
@@ -243,6 +247,10 @@ configuremaas(){
     maas $PROFILE boot-source update $SOURCE_ID \
          url=$URL keyring_filename=$KEYRING_FILE || true
 
+    if [ $NODE_ARCTYPE != "x86_64" ] ; then
+        maas $PROFILE boot-source-selection update 1 1 arches="$NODE_ARCHES"
+    fi
+
     maas $PROFILE boot-resources import || true
 
     while [ "$(maas $PROFILE boot-resources is-importing)" == "true" ];
@@ -403,10 +411,10 @@ addnodes(){
 
     echo_info "Creating and adding bootstrap node"
 
-    virt-install --connect $VIRSHURL --name bootstrap --ram 4098 --cpu host --vcpus 2 --video \
-                 cirrus --disk size=20,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
+    virt-install --connect $VIRSHURL --name bootstrap --ram 4098 --cpu host --vcpus 2 \
+                 --disk size=20,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
                  $netw --boot network,hd,menu=off --noautoconsole \
-                 --vnc --print-xml | tee bootstrap
+                 --print-xml | tee bootstrap
 
     if [ "$virtinstall" -eq 1 ]; then
         bootstrapmac=`grep  "mac address" bootstrap | head -1 | cut -d '"' -f 2`
@@ -440,7 +448,7 @@ addnodes(){
 
             virt-install --connect $VIRSHURL --name $NODE_NAME --ram 8192 --cpu host --vcpus 4 \
                      --disk size=120,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
-                     $netw $netw --boot network,hd,menu=off --noautoconsole --vnc --print-xml | tee $NODE_NAME
+                     $netw $netw --boot network,hd,menu=off --noautoconsole --print-xml | tee $NODE_NAME
 
             nodemac=`grep  "mac address" $NODE_NAME | head -1 | cut -d '"' -f 2`
             virsh -c $VIRSHURL define --file $NODE_NAME
@@ -471,6 +479,8 @@ addnodes(){
                 NODE_ARC="amd64/generic"
             elif  [ "ppc64le" == "$NODE_ARCTYPE" ]; then
                 NODE_ARC='ppc64el'
+            elif [ "aarch64" == "$NODE_ARCTYPE" ]; then
+                NODE_ARC="arm64/generic"
             else
                 NODE_ARC=$NODE_ARCTYPE
             fi
