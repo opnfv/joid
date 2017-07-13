@@ -52,7 +52,7 @@ mkdir -p ~/simplestreams/images
 
 #Now, if necessary, source the nova.rc file for your cloud:
 
-. ~/joid_config/admin-openrc
+. ~/joid_config/admin-openrcpublic
 
 #We can now determine the region name for the cloud by running:
 

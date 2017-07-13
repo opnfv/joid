@@ -35,16 +35,16 @@ fi
 echo "Configuring Openstack Neutron Networking"
 
 #create ext network with neutron for floating IPs
-EXTERNAL_NETWORK_ID=$(neutron net-show ext-net | grep " id" | awk '{print $4}')
+EXTERNAL_NETWORK_ID=$(openstack network show ext-net | grep " id" | awk '{print $4}')
 
 #Create private network for neutron for tenant VMs
-neutron net-show private > /dev/null 2>&1 || neutron net-create private
-neutron subnet-show private_subnet > /dev/null 2>&1 || neutron subnet-create private $NEUTRON_FIXED_NET_CIDR -- --name private_subnet --dns_nameservers list=true 8.8.8.8
-SUBNET_ID=$(neutron subnet-show private_subnet | grep " id" | awk '{print $4}')
+openstack network show private > /dev/null 2>&1 || openstack network create private
+openstack subnet show private_subnet > /dev/null 2>&1 || neutron subnet-create private $NEUTRON_FIXED_NET_CIDR -- --name private_subnet --dns_nameservers list=true 8.8.8.8
+SUBNET_ID=$(openstack subnet show private_subnet | grep " id" | awk '{print $4}')
 
 #Create router for external network and private network
-openstack router list provider-router > /dev/null 2>&1 || openstack router create --project-domain=$OS_PROJECT_DOMAIN_NAME --project $OS_PROJECT_NAME provider-router
-ROUTER_ID=$(neutron router-show provider-router | grep " id" | awk '{print $4}')
+openstack router show provider-router > /dev/null 2>&1 || openstack router create --project-domain=$OS_PROJECT_DOMAIN_NAME --project $OS_PROJECT_NAME provider-router
+ROUTER_ID=$(openstack router show provider-router | grep " id" | awk '{print $4}')
 
 neutron router-gateway-clear provider-router || true
 neutron router-gateway-set $ROUTER_ID $EXTERNAL_NETWORK_ID
@@ -57,9 +57,9 @@ echo "Configuring security groups for access to ICMP, SSH and RDP by default"
 PROJECT_ID=`openstack project list -c ID -f value --domain admin_domain`
 
 #Configure the default security group to allow ICMP and SSH
-SEC_GRP=`openstack security group list --project "$PROJECT_ID" -c ID -f value`
-openstack security group rule list $SEC_GRP | grep "icmp" > /dev/null 2>&1 || openstack security group rule create --remote-group $SEC_GRP --ingress --protocol icmp --prefix "0.0.0.0/0" $SEC_GRP
-openstack security group rule list $SEC_GRP | grep "22/tcp" > /dev/null 2>&1 || openstack security group rule create --remote-group $SEC_GRP --ingress --protocol tcp --dst-port 22:22 --prefix "0.0.0.0/0" $SEC_GRP
+#SEC_GRP=`openstack security group list --project "$PROJECT_ID" -c ID -f value`
+#openstack security group rule list $SEC_GRP | grep "icmp" > /dev/null 2>&1 || openstack security group rule create --remote-group $SEC_GRP --ingress --protocol icmp --prefix "0.0.0.0/0" $SEC_GRP
+#openstack security group rule list $SEC_GRP | grep "22/tcp" > /dev/null 2>&1 || openstack security group rule create --remote-group $SEC_GRP --ingress --protocol tcp --dst-port 22:22 --prefix "0.0.0.0/0" $SEC_GRP
 
 echo "Uploading default SSH key"
 
@@ -94,13 +94,11 @@ echo "Uploading images to glance"
 ## image name is used by script to generate metadata .. don't screw the series
 
 if grep -q 'virt-type: lxd' bundles.yaml; then
-    glance image-list | grep "Xenial LXC x86_64" > /dev/null 2>&1 || glance image-create --name="Xenial LXC x86_64" --visibility=public --container-format=bare --disk-format=root-tar --property architecture="x86_64"  < /srv/data/xenial-server-cloudimg-amd64-root.tar.gz
-    glance image-list | grep "Cirros LXC 0.3" > /dev/null 2>&1 || glance image-create --name="Cirros LXC 0.3" --visibility=public --container-format=bare --disk-format=root-tar --property architecture="x86_64"  < /srv/data/cirros-0.3.4-x86_64-lxc.tar.gz
+    openstack image list | grep "Xenial LXC x86_64" > /dev/null 2>&1 || glance image-create --name="Xenial LXC x86_64" --visibility=public --container-format=bare --disk-format=root-tar --property architecture="x86_64"  < /srv/data/xenial-server-cloudimg-amd64-root.tar.gz
+    openstack image list | grep "Cirros LXC 0.3" > /dev/null 2>&1 || glance image-create --name="Cirros LXC 0.3" --visibility=public --container-format=bare --disk-format=root-tar --property architecture="x86_64"  < /srv/data/cirros-0.3.4-x86_64-lxc.tar.gz
 else
-    #glance image-list | grep "Precise x86_64" > /dev/null 2>&1 || glance image-create --name="Precise x86_64" --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/precise-server-cloudimg-amd64-disk1.img
-    glance image-list | grep "Trusty x86_64" > /dev/null 2>&1 || glance image-create --name="Trusty x86_64" --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/trusty-server-cloudimg-amd64-disk1.img
-    glance image-list | grep "Xenial x86_64" > /dev/null 2>&1 || glance image-create --name="Xenial x86_64" --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/xenial-server-cloudimg-amd64-disk1.img
-    glance image-list | grep "CentOS 6.4" > /dev/null 2>&1 || glance image-create --name="CentOS 6.4" --visibility=public --container-format=bare --disk-format=qcow2 < /srv/data/centos6.4-x86_64-gold-master.img
-    glance image-list | grep "Cirros 0.3" > /dev/null 2>&1 || glance image-create --name="Cirros 0.3" --visibility=public --container-format=bare --disk-format=qcow2 < /srv/data/cirros-0.3.4-x86_64-disk.img
-    #glance image-list | grep "win2012r2" > /dev/null 2>&1 || gzip -cd /srv/data/windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz |glance image-create --name="Windows Server 2012" --is-public=true --container-format=bare --disk-format=qcow2 --progress
+    openstack image list | grep "Trusty x86_64" > /dev/null 2>&1 || openstack image create "Trusty x86_64" --public --container-format=ovf --disk-format=qcow2 <  /srv/data/trusty-server-cloudimg-amd64-disk1.img
+    openstack image list | grep "Xenial x86_64" > /dev/null 2>&1 || openstack image create "Xenial x86_64" --public --container-format=ovf --disk-format=qcow2 <  /srv/data/xenial-server-cloudimg-amd64-disk1.img
+    openstack image list | grep "CentOS 6.4" > /dev/null 2>&1 || openstack image create "CentOS 6.4" --public --container-format=bare --disk-format=qcow2 < /srv/data/centos6.4-x86_64-gold-master.img
+    openstack image list | grep "Cirros 0.3" > /dev/null 2>&1 || openstack image create "Cirros 0.3" --public --container-format=bare --disk-format=qcow2 < /srv/data/cirros-0.3.4-x86_64-disk.img
 fi
