@@ -52,7 +52,7 @@ mkdir -p ~/simplestreams/images
 
 #Now, if necessary, source the nova.rc file for your cloud:
 
-. ~/joid_config/admin-openrcpublic
+. ~/joid_config/admin-openrc
 
 #We can now determine the region name for the cloud by running:
 
@@ -91,9 +91,9 @@ cd -
 swift stat simplestreams
 
 swift post simplestreams --read-acl .r:*
-openstack service list product-streams > /dev/null 2>&1 || openstack service create --name product-stream --description "Product Simple Stream" product-streams
-SWIFT_URL=`openstack endpoint list --service swift --interface internal -c URL -f value`
+openstack service show product-streams > /dev/null 2>&1 || openstack service create --name product-streams --description "Product Simple Stream" product-streams
 
+SWIFT_URL=`openstack endpoint list --service swift --interface internal -c URL -f value`
 openstack endpoint create --region $OS_REGION_NAME product-streams public $SWIFT_URL/simplestreams/images
 openstack endpoint create --region $OS_REGION_NAME product-streams internal $SWIFT_URL/simplestreams/images
 
@@ -124,7 +124,7 @@ juju add-credential openstack -f os-creds.yaml --replace
 
 #Bootstrap with Juju
 
-juju bootstrap openstack --config image-metadata-url=$SWIFT_URL/simplestreams/images --config use-floating-ip=true --config network=private
+juju bootstrap openstack --debug --config image-metadata-url=$SWIFT_URL/simplestreams/images --config use-floating-ip=true --config network=private
 juju gui --show-credentials --no-browser
 
 #Print the address of Juju-gui for deployments on Openstack
