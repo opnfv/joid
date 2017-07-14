@@ -91,7 +91,7 @@ cd -
 swift stat simplestreams
 
 swift post simplestreams --read-acl .r:*
-openstack service create --name product-stream --description "Product Simple Stream" product-streams
+openstack service list product-streams > /dev/null 2>&1 || openstack service create --name product-stream --description "Product Simple Stream" product-streams
 SWIFT_URL=`openstack endpoint list --service swift --interface internal -c URL -f value`
 
 openstack endpoint create --region $OS_REGION_NAME product-streams public $SWIFT_URL/simplestreams/images

@@ -99,7 +99,6 @@ create_openrc() {
         chmod 0600 ~/joid_config/admin-openrc
         source ~/joid_config/admin-openrc
         projectid=`openstack project show admin -c id -f value`
-        configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v3 RegionOne internalURL $projectid > ~/joid_config/admin-openrc
         configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v3 RegionOne publicURL $projectid > ~/joid_config/admin-openrcpublic
     else
         configOpenrc2 admin $adminPasswd admin http://$keystoneIp:5000/v2.0 RegionOne > ~/joid_config/admin-openrc
@@ -140,7 +139,7 @@ export KEYSTONE_ENDPOINT_TYPE=$6
 export NOVA_ENDPOINT_TYPE=$6
 export NEUTRON_ENDPOINT_TYPE=$6
 export OS_ENDPOINT_TYPE=$6
-#export OS_INTERFACE=public
+export OS_INTERFACE=public
 export OS_AUTH_URL=$4
 EOF
 }
