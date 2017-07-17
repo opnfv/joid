@@ -14,6 +14,7 @@ opnfvfeature=none
 opnfvdistro=xenial
 opnfvarch=amd64
 opnfvmodel=openstack
+virtinstall=0
 
 jujuver=`juju --version`
 
@@ -33,9 +34,10 @@ usage() { echo "Usage: $0 [-s <nosdn|odl|opencontrail>]
                          [-d <trusty|xenial>]
                          [-a <amd64>]
                          [-m <openstack|kubernetes>]
+                         [-i <0|1>]
                          [-r <a|b>]" 1>&2 exit 1; }
 
-while getopts ":s:t:o:l:h:r:f:d:a:m:" opt; do
+while getopts ":s:t:o:l:h:r:f:d:a:m:i:" opt; do
     case "${opt}" in
         s)
             opnfvsdn=${OPTARG}
@@ -63,6 +65,9 @@ while getopts ":s:t:o:l:h:r:f:d:a:m:" opt; do
             ;;
         m)
             opnfvmodel=${OPTARG}
+            ;;
+        i)
+            virtinstall=${OPTARG}
             ;;
         h)
             usage
@@ -200,6 +205,11 @@ check_status() {
     fi
     echo "...... deployment finishing ......."
 }
+
+# In the case of a virtual deployment
+if [ "$virtinstall" -eq 1 ]; then
+    ./clean.sh || true
+fi
 
 echo "...... deployment started ......"
 deploy
