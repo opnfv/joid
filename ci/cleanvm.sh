@@ -16,7 +16,7 @@ for vm in node1-control node2-compute node3-control node4-control \
 do
     echo "$vm_list" | grep -q " $vm " || continue
     sudo virsh destroy $vm
-    sudo virsh undefine $vm
+    sudo virsh undefine --nvram $vm
     sudo rm -f /var/lib/libvirt/images/${vm}.qcow2
 done
 
