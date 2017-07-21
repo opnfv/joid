@@ -1,9 +1,9 @@
 
     ovn:
-      charm: "cs:~aakashkt/ovn-2"
+      charm: "cs:~aakashkt/ovn-8"
 {% if os.service.bindings %}
       bindings:
         "": internal-api
 {% endif %}
       options:
-        gateway-physical-interface: "intf100"
+        gateway-physical-interface: "none"

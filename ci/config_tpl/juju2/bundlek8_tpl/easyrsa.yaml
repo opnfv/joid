@@ -6,5 +6,9 @@
         "": internal-api
 {% endif %}
       to:
-        - "lxd:nodes/0"
+{% if k8.network.controller == 'ovn' %}
+        - "nodes/1"
+{% else %}
+         - "lxd:nodes/0"
+{% endif %}
 

@@ -1,7 +1,11 @@
     etcd:
       charm: "cs:~containers/etcd"
 {% if k8.feature.loadbalancer %}
+{% if k8.network.controller == 'ovn' %}
+      num_units: 1
+{% else %}
       num_units: 3
+{% endif %}
 {% else %}
       num_units: 1
 {% endif %}
@@ -10,11 +14,15 @@
         "": internal-api
 {% endif %}
       to:
+{% if k8.network.controller == 'ovn' %}
+        - "nodes/0"
+{% else %}
 {% if k8.feature.loadbalancer %}
 {% for unit_id in to_select() %}
         - "lxd:nodes/0"
 {% endfor %}
 {% else %}
         - "lxd:nodes/0"
+{% endif %}
 {% endif %}
 

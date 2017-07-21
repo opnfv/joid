@@ -9,6 +9,7 @@
 {% if k8.network.controller == 'ovn' %}
       options:
         channel: 1.5/stable
+        service-cidr: "192.168.200.0/24"
 {% endif %}
       to:
         - "nodes/0"

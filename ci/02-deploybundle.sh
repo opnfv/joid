@@ -30,7 +30,7 @@ check_status() {
     while [ $retval -eq 0 ]; do
        sleep 30
        juju status > status.txt
-       if [ "$(grep -c "waiting" status.txt )" -ge 2 ]; then
+       if [ "$(grep -c "waiting" status.txt )" -ge 3 ]; then
            echo " still waiting for machines ..."
            if [ $timeoutiter -ge 240 ]; then
                retval=1
