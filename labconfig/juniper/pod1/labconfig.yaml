@@ -7,11 +7,11 @@ lab:
       architecture: x86_64
       roles: [compute,storage]
       nics:
-      - ifname: eth0
+      - ifname: intf100
         spaces: [admin]
         mac: ["0c:c4:7a:53:57:c2"]
-      - ifname: eth1
-        spaces: [public]
+      - ifname: intf101
+        spaces: [floating]
         mac: ["0c:c4:7a:53:57:c3"]
       power:
         type: ipmi
@@ -22,11 +22,11 @@ lab:
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: eth0
+      - ifname: intf100
         spaces: [admin]
         mac: ["0c:c4:7a:16:2a:70"]
-      - ifname: eth1
-        spaces: [public]
+      - ifname: intf101
+        spaces: [floating]
         mac: ["0c:c4:7a:16:2a:71"]
       power:
         type: ipmi
@@ -37,11 +37,11 @@ lab:
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: eth0
+      - ifname: intf100
         spaces: [admin]
         mac: ["0c:c4:7a:16:2a:0a"]
-      - ifname: eth1
-        spaces: [public]
+      - ifname: intf101
+        spaces: [floating]
         mac: ["0c:c4:7a:16:2a:0b"]
       power:
         type: ipmi
@@ -52,11 +52,11 @@ lab:
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
-      - ifname: eth0
+      - ifname: intf100
         spaces: [admin]
         mac: ["0c:c4:7a:16:22:9c"]
-      - ifname: eth1
-        spaces: [public]
+      - ifname: intf101
+        spaces: [floating]
         mac: ["0c:c4:7a:16:22:9d"]
       power:
         type: ipmi
@@ -67,11 +67,11 @@ lab:
       architecture: x86_64
       roles: [compute,storage]
       nics:
-      - ifname: eth0
+      - ifname: intf100
         spaces: [admin]
         mac: ["0c:c4:7a:53:57:16"]
-      - ifname: eth1
-        spaces: [public]
+      - ifname: intf101
+        spaces: [floating]
         mac: ["0c:c4:7a:53:57:17"]
       power:
         type: ipmi
@@ -79,28 +79,28 @@ lab:
         user: ADMIN
         pass: ADMIN
     floating-ip-range: 10.10.10.6,10.10.10.250,10.10.10.1,10.10.10.0/24
-    ext-port: "br-eth1"
+    ext-port: "intf101"
     dns: 8.8.8.8
     osdomainname:
 opnfv:
-    release: c
-    distro: trusty
-    type: nonha
-    openstack: mitaka
+    release: d
+    distro: xenial
+    type: ha
+    openstack: ocata
     sdncontroller:
-    - type: nosdn
+    - type: ocl
     storage:
     - type: ceph
       disk: /srv
-    feature: odl_l2
+    feature: nofeature
     spaces:
     - type: admin
       bridge: brAdm
       cidr: 172.16.50.0/24
       gateway: 172.16.50.1
       vlan:
-    - type: public
+    - type: floating
       bridge: brPublic
       cidr: 10.10.10.0/24
-      gateway: 10.10.10.1
+      gateway:
       vlan:
