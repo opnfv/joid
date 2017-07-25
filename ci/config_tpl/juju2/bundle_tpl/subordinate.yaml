@@ -48,26 +48,6 @@
 {% if os.network.sfc %}
         profile: onos-sfc
 {% endif %}
-{% elif os.network.controller == 'ocl' %}
-    ceilometer-contrail:
-      charm: ./{{ ubuntu.release }}/ceilometer-contrail
-      options:
-        install-sources: ppa:opencontrail/trunk-20160812
-    neutron-api-contrail:
-      charm: ./{{ ubuntu.release }}/neutron-api-contrail
-      options:
-        install-sources: ppa:opencontrail/trunk-20160812
-    neutron-contrail:
-      charm: ./{{ ubuntu.release }}/neutron-contrail
-      options:
-        install-sources: ppa:opencontrail/trunk-20160812
-    keepalived:
-      charm: ./{{ ubuntu.release }}/keepalived
-      options:
-        router-id: 1
-{% if os.ha.mode == 'ha' %}
-        virtual-ip: {{ opnfv.vip.keepalived }}
-{% endif %}
 {% endif %}
 {% if os.lxd %}
     lxd:

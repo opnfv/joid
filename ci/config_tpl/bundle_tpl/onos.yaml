@@ -1,9 +1,0 @@
-    onos-controller:
-      charm: local:{{ ubuntu.release }}/onos-controller
-      options:
-{% if opnfv.ext_port is defined  %}
-        ext-port: {{ opnfv.ext_port }}
-{% endif %}
-        #gateway-mac: "default"
-      to:
-        - "lxc:nodes=0"

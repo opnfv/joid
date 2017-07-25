@@ -169,6 +169,9 @@ config['os']['ha']['mode'] = hamode
 # change ha mode
 config['os']['network']['controller'] = sdn
 
+if 'ocl' in sdn:
+    config['os']['hyperconverged'] = False
+
 # Change features
 if 'lxd' in features:
     config['os']['lxd'] = True

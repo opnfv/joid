@@ -1,76 +1,107 @@
-    zookeeper:
-      charm: ./{{ ubuntu.release }}/zookeeper
-      num_units: {{ unit_qty() }}
-      series: {{ ubuntu.release }}
-      to:
-{% for unit_id in to_select() %}
-        - "lxd:nodes/{{ unit_id }}"
-{% endfor %}
-    cassandra:
-      charm: ./{{ ubuntu.release }}/cassandra
-      num_units: {{ unit_qty() }}
-      to:
-{% for unit_id in to_select() %}
-        - "lxd:nodes/{{ unit_id }}"
-{% endfor %}
+
+    contrail-openstack:
+      charm: ./{{ ubuntu.release }}/contrail-openstack
       options:
-        authenticator: AllowAllAuthenticator
-    contrail-configuration:
-      charm: ./{{ ubuntu.release }}/contrail-configuration
-      num_units: {{ unit_qty() }}
+        install-keys: |
+          - |
+          -----BEGIN PGP PUBLIC KEY BLOCK-----
+          Version: GnuPG v1
+
+          mQENBFkff8kBCADm+xSDvRjblHEZ5aISb/j6pdvgLL5Ht1SgJ6a8EJdRBJGIt3lP
+          6Eurvmn4gxm7McelpFMWsDKy+Rr0GJ6Wjq6CwFzDi2Vvl2IQpafYuYLGaFYG1/73
+          0+O0LclwPnVezQ9wu/AWkD/y6YJFhxDCCeBplNf/pdRzZg2c6BBugMBN2s0nsqHN
+          xKqRDItR8OxeVdF70bmdSecemHmB7ccoCMD5F81E2IdUN8ATpRqJOVXOMt2BWrj+
+          dhQK2Amzv/qzYdYOvqYqvFqTl6RNy4YkOJIVc45hBoYxlRpd18/fT3ejWM25WZ2b
+          d+c5MNGRV2+2lgqqzRgUehBo2f4RDT+p4fAxABEBAAG0CWNvbnRyYWlsNIkBOAQT
+          AQIAIgUCWR9/yQIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQcsuWr0gx
+          U0w58wgAg+nmWRSDYNU99MU5tEMMurWMkwpC1V0uB20cr5z7gREyAUN+HAWV8Ngz
+          R+DMaDQK6JHPkNu8xNgyfAB7sO795DKF2aSP3RhephXsDJdyb55zEsjzmsJiZ9JI
+          sdkSg/6zRKkkK9S0VqY5C9jhj6TCUOVuJjk56ynbS/0klwUjpf6qqutJg0LyIWn0
+          o3vdpVr/PVJUTK9uOriNXtQPkvai+7jBEJ28zaDCilLhdX0Kg4gmpgpm8IlscDGK
+          dqxQiraGvK3fGmmQ1mk5jEk5ydQOGvVIJO5N/H6AgBJ+xIUSU3yzNVJlfBUnBrSO
+          OHdFNOPnSrwZuepQfht8vWgwTArczrkBDQRZH3/JAQgAzZMwPBVjpstYnThsgWO5
+          HQ9kbsviVWK/4ZHceYujfJ/ovZn/b9TGsvmL9U1dMJbBbBO6cFh7GvKFoIoR8c7g
+          QPHbh+MwH7EyBizpJPE+Fg+YP4hlaLvKf3bzVor9nFP4FUF671gXCFwvSbTMh/pm
+          EnOM6p6E/dWD2Ag1rcEX2lXn1sKvO+0nEdmHra8c6EeGhwt/sJ8MMVx61ZgKi0/Z
+          UGmfwBR004Tb4XBbUPOYzIZqtsK9lBUeFs6v3mNaZCBxzTb3fIXnqX5o9d7F/8ya
+          a+S+sLqYzheCiJz5JpYxh2GovoeDkPczd8HeAK9REedEs12grZj3cxnVyZApbeX5
+          yQARAQABiQEfBBgBAgAJBQJZH3/JAhsMAAoJEHLLlq9IMVNMRFAIAJzEv6Y0ngqU
+          jgcE+kd+nLGtSgQ4MRWD5y0s8cLP/M5WNtJNWy70038fG3/ilh8Y4HsfTDu4ZMHQ
+          mVM1lpJg/U08fUIiU+iQfVnckB+Oj/irc2FgUF2YJSJwZkwFaIv0u1NKkvKr8Qmt
+          jJuAuNv97uHLF9fkAJGUrLGZDk5MmCNdnQDkPEn7NaRMxf+1SvbGvPS3jGzGbR0p
+          Umtdm5/zs4kre7xS71d4F5De4d1bhTNT8weC9KDJdXXf8xsuF1NPlxU/Cv6XB78Y
+          W2I4/FMkyQOkVZyNz20SbupiZt0L0ldlnk1brf2hoKagmBLNU8bXKrQAkqQTxJcT
+          d+E671t4w94=
+          =Fbaq
+          -----END PGP PUBLIC KEY BLOCK-----
+        install-sources: |
+          - "deb http://10.102.44.96/contrail4 /"
+
+    contrail-agent:
+      charm: ./{{ ubuntu.release }}/contrail-agent
       options:
-        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
-        install-sources: ppa:opencontrail/trunk-20160812
-{% if os.ha.mode == 'ha' %}
-        vip: {{ opnfv.vip.contrailconfig }}
-{% endif %}
-      to:
-{% for unit_id in to_select() %}
-        - "lxd:nodes/{{ unit_id }}"
-{% endfor %}
-    contrail-control:
-      charm: ./{{ ubuntu.release }}/contrail-control
-      num_units: {{ unit_qty() }}
-      options:
-        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
-        install-sources: ppa:opencontrail/trunk-20160812
-      to:
-{% for unit_id in to_select() %}
-        - "lxd:nodes/{{ unit_id }}"
-{% endfor %}
+        install-keys: |
+          - |
+          -----BEGIN PGP PUBLIC KEY BLOCK-----
+          Version: GnuPG v1
+
+          mQENBFkff8kBCADm+xSDvRjblHEZ5aISb/j6pdvgLL5Ht1SgJ6a8EJdRBJGIt3lP
+          6Eurvmn4gxm7McelpFMWsDKy+Rr0GJ6Wjq6CwFzDi2Vvl2IQpafYuYLGaFYG1/73
+          0+O0LclwPnVezQ9wu/AWkD/y6YJFhxDCCeBplNf/pdRzZg2c6BBugMBN2s0nsqHN
+          xKqRDItR8OxeVdF70bmdSecemHmB7ccoCMD5F81E2IdUN8ATpRqJOVXOMt2BWrj+
+          dhQK2Amzv/qzYdYOvqYqvFqTl6RNy4YkOJIVc45hBoYxlRpd18/fT3ejWM25WZ2b
+          d+c5MNGRV2+2lgqqzRgUehBo2f4RDT+p4fAxABEBAAG0CWNvbnRyYWlsNIkBOAQT
+          AQIAIgUCWR9/yQIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQcsuWr0gx
+          U0w58wgAg+nmWRSDYNU99MU5tEMMurWMkwpC1V0uB20cr5z7gREyAUN+HAWV8Ngz
+          R+DMaDQK6JHPkNu8xNgyfAB7sO795DKF2aSP3RhephXsDJdyb55zEsjzmsJiZ9JI
+          sdkSg/6zRKkkK9S0VqY5C9jhj6TCUOVuJjk56ynbS/0klwUjpf6qqutJg0LyIWn0
+          o3vdpVr/PVJUTK9uOriNXtQPkvai+7jBEJ28zaDCilLhdX0Kg4gmpgpm8IlscDGK
+          dqxQiraGvK3fGmmQ1mk5jEk5ydQOGvVIJO5N/H6AgBJ+xIUSU3yzNVJlfBUnBrSO
+          OHdFNOPnSrwZuepQfht8vWgwTArczrkBDQRZH3/JAQgAzZMwPBVjpstYnThsgWO5
+          HQ9kbsviVWK/4ZHceYujfJ/ovZn/b9TGsvmL9U1dMJbBbBO6cFh7GvKFoIoR8c7g
+          QPHbh+MwH7EyBizpJPE+Fg+YP4hlaLvKf3bzVor9nFP4FUF671gXCFwvSbTMh/pm
+          EnOM6p6E/dWD2Ag1rcEX2lXn1sKvO+0nEdmHra8c6EeGhwt/sJ8MMVx61ZgKi0/Z
+          UGmfwBR004Tb4XBbUPOYzIZqtsK9lBUeFs6v3mNaZCBxzTb3fIXnqX5o9d7F/8ya
+          a+S+sLqYzheCiJz5JpYxh2GovoeDkPczd8HeAK9REedEs12grZj3cxnVyZApbeX5
+          yQARAQABiQEfBBgBAgAJBQJZH3/JAhsMAAoJEHLLlq9IMVNMRFAIAJzEv6Y0ngqU
+          jgcE+kd+nLGtSgQ4MRWD5y0s8cLP/M5WNtJNWy70038fG3/ilh8Y4HsfTDu4ZMHQ
+          mVM1lpJg/U08fUIiU+iQfVnckB+Oj/irc2FgUF2YJSJwZkwFaIv0u1NKkvKr8Qmt
+          jJuAuNv97uHLF9fkAJGUrLGZDk5MmCNdnQDkPEn7NaRMxf+1SvbGvPS3jGzGbR0p
+          Umtdm5/zs4kre7xS71d4F5De4d1bhTNT8weC9KDJdXXf8xsuF1NPlxU/Cv6XB78Y
+          W2I4/FMkyQOkVZyNz20SbupiZt0L0ldlnk1brf2hoKagmBLNU8bXKrQAkqQTxJcT
+          d+E671t4w94=
+          =Fbaq
+          -----END PGP PUBLIC KEY BLOCK-----
+        install-sources: |
+          - "deb http://10.102.44.96/contrail4 /"
+
     contrail-analytics:
       charm: ./{{ ubuntu.release }}/contrail-analytics
       num_units: {{ unit_qty() }}
-      options:
-        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
-        install-sources: ppa:opencontrail/trunk-20160812
       to:
 {% for unit_id in to_select() %}
-        - "lxd:nodes/{{ unit_id }}"
+        - "nodes/{{ unit_id }}"
 {% endfor %}
-    contrail-webui:
-      charm: ./{{ ubuntu.release }}/contrail-webui
-      num_units: {{ unit_qty() }}
-      options:
-        install-sources: ppa:opencontrail/trunk-20160812
-      to:
-{% for unit_id in to_select() %}
-        - "lxd:nodes/{{ unit_id }}"
-{% endfor %}
-    haproxy:
-      charm: ./{{ ubuntu.release }}/haproxy
-      num_units: {{ unit_qty() }}
-      options:
-        peering_mode: active-active
-      to:
-{% for unit_id in to_select() %}
-        - "lxd:nodes/{{ unit_id }}"
-{% endfor %}
-    kafka:
-      charm: ./{{ ubuntu.release }}/kafka
+
+    contrail-analyticsdb:
+      charm: ./{{ ubuntu.release }}/contrail-analyticsdb
       num_units: {{ unit_qty() }}
       to:
 {% for unit_id in to_select() %}
-        - "lxd:nodes/{{ unit_id }}"
+        - "nodes/{{ unit_id }}"
 {% endfor %}
+
+    contrail-controller:
+      charm: ./{{ ubuntu.release }}/contrail-controller
+      num_units: {{ unit_qty() }}
+      to:
+{% for unit_id in to_select() %}
+        - "nodes/{{ unit_id }}"
+{% endfor %}
+
+    contrail-keystone-auth:
+      charm: ./{{ ubuntu.release }}/contrail-keystone-auth
+      num_units: 1
+      to:
+        - "lxd:nodes/0"
 
