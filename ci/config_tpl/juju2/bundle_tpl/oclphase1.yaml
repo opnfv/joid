@@ -102,6 +102,8 @@
     contrail-keystone-auth:
       charm: ./{{ ubuntu.release }}/contrail-keystone-auth
       num_units: 1
+      bindings:
+        "": internal-api
       to:
         - "lxd:nodes/0"
 

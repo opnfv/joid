@@ -56,7 +56,9 @@
 {% include 'rabbitmq.yaml' %}
 {% include 'heat.yaml' %}
 {% include 'neutron-api.yaml' %}
+{% if os.network.controller != 'ocl' %}
 {% include 'neutron-gateway.yaml' %}
+{% endif %}
 {% include 'aodh.yaml' %}
 {% if os.network.controller == 'odl' %}
 {% include 'odl.yaml' %}
