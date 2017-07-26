@@ -101,6 +101,6 @@ opnfv:
       vlan:
     - type: floating
       bridge: brPublic
-      cidr: 10.10.10.0/24
+      cidr: 10.10.0.0/20
       gateway:
       vlan:

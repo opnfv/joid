@@ -431,6 +431,7 @@ addnodes(){
            units=$(($units - 1));
            NODE_NAME=`cat labconfig.json | jq ".lab.racks[].nodes[$units].name" | cut -d \" -f 2 `
            MAC_ADDRESS=`cat labconfig.json | jq ".lab.racks[].nodes[$units].nics[] | select(.spaces[]==\"admin\").mac"[0] | cut -d \" -f 2 `
+           MAC_ADDRESS1=`cat labconfig.json | jq ".lab.racks[].nodes[$units].nics[] | select(.spaces[]==\"floating\").mac"[0] | cut -d \" -f 2 `
            POWER_TYPE=`cat labconfig.json | jq ".lab.racks[].nodes[$units].power.type" | cut -d \" -f 2 `
            POWER_IP=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.address" | cut -d \" -f 2 `
            POWER_USER=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.user" | cut -d \" -f 2 `
@@ -439,7 +440,7 @@ addnodes(){
            maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
                hostname=$NODE_NAME power_type=$POWER_TYPE power_parameters_power_address=$POWER_IP \
                power_parameters_power_user=$POWER_USER power_parameters_power_pass=$POWER_PASS mac_addresses=$MAC_ADDRESS \
-               architecture='amd64/generic'
+               mac_addresses=$MAC_ADDRESS1 architecture='amd64/generic'
        done
     fi
 

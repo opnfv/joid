@@ -13,7 +13,7 @@
 {% else %}
       num_units: 1
 {% endif %}
-      constraints: tags=control
+
     nodes-compute:
       charm: "cs:{{ ubuntu.release }}/ubuntu"
 {% if os.ha.mode == 'ha' %}
