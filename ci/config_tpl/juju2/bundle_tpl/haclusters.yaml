@@ -15,6 +15,7 @@
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
+{% if os.network.controller != 'ocl' %}
 #    hacluster-heat:
 #      charm: "./{{ ubuntu.release }}/hacluster"
 #      options:
@@ -22,6 +23,7 @@
 #        cluster_count: 3
 {% if os.network.ipv6 %}
 #        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
 {% endif %}
     hacluster-horizon:
       charm: "./{{ ubuntu.release }}/hacluster"
@@ -55,6 +57,7 @@
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
+{% if os.network.controller != 'ocl' %}
     hacluster-ceilometer:
       charm: "./{{ ubuntu.release }}/hacluster"
       options:
@@ -62,6 +65,7 @@
         cluster_count: 3
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
 {% endif %}
     hacluster-mysql:
       charm: "./{{ ubuntu.release }}/hacluster"
