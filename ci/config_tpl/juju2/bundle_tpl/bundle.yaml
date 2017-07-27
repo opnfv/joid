@@ -30,7 +30,6 @@
         auto_peers: false
 {% endif %}
 {% include 'mysql.yaml' %}
-{% include 'ceilometer.yaml' %}
 {% if opnfv.storage_dict.scaleio is defined %}
 {% include 'scaleio.yaml' %}
 {% else %}
@@ -54,10 +53,11 @@
 {% include 'nova-compute.yaml' %}
 {% include 'openstack-dashboard.yaml' %}
 {% include 'rabbitmq.yaml' %}
-{% include 'heat.yaml' %}
 {% include 'neutron-api.yaml' %}
 {% if os.network.controller != 'ocl' %}
 {% include 'neutron-gateway.yaml' %}
+{% include 'heat.yaml' %}
+{% include 'ceilometer.yaml' %}
 {% endif %}
 {% include 'aodh.yaml' %}
 {% if os.network.controller == 'odl' %}
