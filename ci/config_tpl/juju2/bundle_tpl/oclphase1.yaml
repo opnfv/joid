@@ -3,7 +3,38 @@
       charm: ./{{ ubuntu.release }}/contrail-openstack
       options:
         install-keys: |
-          "http:65.122.57.42/repo/key"
+          - |
+            -----BEGIN PGP PUBLIC KEY BLOCK-----
+            Version: GnuPG v1
+
+            mQENBFkIj2sBCADL2Kws0P+19LnEMuWmGDJFo5WjJ3nk6ubf8AKQiF/5MMyYP665
+            s3nKviU4gO+NBjMGIRWfVDUdikG/mUhlIC2x17lrIVA1rrOj7IwL6CgLDOn5lQeu
+            SOL2XavLToJlG1TgkPOObmCjeg8wZxswUIIc9BVVdG2XKFlEEQ0ExyhDjq25JuOI
+            OaWsY0TrAfuLnimZ/cchBT8ThTcheko47jaKnHI0rlsqXKX6oeZ1vIAtMSPIAuc/
+            G0Et8z+aXY7vpWRrJsdXvZECJCVhc58af3LwmcczC5WvwGbrTI2Q7mCiVoUUyRV/
+            MBXYSPZFCiLZHBive5ZrpfWozoLDUL+dZCMrABEBAAG0LFN0dWFydCBNYWNraWUg
+            KE9QTkZWKSA8d3NtYWNraWVAanVuaXBlci5uZXQ+iQE4BBMBAgAiBQJZCI9rAhsD
+            BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRB8SBQaOveMpwTSB/0Y0Fr0xXA+
+            fd2j6Xq8+LJF6aM1/GKz9u36QR4nD2J6J4I01/OeJnemco1yPgkm7zLMMmWfIyRV
+            1WStkRiKxcWYXU4Fg+iCikbPG09z5FeIDWh643mYClLpg+jI+c8gsYSzqiuLw7NM
+            4Qn/cKqSh1IunFWgRSKpPlGgFSn+3jWaRZs98Pq+Zqz+FbjWArrsyWMsFXuB7/vm
+            X2wz1IcHWO4kcjtMaeTizMIitAjmWl0cO9X4IBgQMwRxlelD4lAw+iyCLUTkqmOW
+            kncGgfOOyV0A5Cd2Ws2Hi7Ikz1RUI6OqyVtlC76cEIG+DnPmb0v1BH8CQ6bLOrOT
+            kETcdvBBZOMmuQENBFkIj2sBCACy4VoDFcy8ZyLuKOwQw/9LdGMFkbb3OJDsrPT0
+            bz9CmYHSTRVAbJljlOa0Q/qzpPNk7jHslMBjewp5nSdK091/LBc9OJw9SDcnLWHM
+            Nxxes6IyVOqZe2Xa49S3FqMJsfYf3Q6i89L5WySr+bcfF0+CFe57cKFGX3l/pPE2
+            dVwIsCUo1puEFrvSJqQiU22MtrL7g8XM83zJF5OU7u34+BR+Rc40MSJm7dsbn29m
+            QKlmkoV1KSG7va/WNoz1sfySmPgMjHx2b1f5GGt3du5RQESn1jDTHdNj+bqvrQ3r
+            uw6SbbuCsGzMJMD3LovfI62xNGYhda/GlHgYAyg0nDJ1aa3TABEBAAGJAR8EGAEC
+            AAkFAlkIj2sCGwwACgkQfEgUGjr3jKdeigf/QsBlCNOXcuXjU0gw6w6Q77XQcNzD
+            4+Bw2igCmQOhAZSMLsRMMWzLiu35xthVcUOACyLfCSZWSLQh8x8jGpU29cMhLqlY
+            CMerpnFldqH+f3omORBENAFCO1C4ZGym+zLFSBQBZhf8U7y2eC/sSeCGMEOkKpbg
+            TX5psQXa8SnjWUrfg0aDgd4KVK+AGE3BTVaJmT//OrXy8e4AzspX8oNa15ntk/ll
+            WOsSJ4g1WHIk3mwPLjCwufbu4GErHBxyCfYlG1I3Vu8Ilp7dL3vpjcDRocJLoIyb
+            WUHA5RozR0o3GEI/IDS5TiVqMxqvdkayP1ySrjBbQxT3wOiTBxic5wI/zQ==
+            =5y7K
+            -----END PGP PUBLIC KEY BLOCK-----
+
         install-sources: |
           - "deb http:65.122.57.42/repo /"
 
@@ -11,7 +42,38 @@
       charm: ./{{ ubuntu.release }}/contrail-agent
       options:
         install-keys: |
-          "http:65.122.57.42/repo/key"
+          - |
+            -----BEGIN PGP PUBLIC KEY BLOCK-----
+            Version: GnuPG v1
+
+            mQENBFkIj2sBCADL2Kws0P+19LnEMuWmGDJFo5WjJ3nk6ubf8AKQiF/5MMyYP665
+            s3nKviU4gO+NBjMGIRWfVDUdikG/mUhlIC2x17lrIVA1rrOj7IwL6CgLDOn5lQeu
+            SOL2XavLToJlG1TgkPOObmCjeg8wZxswUIIc9BVVdG2XKFlEEQ0ExyhDjq25JuOI
+            OaWsY0TrAfuLnimZ/cchBT8ThTcheko47jaKnHI0rlsqXKX6oeZ1vIAtMSPIAuc/
+            G0Et8z+aXY7vpWRrJsdXvZECJCVhc58af3LwmcczC5WvwGbrTI2Q7mCiVoUUyRV/
+            MBXYSPZFCiLZHBive5ZrpfWozoLDUL+dZCMrABEBAAG0LFN0dWFydCBNYWNraWUg
+            KE9QTkZWKSA8d3NtYWNraWVAanVuaXBlci5uZXQ+iQE4BBMBAgAiBQJZCI9rAhsD
+            BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRB8SBQaOveMpwTSB/0Y0Fr0xXA+
+            fd2j6Xq8+LJF6aM1/GKz9u36QR4nD2J6J4I01/OeJnemco1yPgkm7zLMMmWfIyRV
+            1WStkRiKxcWYXU4Fg+iCikbPG09z5FeIDWh643mYClLpg+jI+c8gsYSzqiuLw7NM
+            4Qn/cKqSh1IunFWgRSKpPlGgFSn+3jWaRZs98Pq+Zqz+FbjWArrsyWMsFXuB7/vm
+            X2wz1IcHWO4kcjtMaeTizMIitAjmWl0cO9X4IBgQMwRxlelD4lAw+iyCLUTkqmOW
+            kncGgfOOyV0A5Cd2Ws2Hi7Ikz1RUI6OqyVtlC76cEIG+DnPmb0v1BH8CQ6bLOrOT
+            kETcdvBBZOMmuQENBFkIj2sBCACy4VoDFcy8ZyLuKOwQw/9LdGMFkbb3OJDsrPT0
+            bz9CmYHSTRVAbJljlOa0Q/qzpPNk7jHslMBjewp5nSdK091/LBc9OJw9SDcnLWHM
+            Nxxes6IyVOqZe2Xa49S3FqMJsfYf3Q6i89L5WySr+bcfF0+CFe57cKFGX3l/pPE2
+            dVwIsCUo1puEFrvSJqQiU22MtrL7g8XM83zJF5OU7u34+BR+Rc40MSJm7dsbn29m
+            QKlmkoV1KSG7va/WNoz1sfySmPgMjHx2b1f5GGt3du5RQESn1jDTHdNj+bqvrQ3r
+            uw6SbbuCsGzMJMD3LovfI62xNGYhda/GlHgYAyg0nDJ1aa3TABEBAAGJAR8EGAEC
+            AAkFAlkIj2sCGwwACgkQfEgUGjr3jKdeigf/QsBlCNOXcuXjU0gw6w6Q77XQcNzD
+            4+Bw2igCmQOhAZSMLsRMMWzLiu35xthVcUOACyLfCSZWSLQh8x8jGpU29cMhLqlY
+            CMerpnFldqH+f3omORBENAFCO1C4ZGym+zLFSBQBZhf8U7y2eC/sSeCGMEOkKpbg
+            TX5psQXa8SnjWUrfg0aDgd4KVK+AGE3BTVaJmT//OrXy8e4AzspX8oNa15ntk/ll
+            WOsSJ4g1WHIk3mwPLjCwufbu4GErHBxyCfYlG1I3Vu8Ilp7dL3vpjcDRocJLoIyb
+            WUHA5RozR0o3GEI/IDS5TiVqMxqvdkayP1ySrjBbQxT3wOiTBxic5wI/zQ==
+            =5y7K
+            -----END PGP PUBLIC KEY BLOCK-----
+
         install-sources: |
           - "deb http:65.122.57.42/repo /"
 
