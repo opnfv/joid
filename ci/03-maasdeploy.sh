@@ -345,10 +345,12 @@ addnodes(){
     # if we have a virshurl configuration we use it, else we use local
     VIRSHURL=$(cat labconfig.json | jq -r '.opnfv.virshurl')
     if ([ $VIRSHURL == "" ] || [ "$VIRSHURL" == "null" ]); then
-        VIRSHURL="qemu+ssh://$USER@$MAAS_IP/system "
+        VIRSHIP=$MAAS_IP
+        VIRSHURL="qemu+ssh://$USER@$VIRSHIP/system "
         VIRSHHOST=""
     else
         VIRSHHOST=$(echo $VIRSHURL| cut -d\/ -f 3 | cut -d@ -f2)
+        VIRSHIP=""  # TODO: parse from $VIRSHURL if needed
     fi
 
     if [ "$virtinstall" -eq 1 ]; then
@@ -372,6 +374,16 @@ addnodes(){
                 netw=$netw" --network bridge="$feature",model=virtio"
             fi
         done
+    fi
+
+    # Add server fingerprint to known hosts to prevent security prompt in the
+    # SSH connection during the virt-install
+    if [ $VIRSHIP != "" ]; then
+        # Check if the IP is not already present among the known hosts
+        if ! ssh-keygen -F $VIRSHIP > /dev/null ; then
+            echo "SSH fingerprint of the host is not known yet, adding"
+            ssh-keyscan -H $VIRSHIP >> ~/.ssh/known_hosts
+        fi
     fi
 
     virt-install --connect $VIRSHURL --name bootstrap --ram 4098 --cpu host --vcpus 2 --video \
