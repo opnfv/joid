@@ -1,6 +1,6 @@
 
     ovn:
-      charm: "cs:~aakashkt/ovn-13"
+      charm: "cs:~aakashkt/ovn-14"
 {% if os.service.bindings %}
       bindings:
         "": internal-api
