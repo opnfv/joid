@@ -458,10 +458,18 @@ addnodes(){
 
     maas $PROFILE pods create type=virsh power_address="$VIRSHURL" power_user=$USER
 
-    # make sure nodes are added into MAAS and none of them is in commisoning state
-    while [ "$(maas $PROFILE nodes read | grep  Commissioning )" ];
+    # Make sure nodes are added into MAAS and none of them is in commissioning state
+    while [ "$(maas $PROFILE nodes read | grep Commissioning )" ];
     do
         sleep 60
+
+        # Make sure that no nodes have failed commissioning
+        if [ "$(maas $PROFILE nodes read | grep 'Failed commissioning' )" ];
+        then
+            echo "Error: Some nodes have failed commissioning" 1>&2
+            exit 1
+        fi
+
     done
 
 }
@@ -480,7 +488,7 @@ setupspacenetwork
 sudo ./maas-reconfigure-region.sh $MAAS_IP
 sleep 120
 
-#lets add the nodes now. Currently works only for virtual deploymnet.
+# Let's add the nodes now. Currently works only for virtual deployment.
 addnodes
 
 echo "... Deployment of maas finish ...."
