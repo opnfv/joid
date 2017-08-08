@@ -170,7 +170,7 @@ if [ "$API_FQDN" != "None" ]; then
                     fi"
 
     # remove this enhancement for heat that does not manage endpoints
-    juju run --service=heat "cp /etc/hosts /tmp/hosts ; \
+    juju run --application=heat "cp /etc/hosts /tmp/hosts ; \
                              grep -v $API_FQDN /tmp/hosts > /etc/hosts"
 
     #change in jumphost as well as below commands will run on jumphost
