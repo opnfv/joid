@@ -175,17 +175,19 @@ deploy() {
 
 #check whether charms are still executing the code even juju-deployer says installed.
 check_status() {
+    waitstatus=$1
     retval=0
     timeoutiter=0
 
     echo -n "executing the reltionship within charms ."
     while [ $retval -eq 0 ]; do
-       sleep 30
-       if juju status | grep -q "executing"; then
+        if juju status | grep -q $waitstatus; then
            echo -n '.'
            if [ $timeoutiter -ge 120 ]; then
                echo 'timed out'
                retval=1
+           else
+               sleep 30
            fi
            timeoutiter=$((timeoutiter+1))
        else
@@ -198,13 +200,14 @@ check_status() {
         juju expose ceph-radosgw || true
         #juju ssh ceph/0 \ 'sudo radosgw-admin user create --uid="ubuntu" --display-name="Ubuntu Ceph"'
     fi
+
     echo "...... deployment finishing ......."
-}
+ }
 
 echo "...... deployment started ......"
 deploy
 
-check_status
+check_status executing
 
 echo "...... deployment finished  ......."
 
@@ -253,6 +256,10 @@ if ([ $opnfvmodel == "openstack" ]); then
 
     sudo ../juju/get-cloud-images || true
     ../juju/joid-configure-openstack || true
+
+    if grep -q 'openbaton' bundles.yaml; then
+        juju add-relation openbaton keystone
+    fi
 
 elif ([ $opnfvmodel == "kubernetes" ]); then
     ./k8.sh
