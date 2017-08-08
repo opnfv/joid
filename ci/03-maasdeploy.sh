@@ -463,10 +463,10 @@ addnodes(){
     do
         sleep 60
 
-        # Make sure that no nodes have failed commissioning
-        if [ "$(maas $PROFILE nodes read | grep 'Failed commissioning' )" ];
+        # Make sure that no nodes have failed commissioning or testing
+        if [ "$(maas $PROFILE nodes read | grep 'Failed' )" ];
         then
-            echo "Error: Some nodes have failed commissioning" 1>&2
+            echo "Error: Some nodes have failed commissioning or testing" 1>&2
             exit 1
         fi
 
