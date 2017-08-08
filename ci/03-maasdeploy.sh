@@ -11,6 +11,17 @@ if [ ! -e $HOME/.ssh/id_rsa ]; then
     ssh-keygen -N '' -f $HOME/.ssh/id_rsa
 fi
 
+NODE_ARCTYPE=`arch`
+NODE_ARC="amd64/generic"
+
+if [ "x86_64" == "$NODE_ARCTYPE" ]; then
+    NODE_ARC="adm64/generic"
+elif  [ "ppc64le" == "$NODE_ARCTYPE" ]; then
+    NODE_ARC='ppc64el'
+else
+    NODE_ARC=$NODE_ARCTYPE
+fi
+
 # Install the packages needed
 echo_info "Installing and upgrading required packages"
 sudo apt-get install software-properties-common -y
@@ -393,7 +404,7 @@ addnodes(){
     echo_info "Creating and adding bootstrap node"
 
     virt-install --connect $VIRSHURL --name bootstrap --ram 4098 --cpu host --vcpus 2 --video \
-                 cirrus --arch x86_64 --disk size=20,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
+                 cirrus --disk size=20,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
                  $netw --boot network,hd,menu=off --noautoconsole \
                  --vnc --print-xml | tee bootstrap
 
@@ -414,7 +425,7 @@ addnodes(){
     maas $PROFILE machines create autodetect_nodegroup='yes' name='bootstrap' \
         tags='bootstrap' hostname='bootstrap' power_type='virsh' mac_addresses=$bootstrapmac \
         power_parameters_power_address="$VIRSHURL" \
-        architecture='amd64/generic' power_parameters_power_id='bootstrap'
+        architecture=$NODE_ARC power_parameters_power_id='bootstrap'
 
     bootstrapid=$(maas $PROFILE machines read | jq -r '.[] | select(.hostname == "bootstrap").system_id')
 
@@ -437,7 +448,7 @@ addnodes(){
             maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
                 tags='control compute' hostname=$NODE_NAME power_type='virsh' mac_addresses=$nodemac \
                 power_parameters_power_address="$VIRSHURL" \
-                architecture='amd64/generic' power_parameters_power_id=$NODE_NAME
+                architecture=$NODE_ARC power_parameters_power_id=$NODE_NAME
             nodeid=$(maas $PROFILE machines read | jq -r '.[] | select(.hostname == '\"$NODE_NAME\"').system_id')
             maas $PROFILE tag update-nodes control add=$nodeid || true
             maas $PROFILE tag update-nodes compute add=$nodeid || true
@@ -449,17 +460,25 @@ addnodes(){
             units=$(($units - 1));
             NODE_NAME=`cat labconfig.json | jq ".lab.racks[].nodes[$units].name" | cut -d \" -f 2 `
             MAC_ADDRESS=`cat labconfig.json | jq ".lab.racks[].nodes[$units].nics[] | select(.spaces[]==\"admin\").mac"[0] | cut -d \" -f 2 `
-            MAC_ADDRESS1=`cat labconfig.json | jq ".lab.racks[].nodes[$units].nics[] | select(.spaces[]==\"floating\").mac"[0] | cut -d \" -f 2 `
+            #MAC_ADDRESS1=`cat labconfig.json | jq ".lab.racks[].nodes[$units].nics[] | select(.spaces[]==\"floating\").mac"[0] | cut -d \" -f 2 `
             POWER_TYPE=`cat labconfig.json | jq ".lab.racks[].nodes[$units].power.type" | cut -d \" -f 2 `
             POWER_IP=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.address" | cut -d \" -f 2 `
             POWER_USER=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.user" | cut -d \" -f 2 `
             POWER_PASS=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.pass" | cut -d \" -f 2 `
+            NODE_ARCTYPE=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].architecture" | cut -d \" -f 2 `
+
+            if [ "x86_64" -eq $NODE_ARCTYPE ]; then
+                NODE_ARC='adm64/generic'
+            else
+                NODE_ARC=$NODE_ARCTYPE
+            fi
 
             echo_info "Creating node $NODE_NAME"
             maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
                 hostname=$NODE_NAME power_type=$POWER_TYPE power_parameters_power_address=$POWER_IP \
                 power_parameters_power_user=$POWER_USER power_parameters_power_pass=$POWER_PASS mac_addresses=$MAC_ADDRESS \
-                mac_addresses=$MAC_ADDRESS1 architecture='amd64/generic'
+                architecture=$NODE_ARC
+                #mac_addresses=$MAC_ADDRESS1 architecture=$NODE_ARCH
         done
     fi
 
