@@ -2,6 +2,8 @@
 #placeholder for deployment script.
 set -ex
 
+source tools.sh
+
 virtinstall=0
 labname=$1
 
@@ -9,7 +11,8 @@ if [ ! -e $HOME/.ssh/id_rsa ]; then
     ssh-keygen -N '' -f $HOME/.ssh/id_rsa
 fi
 
-#install the packages needed
+# Install the packages needed
+echo_info "Installing and upgrading required packages"
 sudo apt-get install software-properties-common -y
 sudo apt-add-repository ppa:juju/stable -y
 sudo apt-add-repository ppa:maas/stable -y
@@ -37,6 +40,7 @@ sudo -H pip install --upgrade pip
 #
 
 # Get labconfig and generate deployconfig.yaml
+echo_info "Parsing lab configuration file"
 case "$labname" in
     intelpod[569]|orangepod[12]|cengnpod[12] )
         array=(${labname//pod/ })
@@ -126,7 +130,7 @@ else
     sudo mv 90-joid-init /etc/sudoers.d/
 fi
 
-echo "... Deployment of maas Started ...."
+echo_info "Deployment of MAAS started"
 
 #
 # Virsh preparation
@@ -221,7 +225,7 @@ configuremaas(){
                  compute-external storage-data storage-cluster admin \
                  tenant-data tenant-api tenant-public
     do
-        echo "Creating the space $space"
+        echo_info "Creating the space $space"
         maas $PROFILE spaces create name=$space || true
     done
 
@@ -299,7 +303,7 @@ setupspacenetwork(){
             'storage')         JUJU_SPACE="tenant-stor";   DHCP='' ;;
             'storagecluster')  JUJU_SPACE="storclus";      DHCP='' ;;
             'floating')        JUJU_SPACE="tenant-public"; DHCP='' ;;
-            *)                 JUJU_SPACE='default';       DHCP='OFF'; echo "      >>> Unknown SPACE" ;;
+            *)                 JUJU_SPACE='default';       DHCP='OFF'; echo_info "      >>> Unknown SPACE" ;;
         esac
         JUJU_SPACE_ID=$(maas $PROFILE spaces read | jq -r ".[] |  select(.name==\"$JUJU_SPACE\")".id)
         JUJU_VLAN_VID=$(maas $PROFILE subnets read | jq -r ".[] |  select(.name==\"$SPACE_CIDR\")".vlan.vid)
@@ -381,10 +385,12 @@ addnodes(){
     if [ $VIRSHIP != "" ]; then
         # Check if the IP is not already present among the known hosts
         if ! ssh-keygen -F $VIRSHIP > /dev/null ; then
-            echo "SSH fingerprint of the host is not known yet, adding"
+            echo_info "SSH fingerprint of the host is not known yet, adding to known_hosts"
             ssh-keyscan -H $VIRSHIP >> ~/.ssh/known_hosts
         fi
     fi
+
+    echo_info "Creating and adding bootstrap node"
 
     virt-install --connect $VIRSHURL --name bootstrap --ram 4098 --cpu host --vcpus 2 --video \
                  cirrus --arch x86_64 --disk size=20,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
@@ -437,31 +443,35 @@ addnodes(){
             maas $PROFILE tag update-nodes compute add=$nodeid || true
         done
     else
-       units=`cat deployconfig.json | jq .opnfv.units`
+        units=`cat deployconfig.json | jq .opnfv.units`
 
-       until [ $(($units)) -lt 1 ]; do
-           units=$(($units - 1));
-           NODE_NAME=`cat labconfig.json | jq ".lab.racks[].nodes[$units].name" | cut -d \" -f 2 `
-           MAC_ADDRESS=`cat labconfig.json | jq ".lab.racks[].nodes[$units].nics[] | select(.spaces[]==\"admin\").mac"[0] | cut -d \" -f 2 `
-           MAC_ADDRESS1=`cat labconfig.json | jq ".lab.racks[].nodes[$units].nics[] | select(.spaces[]==\"floating\").mac"[0] | cut -d \" -f 2 `
-           POWER_TYPE=`cat labconfig.json | jq ".lab.racks[].nodes[$units].power.type" | cut -d \" -f 2 `
-           POWER_IP=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.address" | cut -d \" -f 2 `
-           POWER_USER=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.user" | cut -d \" -f 2 `
-           POWER_PASS=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.pass" | cut -d \" -f 2 `
+        until [ $(($units)) -lt 1 ]; do
+            units=$(($units - 1));
+            NODE_NAME=`cat labconfig.json | jq ".lab.racks[].nodes[$units].name" | cut -d \" -f 2 `
+            MAC_ADDRESS=`cat labconfig.json | jq ".lab.racks[].nodes[$units].nics[] | select(.spaces[]==\"admin\").mac"[0] | cut -d \" -f 2 `
+            MAC_ADDRESS1=`cat labconfig.json | jq ".lab.racks[].nodes[$units].nics[] | select(.spaces[]==\"floating\").mac"[0] | cut -d \" -f 2 `
+            POWER_TYPE=`cat labconfig.json | jq ".lab.racks[].nodes[$units].power.type" | cut -d \" -f 2 `
+            POWER_IP=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.address" | cut -d \" -f 2 `
+            POWER_USER=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.user" | cut -d \" -f 2 `
+            POWER_PASS=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.pass" | cut -d \" -f 2 `
 
-           maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
-               hostname=$NODE_NAME power_type=$POWER_TYPE power_parameters_power_address=$POWER_IP \
-               power_parameters_power_user=$POWER_USER power_parameters_power_pass=$POWER_PASS mac_addresses=$MAC_ADDRESS \
-               mac_addresses=$MAC_ADDRESS1 architecture='amd64/generic'
-       done
+            echo_info "Creating node $NODE_NAME"
+            maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
+                hostname=$NODE_NAME power_type=$POWER_TYPE power_parameters_power_address=$POWER_IP \
+                power_parameters_power_user=$POWER_USER power_parameters_power_pass=$POWER_PASS mac_addresses=$MAC_ADDRESS \
+                mac_addresses=$MAC_ADDRESS1 architecture='amd64/generic'
+        done
     fi
 
     maas $PROFILE pods create type=virsh power_address="$VIRSHURL" power_user=$USER
 
     # Make sure nodes are added into MAAS and none of them is in commissioning state
+    i=0
     while [ "$(maas $PROFILE nodes read | grep Commissioning )" ];
     do
+        echo_info "Waiting for nodes to finish commissioning. ${i} minutes elapsed."
         sleep 60
+        i=$[$i+1]
 
         # Make sure that no nodes have failed commissioning or testing
         if [ "$(maas $PROFILE nodes read | grep 'Failed' )" ];
@@ -491,7 +501,7 @@ sleep 120
 # Let's add the nodes now. Currently works only for virtual deployment.
 addnodes
 
-echo "... Deployment of maas finish ...."
+echo_info "Initial deployment of MAAS finished"
 
 #Added the Qtip public to run the Qtip test after install on bare metal nodes.
 #maas $PROFILE sshkeys new key="`cat ./maas/sshkeys/QtipKey.pub`"
@@ -521,6 +531,7 @@ addcloud() {
     echo "      auth-types: [oauth1]" >> maas-cloud.yaml
     echo "      endpoint: $API_SERVERMAAS" >> maas-cloud.yaml
 
+    echo_info "Adding cloud $cloudname"
     juju add-cloud $cloudname maas-cloud.yaml --replace
 }
 
@@ -538,7 +549,7 @@ if [ -e ./labconfig.json ]; then
         # Get the NAME/SYS_ID of this node
         NODE_NAME=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].name")
         NODE_SYS_ID=$(maas $PROFILE nodes read | jq -r ".[] |  select(.hostname==\"$NODE_NAME\")".system_id)
-        echo ">>> Configuring node $NODE_NAME [$NODE_ID][$NODE_SYS_ID]"
+        echo_info ">>> Configuring node $NODE_NAME [$NODE_ID][$NODE_SYS_ID]"
         # Recover the network interfaces list and configure each one
         #   with sorting the list, we have hardware interface first, than the vlan interfaces
         IF_LIST=$(cat labconfig.json | jq --raw-output ".lab.racks[0].nodes[$NODE_ID].nics[] ".ifname | sort -u )
@@ -551,9 +562,9 @@ if [ -e ./labconfig.json ]; then
                 'public')   IF_MODE='AUTO' ;;
                 'storage')  IF_MODE='AUTO' ;;
                 'floating') IF_MODE='link_up' ;;
-                *) SUBNET_CIDR='null'; IF_MODE='null'; echo "      >>> Unknown SPACE" ;;
+                *) SUBNET_CIDR='null'; IF_MODE='null'; echo_info "      >>> Unknown SPACE" ;;
             esac
-            echo "   >>> Configuring interface $IF_NAME [$IF_SPACE][$SUBNET_CIDR]"
+            echo_info "   >>> Configuring interface $IF_NAME [$IF_SPACE][$SUBNET_CIDR]"
 
             # if we have a vlan parameter in the space config
             IF_VLAN=$(cat labconfig.json | jq --raw-output ".opnfv.spaces[] | select(.type==\"$IF_SPACE\")".vlan)
@@ -566,7 +577,7 @@ if [ -e ./labconfig.json ]; then
 
             # In case of a VLAN interface
             if ([ $IF_VLAN ] && [ "$IF_VLAN" != "null" ]); then
-                echo "      >>> Configuring VLAN $IF_VLAN"
+                echo_info "      >>> Configuring VLAN $IF_VLAN"
                 VLANID=$(maas $PROFILE subnets read | jq ".[].vlan | select(.vid==$IF_VLAN)".id)
                 FABRICID=$(maas $PROFILE subnets read | jq ".[].vlan | select(.vid==$IF_VLAN)".fabric_id)
                 INTERFACE=$(maas $PROFILE interfaces read $NODE_SYS_ID | jq ".[] | select(.vlan.fabric_id==$FABRICID)".id)
@@ -605,7 +616,7 @@ if [ -e ./labconfig.json ]; then
                 maas $PROFILE interface link-subnet $NODE_SYS_ID $IF_NAME  mode=$IF_MODE subnet=$SUBNET_CIDR || true
                 sleep 2
             else
-                echo "      >>> Not configuring, we have an empty Subnet CIDR"
+                echo_info "      >>> Not configuring, we have an empty Subnet CIDR"
             fi
 
         done
@@ -623,4 +634,4 @@ fi
 #
 # End of scripts
 #
-echo " .... MAAS deployment finished successfully ...."
+echo_info " .... MAAS deployment finished successfully ...."
