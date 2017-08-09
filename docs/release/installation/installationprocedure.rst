@@ -184,7 +184,7 @@ https://gerrit.opnfv.org/gerrit/gitweb?p=joid.git;a=blob;f=labconfig/intel/pod6/
 opnfv:
     release: d
     distro: xenial
-    type: nonha
+    type: noha
     openstack: newton
     sdncontroller:
     - type: nosdn
@@ -228,10 +228,10 @@ For deployment of Danube release on KVM please use the following command.
 OPNFV Install
 -------------
 
-| ``   ./deploy.sh -o newton -s nosdn -t nonha -l custom -f none -d xenial -m openstack``
+| ``   ./deploy.sh -o newton -s nosdn -t noha -l custom -f none -d xenial -m openstack``
 | ``   ``
 
-./deploy.sh -o newton -s nosdn -t nonha -l custom -f none -d xenial -m openstack
+./deploy.sh -o newton -s nosdn -t noha -l custom -f none -d xenial -m openstack
 
 NOTE: Possible options are as follows:
 
@@ -243,8 +243,8 @@ choose which sdn controller to use.
   onos: ONOS framework as SDN.
 
 Mode of Openstack deployed.
-  [-t <nonha|ha|tip>]
-  nonha: NO HA mode of Openstack
+  [-t <noha|ha|tip>]
+  noha: NO HA mode of Openstack
   ha: HA mode of openstack.
 
 Wihch version of Openstack deployed.
@@ -286,8 +286,8 @@ os-nosdn-lxd-ha          Joid           Yardstick team is working to support.
 os-nosdn-lxd-noha        Joid           Yardstick team is working to support.
 os-onos-nofeature-ha	 ONOSFW
 os-onos-sfc-ha	         ONOSFW
-k8-nosdn-nofeature-nonha Joid	        No support from Functest and Yardstick
-k8-nosdn-lb-nonha	 Joid	        No support from Functest and Yardstick
+k8-nosdn-nofeature-noha Joid	        No support from Functest and Yardstick
+k8-nosdn-lb-noha	 Joid	        No support from Functest and Yardstick
 
 ------------
 Troubleshoot

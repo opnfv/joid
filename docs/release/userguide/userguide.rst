@@ -171,7 +171,7 @@ lab:
 opnfv:
   release: d
   distro: xenial
-  type: nonha
+  type: noha
   openstack: newton
   sdncontroller:
   - type: nosdn
@@ -247,7 +247,7 @@ Take a look at the deploy.sh script. You will find we support the following for 
     opencontrail: OpenContrail.
     onos: ONOS framework as SDN.
   [-t]
-    nonha: NO HA mode of OpenStack.
+    noha: NO HA mode of OpenStack.
     ha: HA mode of OpenStack.
     tip: The tip of the development.
   [-o]

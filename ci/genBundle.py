@@ -143,7 +143,7 @@ for storage in config['opnfv']['storage']:
 
 # Set default scenario name
 if not scenario:
-    scenario = "os-nosdn-nofeature-nonha"
+    scenario = "os-nosdn-nofeature-noha"
 
 # Parse scenario name
 try:
