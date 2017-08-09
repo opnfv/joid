@@ -39,8 +39,8 @@
 {% endfor %}
 {% else %}
         - "lxd:nodes/0"
-        - "lxd:nodes/0"
-        - "lxd:nodes/0"
+        - "lxd:nodes/1"
+        - "lxd:nodes/2"
 {% endif %}
 {% endif %}
     ceph-osd:

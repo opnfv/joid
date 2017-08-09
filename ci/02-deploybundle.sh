@@ -182,5 +182,20 @@ else
     done
 fi
 
+if [ "$opnfvsdn" = "ocl" ]
+then
+  ROLES="contrail-controller contrail-analytics contrail-analyticsdb"
+  TAG="ubuntu16.04-4.0.0.0-20.tar.gz"
+
+  for ROLE in $ROLES
+  do
+    FILE="${ROLE}-${TAG}"
+  if [ ! -f $FILE ]
+  then
+    curl -o $FILE http://artifacts.opnfv.org/ovno/containers/$FILE
+  fi
+  juju attach $ROLE ${ROLE}="./$FILE"
+done
+fi
 #lets gather the status of deployment once juju-deployer completed.
 juju status --format=tabular
