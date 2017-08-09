@@ -15,7 +15,7 @@ NODE_ARCTYPE=`arch`
 NODE_ARC="amd64/generic"
 
 if [ "x86_64" == "$NODE_ARCTYPE" ]; then
-    NODE_ARC="adm64/generic"
+    NODE_ARC="amd64/generic"
 elif  [ "ppc64le" == "$NODE_ARCTYPE" ]; then
     NODE_ARC='ppc64el'
 else
@@ -377,16 +377,16 @@ addnodes(){
         # prepare a file containing virsh remote url to connect without adding it n command line
         echo "export VIRSH_DEFAULT_CONNECT_URI=$VIRSHURL" > virsh_uri.sh
     else
-        brid=`brctl show | grep 8000 | cut -d "8" -f 1 |  tr "\n" " " | tr "    " " " | tr -s " "`
-
         netw=""
+
+        brid=`brctl show | grep 8000 | cut -d "8" -f 1 |  tr "\n" " " | tr "    " " " | tr -s " "`
+        ADMIN_BR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="admin")'.bridge | cut -d \" -f 2 `
+
         for feature in $brid; do
-            if [ "$feature" == "" ]; then
-                netw=$netw
-            elif [ "$feature" == "virbr0" ]; then
-                netw=$netw
-            else
+            if [ "$feature" == "$ADMIN_BR" ]; then
                 netw=$netw" --network bridge="$feature",model=virtio"
+            else
+                netw=$netw
             fi
         done
     fi
@@ -467,8 +467,10 @@ addnodes(){
             POWER_PASS=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.pass" | cut -d \" -f 2 `
             NODE_ARCTYPE=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].architecture" | cut -d \" -f 2 `
 
-            if [ "x86_64" -eq $NODE_ARCTYPE ]; then
-                NODE_ARC='adm64/generic'
+            if [ "x86_64" == "$NODE_ARCTYPE" ]; then
+                NODE_ARC="amd64/generic"
+            elif  [ "ppc64le" == "$NODE_ARCTYPE" ]; then
+                NODE_ARC='ppc64el'
             else
                 NODE_ARC=$NODE_ARCTYPE
             fi
@@ -478,7 +480,6 @@ addnodes(){
                 hostname=$NODE_NAME power_type=$POWER_TYPE power_parameters_power_address=$POWER_IP \
                 power_parameters_power_user=$POWER_USER power_parameters_power_pass=$POWER_PASS mac_addresses=$MAC_ADDRESS \
                 architecture=$NODE_ARC
-                #mac_addresses=$MAC_ADDRESS1 architecture=$NODE_ARCH
         done
     fi
 
