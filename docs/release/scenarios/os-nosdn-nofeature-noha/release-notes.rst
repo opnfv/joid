@@ -51,7 +51,7 @@ command to deploy lxd feature is:
 ./deploy.sh -o newton -f none -t ha -l custom -s nosdn
 
 #LXD deployment with no HA Openstack
-./deploy.sh -o newton -f none -t nonha -l custom -s nosdn
+./deploy.sh -o newton -f none -t noha -l custom -s nosdn
 
 Using Openstack
 ===============

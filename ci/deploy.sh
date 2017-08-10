@@ -6,7 +6,7 @@ set -ex
 # Below parameters are the default and we can according the release
 
 opnfvsdn=nosdn
-opnfvtype=nonha
+opnfvtype=noha
 openstack=ocata
 opnfvlab=default
 opnfvrel=e
@@ -27,7 +27,7 @@ read_config() {
 }
 
 usage() { echo "Usage: $0 [-s <nosdn|odl|opencontrail>]
-                         [-t <nonha|ha|tip>]
+                         [-t <noha|ha|tip>]
                          [-o <juno|liberty>]
                          [-l <default|intelpod5>]
                          [-f <ipv6,dpdk,lxd,dvr>]

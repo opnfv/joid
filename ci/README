@@ -38,11 +38,11 @@ git clone https://gerrit.opnfv.org/gerrit/joid.git
 
 copy the environments.yaml file from ~/.juju/ to joid/ci/
 
-# to deploy odl with mitaka in nonha mode
-./deploy.sh -s odl -o mitaka -t nonha
+# to deploy odl with mitaka in noha mode
+./deploy.sh -s odl -o mitaka -t noha
 
-# to deploy opencontail with liberty in nonha mode
-./deply.sh -s opencontrail -o liberty -t nonha
+# to deploy opencontail with liberty in noha mode
+./deply.sh -s opencontrail -o liberty -t noha
 
 NOTE: Wait for approximately 30-45 minutes and your openstack will be ready to use.
 

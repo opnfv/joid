@@ -148,7 +148,7 @@ lab:
 opnfv:
     release: d
     distro: xenial
-    type: nonha
+    type: noha
     openstack: ocata
     sdncontroller:
     - type: nosdn

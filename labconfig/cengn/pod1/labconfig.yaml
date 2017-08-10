@@ -100,7 +100,7 @@ lab:
 opnfv:
   release: c
   distro: xenial
-  type: nonha
+  type: noha
   openstack: mitaka
   sdncontroller:
   - type: nosdn

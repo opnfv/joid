@@ -101,7 +101,7 @@ lab:
 opnfv:
   release: d
   distro: xenial
-  type: nonha
+  type: noha
   openstack: newton
   sdncontroller:
   - type: nosdn

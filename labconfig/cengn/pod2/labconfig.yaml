@@ -117,7 +117,7 @@ lab:
 opnfv:
   release: c
   distro: trusty
-  type: nonha
+  type: noha
   openstack: liberty
   sdncontroller:
   - type: nosdn

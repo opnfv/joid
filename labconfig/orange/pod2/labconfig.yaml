@@ -125,7 +125,7 @@ lab:
 opnfv:
     release: c
     distro: xenial
-    type: nonha
+    type: noha
     openstack: newton
     sdncontroller:
     - type: nosdn

@@ -30,7 +30,7 @@ lab:
 opnfv:
   release: c
   distro: trusty
-  type: nonha
+  type: noha
   openstack: mitaka
   sdncontroller:
   - type: nosdn
