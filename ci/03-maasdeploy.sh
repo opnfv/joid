@@ -211,7 +211,7 @@ installmaas(){
 #
 configuremaas(){
     #reconfigure maas with correct MAAS address.
-    #Below code is needed as MAAS have issue in commisoning without restart.
+    #Below code is needed as MAAS have issue in commissioning without restart.
     #sudo ./maas-reconfigure-region.sh $MAAS_IP
     sleep 30
     sudo maas-rack config --region-url http://$MAAS_IP:5240/MAAS
@@ -325,7 +325,7 @@ setupspacenetwork(){
             fi
         fi
         if ([ $type == "admin" ]); then
-                    # If we have a network, we create it
+            # If we have a network, we create it
             if ([ $NET_FABRIC_ID ]); then
                 # Set ranges
                 SUBNET_PREFIX=${SPACE_CIDR::-5}

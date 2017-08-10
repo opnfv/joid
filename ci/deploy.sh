@@ -2,7 +2,7 @@
 
 set -ex
 
-#need to put mutiple cases here where decide this bundle to deploy by default use the odl bundle.
+#need to put multiple cases here where decide this bundle to deploy by default use the odl bundle.
 # Below parameters are the default and we can according the release
 
 opnfvsdn=nosdn
@@ -136,8 +136,8 @@ deploy() {
                 echo " MAAS not deployed please deploy MAAS first."
             fi
         fi
-#create json file which is missing in case of new deployment after maas and git tree cloned freshly.
 
+        #create json file which is missing in case of new deployment after maas and git tree cloned freshly.
         python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < labconfig.yaml > labconfig.json
         python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < deployconfig.yaml > deployconfig.json
 
@@ -179,7 +179,7 @@ check_status() {
     retval=0
     timeoutiter=0
 
-    echo -n "executing the reltionship within charms ."
+    echo -n "executing the relationship within charms ."
     while [ $retval -eq 0 ]; do
         if juju status | grep -q $waitstatus; then
            echo -n '.'
@@ -245,7 +245,7 @@ echo "...... configure  ......."
 if ([ $opnfvmodel == "openstack" ]); then
     ./openstack.sh "$opnfvsdn" "$opnfvlab" "$opnfvdistro" "$openstack" || true
 
-    # creating heat domain after puching the public API into /etc/hosts
+    # creating heat domain after pushing the public API into /etc/hosts
     if [[ "$jujuver" > "2" ]]; then
         status=`juju run-action heat/0 domain-setup`
         echo $status

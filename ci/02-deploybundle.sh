@@ -118,7 +118,7 @@ case "$opnfvlab" in
         ;;
 esac
 
-# lets put the if seperateor as "," as this will save me from world.
+# lets put the if separator as "," as this will save me from world.
 fea=""
 IFS=","
 for feature in $opnfvfeature; do
