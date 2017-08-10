@@ -96,8 +96,8 @@ python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, i
 
 MAAS_IP=$(grep " ip_address" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //')
 MAAS_NAME=`grep "maas_name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
-API_SERVER="http://$MAAS_IP/MAAS/api/2.0"
-API_SERVERMAAS="http://$MAAS_IP/MAAS/"
+API_SERVER="http://$MAAS_IP:5240/MAAS/api/2.0"
+API_SERVERMAAS="http://$MAAS_IP:5240/MAAS/"
 PROFILE=ubuntu
 MY_UPSTREAM_DNS=`grep "upstream_dns" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
 SSH_KEY=`cat ~/.ssh/id_rsa.pub`
