@@ -133,7 +133,7 @@ if [[ "$opnfvmodel" = "openstack" ]]; then
     #update source if trusty is target distribution
     var=os-$opnfvsdn-$fea-$opnfvtype"-"$opnfvdistro"_"$openstack
 
-    if [ "$osdomname" != "None" ]; then
+    if ([ $osdomname ] && [ $osdomname != "null" ] && [ $osdomname != "None"]); then
         var=$var"_"publicapi
     fi
 else

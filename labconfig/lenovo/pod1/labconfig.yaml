@@ -39,10 +39,10 @@ lab:
       nics:
       - ifname: intf100
         spaces: [admin]
-        mac: ["24:8a:07:3f:95:b6"]
+        mac: ["24:8a:07:3f:84:c4"]
       - ifname: intf101
         spaces: [floating]
-        mac: ["24:8a:07:3f:95:b7"]
+        mac: ["24:8a:07:3f:84:c5"]
       power:
         type: ipmi
         address: 192.0.5.127
@@ -78,8 +78,8 @@ lab:
         address: 192.0.5.129
         user: USERID
         pass: PASSW0RD
-    floating-ip-range: 172.21.159.6,172.21.159.100,172.21.159.1,172.21.159.0/24
-    ext-port: "br-intf101"
+    floating-ip-range: 172.21.159.6,172.21.159.100,172.21.159.5,172.21.159.0/24
+    ext-port: "intf101"
     dns: 8.8.8.8
     osdomainname:
 opnfv:
