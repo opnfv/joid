@@ -150,7 +150,7 @@ export OS_AUTH_URL=$4
 EOF
 }
 
-if [ "$API_FQDN" != "None" ]; then
+if ([ $API_FQDN ] && [ $API_FQDN != "null" ] && [ $API_FQDN != "None"]); then
     # Push api fqdn local ip to all /etc/hosts
     if [[ "$jujuver" < "2" ]]; then
         API_FQDN=$(juju get keystone | python -c "import yaml; import sys;\
