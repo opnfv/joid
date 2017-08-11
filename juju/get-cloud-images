@@ -10,7 +10,6 @@ if grep -q 'virt-type: lxd' bundles.yaml; then
 
 else
     URLS=" \
-    http://cloud-images.ubuntu.com/precise/current/precise-server-cloudimg-amd64-disk1.img \
     http://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img \
     http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img \
     http://mirror.catn.com/pub/catn/images/qcow2/centos6.4-x86_64-gold-master.img \
