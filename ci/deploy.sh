@@ -82,7 +82,7 @@ createresource() {
     # TODO: make sure this function run with the same parameters used in 03-maasdeploy.sh
     PROFILE=${PROFILE:-ubuntu}
     MAAS_IP=$(grep " ip_address" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //')
-    API_SERVER="http://$MAAS_IP/MAAS/api/2.0"
+    API_SERVER="http://$MAAS_IP:5240/MAAS/api/2.0"
     API_KEY=`sudo maas-region apikey --username=ubuntu`
     maas login $PROFILE $API_SERVER $API_KEY
 

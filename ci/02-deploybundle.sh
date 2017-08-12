@@ -52,7 +52,7 @@ check_status() {
 
 PROFILE=maas
 MAAS_IP=$(grep " ip_address" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //')
-API_SERVERMAAS="http://$MAAS_IP/MAAS/"
+API_SERVERMAAS="http://$MAAS_IP:5240/MAAS/"
 if [[ "$maasver" > "2" ]]; then
     API_KEY=`sudo maas-region apikey --username=ubuntu || true`
 else
