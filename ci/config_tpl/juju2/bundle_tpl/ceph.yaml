@@ -6,9 +6,7 @@
       bindings:
         "": internal-api
 {% if opnfv.spaces_dict.storage is defined %}
-        public: storage-cluster
-{% else %}
-        public: internal-api
+        cluster: storage-cluster
 {% endif %}
 {% endif %}
       options:
@@ -54,11 +52,7 @@
       bindings:
         "": internal-api
 {% if opnfv.spaces_dict.storage is defined %}
-        public: storage-cluster
         cluster: storage-cluster
-{% else %}
-        public: internal-api
-        cluster: internal-api
 {% endif %}
 {% endif %}
       options:
@@ -110,9 +104,6 @@
         public: public-api
 {% else %}
         public: internal-api
-{% endif %}
-{% if opnfv.spaces_dict.storage is defined %}
-        mon: storage-cluster
 {% endif %}
 {% endif %}
       options:

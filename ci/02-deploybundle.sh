@@ -33,7 +33,7 @@ check_status() {
     while [ $retval -eq 0 ]; do
         if juju status | grep -q $waitstatus; then
            echo -n '.'
-           if [ $timeoutiter -ge 240 ]; then
+           if [ $timeoutiter -ge 180 ]; then
                echo 'timed out'
                retval=1
            else
@@ -133,7 +133,7 @@ if [[ "$opnfvmodel" = "openstack" ]]; then
     #update source if trusty is target distribution
     var=os-$opnfvsdn-$fea-$opnfvtype"-"$opnfvdistro"_"$openstack
 
-    if ([ $osdomname ] && [ $osdomname != "null" ] && [ $osdomname != "None"]); then
+    if ([ $osdomname ] && [ $osdomname != "null" ] && [ $osdomname != "None" ]); then
         var=$var"_"publicapi
     fi
 else

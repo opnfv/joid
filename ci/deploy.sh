@@ -188,7 +188,7 @@ check_status() {
     while [ $retval -eq 0 ]; do
         if juju status | grep -q $waitstatus; then
            echo -n '.'
-           if [ $timeoutiter -ge 120 ]; then
+           if [ $timeoutiter -ge 180 ]; then
                echo 'timed out'
                retval=1
            else
