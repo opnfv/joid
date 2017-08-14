@@ -12,19 +12,16 @@ if [ ! -e $HOME/.ssh/id_rsa ]; then
 fi
 
 NODE_ARCTYPE=`arch`
-NODE_ARC="amd64/generic"
-NODE_ARCHES="amd64"
 
-if [ "x86_64" == "$NODE_ARCTYPE" ]; then
-    NODE_ARC="amd64/generic"
-elif  [ "ppc64le" == "$NODE_ARCTYPE" ]; then
-    NODE_ARC='ppc64el'
+if  [ "ppc64le" == "$NODE_ARCTYPE" ]; then
+    NODE_ARCHES="ppc64el"
 elif [ "aarch64" == "$NODE_ARCTYPE" ]; then
-    NODE_ARC="arm64/generic"
     NODE_ARCHES="arm64"
 else
-    NODE_ARC=$NODE_ARCTYPE
+    NODE_ARCHES="amd64"
 fi
+
+NODE_ARC="$NODE_ARCHES/generic"
 
 # Install the packages needed
 echo_info "Installing and upgrading required packages"
@@ -475,21 +472,21 @@ addnodes(){
             POWER_PASS=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.pass" | cut -d \" -f 2 `
             NODE_ARCTYPE=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].architecture" | cut -d \" -f 2 `
 
-            if [ "x86_64" == "$NODE_ARCTYPE" ]; then
-                NODE_ARC="amd64/generic"
-            elif  [ "ppc64le" == "$NODE_ARCTYPE" ]; then
-                NODE_ARC='ppc64el'
+            if  [ "ppc64le" == "$NODE_ARCTYPE" ]; then
+                NODE_ARCHES="ppc64el"
             elif [ "aarch64" == "$NODE_ARCTYPE" ]; then
-                NODE_ARC="arm64/generic"
+                NODE_ARCHES="arm64"
             else
-                NODE_ARC=$NODE_ARCTYPE
+                NODE_ARCHES="amd64"
             fi
+
+            NODE_ARC="$NODE_ARCHES/generic"
 
             echo_info "Creating node $NODE_NAME"
             maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
                 hostname=$NODE_NAME power_type=$POWER_TYPE power_parameters_power_address=$POWER_IP \
-                power_parameters_power_user=$POWER_USER power_parameters_power_pass=$POWER_PASS mac_addresses=$MAC_ADDRESS \
-                architecture=$NODE_ARC
+                power_parameters_power_user=$POWER_USER power_parameters_power_pass=$POWER_PASS \
+                mac_addresses=$MAC_ADDRESS architecture=$NODE_ARC
         done
     fi
 
