@@ -111,6 +111,9 @@
 {% else %}
         public: internal-api
 {% endif %}
+{% if opnfv.spaces_dict.storage is defined %}
+        mon: storage-cluster
+{% endif %}
 {% endif %}
       options:
         region: {{ os.region }}
