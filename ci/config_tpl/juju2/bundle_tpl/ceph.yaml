@@ -4,15 +4,11 @@
       num_units: {{ unit_ceph_qty() }}
 {% if os.service.bindings %}
       bindings:
-{% if opnfv.spaces_dict.public is defined %}
-        public: internal-api
-{% else %}
-        public: internal-api
-{% endif %}
+        "": internal-api
 {% if opnfv.spaces_dict.storage is defined %}
-        cluster: internal-api
+        public: storage-cluster
 {% else %}
-        cluster: internal-api
+        public: internal-api
 {% endif %}
 {% endif %}
       options:
@@ -56,14 +52,12 @@
 {% endif %}
 {% if os.service.bindings %}
       bindings:
-{% if opnfv.spaces_dict.public is defined %}
-        public: internal-api
-{% else %}
-        public: internal-api
-{% endif %}
+        "": internal-api
 {% if opnfv.spaces_dict.storage is defined %}
-        cluster: internal-api
+        public: storage-cluster
+        cluster: storage-cluster
 {% else %}
+        public: internal-api
         cluster: internal-api
 {% endif %}
 {% endif %}
@@ -109,6 +103,7 @@
       num_units: {{ unit_qty() if os.beta.hacluster_ceph_radosgw else 1 }}
 {% if os.service.bindings %}
       bindings:
+        "": internal-api
         internal: internal-api
         admin: internal-api
 {% if opnfv.spaces_dict.public is defined %}

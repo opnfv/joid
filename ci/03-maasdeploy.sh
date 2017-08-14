@@ -319,8 +319,8 @@ setupspacenetwork(){
             'admin')           JUJU_SPACE="internal-api";  DHCP='enabled' ;;
             'data')            JUJU_SPACE="tenant-data";   DHCP='' ;;
             'public')          JUJU_SPACE="public-api";    DHCP='' ;;
-            'storage')         JUJU_SPACE="tenant-stor";   DHCP='' ;;
-            'storagecluster')  JUJU_SPACE="storclus";      DHCP='' ;;
+            'storage')         JUJU_SPACE="storage-cluster";   DHCP='' ;;
+            'storageaccess')  JUJU_SPACE="storage-data";      DHCP='' ;;
             'floating')        JUJU_SPACE="tenant-public"; DHCP='' ;;
             *)                 JUJU_SPACE='default';       DHCP='OFF'; echo_info "      >>> Unknown SPACE" ;;
         esac
