@@ -28,7 +28,7 @@ function echo_info { (
 }
 
 #######################################
-# Echo error
+# Echo error (to stderr)
 # Arguments:
 #   Same as for echo
 # Returns:
@@ -41,5 +41,22 @@ function echo_error { (
     red_bold='\033[1;31m'
     color_off='\033[0m'
     >&2 echo "${@:1:($#-1)}" -e "$red_bold${@: -1}$color_off";
+  )
+}
+
+#######################################
+# Echo warning (to stderr)
+# Arguments:
+#   Same as for echo
+# Returns:
+#   None
+#######################################
+function echo_warning { (
+    # don't clutter the script output with the xtrace of the echo command
+    { set +x; } 2> /dev/null
+
+    red_italic='\033[3;91m'
+    color_off='\033[0m'
+    >&2 echo "${@:1:($#-1)}" -e "$red_italic${@: -1}$color_off";
   )
 }

@@ -42,9 +42,21 @@ sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvi
 
 sudo -H pip install --upgrade pip
 
-#first parameter should be custom and second should be either
-# absolute location of file (including file name) or url of the
-# file to download.
+
+usage() {
+  # no xtrace output
+  { set +x; } 2> /dev/null
+
+  echo "OPNFV JOID deployer of the MAAS (Metal as a Service) infrastructure."
+  echo "Usage: $0 custom <path_to_labconfig>"
+  echo "       $0 virtual"
+  exit ${1-0}
+}
+
+if [ "$1" == "help" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]
+then
+    usage;
+fi
 
 
 #
@@ -52,43 +64,51 @@ sudo -H pip install --upgrade pip
 #
 
 # Get labconfig and generate deployconfig.yaml
-echo_info "Parsing lab configuration file"
+
 case "$labname" in
-    intelpod[569]|orangepod[12]|cengnpod[12] )
-        array=(${labname//pod/ })
-        cp ../labconfig/${array[0]}/pod${array[1]}/labconfig.yaml .
-        python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
-        ;;
-    'attvirpod1' )
-        cp ../labconfig/att/virpod1/labconfig.yaml .
-        python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
-        ;;
     'custom')
+        # Deployment with a custom labconfig file
         labfile=$2
-        if [ -e $labfile ]; then
-            cp $labfile ./labconfig.yaml || true
-        else
-            wget $labconfigfile -t 3 -T 10 -O ./labconfig.yaml || true
+        if [ -z "$labfile" ]; then
+            if [ ! -e ./labconfig.yaml ]; then
+                # no labconfig file was specified and no ci/labconfig.yaml is present
+                echo_error "Labconfig file must be specified when using custom"
+                usage 1
+            else
+                # no labconfig file was specified and but a (backup) ci/labconfig.yaml found
+                echo_warning "Labconfig was not specified, using ./labconfig.yaml instead"
+                # no action needed, ./labconfig.yaml already present
+            fi
+        elif [ ! -e "$labfile" ]; then
+            # labconfig file was specified but does not exist on disk
+            echo_warning "Labconfig not found locally, trying download"
+
+            wget $labfile -t 3 -T 10 -O ./labconfig.yaml || true
             count=`wc -l labconfig.yaml  | cut -d " " -f 1`
             if [ $count -lt 10 ]; then
-                rm -rf labconfig.yaml
+                echo_error "Unable to download labconfig"
+                exit 1
             fi
-        fi
-        if [ ! -e ./labconfig.yaml ]; then
-            virtinstall=1
-            labname="default"
-            cp ../labconfig/default/labconfig.yaml ./
-            cp ../labconfig/default/deployconfig.yaml ./
         else
-            python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
-            labname=`grep "maas_name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+            echo_info "Using $labfile to setup deployment"
+            cp $labfile ./labconfig.yaml
         fi
+
+        python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
+        labname=`grep "maas_name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
         ;;
-    * )
-        virtinstall=1
-        labname="default"
+    'virtual'|'')
+        # Virtual deployment using a default labconfig file
+        echo_info "Using default labconfig for virtual install"
         cp ../labconfig/default/labconfig.yaml ./
         python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
+        labname="default"
+        virtinstall=1
+        ;;
+    * )
+        # Unknown argument
+        echo_error "Unknown script argument: $labname"
+        usage 1
         ;;
 esac
 
