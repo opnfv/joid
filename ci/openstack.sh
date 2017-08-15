@@ -1,11 +1,14 @@
 #!/bin/bash -ex
-
 ##############################################################################
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Apache License, Version 2.0
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
+
+set -ex
+
+source tools.sh
 
 #./openstack.sh "$opnfvsdn" "$opnfvlab" "$opnfvdistro" "$openstack" || true
 
@@ -84,6 +87,8 @@ keystoneIp() {
 
 # create external network and subnet in openstack
 create_openrc() {
+    echo_info "Creating the openrc (OpenStack client environment scripts)"
+
     mkdir -m 0700 -p cloud
     keystoneIp=$(keystoneIp)
     if [[ "$jujuver" < "2" ]]; then
@@ -150,7 +155,9 @@ export OS_AUTH_URL=$4
 EOF
 }
 
-if ([ $API_FQDN ] && [ $API_FQDN != "null" ] && [ $API_FQDN != "None"]); then
+if ([ $API_FQDN ] && [ $API_FQDN != "null" ] && [ $API_FQDN != "None" ]); then
+    echo_info "OS domain name was specified - injecting API FQDN to nodes"
+
     # Push api fqdn local ip to all /etc/hosts
     if [[ "$jujuver" < "2" ]]; then
         API_FQDN=$(juju get keystone | python -c "import yaml; import sys;\
@@ -187,13 +194,13 @@ create_openrc
 
 . ~/joid_config/admin-openrc
 
-echo "...... deploy public api proxy ......"
-
 if ([ "$opnfvlab" == "orangepod1" ] \
     || [ "$opnfvlab" == "intelpod6" ]) \
     && [ "$opnfvsdn" == "nosdn" ] \
     && [ "$API_FQDN" != "None" ]; then # only for first test phase
     if [ -e ./labconfig.yaml ]; then
+        echo_info "Deploying public API proxy"
+
         PUB_API_MASK=$(grep floating-ip-range ./labconfig.yaml |cut -d/ -f2)
         PUB_API_NET=$(grep floating-ip-range ./labconfig.yaml |cut -d, -f4)
         PUB_API_IP=$(grep public-api-ip ./labconfig.yaml |cut -d: -f2)
@@ -218,10 +225,11 @@ if ([ "$opnfvlab" == "orangepod1" ] \
         juju run --unit nodes/0 "sudo ip l set dev br-ex up" || true
         python genPublicAPIProxyBundle.py -l labconfig.yaml >> bundles.yaml
         juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$opnfvos" || true
+
+        echo_info "Public API proxy deployed!"
     fi
 fi
 
-echo "...... deploy end public api proxy ......"
 
 ##
 ## removing the swift API endpoint which is created by radosgw.
@@ -237,6 +245,8 @@ echo "...... deploy end public api proxy ......"
 ##
 ## Create external subnet Network
 ##
+
+echo_info "Creating external network with neutron"
 
 if [ "onos" == "$opnfvsdn" ]; then
     launch_eth

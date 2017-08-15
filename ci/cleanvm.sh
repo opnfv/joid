@@ -2,7 +2,9 @@
 
 set -x
 
-echo " Cleanup Started ..."
+source tools.sh
+
+echo_info "Cleanup Started..."
 
 #use the below commands if you needs to delete the virtual machine
 # also along with environment destroy.
@@ -20,4 +22,4 @@ do
     sudo rm -f /var/lib/libvirt/images/${vm}.qcow2
 done
 
-echo " Cleanup Finished ..."
+echo_info "Cleanup Finished!"

@@ -2,6 +2,8 @@
 
 set -ex
 
+source tools.sh
+
 #need to put multiple cases here where decide this bundle to deploy by default use the odl bundle.
 # Below parameters are the default and we can according the release
 
@@ -111,7 +113,7 @@ createresource() {
                   jq -r ".[] | select(.hostname == \"$node\").system_id")
         fi
         if [[ -z "$node_id" ]]; then
-            echo "Error: failed to create node $node ."
+            echo_error "Error: failed to create node $node ."
             exit 1
         fi
         maas $PROFILE tag update-nodes control add=$node_id || true
@@ -138,7 +140,7 @@ deploy() {
                     python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
                 fi
             else
-                echo " MAAS not deployed please deploy MAAS first."
+                echo_error "MAAS not deployed please deploy MAAS first."
             fi
         fi
 
@@ -153,7 +155,7 @@ deploy() {
             cp ~/joid_config/environments.yaml ./environments.yaml
         fi
         #copy the script which needs to get deployed as part of ofnfv release
-        echo "...... deploying now ......"
+        echo_info "Deploying now..."
         echo "   " >> environments.yaml
         echo "        enable-os-refresh-update: false" >> environments.yaml
         echo "        enable-os-upgrade: false" >> environments.yaml
@@ -184,19 +186,19 @@ check_status() {
     retval=0
     timeoutiter=0
 
-    echo -n "executing the relationship within charms ."
+    echo_info "Executing the relationships within charms..."
     while [ $retval -eq 0 ]; do
         if juju status | grep -q $waitstatus; then
-           echo -n '.'
+           echo_info "Still waiting for $waitstatus units"
            if [ $timeoutiter -ge 180 ]; then
-               echo 'timed out'
+               echo_error 'Timed out'
                retval=1
            else
                sleep 30
            fi
            timeoutiter=$((timeoutiter+1))
        else
-           echo 'done'
+           echo_info 'Done executing the relationships'
            retval=1
        fi
     done
@@ -206,7 +208,7 @@ check_status() {
         #juju ssh ceph/0 \ 'sudo radosgw-admin user create --uid="ubuntu" --display-name="Ubuntu Ceph"'
     fi
 
-    echo "...... deployment finishing ......."
+    echo_info "Deployment finishing..."
  }
 
 # In the case of a virtual deployment
@@ -214,15 +216,15 @@ if [ "$virtinstall" -eq 1 ]; then
     ./clean.sh || true
 fi
 
-echo "...... deployment started ......"
+echo_info "Deployment started"
 deploy
 
 check_status executing
 
-echo "...... deployment finished  ......."
+echo_info "Deployment finished"
 
 
-echo "...... configuring public access  ......."
+echo_info "Configuring public access"
 
 # translate bundle.yaml to json
 python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < bundles.yaml > bundles.json
@@ -237,7 +239,7 @@ admin_gw=$(cat labconfig.json | jq --raw-output ".opnfv.spaces[] | select(.type=
 if ([ $admin_gw ] && [ $admin_gw != "null" ]); then
     # set default gateway to public api gateway
     for cnt in $cnt_list; do
-        echo "changing default gw on $cnt"
+        echo_info "Changing default gateway on $cnt"
         if ([ $public_api_gw ] && [ $public_api_gw != "null" ]); then
             juju ssh $cnt "sudo ip r d default && sudo ip r a default via $public_api_gw";
             juju ssh $cnt "gw_dev=\$(ip  r l | grep 'via $public_api_gw' | cut -d \  -f5) &&\
@@ -250,9 +252,10 @@ if ([ $admin_gw ] && [ $admin_gw != "null" ]); then
     done
 fi
 
-echo "...... configure  ......."
-
+// Configuring deployment
 if ([ $opnfvmodel == "openstack" ]); then
+    echo_info "Configuring OpenStack deployment"
+
     ./openstack.sh "$opnfvsdn" "$opnfvlab" "$opnfvdistro" "$openstack" || true
 
     # creating heat domain after pushing the public API into /etc/hosts
@@ -272,12 +275,14 @@ if ([ $opnfvmodel == "openstack" ]); then
     fi
 
 elif ([ $opnfvmodel == "kubernetes" ]); then
+    echo_info "Configuring Kubernetes deployment"
+
     ./k8.sh
 fi
 
 # expose the juju gui-url to login into juju gui
 
-echo " ...... JUJU GUI can be access using the below URL ...... "
+echo_info "Juju GUI can be accessed using the following URL and credentials:"
 juju gui --show-credentials --no-browser
 
-echo "...... finished  ......."
+echo "Finished deployment and configuration"

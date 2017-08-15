@@ -671,4 +671,4 @@ fi
 #
 # End of scripts
 #
-echo_info " .... MAAS deployment finished successfully ...."
+echo_info "MAAS deployment finished successfully"

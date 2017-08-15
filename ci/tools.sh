@@ -7,6 +7,8 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
+# include only once
+[ ! -z "$_tools_included" ] && return || readonly _tools_included=true
 
 #######################################
 # Echo printing in yellow bold color
@@ -22,5 +24,22 @@ function echo_info { (
     yellow_bold='\033[1;33m'
     color_off='\033[0m'
     echo "${@:1:($#-1)}" -e "$yellow_bold${@: -1}$color_off";
+  )
+}
+
+#######################################
+# Echo error
+# Arguments:
+#   Same as for echo
+# Returns:
+#   None
+#######################################
+function echo_error { (
+    # don't clutter the script output with the xtrace of the echo command
+    { set +x; } 2> /dev/null
+
+    red_bold='\033[1;31m'
+    color_off='\033[0m'
+    >&2 echo "${@:1:($#-1)}" -e "$red_bold${@: -1}$color_off";
   )
 }
