@@ -3,21 +3,18 @@
       num_units: {{ unit_qty() }}
 {% if os.service.bindings %}
       bindings:
-        internal: internal-api
-        admin: internal-api
-        shared-db: internal-api
-{% if opnfv.spaces_dict.public is defined %}
-        public: public-api
-{% else %}
-        public: internal-api
-{% endif %}
+        "": *oam-space
+        public: *public-space
+        admin: *admin-space
+        internal: *internal-space
+        shared-db: *internal-space
 {% endif %}
       options:
-        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+        openstack-origin: *openstack-origin
 {% if os.git_repo.origin_git %}
         openstack-origin-git: "{{ os.git_repo.branch }}"
 {% endif %}
-        region: {{ os.region }}
+        region: *openstack-region
         admin-role: {{ os.admin.role }}
         keystone-admin-role: {{ os.admin.role }}
         preferred-api-version: 3
@@ -25,7 +22,7 @@
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
 {% if os.api.worker_multiplier %}
-        worker-multiplier: {{ os.api.worker_multiplier }}
+        worker-multiplier: *worker-multiplier
 {% endif %}
         admin-password: {{ opnfv.admin_password | default(os.admin.password) }}
         admin-token: {{ os.admin.name }}

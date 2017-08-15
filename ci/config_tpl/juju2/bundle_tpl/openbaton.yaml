@@ -3,7 +3,8 @@
       num_units: 1
 {% if os.service.bindings %}
       bindings:
-        "": internal-api
+        "": *oam-space
+        internal: *internal-space
 {% endif %}
       to:
         - "lxd:nodes/0"

@@ -396,7 +396,7 @@ addnodes(){
 
     if [ "$virtinstall" -eq 1 ]; then
         netw=" --network bridge=virbr0,model=virtio"
-    elif ([ $VIRSHHOST != "" ]); then
+    elif ([ "$VIRSHHOST" != "" ]); then
         # Get the bridge hosting the remote virsh
         brid=$(ssh $VIRSHHOST "ip a l | grep $VIRSHHOST | perl -pe 's/.* (.*)\$/\$1/g'")
         netw=" --network bridge=$brid,model=virtio"

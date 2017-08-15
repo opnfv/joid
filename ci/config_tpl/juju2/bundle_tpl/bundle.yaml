@@ -1,5 +1,7 @@
 # vim: set ts=2 et:
   series: {{ ubuntu.release }}
+  variables:
+{% include 'spaces.yaml' %}
   services:
 {% if os.hyperconverged %}
     nodes:

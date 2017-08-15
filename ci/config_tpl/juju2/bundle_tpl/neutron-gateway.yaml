@@ -2,61 +2,30 @@
       charm: "./{{ ubuntu.release }}/neutron-gateway"
       num_units: 1
 {% if os.service.bindings %}
-{% if opnfv.spaces_dict.data is defined %}
       bindings:
-        data: tenant-data
-{% else %}
-      bindings:
-        data: internal-api
-{% endif %}
+        "": *oam-space
+        data: *overlay-space
 {% endif %}
       options:
-        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+        openstack-origin: *openstack-origin
 {% if os.git_repo.origin_git %}
         openstack-origin-git: "{{ os.git_repo.branch }}"
 {% endif %}
-{% if os.api.worker_multiplier %}
-        worker-multiplier: {{ os.api.worker_multiplier }}
-{% endif %}
+        worker-multiplier: *worker-multiplier
 {% if os.network.controller == 'nosdn' %}
-{% if opnfv.ext_port is defined  %}
-{% if opnfv.data_port is defined  %}
-        bridge-mappings: physnet1:br-ex physnet2:br-data
-        data-port: br-ex:{{ opnfv.ext_port }} br-data:{{ opnfv.data_port }}
-{% else %}
-        bridge-mappings: physnet1:br-ex
-        data-port: br-ex:{{ opnfv.ext_port }}
-{% endif %}
-{% endif %}
+        bridge-mappings: physnet1:br-data
+        data-port: *data-port
 {% elif os.network.controller == 'onos' %}
         plugin: onos
-{% if opnfv.ext_port is defined  %}
-{% if opnfv.data_port is defined  %}
-        bridge-mappings: physnet1:br-data external:br-ex
-        data-port: br-data:{{ opnfv.data_port }} br-ex:{{ opnfv.ext_port }}
-{% else %}
-        bridge-mappings: external:br-ex
-        data-port: br-ex:{{ opnfv.ext_port }}
-{% endif %}
-{% endif %}
+        bridge-mappings: physnet1:br-data
+        data-port: *data-port
 {% if os.network.sfc %}
         profile: onos-sfc
 {% endif %}
 {% elif os.network.controller == 'odl' %}
         plugin: ovs-odl
-{% if opnfv.ext_port is defined  %}
-{% if opnfv.data_port is defined  %}
-        bridge-mappings: physnet1:br-ex physnet2:br-data
-        data-port: br-ex:{{ opnfv.ext_port }} br-data:{{ opnfv.data_port }}
-{% else %}
-        bridge-mappings: physnet1:br-ex
-        data-port: br-ex:{{ opnfv.ext_port }}
-{% endif %}
-{% endif %}
-{% else %}
-{% if opnfv.ext_port is defined  %}
-        ext-port: {{ opnfv.ext_port }}
-{% endif %}
+        bridge-mappings: physnet1:br-data
+        data-port: *data-port
 {% endif %}
         instance-mtu: 1400
       to:

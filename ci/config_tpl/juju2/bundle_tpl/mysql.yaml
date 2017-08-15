@@ -3,23 +3,20 @@
       num_units: {{ unit_qty() }}
 {% if os.service.bindings %}
       bindings:
-        access: internal-api
-        shared-db: internal-api
+        "": *oam-space
+        cluster: *internal-space
+        shared-db: *internal-space
 {% endif %}
       options:
-{% if os.ha.mode == 'ha' %}
         innodb-buffer-pool-size: 1G
         max-connections: 4000
-{% else %}
-        innodb-buffer-pool-size: 1G
-        max-connections: 4000
-{% endif %}
         #performance-schema: true
         #source: "deb http://repo.percona.com/apt xenial main"
         #key: "8507EFA5"
         root-password: {{ get_password('mysql_root') }}
         sst-password: {{ get_password('mysql_sst') }}
         sst-method: rsync
+        wait-timeout: 180
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}

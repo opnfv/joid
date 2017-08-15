@@ -252,7 +252,7 @@ if ([ $admin_gw ] && [ $admin_gw != "null" ]); then
     done
 fi
 
-// Configuring deployment
+# Configuring deployment
 if ([ $opnfvmodel == "openstack" ]); then
     echo_info "Configuring OpenStack deployment"
 

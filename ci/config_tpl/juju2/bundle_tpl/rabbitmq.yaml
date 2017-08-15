@@ -3,9 +3,12 @@
       num_units: {{ unit_qty() }}
 {% if os.service.bindings %}
       bindings:
-        amqp: internal-api
+        "": *oam-space
+        amqp: *internal-space
+        cluster: *internal-space
 {% endif %}
       options:
+        source: *openstack-origin
 {% if opnfv.storage_dict.ceph is defined %}
         ceph-osd-replication-count: {{ unit_ceph_qty() }}
 {% endif %}
@@ -13,7 +16,6 @@
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
 {% if os.ha.mode == 'ha' %}
-        #vip: {{ opnfv.vip.rabbitmq }}
         min-cluster-size: {{ unit_qty() }}
 {% endif %}
       to:

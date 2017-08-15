@@ -3,24 +3,19 @@
       num_units: 1
 {% if os.service.bindings %}
       bindings:
-        internal: internal-api
-        admin: internal-api
-        shared-db: internal-api
-{% if opnfv.spaces_dict.public is defined %}
-        public: public-api
-{% else %}
-        public: internal-api
-{% endif %}
+        "": *oam-space
+        public: *public-space
+        admin: *admin-space
+        internal: *internal-space
+        shared-db: *internal-space
 {% endif %}
       options:
-        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
-        region: {{ os.region }}
+        openstack-origin: *openstack-origin
+        region: *openstack-region
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
-{% if os.api.worker_multiplier %}
-        worker-multiplier: {{ os.api.worker_multiplier }}
-{% endif %}
+        worker-multiplier: *worker-multiplier
 {% if os.ha.mode == 'ha' %}
 #        vip: {{ opnfv.vip.heat }}
 {% endif %}

@@ -9,16 +9,19 @@
       num_units: {{ opnfv.units - 1 }}
 {% endif %}
 {% endif %}
+      bindings:
+        "": *oam-space
+        internal: *internal-space
       options:
-        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+        openstack-origin: *openstack-origin
 {% if os.git_repo.origin_git %}
         openstack-origin-git: "{{ os.git_repo.branch }}"
 {% endif %}
-        enable-live-migration: true
-        enable-resize: true
+        enable-live-migration: True
+        enable-resize: True
         migration-auth-type: ssh
 {% if os.beta.public_api %}
-        use-internal-endpoints: true
+        use-internal-endpoints: True
 {% endif %}
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
@@ -34,6 +37,8 @@
 {% endif %}
 {% if os.lxd %}
         virt-type: lxd
+{% else %}
+        virt-type: kvm
 {% endif %}
       to:
 {% if os.hyperconverged %}

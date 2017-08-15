@@ -1,0 +1,62 @@
+
+
+{% if os.release == 'mitaka' %}
+    openstack-origin:    &openstack-origin    distro
+{% else %}
+    openstack-origin:    &openstack-origin    cloud:{{ ubuntu.release }}-{{ os.release }}
+{% endif %}
+
+    openstack-region:    &openstack-region    {{ os.region }}
+    worker-multiplier:   &worker-multiplier   {{ os.api.worker_multiplier }}
+    data-port:           &data-port           br-data:{{ opnfv.ext_port }}
+
+    # OAM - Operations, Administration and Maintenance
+{% if opnfv.spaces_dict.pxe is defined %}
+    oam-space:           &oam-space           oam-space
+{% else %}
+    oam-space:           &oam-space           internal-api
+{% endif %}
+
+    # This is OpenStack Admin network; for adminURL endpoints
+    admin-space:         &admin-space         internal-api
+
+    # This is OpenStack Public network; for publicURL endpoints
+{% if opnfv.spaces_dict.public is defined %}
+    public-space:        &public-space        public-api
+{% else %}
+    public-space:        &public-space        internal-api
+{% endif %}
+
+    # This is OpenStack Internal network; for internalURL endpoints
+    internal-space:      &internal-space      internal-api
+
+    # This is the overlay network
+{% if opnfv.spaces_dict.data is defined %}
+    overlay-space:       &overlay-space       tenant-data
+{% else %}
+    overlay-space:       &overlay-space       internal-api
+{% endif %}
+
+    # CEPH configuration
+    # CEPH access network
+    ceph-public-space:   &ceph-public-space   internal-api
+
+    # CEPH replication network
+{% if opnfv.spaces_dict.storage is defined %}
+    ceph-cluster-space:  &ceph-cluster-space  storage-cluster
+{% else %}
+    ceph-cluster-space:  &ceph-cluster-space  internal-api
+{% endif %}
+
+    # Workaround for 'only one default binding supported'
+    oam-space-constr:    &oam-space-constr    spaces=oam-space
+    ceph-access-constr:  &ceph-access-constr  spaces=ceph-access-space
+
+    # CEPH OSD and journal devices; temporary workaround for #1674148
+{% if os.lxd %}
+    osd-devices:         &osd-devices         /srv/ceph-osd
+{% else %}
+    osd-devices:         &osd-devices         {{ opnfv.storage_dict.ceph.disk }}
+{% endif %}
+    osd-journal:         &osd-journal
+

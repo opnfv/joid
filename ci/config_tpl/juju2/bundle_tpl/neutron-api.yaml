@@ -3,30 +3,25 @@
       num_units: {{ unit_qty() }}
 {% if os.service.bindings %}
       bindings:
-        internal: internal-api
-        admin: internal-api
-        shared-db: internal-api
-{% if opnfv.spaces_dict.public is defined %}
-        public: public-api
-{% else %}
-        public: internal-api
-{% endif %}
+        "": *oam-space
+        public: *public-space
+        admin: *admin-space
+        internal: *internal-space
+        shared-db: *internal-space
 {% endif %}
       options:
-        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+        openstack-origin: *openstack-origin
 {% if os.git_repo.origin_git %}
         openstack-origin-git: "{{ os.git_repo.branch }}"
 {% endif %}
-        region: {{ os.region }}
+        region: *openstack-region
         neutron-security-groups: true
 {% if os.beta.public_api %}
-        #use-internal-endpoints: true
+        use-internal-endpoints: True
 {% endif %}
+        worker-multiplier: *worker-multiplier
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
-{% endif %}
-{% if os.api.worker_multiplier %}
-        worker-multiplier: {{ os.api.worker_multiplier }}
 {% endif %}
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.neutron }}

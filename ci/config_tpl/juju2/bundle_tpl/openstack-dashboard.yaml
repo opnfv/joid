@@ -3,23 +3,20 @@
       num_units: {{ unit_qty() }}
 {% if os.service.bindings %}
       bindings:
-        shared-db: internal-api
-{% if opnfv.spaces_dict.public is defined %}
-        website: public-api
-{% else %}
-        website: internal-api
-{% endif %}
-{% if os.ha.mode == 'ha' %}
-        cluster: internal-api
-{% endif %}
+        "": *public-space
+        shared-db: *internal-space
 {% endif %}
       options:
-        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
+        openstack-origin: *openstack-origin
 {% if os.git_repo.origin_git %}
         openstack-origin-git: "{{ os.git_repo.branch }}"
 {% endif %}
         secret: admin
         webroot: /
+        neutron-network-lb: True
+        neutron-network-firewall: False
+        cinder-backup: False
+        password-retrieve: True
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}

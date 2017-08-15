@@ -1,23 +1,17 @@
     neutron-openvswitch:
       charm: ./{{ ubuntu.release }}/neutron-openvswitch
 {% if os.service.bindings %}
-{% if opnfv.spaces_dict.data is defined %}
       bindings:
-        data: tenant-data
+        data: *overlay-space
       options:
 {% else %}
-      bindings:
-        data: internal-api
       options:
-{% endif %}
-{% else %}
-      options:
-{% if os.git_repo.origin_git %}
-        openstack-origin-git: "{{ os.git_repo.branch }}"
-{% endif %}
 {% if opnfv.spaces_dict.data is defined %}
         os-data-network: {{ opnfv.spaces_dict.data.cidr }}
 {% endif %}
+{% endif %}
+{% if os.git_repo.origin_git %}
+        openstack-origin-git: "{{ os.git_repo.branch }}"
 {% endif %}
 {% if os.network.dpdk %}
         enable-dpdk: true
@@ -26,17 +20,10 @@
         #default-socket-memory: 1024
         #default-socket-cores: 1
 {% endif %}
-{% if opnfv.ext_port is defined  %}
 {% if os.network.controller == 'nosdn' %}
-{% if opnfv.data_port is defined  %}
-        bridge-mappings: physnet1:br-ex physnet2:br-data
-        data-port: br-ex:{{ opnfv.ext_port }} br-data:{{ opnfv.data_port }}
-{% else %}
-        bridge-mappings: physnet1:br-ex
-        data-port: br-ex:{{ opnfv.ext_port }}
-{% endif %}
+        bridge-mappings: physnet1:br-data
+        #data-port: *data-port
 {% else %}
         ext-port: {{ opnfv.ext_port }}
-{% endif %}
 {% endif %}
 {# Empty block to avoid bad block trim #}
