@@ -12,11 +12,13 @@ if [ ! -e $HOME/.ssh/id_rsa ]; then
 fi
 
 NODE_ARCTYPE=`arch`
+CPU_MODEL="host"
 
 if  [ "ppc64le" == "$NODE_ARCTYPE" ]; then
     NODE_ARCHES="ppc64el"
 elif [ "aarch64" == "$NODE_ARCTYPE" ]; then
     NODE_ARCHES="arm64"
+    CPU_MODEL="host-passthrough"
 else
     NODE_ARCHES="amd64"
 fi
@@ -430,7 +432,7 @@ addnodes(){
 
     echo_info "Creating and adding bootstrap node"
 
-    virt-install --connect $VIRSHURL --name bootstrap --ram 4098 --cpu host --vcpus 2 \
+    virt-install --connect $VIRSHURL --name bootstrap --ram 4098 --cpu $CPU_MODEL --vcpus 2 \
                  --disk size=20,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
                  $netw --boot network,hd,menu=off --noautoconsole \
                  --print-xml | tee bootstrap
@@ -465,7 +467,7 @@ addnodes(){
            units=$(($units - 1));
            NODE_NAME=`cat labconfig.json | jq ".lab.racks[].nodes[$units].name" | cut -d \" -f 2 `
 
-            virt-install --connect $VIRSHURL --name $NODE_NAME --ram 8192 --cpu host --vcpus 4 \
+            virt-install --connect $VIRSHURL --name $NODE_NAME --ram 8192 --cpu $CPU_MODEL --vcpus 4 \
                      --disk size=120,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
                      $netw $netw --boot network,hd,menu=off --noautoconsole --print-xml | tee $NODE_NAME
 
