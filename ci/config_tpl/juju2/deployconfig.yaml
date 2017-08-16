@@ -46,7 +46,7 @@ opnfv:
   units: {{ lab.racks[0].nodes|count }}
   vip:
 {% if opnfv.spaces_dict.public is defined %}
-    ceilometer: {{ netpublic_prefix }}24 {{ net_prefix }}24 {{ netpublic_prefix }}24
+    ceilometer: {{ netpublic_prefix }}24 {{ net_prefix }}24
     cinder: {{ netpublic_prefix }}29 {{ net_prefix }}29
     dashboard: {{ netpublic_prefix }}21 {{ net_prefix }}21
     glance: {{ netpublic_prefix }}22 {{ net_prefix }}22
