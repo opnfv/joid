@@ -6,6 +6,7 @@
       bindings:
         "": *oam-space
         public: *ceph-public-space
+        cluster: *ceph-cluster-space
 {% endif %}
       options:
         monitor-count: {{ unit_ceph_qty() }}

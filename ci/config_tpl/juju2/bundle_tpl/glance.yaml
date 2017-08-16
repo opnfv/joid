@@ -13,9 +13,7 @@
         openstack-origin: *openstack-origin
         worker-multiplier: *worker-multiplier
         region: *openstack-region
-{% if os.beta.public_api %}
         use-internal-endpoints: True
-{% endif %}
 {% if os.git_repo.origin_git %}
         openstack-origin-git: "{{ os.git_repo.branch }}"
 {% endif %}

@@ -3,10 +3,8 @@
     ceilometer-agent:
       charm: ./{{ ubuntu.release }}/ceilometer-agent
       options:
-        openstack-origin: "cloud:{{ ubuntu.release }}-{{ os.release }}"
-{% if os.beta.public_api %}
+        openstack-origin: *openstack-origin
         use-internal-endpoints: true
-{% endif %}
 {% endif %}
 {% if opnfv.storage_dict.ceph is defined %}
     cinder-ceph:

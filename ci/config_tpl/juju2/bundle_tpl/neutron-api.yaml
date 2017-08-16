@@ -16,9 +16,7 @@
 {% endif %}
         region: *openstack-region
         neutron-security-groups: true
-{% if os.beta.public_api %}
         use-internal-endpoints: True
-{% endif %}
         worker-multiplier: *worker-multiplier
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}

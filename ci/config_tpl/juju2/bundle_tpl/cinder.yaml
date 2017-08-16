@@ -21,9 +21,7 @@
         region: *openstack-region
         block-device: None
         glance-api-version: 2
-{% if os.beta.public_api %}
         use-internal-endpoints: True
-{% endif %}
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
