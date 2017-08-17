@@ -384,7 +384,8 @@ addnodes(){
     do
         maas $PROFILE machine delete $m
     done
-    maas $PROFILE pod delete 1 || true
+    podno=$(maas $PROFILE pods read | jq -r ".[]".id)
+    maas $PROFILE pod delete $podno || true
 
     # if we have a virshurl configuration we use it, else we use local
     VIRSHURL=$(cat labconfig.json | jq -r '.opnfv.virshurl')

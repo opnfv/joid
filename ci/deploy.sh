@@ -210,7 +210,8 @@ deploy() {
         do
             maas $PROFILE machine delete $m || true
         done
-        maas $PROFILE pod delete 1 || true
+        podno=$(maas $PROFILE pods read | jq -r ".[]".id)
+        maas $PROFILE pod delete $podno || true
 
         ./cleanvm.sh || true
 
