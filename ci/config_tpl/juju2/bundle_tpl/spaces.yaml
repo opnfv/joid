@@ -1,11 +1,8 @@
-
-
 {% if os.release == 'mitaka' %}
     openstack-origin:    &openstack-origin    distro
 {% else %}
     openstack-origin:    &openstack-origin    cloud:{{ ubuntu.release }}-{{ os.release }}
 {% endif %}
-
     openstack-region:    &openstack-region    {{ os.region }}
     worker-multiplier:   &worker-multiplier   {{ os.api.worker_multiplier }}
     data-port:           &data-port           br-data:{{ opnfv.ext_port }}
@@ -22,7 +19,6 @@
     internal-space:      &internal-space      internal-api
     admin-space:         &admin-space         internal-api
 {% endif %}
-
 
     # This is OpenStack Public network; for publicURL endpoints
 {% if opnfv.spaces_dict.public is defined %}
