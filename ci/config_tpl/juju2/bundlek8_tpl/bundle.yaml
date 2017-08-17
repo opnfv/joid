@@ -6,6 +6,8 @@
 # deployment before moving to production.
 #
   series: {{ ubuntu.release }}
+  variables:
+{% include 'spaces.yaml' %}
   services:
     nodes:
       charm: "cs:{{ ubuntu.release }}/ubuntu"

@@ -1,0 +1,5 @@
+
+
+    # OAM - Operations, Administration and Maintenance
+    oam-space:           &oam-space           internal-api
+
