@@ -4,7 +4,7 @@
       expose: true
 {% if os.service.bindings %}
       bindings:
-        "": internal-api
+        "": *oam-space
 {% endif %}
 {% if k8.network.controller == 'ovn' %}
       options:
@@ -23,7 +23,7 @@
       expose: true
 {% if os.service.bindings %}
       bindings:
-        "": internal-api
+        "": *oam-space
 {% endif %}
 {% if k8.network.controller == 'ovn' %}
       options:

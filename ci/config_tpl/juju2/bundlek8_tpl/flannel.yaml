@@ -3,5 +3,5 @@
       charm: cs:~containers/flannel
 {% if os.service.bindings %}
       bindings:
-        "": internal-api
+        "": *oam-space
 {% endif %}

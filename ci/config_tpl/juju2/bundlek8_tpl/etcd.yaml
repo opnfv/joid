@@ -11,7 +11,7 @@
 {% endif %}
 {% if os.service.bindings %}
       bindings:
-        "": internal-api
+        "": *oam-space
 {% endif %}
       to:
 {% if k8.network.controller == 'ovn' %}

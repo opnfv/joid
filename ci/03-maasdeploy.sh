@@ -253,9 +253,9 @@ configuremaas(){
 
     #create the required spaces.
     maas $PROFILE space update 0 name=default || true
-    for space in unused admin-api internal-api public-api \
+    for space in admin-api internal-api public-api \
                  storage-access storage-cluster admin \
-                 tenant-data tenant-api tenant-public oam-space
+                 tenant-data tenant-api tenant-public  os-api
     do
         echo_info "Creating the space $space"
         maas $PROFILE spaces create name=$space || true
@@ -279,7 +279,7 @@ configuremaas(){
 setupspacenetwork(){
 
     #get space, subnet and vlan and create accordingly.
-    #for type in pxe admin data storage external floating public; do
+    #for type in admin osapi data storage external floating public; do
     nettypes=`cat labconfig.json | jq '.opnfv.spaces[]'.type | cut -d \" -f 2`
     for type in $nettypes; do
         config_done=0
@@ -333,13 +333,13 @@ setupspacenetwork(){
             fi
         fi
         case "$type" in
-            'pxe')             JUJU_SPACE="oam-space";     DHCP='enabled' ;;
             'admin')           JUJU_SPACE="internal-api";  DHCP='enabled' ;;
             'data')            JUJU_SPACE="tenant-data";   DHCP='' ;;
             'public')          JUJU_SPACE="public-api";    DHCP='' ;;
             'storage')         JUJU_SPACE="storage-cluster";   DHCP='' ;;
             'storageaccess')   JUJU_SPACE="storage-data";  DHCP='' ;;
             'floating')        JUJU_SPACE="tenant-public"; DHCP='' ;;
+            'osapi')           JUJU_SPACE="os-api";        DHCP='' ;;
             *)                 JUJU_SPACE='default';       DHCP='OFF'; echo_info "      >>> Unknown SPACE" ;;
         esac
         JUJU_SPACE_ID=$(maas $PROFILE spaces read | jq -r ".[] |  select(.name==\"$JUJU_SPACE\")".id)
@@ -350,7 +350,7 @@ setupspacenetwork(){
                 maas $PROFILE vlan update $NET_FABRIC_ID $JUJU_VLAN_VID space=$JUJU_SPACE_ID
             fi
         fi
-        if ([ $type == "admin" ] || [ $type == "pxe" ]); then
+        if ([ $type == "admin" ]); then
             # If we have a network, we create it
             if ([ $NET_FABRIC_ID ]); then
                 # Set ranges
@@ -407,10 +407,9 @@ addnodes(){
 
         brid=`brctl show | grep 8000 | cut -d "8" -f 1 |  tr "\n" " " | tr "    " " " | tr -s " "`
         ADMIN_BR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="admin")'.bridge | cut -d \" -f 2 `
-        PXE_BR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="admin")'.bridge | cut -d \" -f 2 `
 
         for feature in $brid; do
-            if ([ "$feature" == "$ADMIN_BR" ] || [ "$feature" == "$PXE_BR" ]); then
+            if ([ "$feature" == "$ADMIN_BR" ]); then
                 netw=$netw" --network bridge="$feature",model=virtio"
             else
                 netw=$netw
@@ -487,8 +486,6 @@ addnodes(){
             units=$(($units - 1));
             NODE_NAME=`cat labconfig.json | jq ".lab.racks[].nodes[$units].name" | cut -d \" -f 2 `
             MAC_ADDRESS=`cat labconfig.json | jq ".lab.racks[].nodes[$units].nics[] | select(.spaces[]==\"admin\").mac"[0] | cut -d \" -f 2 `
-            MAC_ADDRESS_PXE=`cat labconfig.json | jq ".lab.racks[].nodes[$units].nics[] | select(.spaces[]==\"pxe\").mac"[0] | cut -d \" -f 2 `
-            #MAC_ADDRESS1=`cat labconfig.json | jq ".lab.racks[].nodes[$units].nics[] | select(.spaces[]==\"floating\").mac"[0] | cut -d \" -f 2 `
             POWER_TYPE=`cat labconfig.json | jq ".lab.racks[].nodes[$units].power.type" | cut -d \" -f 2 `
             POWER_IP=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.address" | cut -d \" -f 2 `
             POWER_USER=`cat labconfig.json |  jq ".lab.racks[].nodes[$units].power.user" | cut -d \" -f 2 `
@@ -506,17 +503,10 @@ addnodes(){
             NODE_ARC="$NODE_ARCHES/generic"
 
             echo_info "Creating node $NODE_NAME"
-            if ([ $MAC_ADDRESS_PXE ] && ["$MAC_ADDRESS_PXE" != "null" ]); then
-                maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
-                    hostname=$NODE_NAME power_type=$POWER_TYPE power_parameters_power_address=$POWER_IP \
-                    power_parameters_power_user=$POWER_USER power_parameters_power_pass=$POWER_PASS \
-                    mac_addresses=$MAC_ADDRESS_PXE architecture=$NODE_ARC
-            else
-                maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
-                    hostname=$NODE_NAME power_type=$POWER_TYPE power_parameters_power_address=$POWER_IP \
-                    power_parameters_power_user=$POWER_USER power_parameters_power_pass=$POWER_PASS \
-                    mac_addresses=$MAC_ADDRESS architecture=$NODE_ARC
-            fi
+            maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
+                hostname=$NODE_NAME power_type=$POWER_TYPE power_parameters_power_address=$POWER_IP \
+                power_parameters_power_user=$POWER_USER power_parameters_power_pass=$POWER_PASS \
+                mac_addresses=$MAC_ADDRESS architecture=$NODE_ARC
         done
     fi
 

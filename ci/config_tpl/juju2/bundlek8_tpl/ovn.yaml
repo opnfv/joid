@@ -3,7 +3,8 @@
       charm: "cs:~aakashkt/ovn-15"
 {% if os.service.bindings %}
       bindings:
-        "": internal-api
+        "": *oam-space
 {% endif %}
       options:
         gateway-physical-interface: "none"
+

@@ -11,24 +11,29 @@
     data-port:           &data-port           br-data:{{ opnfv.ext_port }}
 
     # OAM - Operations, Administration and Maintenance
-{% if opnfv.spaces_dict.pxe is defined %}
-    oam-space:           &oam-space           oam-space
-{% else %}
     oam-space:           &oam-space           internal-api
+
+    # This is OpenStack Internal network; for internalURL endpoints
+    # This is OpenStack Admin network; for adminURL endpoints
+{% if opnfv.spaces_dict.osapi is defined %}
+    internal-space:      &internal-space      os-api
+    admin-space:         &admin-space         os-api
+{% else %}
+    internal-space:      &internal-space      internal-api
+    admin-space:         &admin-space         internal-api
 {% endif %}
 
-    # This is OpenStack Admin network; for adminURL endpoints
-    admin-space:         &admin-space         internal-api
 
     # This is OpenStack Public network; for publicURL endpoints
 {% if opnfv.spaces_dict.public is defined %}
     public-space:        &public-space        public-api
 {% else %}
+{% if opnfv.spaces_dict.osapi is defined %}
+    public-space:        &public-space        os-api
+{% else %}
     public-space:        &public-space        internal-api
 {% endif %}
-
-    # This is OpenStack Internal network; for internalURL endpoints
-    internal-space:      &internal-space      internal-api
+{% endif %}
 
     # This is the overlay network
 {% if opnfv.spaces_dict.data is defined %}
