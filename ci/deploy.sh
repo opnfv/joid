@@ -11,73 +11,121 @@ opnfvsdn=nosdn
 opnfvtype=noha
 openstack=ocata
 opnfvlab=default
+opnfvlabfile=
 opnfvrel=e
 opnfvfeature=none
 opnfvdistro=xenial
 opnfvarch=amd64
 opnfvmodel=openstack
 virtinstall=0
+maasinstall=0
 
 jujuver=`juju --version`
 
-read_config() {
-    opnfvrel=`grep release: deploy.yaml | cut -d ":" -f2`
-    openstack=`grep openstack: deploy.yaml | cut -d ":" -f2`
-    opnfvtype=`grep type: deploy.yaml | cut -d ":" -f2`
-    opnfvlab=`grep lab: deploy.yaml | cut -d ":" -f2`
-    opnfvsdn=`grep sdn: deploy.yaml | cut -d ":" -f2`
+usage() { echo "Usage: $0
+    [-s|--sdn <nosdn|odl|opencontrail>]
+    [-t|--type <noha|ha|tip>]
+    [-o|--openstack <ocata>]
+    [-l|--lab <default|custom>]
+    [-f|--feature <ipv6,dpdk,lxd,dvr,openbaton>]
+    [-d|--distro <xenial>]
+    [-a|--arch <amd64|ppc64el|aarch64>]
+    [-m|--model <openstack|kubernetes>]
+    [-i|--virtinstall <0|1>]
+    [--maasinstall <0|1>]
+    [--labfile <labvonfig.yaml file>]
+    [-r|--release <e>]" 1>&2 exit 1;
 }
 
-usage() { echo "Usage: $0 [-s <nosdn|odl|opencontrail>]
-                         [-t <noha|ha|tip>]
-                         [-o <juno|liberty>]
-                         [-l <default|intelpod5>]
-                         [-f <ipv6,dpdk,lxd,dvr>]
-                         [-d <trusty|xenial>]
-                         [-a <amd64>]
-                         [-m <openstack|kubernetes>]
-                         [-i <0|1>]
-                         [-r <a|b>]" 1>&2 exit 1; }
+#A string with command options
+options=$@
 
-while getopts ":s:t:o:l:h:r:f:d:a:m:i:" opt; do
-    case "${opt}" in
-        s)
-            opnfvsdn=${OPTARG}
-            ;;
-        t)
-            opnfvtype=${OPTARG}
-            ;;
-        o)
-            openstack=${OPTARG}
-            ;;
-        l)
-            opnfvlab=${OPTARG}
-            ;;
-        r)
-            opnfvrel=${OPTARG}
-            ;;
-        f)
-            opnfvfeature=${OPTARG}
-            ;;
-        d)
-            opnfvdistro=${OPTARG}
-            ;;
-        a)
-            opnfvarch=${OPTARG}
-            ;;
-        m)
-            opnfvmodel=${OPTARG}
-            ;;
-        i)
-            virtinstall=${OPTARG}
-            ;;
-        h)
-            usage
-            ;;
-        *)
-            ;;
-    esac
-done
+# An array with all the arguments
+arguments=($options)
+
+# Loop index
+index=0
+
+for argument in $options
+    do
+        # Incrementing index
+        index=`expr $index + 1`
+
+        # The conditions
+        case $argument in
+            -h|--help )
+                usage;
+                ;;
+            -s|--sdn  )
+                if ([ "arguments[index]" != "" ]); then
+                    opnfvsdn=${arguments[index]}
+                fi;
+                ;;
+            -t|--type )
+                if ([ "arguments[index]" != "" ]); then
+                    opnfvtype=${arguments[index]}
+                fi;
+                ;;
+            -o|--openstack )
+                if ([ "arguments[index]" != "" ]); then
+                    openstack=${arguments[index]}
+                fi;
+                ;;
+
+            -l|--lab  )
+                if ([ "arguments[index]" != "" ]); then
+                    opnfvlab=${arguments[index]}
+                fi;
+                ;;
+
+            -r|--release )
+                if ([ "arguments[index]" != "" ]); then
+                    opnfvrel=${arguments[index]}
+                fi;
+                ;;
+
+            -f|--feature )
+                if ([ "arguments[index]" != "" ]); then
+                    opnfvfeature=${arguments[index]}
+                fi;
+                ;;
+
+            -d|--distro )
+                if ([ "arguments[index]" != "" ]); then
+                    opnfdistro=${arguments[index]}
+                fi;
+                ;;
+
+            -a|--arch  )
+                if ([ "arguments[index]" != "" ]); then
+                    opnfvarch=${arguments[index]}
+                fi;
+                ;;
+
+            -m|--model )
+                if ([ "arguments[index]" != "" ]); then
+                    opnfvmodel=${arguments[index]}
+                fi;
+                ;;
+
+            -i|--virtinstall )
+                if ([ "arguments[index]" != "" ]); then
+                    virtinstall=${arguments[index]}
+                fi;
+                ;;
+            --maasinstall )
+                if ([ "arguments[index]" != "" ]); then
+                    maasinstall=${arguments[index]}
+                fi;
+                ;;
+            --labfile )
+                if ([ "arguments[index]" != "" ]); then
+                    labfile=${arguments[index]}
+                fi;
+                ;;
+          esac
+    done
+
 
 #by default maas creates two VMs in case of three more VM needed.
 createresource() {
@@ -123,46 +171,73 @@ createresource() {
 #copy the files and create extra resources needed for HA deployment
 # in case of default VM labs.
 deploy() {
-    if [[ "$jujuver" > "2" ]]; then
-        if [ ! -f ./labconfig.yaml ] && [ -e ~/joid_config/labconfig.yaml ]; then
-            cp ~/joid_config/labconfig.yaml ./labconfig.yaml
+    if [ ! -f ./labconfig.yaml ] && [ -e ~/joid_config/labconfig.yaml ]; then
+        cp ~/joid_config/labconfig.yaml ./labconfig.yaml
 
+        if [ ! -f ./deployconfig.yaml ] && [ -e ~/joid_config/deployconfig.yaml ]; then
+            cp ~/joid_config/deployconfig.yaml ./deployconfig.yaml
+        else
+            python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
+        fi
+    else
+        if [ -e ./labconfig.yaml ]; then
             if [ ! -f ./deployconfig.yaml ] && [ -e ~/joid_config/deployconfig.yaml ]; then
                 cp ~/joid_config/deployconfig.yaml ./deployconfig.yaml
             else
                 python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
             fi
         else
-            if [ -e ./labconfig.yaml ]; then
-                if [ ! -f ./deployconfig.yaml ] && [ -e ~/joid_config/deployconfig.yaml ]; then
-                    cp ~/joid_config/deployconfig.yaml ./deployconfig.yaml
+            echo_error "MAAS not deployed please deploy MAAS first."
+        fi
+    fi
+
+    #create json file which is missing in case of new deployment after maas and git tree cloned freshly.
+    python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < labconfig.yaml > labconfig.json
+    python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < deployconfig.yaml > deployconfig.json
+
+    # Install MAAS and expecting the labconfig.yaml at local directory.
+
+    if [ "$maasinstall" -eq 1 ]; then
+        ./clean.sh || true
+        PROFILE=${PROFILE:-ubuntu}
+        MAAS_IP=$(grep " ip_address" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //')
+        API_SERVER="http://$MAAS_IP:5240/MAAS/api/2.0"
+        API_KEY=`sudo maas-region apikey --username=ubuntu`
+        maas login $PROFILE $API_SERVER $API_KEY
+
+        # make sure there is no machine entry in maas
+        for m in $(maas $PROFILE machines read | jq -r '.[].system_id')
+        do
+            maas $PROFILE machine delete $m || true
+        done
+        maas $PROFILE pod delete 1 || true
+
+        ./cleanvm.sh || true
+
+        if [ "$virtinstall" -eq 1 ]; then
+            ./00-maasdeploy.sh virtual
+        else
+            if [ -z "$labfile" ]; then
+                if [ ! -e ./labconfig.yaml ]; then
+                    echo_error "Labconfig file must be specified when using custom"
                 else
-                    python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
+                    echo_warning "Labconfig was not specified, using ./labconfig.yaml instead"
+                fi
+            elif [ ! -e "$labfile" ]; then
+                echo_warning "Labconfig not found locally, trying download"
+                wget $labfile -t 3 -T 10 -O ./labconfig.yaml || true
+                count=`wc -l labconfig.yaml  | cut -d " " -f 1`
+                if [ $count -lt 10 ]; then
+                    echo_error "Unable to download labconfig"
+                    exit 1
                 fi
             else
-                echo_error "MAAS not deployed please deploy MAAS first."
+                echo_info "Using $labfile to setup deployment"
+                cp $labfile ./labconfig.yaml
             fi
-        fi
 
-        #create json file which is missing in case of new deployment after maas and git tree cloned freshly.
-        python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < labconfig.yaml > labconfig.json
-        python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < deployconfig.yaml > deployconfig.json
-
-    else
-        if [ ! -f ./environments.yaml ] && [ -e ~/.juju/environments.yaml ]; then
-            cp ~/.juju/environments.yaml ./environments.yaml
-        elif [ ! -f ./environments.yaml ] && [ -e ~/joid_config/environments.yaml ]; then
-            cp ~/joid_config/environments.yaml ./environments.yaml
+            ./00-maasdeploy.sh custom
         fi
-        #copy the script which needs to get deployed as part of ofnfv release
-        echo_info "Deploying now..."
-        echo "   " >> environments.yaml
-        echo "        enable-os-refresh-update: false" >> environments.yaml
-        echo "        enable-os-upgrade: false" >> environments.yaml
-        echo "        admin-secret: admin" >> environments.yaml
-        echo "        default-series: $opnfvdistro" >> environments.yaml
-        cp environments.yaml ~/.juju/
-        cp environments.yaml ~/joid_config/
     fi
 
     if [[ "$opnfvtype" = "ha" && "$opnfvlab" = "default" ]]; then
@@ -172,11 +247,9 @@ deploy() {
     #bootstrap the node
     ./01-bootstrap.sh
 
-    if [[ "$jujuver" > "2" ]]; then
-        juju model-config default-series=$opnfvdistro enable-os-refresh-update=false enable-os-upgrade=false
-    fi
+    juju model-config default-series=$opnfvdistro enable-os-refresh-update=false enable-os-upgrade=false
 
-    #case default deploy the opnfv platform:
+    # case default deploy the opnfv platform:
     ./02-deploybundle.sh $opnfvtype $openstack $opnfvlab $opnfvsdn $opnfvfeature $opnfvdistro $opnfvmodel
 }
 
@@ -211,6 +284,7 @@ check_status() {
     echo_info "Deployment finishing..."
  }
 
+
 # In the case of a virtual deployment
 if [ "$virtinstall" -eq 1 ]; then
     ./clean.sh || true
@@ -222,7 +296,6 @@ deploy
 check_status executing
 
 echo_info "Deployment finished"
-
 
 echo_info "Configuring public access"
 

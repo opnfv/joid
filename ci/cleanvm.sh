@@ -6,10 +6,6 @@ source tools.sh
 
 echo_info "Cleanup Started..."
 
-#use the below commands if you needs to delete the virtual machine
-# also along with environment destroy.
-./clean.sh
-
 vm_list=$(sudo virsh list --all)
 
 for vm in node1-control node2-compute node3-control node4-control \
