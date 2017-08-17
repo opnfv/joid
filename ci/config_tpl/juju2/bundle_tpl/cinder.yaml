@@ -6,6 +6,7 @@
       num_units: {{ unit_qty() }}
 {% endif %}
 {% if os.service.bindings %}
+      constraints: *ceph-access-constr
       bindings:
         "": *oam-space
         public: *public-space

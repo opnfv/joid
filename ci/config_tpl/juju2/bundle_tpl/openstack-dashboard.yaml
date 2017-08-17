@@ -2,6 +2,7 @@
       charm: "./{{ ubuntu.release }}/openstack-dashboard"
       num_units: {{ unit_qty() }}
 {% if os.service.bindings %}
+      constraints: *oam-space-constr
       bindings:
         "": *public-space
         shared-db: *internal-space

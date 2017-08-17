@@ -44,7 +44,13 @@
 
     # CEPH configuration
     # CEPH access network
-    ceph-public-space:   &ceph-public-space   internal-api
+{% if opnfv.spaces_dict.storageaccess is defined %}
+    ceph-public-space:   &ceph-public-space  storage-access-space
+    ceph-access-constr:  &ceph-access-constr  spaces=storage-access-space
+{% else %}
+    ceph-public-space:   &ceph-public-space  internal-api
+    ceph-access-constr:  &ceph-access-constr  spaces=internal-api
+{% endif %}
 
     # CEPH replication network
 {% if opnfv.spaces_dict.storage is defined %}
@@ -54,8 +60,7 @@
 {% endif %}
 
     # Workaround for 'only one default binding supported'
-    oam-space-constr:    &oam-space-constr    spaces=oam-space
-    ceph-access-constr:  &ceph-access-constr  spaces=ceph-access-space
+    oam-space-constr:    &oam-space-constr    spaces=internal-api
 
     # CEPH OSD and journal devices; temporary workaround for #1674148
 {% if os.lxd %}

@@ -83,6 +83,7 @@
       charm: "./{{ ubuntu.release }}/ceph-radosgw"
       num_units: {{ unit_qty() if os.beta.hacluster_ceph_radosgw else 1 }}
 {% if os.service.bindings %}
+      constraints: *ceph-access-constr
       bindings:
         "": *oam-space
         public: *public-space

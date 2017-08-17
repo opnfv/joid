@@ -1,6 +1,7 @@
     mongodb:
       charm: ./{{ ubuntu.release }}/mongodb
       num_units: 1
+      constraints: *oam-space-constr
 {% if os.service.bindings %}
       bindings:
         "": *internal-space
