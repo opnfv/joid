@@ -4,7 +4,8 @@
 {% if os.service.bindings %}
       bindings:
         "": *oam-space
-        internal: internal-space
+        controller-api: *internal-space
+        ovsdb-manager-api: *internal-space
 {% endif %}
       options:
         install-url: "https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.6.0-Carbon/distribution-karaf-0.6.0-Carbon.tar.gz"
