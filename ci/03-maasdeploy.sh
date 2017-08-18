@@ -4,6 +4,24 @@ set -ex
 
 source tools.sh
 
+
+usage() {
+  # no xtrace output
+  { set +x; } 2> /dev/null
+
+  echo "OPNFV JOID deployer of the MAAS (Metal as a Service) infrastructure."
+  echo "Usage: $0 custom <path_to_labconfig>"
+  echo "       $0 virtual"
+  exit ${1-0}
+}
+
+# Print usage help message if requested
+if [ "$1" == "help" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]
+then
+    usage;
+fi
+
+
 virtinstall=0
 labname=$1
 
@@ -43,22 +61,6 @@ sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvi
 #sudo snap install juju --classic
 
 sudo -H pip install --upgrade pip
-
-
-usage() {
-  # no xtrace output
-  { set +x; } 2> /dev/null
-
-  echo "OPNFV JOID deployer of the MAAS (Metal as a Service) infrastructure."
-  echo "Usage: $0 custom <path_to_labconfig>"
-  echo "       $0 virtual"
-  exit ${1-0}
-}
-
-if [ "$1" == "help" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]
-then
-    usage;
-fi
 
 
 #
