@@ -612,6 +612,7 @@ if [ -e ./labconfig.json ]; then
                 'data')     IF_MODE='AUTO' ;;
                 'public')   IF_MODE='AUTO' ;;
                 'storage')  IF_MODE='AUTO' ;;
+                'osapi')    IF_MODE='AUTO' ;;
                 'floating') IF_MODE='link_up' ;;
                 *) SUBNET_CIDR='null'; IF_MODE='null'; echo_info "      >>> Unknown SPACE" ;;
             esac
@@ -630,8 +631,12 @@ if [ -e ./labconfig.json ]; then
             if ([ $IF_VLAN ] && [ "$IF_VLAN" != "null" ]); then
                 echo_info "      >>> Configuring VLAN $IF_VLAN"
                 VLANID=$(maas $PROFILE subnets read | jq ".[].vlan | select(.vid==$IF_VLAN)".id)
-                FABRICID=$(maas $PROFILE subnets read | jq ".[].vlan | select(.vid==$IF_VLAN)".fabric_id)
-                INTERFACE=$(maas $PROFILE interfaces read $NODE_SYS_ID | jq ".[] | select(.vlan.fabric_id==$FABRICID)".id)
+                if ([ $VLANID ] && [ "$VLANID" != "null" ]); then
+                    FABRICID=$(maas $PROFILE subnets read | jq ".[].vlan | select(.vid==$IF_VLAN)".fabric_id)
+                    if ([ $FABRICID ] && [ "$FABRICID" != "null" ]); then
+                        INTERFACE=$(maas $PROFILE interfaces read $NODE_SYS_ID | jq ".[] | select(.vlan.fabric_id==$FABRICID)".id)
+                    fi
+                fi
                 if [[ -z $INTERFACE ]]; then
                     # parent interface is not set because it does not have a SUBNET_CIDR
                     PARENT_VLANID=$(maas $PROFILE fabrics read | jq ".[].vlans[] | select(.fabric_id==$FABRICID and .name==\"untagged\")".id)
