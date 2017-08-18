@@ -202,17 +202,18 @@ deploy() {
         PROFILE=${PROFILE:-ubuntu}
         MAAS_IP=$(grep " ip_address" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //')
         API_SERVER="http://$MAAS_IP:5240/MAAS/api/2.0"
-        API_KEY=`sudo maas-region apikey --username=ubuntu`
-        maas login $PROFILE $API_SERVER $API_KEY
+        if which maas > /dev/null; then
+            API_KEY=`sudo maas-region apikey --username=ubuntu`
+            maas login $PROFILE $API_SERVER $API_KEY
 
-        # make sure there is no machine entry in maas
-        for m in $(maas $PROFILE machines read | jq -r '.[].system_id')
-        do
-            maas $PROFILE machine delete $m || true
-        done
-        podno=$(maas $PROFILE pods read | jq -r ".[]".id)
-        maas $PROFILE pod delete $podno || true
-
+            # make sure there is no machine entry in maas
+            for m in $(maas $PROFILE machines read | jq -r '.[].system_id')
+            do
+                maas $PROFILE machine delete $m || true
+            done
+            podno=$(maas $PROFILE pods read | jq -r ".[]".id)
+            maas $PROFILE pod delete $podno || true
+        fi
         ./cleanvm.sh || true
 
         if [ "$virtinstall" -eq 1 ]; then
