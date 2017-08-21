@@ -130,28 +130,17 @@ EOF
 
 configOpenrc() {
 cat <<-EOF
-export OS_NO_CACHE='true'
-export OS_TENANT_NAME=$3
-#export OS_TENANT_ID=$7
-export OS_PROJECT_NAME=$3
-export OS_USERNAME=$1
-export OS_PASSWORD=$2
-export OS_IDENTITY_API_VERSION=3
-export OS_DEFAULT_DOMAIN=admin_domain
-export OS_USER_DOMAIN_NAME=admin_domain
-export OS_USER_DOMAIN_ID=$9
-export OS_PROJECT_DOMAIN_NAME=admin_domain
-export OS_PROJECT_DOMAIN_ID=$8
-export OS_AUTH_STRATEGY='keystone'
-export OS_REGION_NAME=$5
-export CINDER_ENDPOINT_TYPE=$6
-export GLANCE_ENDPOINT_TYPE=$6
-export KEYSTONE_ENDPOINT_TYPE=$6
-export NOVA_ENDPOINT_TYPE=$6
-export NEUTRON_ENDPOINT_TYPE=$6
-export OS_ENDPOINT_TYPE=$6
-export OS_INTERFACE=public
+#export OS_NO_CACHE='true'
 export OS_AUTH_URL=$4
+export OS_USER_DOMAIN_NAME=admin_domain
+export OS_PROJECT_DOMAIN_NAME=admin_domain
+export OS_USERNAME=$1
+export OS_TENANT_NAME=$3
+export OS_PROJECT_NAME=$3
+export OS_PASSWORD=$2
+export OS_VOLUME_API_VERSION=2
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
 EOF
 }
 
