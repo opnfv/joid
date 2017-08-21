@@ -93,7 +93,7 @@
 {% endif %}
       options:
         region: *openstack-region
-        operator-roles: "Member,admin"
+        operator-roles: "Member,admin,SwiftOperator"
         source: *openstack-origin
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
