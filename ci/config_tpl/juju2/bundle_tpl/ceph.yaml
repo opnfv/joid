@@ -9,7 +9,7 @@
         cluster: *ceph-cluster-space
 {% endif %}
       options:
-        expceted-osd-count: {{ unit_ceph_qty() }}
+        expected-osd-count: {{ unit_ceph_qty() }}
         source: *openstack-origin
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
