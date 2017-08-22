@@ -169,10 +169,9 @@ openfile_fix() {
 
 if [ "$opnfvsdn" = "ocl" ]
 then
-  ROLES="contrail-controller contrail-analytics contrail-analyticsdb"
   TAG="ubuntu16.04-4.0.0.0-20.tar.gz"
 
-  for ROLE in $ROLES
+  for ROLE in contrail-controller contrail-analytics contrail-analyticsdb
   do
     FILE="${ROLE}-${TAG}"
   if [ ! -f $FILE ]
