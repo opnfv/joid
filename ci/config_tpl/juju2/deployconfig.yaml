@@ -15,10 +15,6 @@ opnfv:
 {% set netdata_prefix = opnfv.spaces_dict.data.cidr[:-4] %}
   dataNetwork: {{ opnfv.spaces_dict.data.cidr }}
 {% endif %}
-{% if lab.racks[0].osdomainname is defined %}
-  domain: {{ lab.racks[0].osdomainname }}
-  os-domain-name: {{ lab.racks[0].osdomainname }}
-{% endif %}
   ext-port: {{ lab.racks[0]['ext-port'] }}
   ext_port: {{ lab.racks[0]['ext-port'] }}
   floating-ip-range: {{ lab.racks[0]['floating-ip-range'] }}

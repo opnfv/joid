@@ -24,9 +24,6 @@
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.dashboard }}
 {% endif %}
-{% if os.beta.public_api %}
-        endpoint-type: internalURL
-{% endif %}
       to:
 {% for unit_id in to_select() %}
         - "lxd:nodes/{{ unit_id }}"

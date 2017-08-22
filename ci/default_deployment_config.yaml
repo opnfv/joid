@@ -28,7 +28,6 @@ os:
         l2_population: False
     beta:
         hacluster_ceph_radosgw: False
-        public_api: False
         huge_pages: False
         cpu_pin: False
         cpu_pin_set: all

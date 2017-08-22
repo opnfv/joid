@@ -20,7 +20,6 @@
         enable-live-migration: True
         enable-resize: True
         migration-auth-type: ssh
-        use-internal-endpoints: True
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}

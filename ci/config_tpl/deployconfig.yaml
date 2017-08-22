@@ -15,12 +15,10 @@ opnfv:
 {% set netdata_prefix = opnfv.spaces_dict.data.cidr[:-4] %}
   dataNetwork: {{ opnfv.spaces_dict.data.cidr }}
 {% endif %}
-  domain: {{ lab.racks[0].osdomainname }}
   ext-port: {{ lab.racks[0]['ext-port'] }}
   ext_port: {{ lab.racks[0]['ext-port'] }}
   floating-ip-range: {{ lab.racks[0]['floating-ip-range'] }}
   interface-enable: {{ lab.racks[0].ifnamelist }}
-  os-domain-name: {{ lab.racks[0].osdomainname }}
 {% if opnfv.spaces_dict.public is defined %}
 {% set netpublic_prefix = opnfv.spaces_dict.public.cidr[:-4] %}
   publicNetwork: {{ opnfv.spaces_dict.public.cidr }}

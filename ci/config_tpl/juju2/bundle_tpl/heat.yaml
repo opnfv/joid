@@ -19,9 +19,6 @@
 {% if os.ha.mode == 'ha' %}
 #        vip: {{ opnfv.vip.heat }}
 {% endif %}
-{% if os.beta.public_api %}
-#        os-public-hostname: api.{{ opnfv.domain }}
-{% endif %}
       to:
         - "lxd:nodes/0"
 {# Empty block to avoid bad block trim #}

@@ -21,7 +21,6 @@
         worker-multiplier: *worker-multiplier
         single-nova-consoleauth: False
         network-manager: Neutron
-        use-internal-endpoints: true
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
@@ -30,9 +29,6 @@
 {% endif %}
 {% if opnfv.domain is defined %}
         #console-proxy-ip: {{ opnfv.domain }}
-{% endif %}
-{% if os.beta.public_api %}
-        os-public-hostname: api.{{ opnfv.domain }}
 {% endif %}
       to:
 {% for unit_id in to_select() %}

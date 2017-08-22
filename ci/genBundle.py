@@ -201,8 +201,6 @@ if 'openbaton' in features:
 
 
 # Set beta option from extra
-if 'publicapi' in extra:
-    config['os']['beta']['public_api'] = True
 if 'radosgwcluster' in extra:
     config['os']['beta']['hacluster_ceph_radosgw'] = True
 if 'hugepages' in extra:

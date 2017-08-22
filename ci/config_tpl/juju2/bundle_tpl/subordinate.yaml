@@ -4,7 +4,6 @@
       charm: ./{{ ubuntu.release }}/ceilometer-agent
       options:
         openstack-origin: *openstack-origin
-        use-internal-endpoints: true
 {% endif %}
 {% if opnfv.storage_dict.ceph is defined %}
     cinder-ceph:

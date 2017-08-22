@@ -29,9 +29,6 @@
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.keystone }}
 {% endif %}
-{% if os.beta.public_api %}
-        os-public-hostname: api.{{ opnfv.domain }}
-{% endif %}
       to:
 {% for unit_id in to_select() %}
         - "lxd:nodes/{{ unit_id }}"

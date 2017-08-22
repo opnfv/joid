@@ -22,7 +22,6 @@
         region: *openstack-region
         block-device: None
         glance-api-version: 2
-        use-internal-endpoints: True
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
@@ -34,9 +33,6 @@
 {% endif %}
 {% if os.ha.mode == 'ha' %}
         vip: {{ opnfv.vip.cinder }}
-{% endif %}
-{% if os.beta.public_api %}
-        os-public-hostname: api.{{ opnfv.domain }}
 {% endif %}
       to:
 {% if opnfv.storage_dict.scaleio is defined %}

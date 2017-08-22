@@ -32,7 +32,6 @@ if [ -f ./deployconfig.yaml ];then
     EXTNET_NET=${EXTNET[3]}
     EXTNET_PORT=`grep "ext-port" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
     ADMNET_GW=`grep "admNetgway" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
-    API_FQDN=`grep "os-domain-name" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
 fi
 
 # launch eth on computer nodes and remove default gw route
@@ -144,81 +143,10 @@ export OS_IMAGE_API_VERSION=2
 EOF
 }
 
-if ([ $API_FQDN ] && [ $API_FQDN != "null" ] && [ $API_FQDN != "None" ]); then
-    echo_info "OS domain name was specified - injecting API FQDN to nodes"
-
-    # Push api fqdn local ip to all /etc/hosts
-    if [[ "$jujuver" < "2" ]]; then
-        API_FQDN=$(juju get keystone | python -c "import yaml; import sys;\
-            print yaml.load(sys.stdin)['settings']['os-public-hostname']['value']")
-    else
-        API_FQDN=$(juju config keystone | python -c "import yaml; import sys;\
-            print yaml.load(sys.stdin)['settings']['os-public-hostname']['value']")
-    fi
-
-
-    KEYSTONEIP=$(keystoneIp)
-    juju run --all "if grep $API_FQDN /etc/hosts > /dev/null; then \
-                        echo 'API FQDN already present'; \
-                    else \
-                        sudo sh -c 'echo $KEYSTONEIP $API_FQDN >> /etc/hosts'; \
-                        echo 'API FQDN injected'; \
-                    fi"
-
-    # remove this enhancement for heat that does not manage endpoints
-    juju run --application=heat "cp /etc/hosts /tmp/hosts ; \
-                             grep -v $API_FQDN /tmp/hosts > /etc/hosts"
-
-    #change in jumphost as well as below commands will run on jumphost
-    if grep $API_FQDN /etc/hosts; then
-        echo 'API FQDN already present'
-    else
-        sudo sh -c "echo $KEYSTONEIP $API_FQDN >> /etc/hosts"
-        echo 'API FQDN injected'
-    fi
-fi
-
 # Create an load openrc
 create_openrc
 
 . ~/joid_config/admin-openrc
-
-if ([ "$opnfvlab" == "orangepod1" ] \
-    || [ "$opnfvlab" == "intelpod6" ]) \
-    && [ "$opnfvsdn" == "nosdn" ] \
-    && [ "$API_FQDN" != "None" ]; then # only for first test phase
-    if [ -e ./labconfig.yaml ]; then
-        echo_info "Deploying public API proxy"
-
-        PUB_API_MASK=$(grep floating-ip-range ./labconfig.yaml |cut -d/ -f2)
-        PUB_API_NET=$(grep floating-ip-range ./labconfig.yaml |cut -d, -f4)
-        PUB_API_IP=$(grep public-api-ip ./labconfig.yaml |cut -d: -f2)
-        if grep "- type: public" ./labconfig.yaml; then
-            # The public network exists on MAAS, so we push the dns record to it
-
-            # Recover maas ips and login to it
-            maas_ip=$(grep " ip_address" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //')
-            maas_pubip=$(grep floating-ip-range ./labconfig.yaml |cut -d, -f4 |perl -pe 's!^(.*)\.\d+/\d+$!$1.5!')
-            apikey=$(grep maas-oauth: environments.yaml | cut -d "'" -f 2)
-            maas login maas http://${maas_ip}/MAAS/api/1.0 ${apikey}
-
-            # Configure maas to add the record
-            CLUSTER_UUID=$(maas ubuntu node-groups list | grep uuid | cut -d\" -f4)
-            PUBLIC_MAAS_IF=$(maas ubuntu node-group-interfaces list $cluster_uuid |\
-                             python -c "import yaml; import sys; cfg=yaml.load(sys.stdin); net_h={net['ip']:net['name'] for net in cfg}; print(net_h['$maas_pubip'])")
-            maas maas node-group-interface update ${CLUSTER_UUID} ${PUBLIC_MAAS_IF} static_ip_range_high=${PUB_API_IP} static_ip_range_low=${PUB_API_IP}
-            maas maas ipaddresses reserve network=${PUB_API_NET} requested_address=${PUB_API_IP} hostname=${API_FQDN}
-            dig ${PUB_API_IP} @${maas_ip} # just for log
-        fi
-        juju run --unit nodes/0 "sudo ip a a ${PUB_API_IP}/${PUB_API_MASK} dev br-ex" || true
-        juju run --unit nodes/0 "sudo ip l set dev br-ex up" || true
-        python genPublicAPIProxyBundle.py -l labconfig.yaml >> bundles.yaml
-        juju-deployer -vW -d -t 7200 -r 5 -c bundles.yaml $opnfvdistro-"$opnfvos" || true
-
-        echo_info "Public API proxy deployed!"
-    fi
-fi
-
 
 ##
 ## removing the swift API endpoint which is created by radosgw.
