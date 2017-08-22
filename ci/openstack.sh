@@ -8,7 +8,7 @@
 
 set -ex
 
-source tools.sh
+source common/tools.sh
 
 #./openstack.sh "$opnfvsdn" "$opnfvlab" "$opnfvdistro" "$openstack" || true
 

@@ -28,7 +28,7 @@
 ##############################################################################
 
 # Imports
-source tools.sh
+source common/tools.sh
 
 # Halt on error
 set -e

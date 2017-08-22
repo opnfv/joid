@@ -2,7 +2,7 @@
 #placeholder for deployment script.
 set -ex
 
-source tools.sh
+source common/tools.sh
 
 
 usage() {

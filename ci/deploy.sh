@@ -2,7 +2,7 @@
 
 set -ex
 
-source tools.sh
+source common/tools.sh
 
 #need to put multiple cases here where decide this bundle to deploy by default use the odl bundle.
 # Below parameters are the default and we can according the release

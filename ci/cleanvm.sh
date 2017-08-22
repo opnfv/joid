@@ -2,7 +2,7 @@
 
 set -x
 
-source tools.sh
+source common/tools.sh
 
 echo_info "Cleanup Started..."
 
