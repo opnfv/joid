@@ -298,8 +298,7 @@ deploy
 check_status executing
 
 echo_info "Deployment finished"
-
-echo_info "Configuring public access"
+juju status --format=tabular
 
 # translate bundle.yaml to json
 python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < bundles.yaml > bundles.json
@@ -327,6 +326,9 @@ if ([ $opnfvmodel == "openstack" ]); then
     fi
 
 elif ([ $opnfvmodel == "kubernetes" ]); then
+   #Workarounf for master chanrm as it takes 5 minutes to run properly
+    check_status waiting
+    check_status executing
     echo_info "Configuring Kubernetes deployment"
 
     ./k8.sh
