@@ -1,6 +1,10 @@
 opnfv-{{ lab.location }}{{ lab.racks[0].rack }}-maas:
 opnfv:
+{% if opnfv.spaces_dict.osapi is defined %}
+{% set net_prefix = opnfv.spaces_dict.osapi.cidr[:-4] %}
+{% else %}
 {% set net_prefix = opnfv.spaces_dict.admin.cidr[:-4] %}
+{% endif %}
   admNetgway: {{ opnfv.spaces_dict.admin.gateway }}
   admNetwork: {{ net_prefix }}2
   admin_password: openstack
