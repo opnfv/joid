@@ -9,8 +9,13 @@ JOID installation instruction
 =============================
 
 .. toctree::
-   :numbered:
-   :maxdepth: 2
+    :numbered:
+    :maxdepth: 2
 
-  ./installationprocedure.rst
-
+    abstract.rst
+    introduction.rst
+    requirements.rst
+    installation_baremetal.rst
+    installation_virtual.rst
+    postinstall.rst
+    appendices.rst
