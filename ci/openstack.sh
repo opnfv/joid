@@ -106,8 +106,7 @@ create_openrc() {
         projectdomainid=`openstack domain show admin_domain -c id -f value`
         userdomainid=`openstack user show admin -c domain_id -f value`
         urlapi=`openstack catalog show keystone --format yaml | python -c "import yaml; import sys; print yaml.load(sys.stdin)['endpoints']" | grep public | cut -d " " -f 4`
-        configOpenrc admin $adminPasswd admin $urlapi > ~/joid_config/admin-openrcinternal
-        configOpenrc admin $adminPasswd admin $urlapi > ~/joid_config/admin-openrc
+        configOpenrc admin $adminPasswd admin $urlapi RegionOne > ~/joid_config/admin-openrc
     else
         configOpenrc2 admin $adminPasswd admin http://$keystoneIp:5000/v2.0 RegionOne > ~/joid_config/admin-openrc
         chmod 0600 ~/joid_config/admin-openrc
@@ -140,6 +139,7 @@ export OS_PASSWORD=$2
 export OS_VOLUME_API_VERSION=2
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
+export OS_REGION_NAME=$5
 EOF
 }
 
