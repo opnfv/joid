@@ -1,0 +1,43 @@
+# jumphost:/etc/network/interfaces
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# Port P6 - access vlan 93
+iface ens255f0 inet manual
+auto brExt
+iface brExt inet static
+        bridge_ports ens255f0
+        address   10.21.19.100
+        gateway   10.21.19.97
+        network   10.21.19.96
+        broadcast 10.21.19.127
+        netmask   255.255.255.224
+        dns-nameservers 8.8.8.8
+
+# Port P5 - access vlan 92
+iface ens255f1 inet manual
+auto brAdmin
+iface brAdmin inet static
+        bridge_ports ens255f1
+        address   192.168.50.5
+        netmask   255.255.255.0
+
+# Port P4 - access vlan 1704
+iface ens4f0 inet manual
+auto brData
+iface brData inet static
+        bridge_ports ens4f0
+        address   192.168.40.5
+        netmask   255.255.255.0
+
+# Port P3 - access vlan 1703
+iface ens4f1 inet manual
+auto brStorage
+iface brStorage inet static
+        bridge_ports ens4f1
+        address   192.168.30.5
+        netmask   255.255.255.0

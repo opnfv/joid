@@ -1,0 +1,228 @@
+lab:
+  location: nokia
+  racks:
+  - rack: pod1
+    nodes:
+    - name: sedna-node00
+      architecture: x86_64
+      roles: [control,network]
+      nics:
+      - ifname: intf105
+        spaces: [admin]
+        mac: ['A8:1E:84:3A:6A:F9']
+      - ifname: intf106
+        spaces: [floating]
+        mac: ['A8:1E:84:3A:6A:F8']
+      - ifname: intf103
+        spaces: [storage]
+        mac: ['A8:1E:84:40:C3:23']
+      - ifname: intf104
+        spaces: [data]
+        mac: ['A8:1E:84:40:C3:22']
+      power: {type: ipmi, address: 10.21.19.69, user: admin, pass: admin}
+    - name: sedna-node01
+      architecture: x86_64
+      roles: [control,compute,storage]
+      nics:
+      - ifname: intf105
+        spaces: [admin]
+        mac: ['A8:1E:84:3A:6E:E3']
+      - ifname: intf106
+        spaces: [floating]
+        mac: ['A8:1E:84:3A:6E:E2']
+      - ifname: intf108
+        spaces: [storage]
+        mac: ['24:8A:07:A4:F8:2C']
+      - ifname: intf109
+        spaces: [data]
+        mac: ['24:8A:07:A4:F8:2D']
+      power: {type: ipmi, address: 10.21.19.70, user: admin, pass: admin}
+    - name: sedna-node02
+      architecture: x86_64
+      roles: [control,compute,storage]
+      nics:
+      - ifname: intf105
+        spaces: [admin]
+        mac: ['A8:1E:84:3A:70:03']
+      - ifname: intf106
+        spaces: [floating]
+        mac: ['A8:1E:84:3A:70:02']
+      - ifname: intf108
+        spaces: [storage]
+        mac: ['24:8A:07:A3:72:1C']
+      - ifname: intf109
+        spaces: [data]
+        mac: ['24:8A:07:A3:72:1D']
+      power: {type: ipmi, address: 10.21.19.71, user: admin, pass: admin}
+    - name: sedna-node03
+      roles: [storage,compute]
+      architecture: x86_64
+      nics:
+      - ifname: intf105
+        spaces: [admin]
+        mac: ['A8:1E:84:3A:6C:55']
+      - ifname: intf106
+        spaces: [floating]
+        mac: ['A8:1E:84:3A:6C:54']
+      - ifname: intf108
+        spaces: [storage]
+        mac: ['24:8A:07:A3:71:6C']
+      - ifname: intf109
+        spaces: [data]
+        mac: ['24:8A:07:A3:71:6D']
+      power: {type: ipmi, address: 10.21.19.72, user: admin, pass: admin}
+    - name: sedna-node04
+      roles: [storage,compute]
+      architecture: x86_64
+      nics:
+      - ifname: intf105
+        spaces: [admin]
+        mac: ['A8:1E:84:3A:6E:3B']
+      - ifname: intf106
+        spaces: [floating]
+        mac: ['A8:1E:84:3A:6E:3A']
+      - ifname: intf108
+        spaces: [storage]
+        mac: ['24:8A:07:A3:71:78']
+      - ifname: intf109
+        spaces: [data]
+        mac: ['24:8A:07:A3:71:79']
+      power: {type: ipmi, address: 10.21.19.73, user: admin, pass: admin}
+    - name: sedna-node05
+      roles: [storage,compute]
+      architecture: x86_64
+      nics:
+      - ifname: intf105
+        spaces: [admin]
+        mac: ['A8:1E:84:3A:71:B6']
+      - ifname: intf106
+        spaces: [floating]
+        mac: ['A8:1E:84:3A:71:B5']
+      - ifname: intf108
+        spaces: [storage]
+        mac: ['24:8A:07:A3:71:60']
+      - ifname: intf109
+        spaces: [data]
+        mac: ['24:8A:07:A3:71:61']
+      power: {type: ipmi, address: 10.21.19.74, user: admin, pass: admin}
+    - name: sedna-node06
+      roles: [storage,compute]
+      architecture: x86_64
+      nics:
+      - ifname: intf105
+        spaces: [admin]
+        mac: ['A8:1E:84:3A:6F:64']
+      - ifname: intf106
+        spaces: [floating]
+        mac: ['A8:1E:84:3A:6F:63']
+      - ifname: intf108
+        spaces: [storage]
+        mac: ['24:8A:07:A3:72:08']
+      - ifname: intf109
+        spaces: [data]
+        mac: ['24:8A:07:A3:72:09']
+      power: {type: ipmi, address: 10.21.19.75, user: admin, pass: admin}
+    - name: sedna-node07
+      roles: [storage,compute]
+      architecture: x86_64
+      nics:
+      - ifname: intf105
+        spaces: [admin]
+        mac: ['A8:1E:84:3A:6E:A7']
+      - ifname: intf106
+        spaces: [floating]
+        mac: ['A8:1E:84:3A:6E:A6']
+      - ifname: intf108
+        spaces: [storage]
+        mac: ['24:8A:07:A3:71:70']
+      - ifname: intf109
+        spaces: [data]
+        mac: ['24:8A:07:A3:71:71']
+      power: {type: ipmi, address: 10.21.19.76, user: admin, pass: admin}
+    - name: sedna-node08
+      roles: [storage,compute]
+      architecture: x86_64
+      nics:
+      - ifname: intf105
+        spaces: [admin]
+        mac: ['A8:1E:84:3A:6F:C1']
+      - ifname: intf106
+        spaces: [floating]
+        mac: ['A8:1E:84:3A:6F:C0']
+      - ifname: intf108
+        spaces: [storage]
+        mac: ['24:8A:07:A3:72:14']
+      - ifname: intf109
+        spaces: [data]
+        mac: ['24:8A:07:A3:72:15']
+      power: {type: ipmi, address: 10.21.19.77, user: admin, pass: admin}
+    - name: sedna-node09
+      roles: [storage,compute]
+      architecture: x86_64
+      nics:
+      - ifname: intf105
+        spaces: [admin]
+        mac: ['A8:1E:84:3A:71:B3']
+      - ifname: intf106
+        spaces: [floating]
+        mac: ['A8:1E:84:3A:71:B2']
+      - ifname: intf108
+        spaces: [storage]
+        mac: ['24:8A:07:A3:72:0C']
+      - ifname: intf109
+        spaces: [data]
+        mac: ['24:8A:07:A3:72:0D']
+      power: {type: ipmi, address: 10.21.19.78, user: admin, pass: admin}
+    - name: sedna-node10
+      roles: [storage,compute]
+      architecture: x86_64
+      nics:
+      - ifname: intf105
+        spaces: [admin]
+        mac: ['A8:1E:84:3A:6D:8D']
+      - ifname: intf106
+        spaces: [floating]
+        mac: ['A8:1E:84:3A:6D:8C']
+      - ifname: intf108
+        spaces: [storage]
+        mac: ['24:8A:07:A3:71:5C']
+      - ifname: intf109
+        spaces: [data]
+        mac: ['24:8A:07:A3:71:5D']
+      power: {type: ipmi, address: 10.21.19.79, user: admin, pass: admin}
+    floating-ip-range: 10.21.19.101,10.21.19.120,10.21.19.97,10.21.19.96/27
+    ext-port: intf106
+    dns: 8.8.8.8
+    osdomainname:
+opnfv:
+  release: d
+  distro: xenial
+  type: noha
+  openstack: ocata
+  sdncontroller:
+  - type: nosdn
+  storage:
+  - type: ceph
+    disk: /dev/sdb
+  feature: odl_l2
+  spaces:
+  - type: admin
+    bridge: brAdmin
+    cidr: 192.168.50.0/24
+    gateway: 192.168.50.5
+    vlan:
+  - type: floating
+    bridge: brExt
+    cidr: 10.21.19.96/27
+    gateway:
+    vlan:
+  - type: storage
+    bridge: brStorage
+    cidr: 192.168.30.0/24
+    gateway:
+    vlan:
+  - type: data
+    bridge: brData
+    cidr: 192.168.40.0/24
+    gateway:
+    vlan:
