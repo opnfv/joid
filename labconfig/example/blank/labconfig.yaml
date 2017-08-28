@@ -1,0 +1,45 @@
+lab:
+  location: # TODO
+  racks:
+  - rack: # TODO
+    nodes:
+    - name: # TODO
+      architecture: x86_64
+      roles: [] # TODO
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: [""] # TODO
+      - ifname: eth1
+        spaces: [floating]
+        mac: [""] # TODO
+      power:
+        type: ipmi
+        address: # TODO
+        user: # TODO
+        pass: # TODO
+    floating-ip-range: # TODO
+    ext-port: eth1
+    dns: 8.8.8.8
+opnfv:
+    distro: xenial
+    openstack: ocata
+    release: d
+    type: # TODO
+    sdncontroller:
+    - type: nosdn
+    storage:
+    - type: ceph
+      disk: /dev/sdb
+    feature: nofeature
+    spaces:
+    - type: admin
+      bridge: brAdmin
+      cidr: # TODO
+      gateway:
+      vlan:
+    - type: floating
+      bridge: # TODO
+      cidr: # TODO
+      gateway: # TODO
+      vlan:

@@ -1,0 +1,122 @@
+lab:
+  # Change the location and rack name. You deployment will be named as
+  # a combination of these two values
+  location: your_company
+  racks:
+  - rack: pod1
+    # Nodes specification
+    nodes:
+    - name: rack-1-m1
+      architecture: x86_64
+      roles: [network,control]
+      # Node network interfaces. Use custom names, the interfaces will be
+      # renamed to what you select here, instead of trying to guess the OS name
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["12:34:56:78:9a:bc"]
+      - ifname: eth1
+        spaces: [floating]
+        mac: ["12:34:56:78:9a:bd"]
+      # BMC configuration
+      power:
+        type: ipmi
+        address: 192.168.10.101
+        user: admin
+        pass: admin
+    - name: rack-1-m2
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["23:45:67:89:ab:cd"]
+      - ifname: eth1
+        spaces: [floating]
+        mac: ["23:45:67:89:ab:ce"]
+      power:
+        type: ipmi
+        address: 192.168.10.102
+        user: admin
+        pass: admin
+    - name: rack-1-m3
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["34:56:78:9a:bc:de"]
+      - ifname: eth1
+        spaces: [floating]
+        mac: ["34:56:78:9a:bc:df"]
+      power:
+        type: ipmi
+        address: 192.168.10.103
+        user: admin
+        pass: admin
+    - name: rack-1-m4
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["45:67:89:ab:cd:ef"]
+      - ifname: eth1
+        spaces: [floating]
+        mac: ["45:67:89:ab:ce:f0"]
+      power:
+        type: ipmi
+        address: 192.168.10.104
+        user: admin
+        pass: admin
+    - name: rack-1-m5
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: eth0
+        spaces: [admin]
+        mac: ["56:78:9a:bc:de:f0"]
+      - ifname: eth1
+        spaces: [floating]
+        mac: ["56:78:9a:bc:df:f1"]
+      power:
+        type: ipmi
+        address: 192.168.10.105
+        user: admin
+        pass: admin
+    # Floating IP range in format:  start,end,gateway,CIDR
+    floating-ip-range: 10.5.15.6,10.5.15.250,10.5.15.254,10.5.15.0/24
+    # Port used for external connectivity
+    ext-port: "eth1"
+    # IP of a DNS server (8.8.8.8 is Google DNS)
+    dns: 8.8.8.8
+opnfv:
+  # Ubuntu version
+  distro: xenial
+  # OpenStack version
+  openstack: ocata
+  # OPNFV release
+  release: d
+  # OpenStack mode
+  type: noha
+  # SDN controller
+  sdncontroller:
+  - type: nosdn
+  # Storage type and configuration
+  storage:
+  - type: ceph
+    disk: /dev/sdb
+  # Special feature(s) to deploy
+  feature: odl_l2
+  # Configured IP networks
+  spaces:
+  - type: admin
+    bridge: brAdmin
+    cidr: 10.5.1.0/24
+    gateway:
+    vlan:
+  - type: floating
+    bridge: brExt
+    cidr: 10.5.15.0/24
+    gateway: 10.5.15.1
+    vlan:
