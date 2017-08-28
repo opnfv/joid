@@ -87,6 +87,12 @@ Jumphost installation and configuration
         of VLAN tags, use the appropriate network on Jumphost depending on the
         VLAN ID on the interface.
 
+    .. note::
+        Both of the networks need to have Internet connectivity. If only one
+        of your interfaces has Internet access, you can setup IP forwarding.
+        For an example how to accomplish that, see the script in Nokia pod 1
+        deployment (``labconfig/nokia/pod1/setup_ip_forwarding.sh``).
+
 
 Configure JOID for your lab
 ---------------------------
