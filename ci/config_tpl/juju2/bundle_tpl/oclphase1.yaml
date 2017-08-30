@@ -36,7 +36,7 @@
             -----END PGP PUBLIC KEY BLOCK-----
 
         install-sources: |
-          - "deb http:65.122.57.42/repo /"
+          - "deb http://65.122.57.42/repo /"
 
     contrail-agent:
       charm: ./{{ ubuntu.release }}/contrail-agent
@@ -75,7 +75,7 @@
             -----END PGP PUBLIC KEY BLOCK-----
 
         install-sources: |
-          - "deb http:65.122.57.42/repo /"
+          - "deb http://65.122.57.42/repo /"
 
     contrail-analytics:
       charm: ./{{ ubuntu.release }}/contrail-analytics

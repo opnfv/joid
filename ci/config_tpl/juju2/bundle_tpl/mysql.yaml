@@ -8,8 +8,10 @@
         shared-db: *internal-space
 {% endif %}
       options:
-        innodb-buffer-pool-size: 1G
-        max-connections: 4000
+        innodb-buffer-pool-size: 256M
+        max-connections: 2000
+        #use-https: "yes"
+        #https-service-endpoints: "True"
         #performance-schema: true
         #source: "deb http://repo.percona.com/apt xenial main"
         #key: "8507EFA5"
