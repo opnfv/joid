@@ -450,6 +450,8 @@ addnodes(){
         done
     fi
     virsh -c $VIRSHURL define --file bootstrap
+    virsh -c $VIRSHURL autostart bootstrap
+
     rm -f bootstrap
 
     sleep 60
@@ -476,6 +478,8 @@ addnodes(){
 
             nodemac=`grep  "mac address" $NODE_NAME | head -1 | cut -d '"' -f 2`
             virsh -c $VIRSHURL define --file $NODE_NAME
+            virsh -c $VIRSHURL autostart $NODE_NAME
+
             rm -f $NODE_NAME
             maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
                 tags='control compute' hostname=$NODE_NAME power_type='virsh' mac_addresses=$nodemac \

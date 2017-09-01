@@ -136,6 +136,17 @@ createresource() {
     API_KEY=`sudo maas-region apikey --username=ubuntu`
     maas login $PROFILE $API_SERVER $API_KEY
 
+   # if we have a virshurl configuration we use it, else we use local
+    VIRSHURL=$(cat labconfig.json | jq -r '.opnfv.virshurl')
+    if ([ $VIRSHURL == "" ] || [ "$VIRSHURL" == "null" ]); then
+        VIRSHIP=$MAAS_IP
+        VIRSHURL="qemu+ssh://$USER@$VIRSHIP/system "
+        VIRSHHOST=""
+    else
+        VIRSHHOST=$(echo $VIRSHURL| cut -d\/ -f 3 | cut -d@ -f2)
+        VIRSHIP=""  # TODO: parse from $VIRSHURL if needed
+    fi
+
     for node in node3-control node4-control
     do
         node_id=$(maas $PROFILE machines read | \
@@ -149,7 +160,7 @@ createresource() {
                 --boot network,hd,menu=off \
                 --noautoconsole --vnc --print-xml | tee _node.xml
             node_mac=$(grep "mac address" _node.xml | head -1 | cut -d "'" -f 2)
-            sudo virsh -c qemu:///system define --file _node.xml
+            sudo virsh -c $VIRSHURL define --file _node.xml
             rm -f _node.xml
 
             maas $PROFILE nodes new autodetect_nodegroup='yes' name=$node \
@@ -157,6 +168,7 @@ createresource() {
                 mac_addresses=$node3controlmac \
                 power_parameters_power_address="qemu+ssh://$USER@192.168.122.1/system" \
                 architecture='amd64/generic' power_parameters_power_id='node3-control'
+            sudo virsh -c $VIRSHURL autostart $node
             node_id=$(maas $PROFILE machines read | \
                   jq -r ".[] | select(.hostname == \"$node\").system_id")
         fi
