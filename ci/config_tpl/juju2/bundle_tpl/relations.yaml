@@ -43,6 +43,7 @@
     - [ 'nova-compute:ephemeral-backend', 'scaleio-openstack:ephemeral-backend' ]
 {% else %}
     - [ 'cinder-ceph:storage-backend', 'cinder:storage-backend' ]
+    - [ 'nova-compute:ceph-access', 'cinder-ceph:ceph-access' ]
     - [ 'ceph-mon:client', 'nova-compute:ceph' ]
     - [ 'ceph-mon:client', 'cinder-ceph:ceph' ]
     - [ 'ceph-mon:client', 'glance:ceph' ]
