@@ -18,9 +18,6 @@ git clone https://github.com/openstack/charm-ceilometer-agent.git $distro/ceilom
 git clone https://github.com/openstack/charm-ceph-mon.git $distro/ceph-mon
 git clone https://github.com/openstack/charm-ceph-osd.git $distro/ceph-osd
 git clone https://github.com/openstack/charm-ceph-radosgw.git $distro/ceph-radosgw
-cd $distro/ceph-radosgw
-git pull https://git.openstack.org/openstack/charm-ceph-radosgw refs/changes/05/500205/1
-cd ../../
 git clone https://github.com/openstack/charm-cinder.git $distro/cinder
 git clone https://github.com/openstack/charm-cinder-ceph.git $distro/cinder-ceph
 git clone https://github.com/openstack/charm-glance.git $distro/glance
