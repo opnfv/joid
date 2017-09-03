@@ -1,6 +1,6 @@
     heat:
       charm: "./{{ ubuntu.release }}/heat"
-      num_units: 1
+      num_units: {{ unit_qty() }}
 {% if os.service.bindings %}
       bindings:
         "": *oam-space
@@ -17,8 +17,10 @@
 {% endif %}
         worker-multiplier: *worker-multiplier
 {% if os.ha.mode == 'ha' %}
-#        vip: {{ opnfv.vip.heat }}
+        vip: {{ opnfv.vip.heat }}
 {% endif %}
       to:
-        - "lxd:nodes/0"
+{% for unit_id in to_select() %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}
 {# Empty block to avoid bad block trim #}

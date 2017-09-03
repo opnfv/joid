@@ -27,7 +27,7 @@ os:
         ipv6: False
         l2_population: False
     beta:
-        hacluster_ceph_radosgw: False
+        hacluster_ceph_radosgw: True
         huge_pages: False
         cpu_pin: False
         cpu_pin_set: all

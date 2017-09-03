@@ -9,7 +9,7 @@
 {% endif %}
       options:
         innodb-buffer-pool-size: 256M
-        max-connections: 2000
+        max-connections: 4000
         #use-https: "yes"
         #https-service-endpoints: "True"
         #performance-schema: true

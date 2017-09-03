@@ -25,12 +25,12 @@ if [[ "$jujuver" > "2" ]]; then
     controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployconfig.yaml`
     cloudname=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployconfig.yaml`
     juju destroy-controller $controllername --destroy-all-models -y || true
-    juju kill-controller $controllername --timeout 10s -y || true
+#    juju kill-controller $controllername --timeout 10s -y || true
     rm -rf precise
     rm -rf trusty
     rm -rf xenial
     rm -rf ~/joid_config/admin-openrc
-    sleep 30
+    sleep 10
     sudo sysctl -w vm.drop_caches=3
 elif [ -d $HOME/.juju/environments ]; then
     echo " " > status.txt
