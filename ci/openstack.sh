@@ -180,6 +180,11 @@ neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net
    --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
    --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
 
+domain_id=$(openstack domain show admin_domain -f value -c id)
+project_id=$(openstack project show admin --domain $domain_id -f value -c id)
+
+openstack role add --project $project_id --user admin admin || true
+
 #congress team is not updating and supporting charm anymore so defer it.
 
 # Create Congress datasources
