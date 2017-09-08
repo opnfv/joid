@@ -56,9 +56,9 @@
 {% include 'openstack-dashboard.yaml' %}
 {% include 'rabbitmq.yaml' %}
 {% include 'neutron-api.yaml' %}
+{% include 'heat.yaml' %}
 {% if os.network.controller != 'ocl' %}
 {% include 'neutron-gateway.yaml' %}
-{% include 'heat.yaml' %}
 {% include 'ceilometer.yaml' %}
 {% endif %}
 {% include 'aodh.yaml' %}

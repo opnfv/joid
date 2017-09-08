@@ -1,8 +1,8 @@
 {% if os.ha.mode == 'ha' %}
 {% if os.network.controller != 'ocl' %}
-    - [ 'heat:ha', 'hacluster-heat:ha' ]
     - [ 'ceilometer:ha', 'hacluster-ceilometer:ha' ]
 {% endif %}
+    - [ 'heat:ha', 'hacluster-heat:ha' ]
     - [ 'mysql:ha', 'hacluster-mysql:ha' ]
     - [ 'cinder:ha', 'hacluster-cinder:ha' ]
     - [ 'glance:ha', 'hacluster-glance:ha' ]
