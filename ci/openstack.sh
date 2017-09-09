@@ -169,18 +169,6 @@ if [ "onos" == "$opnfvsdn" ]; then
     launch_eth
     neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net \
                                                    --router:external=True
-if [ "ocl" == "$opnfvsdn" ]; then
-    if [ ! neutron net-show ext-net > /dev/null 2>&1 ]
-    then 
-      neutron net-create ext-net 
-      LAST_UNIT=`juju status | grep nova-compute/ | tail -1 | cut -c14`
-      for ii in {0..$LAST_UNIT}
-      do
-        ssh $II sudo docker exec contrail-controller \
-          python /opt/contrail/utils/provision_vgw_interface.py\
-           --oper create --interface vgw1 --subnets $SUBNET --routes 0.0.0.0/24 --vrf default-domain:admin:$FIP-VN:$FIP-VN  
-      done
-    fi
 else
     neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net \
                                                    --router:external=True \
