@@ -20,8 +20,6 @@ opnfvmodel=openstack
 virtinstall=0
 maasinstall=0
 
-jujuver=`juju --version`
-
 usage() { echo "Usage: $0
     [-s|--sdn <nosdn|odl|opencontrail>]
     [-t|--type <noha|ha|tip>]
@@ -33,7 +31,7 @@ usage() { echo "Usage: $0
     [-m|--model <openstack|kubernetes>]
     [-i|--virtinstall <0|1>]
     [--maasinstall <0|1>]
-    [--labfile <labvonfig.yaml file>]
+    [--labfile <labconfig.yaml file>]
     [-r|--release <e>]" 1>&2 exit 1;
 }
 
@@ -199,13 +197,13 @@ deploy() {
                 python genDeploymentConfig.py -l labconfig.yaml > deployconfig.yaml
             fi
         else
-            echo_error "MAAS not deployed please deploy MAAS first."
+            if [ "$maasinstall" -eq 0 ]; then
+                echo_error "MAAS not deployed please deploy MAAS first."
+            else
+                echo_info "MAAS not deployed this will deploy MAAS first."
+            fi
         fi
     fi
-
-    #create json file which is missing in case of new deployment after maas and git tree cloned freshly.
-    python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < labconfig.yaml > labconfig.json
-    python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < deployconfig.yaml > deployconfig.json
 
     # Install MAAS and expecting the labconfig.yaml at local directory.
 
@@ -253,6 +251,10 @@ deploy() {
             ./00-maasdeploy.sh custom
         fi
     fi
+
+    #create json file which is missing in case of new deployment after maas and git tree cloned freshly.
+    python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < labconfig.yaml > labconfig.json
+    python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < deployconfig.yaml > deployconfig.json
 
     if [[ "$opnfvtype" = "ha" && "$opnfvlab" = "default" ]]; then
         createresource
@@ -314,6 +316,8 @@ juju status --format=tabular
 
 # translate bundle.yaml to json
 python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < bundles.yaml > bundles.json
+
+jujuver=`juju --version`
 
 # Configuring deployment
 if ([ $opnfvmodel == "openstack" ]); then
