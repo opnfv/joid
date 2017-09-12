@@ -186,15 +186,10 @@ neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net
 # Ocl can push packets to the fabric network in order to reach a gateway if BGP/L3VPN hasn't been configured.
 if [ "ocl" == "$opnfvsdn" ]; then
     echo "Creating simple gateway functions on ocl vRouters"
-      juju run --application nova-compute "ssh $UNIT sudo docker exec contrail-controller \
+      juju run --application nova-compute "sudo docker exec contrail-controller \
         python /opt/contrail/utils/provision_vgw_interface.py\
          --oper create --interface vgw1 --subnets $EXTNET_NET --routes 0.0.0.0/24 --vrf default-domain:admin:ext-net:ext-net" 
 fi
-
-domain_id=$(openstack domain show admin_domain -f value -c id)
-project_id=$(openstack project show admin --domain $domain_id -f value -c id)
-
-openstack role add --project $project_id --user admin admin || true
 
 #congress team is not updating and supporting charm anymore so defer it.
 
