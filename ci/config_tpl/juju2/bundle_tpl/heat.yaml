@@ -12,6 +12,7 @@
       options:
         openstack-origin: *openstack-origin
         region: *openstack-region
+        encryption-key: C4PmHbY3gbBT38wh
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
