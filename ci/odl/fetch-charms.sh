@@ -31,9 +31,6 @@ git clone -b stable/17.08 https://github.com/openstack/charm-nova-compute.git $d
 git clone -b stable/17.08 https://github.com/openstack/charm-openstack-dashboard.git $distro/openstack-dashboard
 git clone -b stable/17.08 https://github.com/openstack/charm-rabbitmq-server.git $distro/rabbitmq-server
 git clone -b stable/17.08 https://github.com/openstack/charm-heat.git $distro/heat
-cd $distro/heat
-git pull https://git.openstack.org/openstack/charm-heat refs/changes/19/504219/1
-cd ../../
 git clone -b stable/17.08 https://github.com/openstack/charm-lxd.git $distro/lxd
 git clone -b stable/17.08 https://github.com/openstack/charm-odl-controller.git $distro/odl-controller
 git clone -b stable/17.08 https://github.com/openstack/charm-neutron-api-odl.git $distro/neutron-api-odl
