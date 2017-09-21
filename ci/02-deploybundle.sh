@@ -26,6 +26,7 @@ fi
 #check whether charms are still executing the code even juju-deployer says installed.
 check_status() {
     waitstatus=$1
+    waittime=$2
     retval=0
     timeoutiter=0
 
@@ -33,7 +34,7 @@ check_status() {
     while [ $retval -eq 0 ]; do
         if juju status | grep -q $waitstatus; then
            echo -n '.'
-           if [ $timeoutiter -ge 180 ]; then
+           if [ $timeoutiter -ge $waittime ]; then
                echo 'timed out'
                retval=1
            else
@@ -150,8 +151,8 @@ pastebinit bundles.yaml || true
 
 # with JUJU 2.0 bundles has to be deployed only once.
 juju deploy bundles.yaml --debug
-sleep 120
-check_status allocating
+sleep 720
+check_status allocating 220
 
 # need to revisit later if not needed we will remove the below.
 openfile_fix() {
