@@ -272,7 +272,6 @@ deploy() {
 #check whether charms are still executing the code even juju-deployer says installed.
 check_status() {
     waitstatus=$1
-    waittime=$2
     retval=0
     timeoutiter=0
 
@@ -280,7 +279,7 @@ check_status() {
     while [ $retval -eq 0 ]; do
         if juju status | grep -q $waitstatus; then
            echo_info "Still waiting for $waitstatus units"
-           if [ $timeoutiter -ge $waittime ]; then
+           if [ $timeoutiter -ge 180 ]; then
                echo_error 'Timed out'
                retval=1
            else
@@ -310,7 +309,7 @@ fi
 echo_info "Deployment started"
 deploy
 
-check_status executing 180
+check_status executing
 
 echo_info "Deployment finished"
 juju status --format=tabular
@@ -344,8 +343,8 @@ if ([ $opnfvmodel == "openstack" ]); then
 
 elif ([ $opnfvmodel == "kubernetes" ]); then
    #Workarounf for master chanrm as it takes 5 minutes to run properly
-    check_status waiting 50
-    check_status executing 50
+    check_status waiting
+    check_status executing
     echo_info "Configuring Kubernetes deployment"
 
     ./k8.sh
