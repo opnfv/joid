@@ -45,6 +45,8 @@ NODE_ARC="$NODE_ARCHES/generic"
 
 # Install the packages needed
 echo_info "Installing and upgrading required packages"
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 5EDB1B62EC4926EA
+sudo apt-get update -y
 sudo apt-get install software-properties-common -y
 sudo apt-add-repository ppa:juju/stable -y
 sudo apt-add-repository ppa:maas/stable -y
