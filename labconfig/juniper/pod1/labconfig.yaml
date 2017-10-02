@@ -69,13 +69,13 @@ lab:
       nics:
       - ifname: intf100
         spaces: [admin]
-        mac: ["0c:c4:7a:53:57:16"]
+        mac: ["0c:c4:7a:53:4e:4e"]
       - ifname: intf101
         spaces: [floating]
-        mac: ["0c:c4:7a:53:57:17"]
+        mac: ["0c:c4:7a:53:4e:4f"]
       power:
         type: ipmi
-        address: 10.10.7.85
+        address: 10.10.7.87
         user: ADMIN
         pass: ADMIN
     floating-ip-range: 10.10.10.6,10.10.10.250,10.10.10.1,10.10.10.0/24

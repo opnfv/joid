@@ -170,7 +170,7 @@ openfile_fix() {
 
 if [ "$opnfvsdn" = "ocl" ]
 then
-  TAG="ubuntu16.04-4.0.0.0-20.tar.gz"
+  TAG="ubuntu16.04-4.0.1.0-32.tar.gz"
 
   for ROLE in contrail-controller contrail-analytics contrail-analyticsdb
   do
