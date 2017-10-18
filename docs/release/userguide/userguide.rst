@@ -1,7 +1,7 @@
 
 Introduction
 ============
-This document will explain how to install OPNFV Danube with JOID including installing JOID, configuring JOID for your environment, and deploying OPNFV with different SDN solutions in HA, or non-HA mode. Prerequisites include
+This document will explain how to install OPNFV Euphrates with JOID including installing JOID, configuring JOID for your environment, and deploying OPNFV with different SDN solutions in HA, or non-HA mode. Prerequisites include
 
 - An Ubuntu 16.04 LTS Server Jumphost
 - Minimum 2 Networks per Pharos requirement
@@ -656,9 +656,7 @@ This section creates a private network for the instances. Please change accordin
 ::
 
   neutron router-create demo-router
-
   neutron router-interface-add demo-router demo-subnet
-
   neutron router-gateway-set demo-router ext-net
 
 This section creates a router and connects this router to the two networks we just created.

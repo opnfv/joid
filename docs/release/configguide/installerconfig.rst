@@ -252,29 +252,28 @@ OPNFV Install
 NOTE: Possible options are as follows:
 
 choose which sdn controller to use.
-  [-s <nosdn|odl|opencontrail|onos>]
+  [-s|--sdn <nosdn|odl|opencontrail>]
   nosdn: openvswitch only and no other SDN.
   odl: OpenDayLight Boron version.
   opencontrail: OpenContrail SDN.
-  onos: ONOS framework as SDN.
 
 Mode of Openstack deployed.
-  [-t <noha|ha|tip>]
+  [-t|--type <noha|ha|tip>]
   noha: NO HA mode of Openstack
   ha: HA mode of openstack.
 
 Wihch version of Openstack deployed.
-  [-o <Newton|Mitaka>]
+  [-o|--openstack <ocata|newton>]
+  Ocata: Ocata version of openstack.
   Newton: Newton version of openstack.
-  Mitaka: Mitaka version of openstack.
 
 Where to deploy
-  [-l <custom | default>] etc...
+  [-l|--lab <custom | default>] etc...
   custom: For bare metal deployment where labconfig.yaml provided externally and not part of JOID.
   default: For virtual deployment where installation will be done on KVM created using 03-maasdeploy.sh
 
 what feature to deploy. Comma seperated list
-  [-f <lxd|dvr|sfc|dpdk|ipv6|none>]
+  [-f|--feature <lxd|dvr|sfc|dpdk|ipv6|none>]
   none: no special feature will be enabled.
   ipv6: ipv6 will be enabled for tenant in openstack.
   lxd:  With this feature hypervisor will be LXD rather than KVM.
@@ -283,13 +282,23 @@ what feature to deploy. Comma seperated list
   sfc:  Will enable sfc feature only supported with onos deployment.
 
 which Ubuntu distro to use.
-  [ -d <trusty|xenial> ]
+  [ -d|--distro <xenial> ]
 
 Which model to deploy
 JOID introduces the various model to deploy apart from openstack for docker based container workloads.
-[-m <openstack|kubernetes>]
+[-m|--model <openstack|kubernetes>]
   openstack: Openstack which will be used for KVM/LXD container based workloads.
   kubernetes: Kubernes model will be used for docker based workloads.
+
+Deploy MAAS or not?
+[--maasinstall <0|1>]
+  0: Do not deploy MAAS
+  1: Deploy MAAS first.
+
+Lab Config file location
+[--labfile <labconfig.yaml file>]
+  location of the file labconfig.yaml if no valid location then virtual MAAS would be deployed.
+
 
 OPNFV Scenarios in JOID
 Following OPNFV scenarios can be deployed using JOID. Seperate yaml bundle will be created to deploy the individual scenario.
@@ -300,10 +309,11 @@ os-nosdn-nofeature-noha	 Joid
 os-odl_l2-nofeature-ha	 Joid           Floating ips are not working on this deployment.
 os-nosdn-lxd-ha          Joid           Yardstick team is working to support.
 os-nosdn-lxd-noha        Joid           Yardstick team is working to support.
-os-onos-nofeature-ha	 ONOSFW
-os-onos-sfc-ha	         ONOSFW
-k8-nosdn-nofeature-noha Joid	        No support from Functest and Yardstick
-k8-nosdn-lb-noha	 Joid	        No support from Functest and Yardstick
+os-ocl-nofeature-ha	 OCL            Keystone V2 has been used.
+os-ocl-nofeature-noha	 OCL            Keystone V2 has been used.
+k8-nosdn-nofeature-noha  Joid	        No support from Functest.
+k8-nosdn-lb-noha	 Joid	        No support from Functest.
+k8-ovn-lb-noha	         OVN	        No support from Functest.
 
 Is the deployment done successfully?
 ------------------------------------

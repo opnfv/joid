@@ -6,16 +6,16 @@
 Abstract
 ========
 
-This document compiles the release notes for the Danube release of
+This document compiles the release notes for the Euphrates release of
 OPNFV when using JOID as a deployment tool.
 
 Introduction
 ============
 
 These notes provides release information for the use of joid as deployment
-tool for the Danube release of OPNFV.
+tool for the Euphrates release of OPNFV.
 
-The goal of the Danube release and this JOID based deployment process is
+The goal of the Euphrates release and this JOID based deployment process is
 to establish a lab ready platform accelerating further development
 of the OPNFV infrastructure.
 
@@ -25,11 +25,11 @@ OPNFV using JOID which is based on MAAS and Juju.
 Summary
 =======
 
-The Danube release with the JOID deployment toolchain will establish an OPNFV target system on a Pharos compliant lab infrastructure.
+The Euphrates release with the JOID deployment toolchain will establish an OPNFV target system on a Pharos compliant lab infrastructure.
 The current definition of an OPNFV target system is and OpenStack Newton combined with OpenDaylight Boron.
 
 The system is deployed with OpenStack High Availability (HA) for most OpenStack services.
-Ceph storage is used as Cinder backend, and is the only supported storage for Danube. Ceph is setup as 3 OSDs and 3 Monitors, one radosgw.
+Ceph storage is used as Cinder backend, and is the only supported storage for Euphrates. Ceph is setup as 3 OSDs and 3 Monitors, one radosgw.
 
     User has following choices to make to do the deployment.
 
@@ -54,15 +54,15 @@ Release Data
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Repo/tag**                         | gerrit.opnfv.org/gerrit/joid.git     |
-|                                      | stable/danube                      |
+|                                      | stable/euphrates                     |
 +--------------------------------------+--------------------------------------+
-| **Release designation**              | Denbue release                     |
+| **Release designation**              | Euphrates release                    |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Release date**                     | March 31 2017                      |
+| **Release date**                     | October 24 2017                      |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Purpose of the delivery**          | Danube release                     |
+| **Purpose of the delivery**          | Euphrates release                    |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 
@@ -86,14 +86,14 @@ Version change
 
 Module version change
 ~~~~~~~~~~~~~~~~~~~~~
-  - Danube release with the JOID deployment toolchain.
-  - OpenStack (Newton release)
-  - OpenDaylight (Boron release)
+  - Euphrates release with the JOID deployment toolchain.
+  - OpenStack (Ocata release)
+  - Kubernetes 1.7
   - Ubuntu 16.04 LTS
 
 Document version change
 ~~~~~~~~~~~~~~~~~~~~~~~
-- OPNFV Installation instructions for the Danube release using JOID deployment
+- OPNFV Installation instructions for the Euphrates release using JOID deployment
   toolchain - ver. 1.0.0
 - OPNFV Release Notes with the JOID deployment toolchain - ver. 1.0.0 (this document)
 
@@ -108,8 +108,6 @@ Feature additions
 +--------------------------------------+--------------------------------------+
 | JIRA: JOID-1                         | use Juju and Ubuntu to deploy OPNFV  |
 +--------------------------------------+--------------------------------------+
-| JIRA:	JOID-103                       | OpenDaylight Carbon Support          |
-+--------------------------------------+--------------------------------------+
 | JIRA:	JOID-100                       | MAAS 2.x support                     |
 +--------------------------------------+--------------------------------------+
 | JIRA:	JOID-101                       | Juju 2.x support                     |
@@ -118,12 +116,11 @@ Feature additions
 +--------------------------------------+--------------------------------------+
 | JIRA:	JOID-106                       | Kubernetes on Baremetal              |
 +--------------------------------------+--------------------------------------+
-| JIRA:	JOID-108                       | integrate load balancer              |
-| 		                       | Kubernetes on Baremetal              |
+| JIRA:	JOID-102                       | Enable OpenStack Ocata               |
 +--------------------------------------+--------------------------------------+
-| JIRA:	JOID-110                       | Enable VM console in Horizon         |
+|                                      | Enable OpenContrail                  |
 +--------------------------------------+--------------------------------------+
-| JIRA:	JOID-102                       | Enable OpenStack Newton              |
+|                                      | Enable OVN for Kubernetes            |
 +--------------------------------------+--------------------------------------+
 
 Bug corrections
@@ -162,7 +159,7 @@ Known issues
 +--------------------------------------+--------------------------------------+
 | JIRA:                                | floating ip are not working for ODL. |
 +--------------------------------------+--------------------------------------+
-| JIRA:                                | No functest and yardstick support.   |
+| JIRA:                                | No functest support for Kubernetes.  |
 +--------------------------------------+--------------------------------------+
 
 
@@ -171,54 +168,44 @@ Workarounds
 See JIRA: <link>
 
 
-Test Result
-===========
-Danube test result using JOID as deployment tool.
-- `https://build.opnfv.org/ci/view/joid/job/functest-joid-baremetal-daily-colorado/>`_
-- `https://build.opnfv.org/ci/view/joid/job/yardstick-joid-baremetal-daily-colorado/>`_
-
 Scenario Releases
 =================
 Name:      joid-os-nosdn-nofeature-ha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-nofeature-ha-baremetal-daily-colorado/
-Notes:
-
-Name:      joid-os-odl-nofeature-ha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-odl_l2-nofeature-ha-baremetal-daily-colorado/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-nofeature-ha-baremetal-daily-euphrates/
 Notes:
 
 Name:      joid-os-nosdn-lxd-ha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-lxd-ha-baremetal-daily-colorado/
-Notes:
-
-Name:      joid-os-onos-nofeature-ha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-onos-nofeature-ha-baremetal-daily-colorado/
-Notes:
-
-Name:      joid-os-onos-sfc-ha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-onos-sfc-ha-baremetal-daily-colorado/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-lxd-ha-baremetal-daily-euphrates/
 Notes:
 
 Name:      joid-os-nosdn-lxd-noha
-Test Link: https://build.opnfv.org/ci/user/narindergupta/my-views/view/joid/job/joid-os-nosdn-lxd-noha-baremetal-daily-colorado/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-lxd-noha-baremetal-daily-euphrates/
 Notes:
 
 Name:      joid-os-nosdn-nofeature-noha
-Test Link: https://build.opnfv.org/ci/user/narindergupta/my-views/view/joid/job/joid-os-nosdn-nofeature-noha-baremetal-daily-colorado/
-Notes:
-
-Name:      joid-k8-nosdn-nofeature-noha
-Test Link: https://build.opnfv.org/ci/user/narindergupta/my-views/view/joid/job/joid-deploy-baremetal-daily-master/1833/console/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-nofeature-noha-baremetal-daily-euphrates/
 Notes:
 
 Name:      joid-k8-nosdn-lb-noha
-Test Link: https://build.opnfv.org/ci/user/narindergupta/my-views/view/joid/job/joid-os-nosdn-nofeature-noha-baremetal-daily-colorado/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-k8-nosdn-lb-noha-baremetal-daily-euphrates/
+Notes:
+
+Name:      joid-k8-ovn-lb-noha
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-k8-ovn-lb-noha-baremetal-daily-euphrates/
+Notes:
+
+Name:      joid-os-ocl-nofeature-ha
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-ocl-nofeature-ha-baremetal-daily-euphrates/
+Notes:
+
+Name:      joid-os-ocl-nofeature-noha
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-ocl-nofeature-noha-baremetal-daily-euphrates/
 Notes:
 
 References
 ==========
-For more information on the OPNFV Danube release, please visit
-- `OPNFV Danube release <http://www.opnfv.org/danube>`_
+For more information on the OPNFV Euphrates release, please visit
+- `OPNFV Euphrates release <http://www.opnfv.org/euphrates>`_
 
 Juju
 ----
@@ -233,16 +220,22 @@ MAAS
 JOID
 ----
 - `OPNFV JOID wiki <https://wiki.opnfv.org/joid>`_
-- `OPNFV JOID User Guide <https://wiki.opnfv.org/joid/b_userguide>`_
-- `OPNFV Release Notes <https://wiki.opnfv.org/display/joid/Danube+Release+Notes>`_
-- `OPNFV JOID Install Guide <https://wiki.opnfv.org/display/joid/Danube+installation+Guide>`_
+- `OPNFV Release Notes <http://docs.opnfv.org/en/stable-danube/submodules/joid/docs/release/release-notes/release-notes.html>`_
+- `OPNFV JOID Install Guide <http://docs.opnfv.org/en/latest/submodules/joid/docs/release/installation/index.html>`_
 
 OpenStack
 ---------
-- `OpenStack Newton Release artifacts <http://www.openstack.org/software/newton>`_
+- `OpenStack Newton Release artifacts <http://www.openstack.org/software/ocata>`_
 - `OpenStack documentation <http://docs.openstack.org>`_
 
 OpenDaylight
 ------------
 - `OpenDaylight artifacts <http://www.opendaylight.org/software/downloads>`_
 
+Opencontrail
+------------
+- `http://www.opencontrail.org/opencontrail-quick-start-guide/`_
+
+Kubernetes
+------------
+- `https://kubernetes.io/`_
