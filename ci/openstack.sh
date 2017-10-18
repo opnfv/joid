@@ -17,8 +17,6 @@ opnfvlab=$2
 opnfvdistro=$3
 opnfvos=$4
 
-jujuver=`juju --version`
-
 if [ -f ./deployconfig.yaml ];then
     EXTERNAL_NETWORK=`grep floating-ip-range deployconfig.yaml | cut -d ' ' -f 4 `
 
@@ -49,38 +47,22 @@ update_gw_mac() {
     ## get gateway mac
     EXTNET_GW_MAC=$(juju ssh nova-compute/0 "arp -a ${EXTNET_GW} | grep -Eo '([0-9a-fA-F]{2})(([/\s:-][0-9a-fA-F]{2}){5})'")
     ## set external gateway mac in onos
-    if [[ "$jujuver" < "2" ]]; then
-        juju set onos-controller gateway-mac=$EXTNET_GW_MAC
-    else
-        juju config onos-controller gateway-mac=$EXTNET_GW_MAC
-    fi
+    juju config onos-controller gateway-mac=$EXTNET_GW_MAC
 }
 
 unitAddress() {
-    if [[ "$jujuver" < "2" ]]; then
-        juju status --format yaml | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"services\"][\"$1\"][\"units\"][\"$1/$2\"][\"public-address\"]" 2> /dev/null
-    else
-        juju status --format yaml | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"applications\"][\"$1\"][\"units\"][\"$1/$2\"][\"public-address\"]" 2> /dev/null
-    fi
+    juju status --format yaml | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"applications\"][\"$1\"][\"units\"][\"$1/$2\"][\"public-address\"]" 2> /dev/null
 }
 
 unitMachine() {
-    if [[ "$jujuver" < "2" ]]; then
-        juju status --format yaml | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"services\"][\"$1\"][\"units\"][\"$1/$2\"][\"machine\"]" 2> /dev/null
-    else
-        juju status --format yaml | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"applications\"][\"$1\"][\"units\"][\"$1/$2\"][\"machine\"]" 2> /dev/null
-    fi
+    juju status --format yaml | python -c "import yaml; import sys; print yaml.load(sys.stdin)[\"applications\"][\"$1\"][\"units\"][\"$1/$2\"][\"machine\"]" 2> /dev/null
 }
 
 keystoneIp() {
     if [ $(juju status keystone --format=short | grep " keystone"|wc -l) == 1 ];then
         unitAddress keystone 0
     else
-        if [[ "$jujuver" < "2" ]]; then
-            juju get keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['vip']['value']" | cut -d " " -f 1
-        else
-            juju config keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['vip']['value']" | cut -d " " -f 1
-        fi
+        juju config keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['vip']['value']" | cut -d " " -f 1
     fi
 }
 
@@ -90,11 +72,7 @@ create_openrc() {
 
     mkdir -m 0700 -p cloud
     keystoneIp=$(keystoneIp)
-    if [[ "$jujuver" < "2" ]]; then
-        adminPasswd=$(juju get keystone | grep admin-password -A 5 | grep value | awk '{print $2}' 2> /dev/null)
-    else
-        adminPasswd=$(juju config keystone | grep admin-password -A 5 | grep value | awk '{print $2}' 2> /dev/null)
-    fi
+    adminPasswd=$(juju config keystone | grep admin-password -A 5 | grep value | awk '{print $2}' 2> /dev/null)
 
     v3api=`juju config keystone  preferred-api-version`
 

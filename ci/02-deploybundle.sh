@@ -12,9 +12,6 @@ opnfvfeature=$5
 opnfvdistro=$6
 opnfvmodel=$7
 
-jujuver=`juju --version`
-maasver=`apt-cache policy maas | grep Installed | cut -d ':' -f 2 | sed -e 's/ //'`
-
 if [[ "$opnfvmodel" = "openstack" ]]; then
     #copy and download charms
     ./$opnfvsdn/fetch-charms.sh $opnfvdistro
@@ -54,19 +51,10 @@ check_status() {
 PROFILE=maas
 MAAS_IP=$(grep " ip_address" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //')
 API_SERVERMAAS="http://$MAAS_IP:5240/MAAS/"
-if [[ "$maasver" > "2" ]]; then
-    API_KEY=`sudo maas-region apikey --username=ubuntu || true`
-else
-    API_KEY=`sudo maas-region-admin apikey --username=ubuntu || true`
-fi
-
+API_KEY=`sudo maas-region apikey --username=ubuntu || true`
 
 if [[ "$API_KEY" = "" ]]; then
-    if [[ "$maasver" > "2" ]]; then
-        API_KEY=`sshpass -p ubuntu ssh ubuntu@$MAAS_IP 'sudo maas-region apikey --username=ubuntu'`
-    else
-        API_KEY=`sshpass -p ubuntu ssh ubuntu@$MAAS_IP 'sudo maas-region-admin apikey --username=ubuntu'`
-    fi
+    API_KEY=`sshpass -p ubuntu ssh ubuntu@$MAAS_IP 'sudo maas-region apikey --username=ubuntu'`
 fi
 
 maas login $PROFILE $API_SERVERMAAS $API_KEY
@@ -80,11 +68,7 @@ if [[ "$opnfvmodel" = "openstack" ]]; then
        osdomname=`grep "os-domain-name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
     fi
 
-    if [[ "$maasver" > "2" ]]; then
-        workmutiple=`maas maas nodes read | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
-    else
-        workmutiple=`maas maas nodes list | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
-    fi
+    workmutiple=`maas maas nodes read | grep "cpu_count" | cut -d ':' -f 2 | sed -e 's/ //' | tr ',' ' '`
     max=0
     for v in ${workmutiple[@]}; do
         if (( $v > $max )); then max=$v; fi;

@@ -227,7 +227,7 @@ deploy() {
         ./cleanvm.sh || true
 
         if [ "$virtinstall" -eq 1 ]; then
-            ./00-maasdeploy.sh virtual
+            ./03-maasdeploy.sh virtual
         else
             if [ -z "$labfile" ]; then
                 if [ ! -e ./labconfig.yaml ]; then
@@ -248,7 +248,7 @@ deploy() {
                 cp $labfile ./labconfig.yaml
             fi
 
-            ./00-maasdeploy.sh custom
+            ./03-maasdeploy.sh custom
         fi
     fi
 
@@ -318,8 +318,6 @@ juju status --format=tabular
 # translate bundle.yaml to json
 python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' < bundles.yaml > bundles.json
 
-jujuver=`juju --version`
-
 # Configuring deployment
 if ([ $opnfvmodel == "openstack" ]); then
     if ([ $opnfvsdn == "ocl" ]); then
@@ -339,13 +337,8 @@ if ([ $opnfvmodel == "openstack" ]); then
     ./openstack.sh "$opnfvsdn" "$opnfvlab" "$opnfvdistro" "$openstack" || true
 
     # creating heat domain after pushing the public API into /etc/hosts
-    if [[ "$jujuver" > "2" ]]; then
-        status=`juju run-action heat/0 domain-setup`
-        echo $status
-    else
-        status=`juju action do heat/0 domain-setup`
-        echo $status
-    fi
+    status=`juju run-action heat/0 domain-setup`
+    echo $status
 
     sudo ../juju/get-cloud-images || true
     ../juju/joid-configure-openstack || true

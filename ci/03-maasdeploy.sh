@@ -56,10 +56,6 @@ sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvi
              python-congressclient gsutil charm-tools pastebinit python-jinja2 sshpass \
              openssh-server vlan ipmitool jq expect snap -y
 
-#sudo apt-get install snap -y
-#sudo snap install maas --classic
-#sudo snap install juju --classic
-
 sudo -H pip install --upgrade pip
 
 
@@ -220,14 +216,6 @@ fi
 # Ensure virsh can connect without ssh auth
 sudo cat ~maas/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 sudo cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
-
-#
-# MAAS deploy
-#
-
-installmaas(){
-    sudo apt-get install maas maas-region-controller -y
-}
 
 #
 # MAAS config
@@ -686,12 +674,8 @@ if [ -e ./labconfig.json ]; then
 fi
 
 # Add the cloud and controller credentials for MAAS for that lab.
-jujuver=`juju --version`
-
-if [[ "$jujuver" > "2" ]]; then
-    addcloud
-    addcredential
-fi
+addcloud
+addcredential
 
 #
 # End of scripts

@@ -35,13 +35,7 @@ labconfig_file = options.lab
 #
 
 scenarioconfig_file = 'default_deployment_config.yaml'
-# Capture our current directory
-jujuver = subprocess.check_output(["juju", "--version"])
-
-if LooseVersion(jujuver) >= LooseVersion('2'):
-    TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl/juju2/bundle_tpl'
-else:
-    TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl/bundle_tpl'
+TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl/juju2/bundle_tpl'
 
 #
 # Prepare variables
