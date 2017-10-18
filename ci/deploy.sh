@@ -25,7 +25,7 @@ usage() { echo "Usage: $0
     [-t|--type <noha|ha|tip>]
     [-o|--openstack <ocata>]
     [-l|--lab <default|custom>]
-    [-f|--feature <ipv6,dpdk,lxd,dvr,openbaton>]
+    [-f|--feature <ipv6,dpdk,lxd,dvr,openbaton,multus>]
     [-d|--distro <xenial>]
     [-a|--arch <amd64|ppc64el|aarch64>]
     [-m|--model <openstack|kubernetes>]
@@ -348,7 +348,7 @@ elif ([ $opnfvmodel == "kubernetes" ]); then
     check_status executing 50
     echo_info "Configuring Kubernetes deployment"
 
-    ./k8.sh
+    ./k8.sh $opnfvfeature
 fi
 
 # expose the juju gui-url to login into juju gui
