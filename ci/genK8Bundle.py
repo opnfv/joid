@@ -35,9 +35,6 @@ labconfig_file = options.lab
 #
 
 scenarioconfig_file = 'default_deployment_config.yaml'
-# Capture our current directory
-jujuver = subprocess.check_output(["juju", "--version"])
-
 TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl/juju2/bundlek8_tpl'
 
 #
