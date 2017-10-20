@@ -105,15 +105,15 @@ Release Data
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Repo/tag**                         | gerrit.opnfv.org/gerrit/joid.git     |
-|                                      | stable/euphrates                        |
+|                                      | stable/euphrates                     |
 +--------------------------------------+--------------------------------------+
-| **Release designation**              | Euphrates release                       |
+| **Release designation**              | Euphrates release                    |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Release date**                     | March 31 2017                        |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Purpose of the delivery**          | Euphrates release                       |
+| **Purpose of the delivery**          | Euphrates release                    |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 
