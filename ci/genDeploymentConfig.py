@@ -30,14 +30,7 @@ labconfig_file = options.lab
 #
 # Set Path and configs path
 #
-
-# Capture our current directory
-jujuver = subprocess.check_output(["juju", "--version"])
-
-if LooseVersion(jujuver) >= LooseVersion('2'):
-    TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl/juju2'
-else:
-    TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl'
+TPL_DIR = os.path.dirname(os.path.abspath(__file__))+'/config_tpl/juju2'
 
 HOME = os.environ['HOME']
 USER = os.environ['USER']
