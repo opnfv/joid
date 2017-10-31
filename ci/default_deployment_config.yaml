@@ -1,10 +1,10 @@
 ubuntu:
     release: xenial
 os:
-    release: ocata
+    release: pike
     git_repo:
         origin_git: False
-        branch: ocata
+        branch: pike
     hyperconverged: True
     ha:
         mode: ha
@@ -39,5 +39,6 @@ os:
 k8:
     feature:
         loadbalancer: False
+        storage: none
     network:
         controller: nosdn

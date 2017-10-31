@@ -26,7 +26,9 @@
 {% else %}
 {% include 'flannel.yaml' %}
 {% endif %}
-
+{% if k8.feature.storage == 'ceph' %}
+{% include 'ceph.yaml' %}
+{% endif %}
 
   relations:
     - [ 'ntp:juju-info', 'nodes:juju-info' ]

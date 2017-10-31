@@ -1,0 +1,54 @@
+lab:
+  location: virtual
+  racks:
+  - rack: pod1
+    nodes:
+    - name: rack-vir-m1
+      architecture: x86_64
+      roles: [network,control]
+      nics:
+      - ifname: ens3
+        spaces: [admin]
+      - ifname: ens4
+        spaces: [floating]
+    - name: rack-vir-m2
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: ens3
+        spaces: [admin]
+      - ifname: ens4
+        spaces: [floating]
+    - name: rack-vir-m3
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: ens3
+        spaces: [admin]
+      - ifname: ens4
+        spaces: [floating]
+    floating-ip-range: 192.168.122.31,192.168.122.49,192.168.122.1,192.168.122.0/24
+    ext-port: "enp2s0"
+    dns: 8.8.8.8
+opnfv:
+  release: d
+  distro: xenial
+  type: noha
+  openstack: newton
+  sdncontroller:
+  - type: nosdn
+  storage:
+  - type: ceph
+    disk: /srv
+  feature: odl_l2
+  spaces:
+  - type: admin
+    bridge: virbr0
+    cidr: 192.168.122.0/24
+    gateway: 192.168.122.1
+    vlan:
+  - type: floating
+    bridge:
+    cidr:
+    gateway:
+    vlan:

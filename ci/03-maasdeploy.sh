@@ -46,17 +46,25 @@ NODE_ARC="$NODE_ARCHES/generic"
 # Install the packages needed
 echo_info "Installing and upgrading required packages"
 #sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 5EDB1B62EC4926EA
-sudo apt-get update -y
+sudo apt-get update -y || true
 sudo apt-get install software-properties-common -y
 sudo apt-add-repository ppa:juju/stable -y
 sudo apt-add-repository ppa:maas/stable -y
-sudo apt-add-repository cloud-archive:ocata -y
-sudo apt-get update -y
+sudo apt-add-repository cloud-archive:pike -y
+if [ "aarch64" == "$NODE_ARCTYPE" ]; then
+sudo add-apt-repository ppa:ubuntu-cloud-archive/pike-staging -y
+fi
+sudo apt-get update -y || true
 #sudo apt-get dist-upgrade -y
+
 sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvirt-bin \
              maas maas-region-controller juju python-pip python-psutil python-openstackclient \
              python-congressclient gsutil charm-tools pastebinit python-jinja2 sshpass \
              openssh-server vlan ipmitool jq expect snap -y
+
+if [ "aarch64" == "$NODE_ARCTYPE" ]; then
+    sudo apt-get install qemu qemu-efi qemu-system-aarch64 -y
+fi
 
 sudo -H pip install --upgrade pip
 
@@ -226,9 +234,7 @@ sudo cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 #
 configuremaas(){
     #reconfigure maas with correct MAAS address.
-    #Below code is needed as MAAS have issue in commissioning without restart.
-    #sudo ./maas-reconfigure-region.sh $MAAS_IP
-    sleep 30
+
     sudo maas-rack config --region-url http://$MAAS_IP:5240/MAAS
 
     sudo maas createadmin --username=ubuntu --email=ubuntu@ubuntu.com --password=ubuntu || true
@@ -371,6 +377,8 @@ addnodes(){
     API_KEY=`sudo maas-region apikey --username=ubuntu`
     maas login $PROFILE $API_SERVERMAAS $API_KEY
 
+    maas $PROFILE maas set-config name=default_min_hwe_kernel value=hwe-16.04-edge || true
+
     # make sure there is no machine entry in maas
     for m in $(maas $PROFILE machines read | jq -r '.[].system_id')
     do
@@ -427,8 +435,8 @@ addnodes(){
 
     virt-install --connect $VIRSHURL --name bootstrap --ram 4098 --cpu $CPU_MODEL --vcpus 2 \
                  --disk size=20,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
-                 $netw --boot network,hd,menu=off --noautoconsole \
-                 --print-xml | tee bootstrap
+                 $netw --boot network,hd,menu=off --video virtio --noautoconsole --autostart \
+                 --accelerate --print-xml | tee bootstrap
 
     if [ "$virtinstall" -eq 1 ]; then
         bootstrapmac=`grep  "mac address" bootstrap | head -1 | cut -d '"' -f 2`
@@ -440,7 +448,6 @@ addnodes(){
         done
     fi
     virsh -c $VIRSHURL define --file bootstrap
-    virsh -c $VIRSHURL autostart bootstrap
 
     rm -f bootstrap
 
@@ -464,11 +471,11 @@ addnodes(){
 
             virt-install --connect $VIRSHURL --name $NODE_NAME --ram 8192 --cpu $CPU_MODEL --vcpus 4 \
                      --disk size=120,format=qcow2,bus=virtio,cache=directsync,io=native,pool=default \
-                     $netw $netw --boot network,hd,menu=off --noautoconsole --print-xml | tee $NODE_NAME
+                     $netw $netw --boot network,hd,menu=off --video virtio --noautoconsole --autostart \
+                     --accelerate --print-xml | tee $NODE_NAME
 
             nodemac=`grep  "mac address" $NODE_NAME | head -1 | cut -d '"' -f 2`
             virsh -c $VIRSHURL define --file $NODE_NAME
-            virsh -c $VIRSHURL autostart $NODE_NAME
 
             rm -f $NODE_NAME
             maas $PROFILE machines create autodetect_nodegroup='yes' name=$NODE_NAME \
@@ -542,7 +549,7 @@ setupspacenetwork
 
 #just make sure rack controller has been synced and import only
 # just whether images have been imported or not.
-sudo ./maas-reconfigure-region.sh $MAAS_IP
+#sudo ./maas-reconfigure-region.sh $MAAS_IP
 sleep 120
 
 # Let's add the nodes now. Currently works only for virtual deployment.

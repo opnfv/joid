@@ -9,7 +9,7 @@ source common/tools.sh
 
 opnfvsdn=nosdn
 opnfvtype=noha
-openstack=ocata
+openstack=pike
 opnfvlab=default
 opnfvlabfile=
 opnfvrel=e
@@ -23,7 +23,7 @@ maasinstall=0
 usage() { echo "Usage: $0
     [-s|--sdn <nosdn|odl|opencontrail>]
     [-t|--type <noha|ha|tip>]
-    [-o|--openstack <ocata>]
+    [-o|--openstack <ocata|pike>]
     [-l|--lab <default|custom>]
     [-f|--feature <ipv6,dpdk,lxd,dvr,openbaton,multus>]
     [-d|--distro <xenial>]

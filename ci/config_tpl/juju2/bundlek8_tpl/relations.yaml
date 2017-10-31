@@ -21,4 +21,7 @@
     - [ 'kubernetes-worker:kube-api-endpoint', 'kubeapi-load-balancer:website' ]
     - [ 'kubeapi-load-balancer:certificates', 'easyrsa:client' ]
 {% endif %}
-
+{% if k8.feature.storage == 'ceph' %}
+    - [ 'ceph-osd:mon', 'ceph-mon:osd' ]
+    - [ 'ceph-mon:admin', 'kubernetes-master:ceph-storage' ]
+{% endif %}

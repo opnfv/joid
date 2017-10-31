@@ -1,5 +1,24 @@
-
-
     # OAM - Operations, Administration and Maintenance
     oam-space:           &oam-space           internal-api
+
+    # CEPH configuration
+    # CEPH access network
+{% if opnfv.spaces_dict.storageaccess is defined %}
+    ceph-public-space:   &ceph-public-space  storage-access-space
+    ceph-access-constr:  &ceph-access-constr  spaces=storage-access-space
+{% else %}
+    ceph-public-space:   &ceph-public-space  internal-api
+    ceph-access-constr:  &ceph-access-constr  spaces=internal-api
+{% endif %}
+
+    # CEPH replication network
+{% if opnfv.spaces_dict.storage is defined %}
+    ceph-cluster-space:  &ceph-cluster-space  storage-cluster
+{% else %}
+    ceph-cluster-space:  &ceph-cluster-space  internal-api
+{% endif %}
+
+    # CEPH OSD and journal devices; temporary workaround for #1674148
+    osd-devices:         &osd-devices         {{ opnfv.storage_dict.ceph.disk }}
+    osd-journal:         &osd-journal
 

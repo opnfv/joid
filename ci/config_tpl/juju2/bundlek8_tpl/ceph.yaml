@@ -1,0 +1,35 @@
+
+    ceph-mon:
+      charm: "./{{ ubuntu.release }}/ceph-mon"
+      num_units: {{ unit_ceph_qty() }}
+{% if os.service.bindings %}
+      bindings:
+        "": *oam-space
+        public: *ceph-public-space
+        cluster: *ceph-cluster-space
+{% endif %}
+      options:
+        expected-osd-count: {{ unit_ceph_qty() }}
+      to:
+{% for unit_id in to_select(unit_ceph_qty()) %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}
+
+    ceph-osd:
+      charm: "./{{ ubuntu.release }}/ceph-osd"
+      num_units: {{ opnfv.units }}
+{% if os.service.bindings %}
+      bindings:
+        "": *oam-space
+        public: *ceph-public-space
+        cluster: *ceph-cluster-space
+{% endif %}
+      options:
+        osd-devices: *osd-devices
+        osd-journal: *osd-journal
+        osd-reformat: 'yes'
+      to:
+ {% for unit_id in range(0, opnfv.units) %}
+         - "nodes/{{ unit_id }}"
+ {% endfor %}
+

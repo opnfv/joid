@@ -161,6 +161,8 @@ if 'dpdk' in features:
     config['os']['network']['dpdk'] = True
 if 'lb' in features:
     config['k8']['feature']['loadbalancer'] = True
+if 'ceph' in features:
+    config['k8']['feature']['storage'] = 'ceph'
 
 # change ha mode
 config['k8']['network']['controller'] = sdn

@@ -63,8 +63,8 @@ if [[ "$opnfvmodel" = "openstack" ]]; then
     if [ -e ./deployconfig.yaml ]; then
        extport=`grep "ext-port" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //' | tr ',' ' '`
        datanet=`grep "dataNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
-       admnet=`grep "admNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
        cephdisk=`grep "ceph-disk" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
+       admnet=`grep "admNetwork" deployconfig.yaml | cut -d ' ' -f 4 | sed -e 's/ //'`
        osdomname=`grep "os-domain-name" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
     fi
 
@@ -91,6 +91,8 @@ if [[ "$opnfvmodel" = "openstack" ]]; then
     else
         sed -i "s/cpu_pin_set: all/cpu_pin_set: 1/g" default_deployment_config.yaml
     fi
+else
+    cephdisk=`grep "ceph-disk" deployconfig.yaml | cut -d ':' -f 2 | sed -e 's/ //'`
 fi
 
 case "$opnfvlab" in
