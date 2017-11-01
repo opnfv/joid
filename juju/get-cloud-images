@@ -3,18 +3,29 @@
 folder=/srv/data/
 sudo mkdir $folder || true
 
+NODE_ARCTYPE=`arch`
+
+if  [ "ppc64le" == "$NODE_ARCTYPE" ]; then
+    NODE_ARCHES="ppc64el"
+elif [ "aarch64" == "$NODE_ARCTYPE" ]; then
+    NODE_ARCHES="arm64"
+else
+    NODE_ARCHES="amd64"
+fi
+
+
 if grep -q 'virt-type: lxd' bundles.yaml; then
     URLS=" \
-    http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-lxc.tar.gz \
-    http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-root.tar.gz "
+    http://download.cirros-cloud.net/daily/20161201/cirros-dl161201-$NODE_ARCTYPE-lxc.tar.gz \
+    http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-$NODE_ARCHES-root.tar.gz "
 
 else
     URLS=" \
-    http://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img \
-    http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img \
+    http://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-$NODE_ARCHES-uefi1.img \
+    http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-$NODE_ARCHES-uefi1.img \
     http://mirror.catn.com/pub/catn/images/qcow2/centos6.4-x86_64-gold-master.img \
     http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2 \
-    http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img "
+    http://download.cirros-cloud.net/daily/20161201/cirros-dl161201-$NODE_ARCTYPE-disk.img "
 fi
 
 for URL in $URLS

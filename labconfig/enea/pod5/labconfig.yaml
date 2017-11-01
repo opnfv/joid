@@ -1,0 +1,166 @@
+lab:
+  location: enea
+  racks:
+  - rack: pod5
+    nodes:
+    - name: softiron-3
+      architecture: aarch64
+      roles: [network,control]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["e0:ff:f7:00:08:ae"]
+      - ifname: intf0.2185
+        spaces: [data]
+        mac: ["e0:ff:f7:00:08:ae"]
+      - ifname: intf0.2183
+        spaces: [public]
+        mac: ["e0:ff:f7:00:08:ae"]
+      - ifname: intf0.2184
+        spaces: [storage]
+        mac: ["e0:ff:f7:00:08:ae"]
+      - ifname: intf1
+        spaces: [floating]
+        mac: ["e0:ff:f7:00:08:af"]
+      power:
+        type: ipmi
+        address: 10.0.8.3
+        user: admin
+        pass: admin
+    - name: softiron-4
+      architecture: aarch64
+      roles: [network,control]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["e0:ff:f7:00:08:b1"]
+      - ifname: intf0.2185
+        spaces: [data]
+        mac: ["e0:ff:f7:00:08:b1"]
+      - ifname: intf0.2183
+        spaces: [public]
+        mac: ["e0:ff:f7:00:08:b1"]
+      - ifname: intf0.2184
+        spaces: [storage]
+        mac: ["e0:ff:f7:00:08:b1"]
+      - ifname: intf1
+        spaces: [floating]
+        mac: ["e0:ff:f7:00:08:b2"]
+      power:
+        type: ipmi
+        address: 10.0.8.4
+        user: admin
+        pass: admin
+
+    - name: softiron-5
+      architecture: aarch64
+      roles: [network,control]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["e0:ff:f7:00:08:bd"]
+      - ifname: intf0.2185
+        spaces: [data]
+        mac: ["e0:ff:f7:00:08:bd"]
+      - ifname: intf0.2183
+        spaces: [public]
+        mac: ["e0:ff:f7:00:08:bd"]
+      - ifname: intf0.2184
+        spaces: [storage]
+        mac: ["e0:ff:f7:00:08:bd"]
+      - ifname: intf1
+        spaces: [floating]
+        mac: ["e0:ff:f7:00:08:be"]
+      power:
+        type: ipmi
+        address: 10.0.8.5
+        user: admin
+        pass: admin
+
+    - name: softiron-6
+      architecture: aarch64
+      roles: [network,control]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["e0:ff:f7:00:08:c6"]
+      - ifname: intf0.2185
+        spaces: [data]
+        mac: ["e0:ff:f7:00:08:c6"]
+      - ifname: intf0.2183
+        spaces: [public]
+        mac: ["e0:ff:f7:00:08:c6"]
+      - ifname: intf0.2184
+        spaces: [storage]
+        mac: ["e0:ff:f7:00:08:c6"]
+      - ifname: intf1
+        spaces: [floating]
+        mac: ["e0:ff:f7:00:08:c7"]
+      power:
+        type: ipmi
+        address: 10.0.8.6
+        user: admin
+        pass: admin
+
+    - name: softiron-7
+      architecture: aarch64
+      roles: [network,control]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["e0:ff:f7:00:08:cf"]
+      - ifname: intf0.2185
+        spaces: [data]
+        mac: ["e0:ff:f7:00:08:cf"]
+      - ifname: intf0.2183
+        spaces: [public]
+        mac: ["e0:ff:f7:00:08:cf"]
+      - ifname: intf0.2184
+        spaces: [storage]
+        mac: ["e0:ff:f7:00:08:cf"]
+      - ifname: intf1
+        spaces: [floating]
+        mac: ["e0:ff:f7:00:08:d0"]
+      power:
+        type: ipmi
+        address: 10.0.8.7
+        user: admin
+        pass: admin
+    floating-ip-range: 10.0.8.40,10.0.8.250,10.0.8.254,10.0.8.0/24
+    ext-port: "intf1"
+    dns: 8.8.8.8
+    osdomainname:
+opnfv:
+    release: d
+    distro: xenial
+    type: noha
+    openstack: pike
+    sdncontroller:
+    - type: nosdn
+    storage:
+    - type: ceph
+      disk: /dev/sdb
+    feature: odl_l2
+    spaces:
+    - type: admin
+      bridge: brAdm
+      cidr: 192.168.11.0/24
+      gateway: 192.168.11.1
+      vlan:
+    - type: data
+      bridge: brData
+      cidr: 10.1.0.0/24
+      gateway:
+      vlan: 2185
+    - type: public
+      cidr: 172.16.10.0/24
+      gateway:
+      vlan: 2183
+    - type: storage
+      cidr: 10.2.0.0/24
+      gateway:
+      vlan: 2184
+    - type: floating
+      cidr: 10.0.8.0/24
+      gateway: 10.0.8.254
+      vlan:
