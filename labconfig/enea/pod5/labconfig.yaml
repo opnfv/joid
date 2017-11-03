@@ -10,17 +10,17 @@ lab:
       - ifname: intf0
         spaces: [admin]
         mac: ["e0:ff:f7:00:08:ae"]
-      - ifname: intf0.2185
-        spaces: [data]
-        mac: ["e0:ff:f7:00:08:ae"]
-      - ifname: intf0.2183
-        spaces: [public]
-        mac: ["e0:ff:f7:00:08:ae"]
-      - ifname: intf0.2184
-        spaces: [storage]
-        mac: ["e0:ff:f7:00:08:ae"]
       - ifname: intf1
         spaces: [floating]
+        mac: ["e0:ff:f7:00:08:af"]
+      - ifname: intf1.2185
+        spaces: [data]
+        mac: ["e0:ff:f7:00:08:af"]
+      - ifname: intf1.2183
+        spaces: [public]
+        mac: ["e0:ff:f7:00:08:af"]
+      - ifname: intf1.2184
+        spaces: [storage]
         mac: ["e0:ff:f7:00:08:af"]
       power:
         type: ipmi
@@ -34,17 +34,17 @@ lab:
       - ifname: intf0
         spaces: [admin]
         mac: ["e0:ff:f7:00:08:b1"]
-      - ifname: intf0.2185
-        spaces: [data]
-        mac: ["e0:ff:f7:00:08:b1"]
-      - ifname: intf0.2183
-        spaces: [public]
-        mac: ["e0:ff:f7:00:08:b1"]
-      - ifname: intf0.2184
-        spaces: [storage]
-        mac: ["e0:ff:f7:00:08:b1"]
       - ifname: intf1
         spaces: [floating]
+        mac: ["e0:ff:f7:00:08:b2"]
+      - ifname: intf1.2185
+        spaces: [data]
+        mac: ["e0:ff:f7:00:08:b2"]
+      - ifname: intf1.2183
+        spaces: [public]
+        mac: ["e0:ff:f7:00:08:b2"]
+      - ifname: intf1.2184
+        spaces: [storage]
         mac: ["e0:ff:f7:00:08:b2"]
       power:
         type: ipmi
@@ -59,17 +59,17 @@ lab:
       - ifname: intf0
         spaces: [admin]
         mac: ["e0:ff:f7:00:08:bd"]
-      - ifname: intf0.2185
-        spaces: [data]
-        mac: ["e0:ff:f7:00:08:bd"]
-      - ifname: intf0.2183
-        spaces: [public]
-        mac: ["e0:ff:f7:00:08:bd"]
-      - ifname: intf0.2184
-        spaces: [storage]
-        mac: ["e0:ff:f7:00:08:bd"]
       - ifname: intf1
         spaces: [floating]
+        mac: ["e0:ff:f7:00:08:be"]
+      - ifname: intf1.2185
+        spaces: [data]
+        mac: ["e0:ff:f7:00:08:be"]
+      - ifname: intf1.2183
+        spaces: [public]
+        mac: ["e0:ff:f7:00:08:be"]
+      - ifname: intf1.2184
+        spaces: [storage]
         mac: ["e0:ff:f7:00:08:be"]
       power:
         type: ipmi
@@ -84,17 +84,17 @@ lab:
       - ifname: intf0
         spaces: [admin]
         mac: ["e0:ff:f7:00:08:c6"]
-      - ifname: intf0.2185
-        spaces: [data]
-        mac: ["e0:ff:f7:00:08:c6"]
-      - ifname: intf0.2183
-        spaces: [public]
-        mac: ["e0:ff:f7:00:08:c6"]
-      - ifname: intf0.2184
-        spaces: [storage]
-        mac: ["e0:ff:f7:00:08:c6"]
       - ifname: intf1
         spaces: [floating]
+        mac: ["e0:ff:f7:00:08:c7"]
+      - ifname: intf1.2185
+        spaces: [data]
+        mac: ["e0:ff:f7:00:08:c7"]
+      - ifname: intf1.2183
+        spaces: [public]
+        mac: ["e0:ff:f7:00:08:c7"]
+      - ifname: intf1.2184
+        spaces: [storage]
         mac: ["e0:ff:f7:00:08:c7"]
       power:
         type: ipmi
@@ -109,17 +109,17 @@ lab:
       - ifname: intf0
         spaces: [admin]
         mac: ["e0:ff:f7:00:08:cf"]
-      - ifname: intf0.2185
-        spaces: [data]
-        mac: ["e0:ff:f7:00:08:cf"]
-      - ifname: intf0.2183
-        spaces: [public]
-        mac: ["e0:ff:f7:00:08:cf"]
-      - ifname: intf0.2184
-        spaces: [storage]
-        mac: ["e0:ff:f7:00:08:cf"]
       - ifname: intf1
         spaces: [floating]
+        mac: ["e0:ff:f7:00:08:d0"]
+      - ifname: intf1.2185
+        spaces: [data]
+        mac: ["e0:ff:f7:00:08:d0"]
+      - ifname: intf1.2183
+        spaces: [public]
+        mac: ["e0:ff:f7:00:08:d0"]
+      - ifname: intf1.2184
+        spaces: [storage]
         mac: ["e0:ff:f7:00:08:d0"]
       power:
         type: ipmi
@@ -130,6 +130,7 @@ lab:
     ext-port: "intf1"
     dns: 8.8.8.8
     osdomainname:
+#below section shoiuld define the jumphost.
 opnfv:
     release: d
     distro: xenial
@@ -143,24 +144,27 @@ opnfv:
     feature: odl_l2
     spaces:
     - type: admin
-      bridge: brAdm
+      bridge: admin7_br0
       cidr: 192.168.11.0/24
       gateway: 192.168.11.1
       vlan:
+    - type: floating
+      cidr: 10.0.8.0/24
+      gateway: 10.0.8.254
+      mac: ["00:0f:b7:04:00:c2"]
+      vlan:
     - type: data
-      bridge: brData
       cidr: 10.1.0.0/24
       gateway:
+      mac: ["00:0f:b7:04:00:c2"]
       vlan: 2185
     - type: public
       cidr: 172.16.10.0/24
       gateway:
+      mac: ["00:0f:b7:04:00:c2"]
       vlan: 2183
     - type: storage
       cidr: 10.2.0.0/24
       gateway:
+      mac: ["00:0f:b7:04:00:c2"]
       vlan: 2184
-    - type: floating
-      cidr: 10.0.8.0/24
-      gateway: 10.0.8.254
-      vlan:

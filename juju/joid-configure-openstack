@@ -92,13 +92,22 @@ echo "Uploading images to glance"
 
 #Upload images to glance
 ## image name is used by script to generate metadata .. don't screw the series
+NODE_ARCTYPE=`arch`
+
+if  [ "ppc64le" == "$NODE_ARCTYPE" ]; then
+    NODE_ARCHES="ppc64el"
+elif [ "aarch64" == "$NODE_ARCTYPE" ]; then
+    NODE_ARCHES="arm64"
+else
+    NODE_ARCHES="amd64"
+fi
 
 if grep -q 'virt-type: lxd' bundles.yaml; then
-    openstack image list | grep "Xenial LXC x86_64" > /dev/null 2>&1 || glance image-create --name="Xenial LXC x86_64" --visibility=public --container-format=bare --disk-format=root-tar --property architecture="x86_64"  < /srv/data/xenial-server-cloudimg-amd64-root.tar.gz
-    openstack image list | grep "Cirros LXC 0.3" > /dev/null 2>&1 || glance image-create --name="Cirros LXC 0.3" --visibility=public --container-format=bare --disk-format=root-tar --property architecture="x86_64"  < /srv/data/cirros-0.3.4-x86_64-lxc.tar.gz
+    openstack image list | grep "Xenial LXC" > /dev/null 2>&1 || glance image-create --name="Xenial LXC" --visibility=public --container-format=bare --disk-format=root-tar --property architecture="$NODE_ARCTYPE"  < /srv/data/xenial-server-cloudimg-$NODE_ARCHES-root.tar.gz
+    openstack image list | grep "Cirros LXC" > /dev/null 2>&1 || glance image-create --name="Cirros LXC" --visibility=public --container-format=bare --disk-format=root-tar --property architecture="$NODE_ARCTYPE"  < /srv/data/cirros-dl161201-$NODE_ARCTYPE-lxc.tar.gz
 else
-    openstack image list | grep "Trusty x86_64" > /dev/null 2>&1 || openstack image create "Trusty x86_64" --public --container-format=ovf --disk-format=qcow2 <  /srv/data/trusty-server-cloudimg-amd64-disk1.img
-    openstack image list | grep "Xenial x86_64" > /dev/null 2>&1 || openstack image create "Xenial x86_64" --public --container-format=ovf --disk-format=qcow2 <  /srv/data/xenial-server-cloudimg-amd64-disk1.img
-    openstack image list | grep "CentOS 6.4" > /dev/null 2>&1 || openstack image create "CentOS 6.4" --public --container-format=bare --disk-format=qcow2 < /srv/data/centos6.4-x86_64-gold-master.img
-    openstack image list | grep "Cirros 0.3" > /dev/null 2>&1 || openstack image create "Cirros 0.3" --public --container-format=bare --disk-format=qcow2 < /srv/data/cirros-0.3.4-x86_64-disk.img
+    openstack image list | grep "Trusty" > /dev/null 2>&1 || openstack image create "Trusty" --public --container-format=ovf --disk-format=qcow2 --property architecture="$NODE_ARCTYPE" <  /srv/data/trusty-server-cloudimg-$NODE_ARCHES-uefi1.img
+    openstack image list | grep "Xenial" > /dev/null 2>&1 || openstack image create "Xenial" --public --container-format=ovf --disk-format=qcow2 --property architecture="$NODE_ARCTYPE" <  /srv/data/xenial-server-cloudimg-$NODE_ARCHES-uefi1.img
+    openstack image list | grep "CentOS" > /dev/null 2>&1 || openstack image create "CentOS" --public --container-format=bare --disk-format=qcow2 < /srv/data/CentOS-7-x86_64-GenericCloud.qcow2
+    openstack image list | grep "Cirros" > /dev/null 2>&1 || openstack image create "Cirros" --public --container-format=bare --disk-format=qcow2 --property architecture="$NODE_ARCTYPE" < /srv/data/cirros-dl161201-$NODE_ARCTYPE-disk.img
 fi

@@ -60,10 +60,10 @@ sudo apt-get update -y || true
 sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvirt-bin \
              maas maas-region-controller juju python-pip python-psutil python-openstackclient \
              python-congressclient gsutil charm-tools pastebinit python-jinja2 sshpass \
-             openssh-server vlan ipmitool jq expect snap -y
+             openssh-server vlan ipmitool jq expect snap -y --allow-unauthenticated
 
 if [ "aarch64" == "$NODE_ARCTYPE" ]; then
-    sudo apt-get install qemu qemu-efi qemu-system-aarch64 -y
+    sudo apt-get install qemu qemu-efi qemu-system-aarch64 -y --allow-unauthenticated
 fi
 
 sudo -H pip install --upgrade pip
