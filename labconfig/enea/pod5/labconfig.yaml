@@ -132,7 +132,7 @@ lab:
     osdomainname:
 #below section shoiuld define the jumphost.
 opnfv:
-    release: d
+    release: f
     distro: xenial
     type: noha
     openstack: pike

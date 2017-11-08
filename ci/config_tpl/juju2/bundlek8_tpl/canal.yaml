@@ -1,0 +1,8 @@
+
+    canal:
+      charm: "cs:~containers/canal-6"
+{% if os.service.bindings %}
+      bindings:
+        "": *oam-space
+{% endif %}
+

@@ -1,0 +1,171 @@
+lab:
+  location: intel
+  racks:
+  - rack: pod19
+    nodes:
+    - name: rack-19-m1
+      architecture: x86_64
+      roles: [network,control]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["00:1E:67:FC:FC:B0"]
+      - ifname: intf1
+        spaces: [data]
+        mac: ["00:1E:67:F8:6A:78"]
+      - ifname: intf3
+        spaces: [floating]
+        mac: ["00:1E:67:FC:FC:AF"]
+      - ifname: intf2.4000
+        spaces: [public]
+        mac: ["00:1E:67:F8:6A:79"]
+      - ifname: intf2
+        spaces: [storage]
+        mac: ["00:1E:67:F8:6A:79"]
+      power:
+        type: ipmi
+        address: 10.10.190.11
+        user: root
+        pass: root
+    - name: rack-19-m2
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["00:1E:67:FE:F4:1A"]
+      - ifname: intf1
+        spaces: [data]
+        mac: ["00:1E:67:F8:6A:40"]
+      - ifname: intf3
+        spaces: [floating]
+        mac: ["00:1E:67:FE:F4:19"]
+      - ifname: intf2.4000
+        spaces: [public]
+        mac: ["00:1E:67:F8:6A:41"]
+      - ifname: intf2
+        spaces: [storage]
+        mac: ["00:1E:67:F8:6A:41"]
+      power:
+        type: ipmi
+        address: 10.10.190.12
+        user: root
+        pass: root
+    - name: rack-19-m3
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["00:1E:67:F1:5B:91"]
+      - ifname: intf1
+        spaces: [data]
+        mac: ["00:1E:67:F8:69:80"]
+      - ifname: intf3
+        spaces: [floating]
+        mac: ["00:1E:67:F1:5B:90"]
+      - ifname: intf2.4000
+        spaces: [public]
+        mac: ["00:1E:67:F8:69:81"]
+      - ifname: intf2
+        spaces: [storage]
+        mac: ["00:1E:67:F8:69:81"]
+      power:
+        type: ipmi
+        address: 10.10.190.13
+        user: root
+        pass: root
+    - name: rack-19-m4
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["00:1E:67:FE:F0:78"]
+      - ifname: intf1
+        spaces: [data]
+        mac: ["00:1E:67:F8:6A:58"]
+      - ifname: intf3
+        spaces: [floating]
+        mac: ["00:1E:67:FE:F0:77"]
+      - ifname: intf2.4000
+        spaces: [public]
+        mac: ["00:1E:67:F8:6A:59"]
+      - ifname: intf2
+        spaces: [storage]
+        mac: ["00:1E:67:F8:6A:59"]
+      power:
+        type: ipmi
+        address: 10.10.190.14
+        user: root
+        pass: root
+    - name: rack-19-m5
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["00:1E:67:FC:FF:17"]
+      - ifname: intf1
+        spaces: [data]
+        mac: ["00:1E:67:F8:6A:60"]
+      - ifname: intf3
+        spaces: [floating]
+        mac: ["00:1E:67:FC:FF:16"]
+      - ifname: intf2.4000
+        spaces: [public]
+        mac: ["00:1E:67:F8:6A:61"]
+      - ifname: intf2
+        spaces: [storage]
+        mac: ["00:1E:67:F8:6A:61"]
+      power:
+        type: ipmi
+        address: 10.10.190.15
+        user: root
+        pass: root
+    floating-ip-range: 10.10.190.40,10.10.190.250,10.10.190.1,10.10.190.0/24
+    ext-port: "intf3"
+    dns: 8.8.8.8
+    osdomainname:
+opnfv:
+    release: d
+    distro: xenial
+    type: noha
+    openstack: pike
+    sdncontroller:
+    - type: nosdn
+    storage:
+    - type: ceph
+      disk: /dev/sdb
+    feature: odl_l2
+    spaces:
+    - type: admin
+      bridge: brAdm
+      cidr: 10.10.191.0/24
+      gateway: 10.10.191.1
+      vlan:
+    - type: data
+      bridge: brData
+      cidr: 10.10.192.0/24
+      gateway:
+      vlan:
+    - type: storage
+      bridge: brStor
+      cidr: 10.10.193.0/24
+      gateway:
+      vlan:
+    - type: floating
+      bridge: brExt
+      cidr: 10.10.190.0/24
+      gateway:
+      vlan:
+#    - type: storage
+#      bridge: brMgmt
+#      cidr: 10.10.194.0/24
+#      gateway:
+#      vlan: 214
+    - type: public
+      bridge: brPublic
+      cidr: 10.10.195.0/24
+      gateway:
+      vlan: 4000

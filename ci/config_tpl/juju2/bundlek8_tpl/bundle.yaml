@@ -23,6 +23,8 @@
 
 {% if k8.network.controller == 'ovn' %}
 {% include 'ovn.yaml' %}
+{% elif k8.network.controller == 'canal' %}
+{% include 'canal.yaml' %}
 {% else %}
 {% include 'flannel.yaml' %}
 {% endif %}

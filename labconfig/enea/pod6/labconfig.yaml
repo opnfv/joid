@@ -1,0 +1,170 @@
+lab:
+  location: enea
+  racks:
+  - rack: pod6
+    nodes:
+    - name: cn8890-24
+      architecture: aarch64
+      roles: [network,control]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["68:05:ca:5a:c3:a7"]
+      - ifname: intf1.2323
+        spaces: [public]
+        mac: ["1c:1b:0d:e8:fa:83"]
+      - ifname: intf1.2324
+        spaces: [storage]
+        mac: ["1c:1b:0d:e8:fa:83"]
+      - ifname: intf1.2325
+        spaces: [data]
+        mac: ["1c:1b:0d:e8:fa:83"]
+      - ifname: intf1
+        spaces: [floating]
+        mac: ["1c:1b:0d:e8:fa:83"]
+      power:
+        type: ipmi
+        address: 10.0.1.54
+        user: ADMIN
+        pass: ADMIN
+    - name: cn8890-25
+      architecture: aarch64
+      roles: [network,control]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["68:05:ca:5a:c3:bc"]
+      - ifname: intf1.2323
+        spaces: [public]
+        mac: ["1c:1b:0d:e8:fb:a5"]
+      - ifname: intf1.2324
+        spaces: [storage]
+        mac: ["1c:1b:0d:e8:fb:a5"]
+      - ifname: intf1.2325
+        spaces: [data]
+        mac: ["1c:1b:0d:e8:fb:a5"]
+      - ifname: intf1
+        spaces: [floating]
+        mac: ["1c:1b:0d:e8:fb:a5"]
+      power:
+        type: ipmi
+        address: 10.0.1.55
+        user: ADMIN
+        pass: ADMIN
+
+    - name: cn8890-26
+      architecture: aarch64
+      roles: [network,control]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["68:05:ca:61:b9:00"]
+      - ifname: intf1.2323
+        spaces: [public]
+        mac: ["1c:1b:0d:e8:fa:65"]
+      - ifname: intf1.2324
+        spaces: [storage]
+        mac: ["1c:1b:0d:e8:fa:65"]
+      - ifname: intf1.2325
+        spaces: [data]
+        mac: ["1c:1b:0d:e8:fa:65"]
+      - ifname: intf1
+        spaces: [floating]
+        mac: ["1c:1b:0d:e8:fa:65"]
+      power:
+        type: ipmi
+        address: 10.0.1.56
+        user: ADMIN
+        pass: ADMIN
+
+    - name: cn8890-27
+      architecture: aarch64
+      roles: [network,control]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["68:05:ca:57:f7:16"]
+      - ifname: intf1.2323
+        spaces: [public]
+        mac: ["1c:1b:0d:e8:fb:19"]
+      - ifname: intf1.2324
+        spaces: [storage]
+        mac: ["1c:1b:0d:e8:fb:19"]
+      - ifname: intf1.2325
+        spaces: [data]
+        mac: ["1c:1b:0d:e8:fb:19"]
+      - ifname: intf1
+        spaces: [floating]
+        mac: ["1c:1b:0d:e8:fb:19"]
+      power:
+        type: ipmi
+        address: 10.0.1.57
+        user: ADMIN
+        pass: ADMIN
+
+    - name: cn8890-28
+      architecture: aarch64
+      roles: [network,control]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["68:05:ca:61:97:5a"]
+      - ifname: intf1.2323
+        spaces: [public]
+        mac: ["1c:1b:0d:e8:fb:7d"]
+      - ifname: intf1.2324
+        spaces: [storage]
+        mac: ["1c:1b:0d:e8:fb:7d"]
+      - ifname: intf1.2325
+        spaces: [data]
+        mac: ["1c:1b:0d:e8:fb:7d"]
+      - ifname: intf1
+        spaces: [floating]
+        mac: ["1c:1b:0d:e8:fb:7d"]
+      power:
+        type: ipmi
+        address: 10.0.1.58
+        user: ADMIN
+        pass: ADMIN
+    floating-ip-range: 10.0.15.40,10.0.15.250,10.0.15.254,10.0.15.0/24
+    ext-port: "intf1"
+    dns: 8.8.8.8
+    osdomainname:
+#below section shoiuld define the jumphost.
+opnfv:
+    release: f
+    distro: xenial
+    type: noha
+    openstack: pike
+    sdncontroller:
+    - type: nosdn
+    storage:
+    - type: ceph
+      disk: /dev/sdb
+    feature: odl_l2
+    spaces:
+    - type: admin
+      bridge: admin14_br0
+      cidr: 192.168.11.0/24
+      gateway: 192.168.11.1
+      vlan:
+    - type: floating
+      cidr: 10.0.15.0/24
+      gateway: 10.0.15.254
+      vlan:
+      mac: ["00:01:73:02:36:d5"]
+    - type: public
+      cidr: 172.16.10.0/24
+      gateway:
+      vlan: 2323
+      mac: ["00:01:73:02:36:d5"]
+    - type: storage
+      cidr: 10.2.0.0/24
+      gateway:
+      vlan: 2324
+      mac: ["00:01:73:02:36:d5"]
+    - type: data
+      cidr: 10.1.0.0/24
+      gateway:
+      vlan: 2325
+      mac: ["00:01:73:02:36:d5"]

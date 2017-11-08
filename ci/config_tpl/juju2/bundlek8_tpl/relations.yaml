@@ -10,6 +10,10 @@
 {% if k8.network.controller == 'ovn' %}
     - [ 'ovn:cni', 'kubernetes-master:cni' ]
     - [ 'ovn:cni', 'kubernetes-worker:cni' ]
+{% elif k8.network.controller == 'canal' %}
+    - [ 'canal:etcd', 'etcd:db' ]
+    - [ 'canal:cni', 'kubernetes-master:cni' ]
+    - [ 'canal:cni', 'kubernetes-worker:cni' ]
 {% else %}
     - [ 'flannel:etcd', 'etcd:db' ]
     - [ 'flannel:cni', 'kubernetes-master:cni' ]

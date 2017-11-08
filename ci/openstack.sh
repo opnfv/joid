@@ -145,22 +145,22 @@ echo_info "Creating external network with neutron"
 
 if [ "onos" == "$opnfvsdn" ]; then
     launch_eth
-    neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net \
-                                                   --router:external=True
+    openstack network show ext-net > /dev/null 2>&1 || openstack network create \
+                                                   --external --share --enable ext-net
 elif [ "ocl" == "$opnfvsdn" ]; then
-    neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net \
-                                                   --router:external=True
+    openstack network show ext-net > /dev/null 2>&1 || openstack network create \
+                                                   --external --share --enable ext-net
 
 else
-    neutron net-show ext-net > /dev/null 2>&1 || neutron net-create ext-net \
-                                                   --router:external=True \
-                                                   --provider:network_type flat \
-                                                   --provider:physical_network physnet1
+    openstack network show ext-net > /dev/null 2>&1 || openstack network create \
+                                                   --provider-network-type flat \
+                                                   --provider-physical-network physnet1 \
+                                                   --external --share --enable  ext-net
 fi
 
-neutron subnet-show ext-subnet > /dev/null 2>&1 || neutron subnet-create ext-net \
-   --name ext-subnet --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
-   --disable-dhcp --gateway $EXTNET_GW $EXTNET_NET
+openstack subnet show ext-subnet > /dev/null 2>&1 || openstack subnet create \
+   --allocation-pool start=$EXTNET_FIP,end=$EXTNET_LIP \
+   --no-dhcp --gateway $EXTNET_GW --network ext-net --subnet-range $EXTNET_NET ext-subnet
 
 # Ocl can push packets to the fabric network in order to reach a gateway if BGP/L3VPN hasn't been configured.
 if [ "ocl" == "$opnfvsdn" ]; then

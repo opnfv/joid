@@ -13,6 +13,9 @@ lab:
       - ifname: intf101
         spaces: [floating]
         mac: ["24:8a:07:3f:84:ad"]
+      - ifname: intf101.104
+        spaces: [public]
+        mac: ["24:8a:07:3f:84:ad"]
       power:
         type: ipmi
         address: 192.0.5.125
@@ -27,6 +30,9 @@ lab:
         mac: ["24:8a:07:3f:96:86"]
       - ifname: intf101
         spaces: [floating]
+        mac: ["24:8a:07:3f:96:87"]
+      - ifname: intf101.104
+        spaces: [public]
         mac: ["24:8a:07:3f:96:87"]
       power:
         type: ipmi
@@ -43,6 +49,9 @@ lab:
       - ifname: intf101
         spaces: [floating]
         mac: ["24:8a:07:3f:84:c5"]
+      - ifname: intf101.104
+        spaces: [public]
+        mac: ["24:8a:07:3f:84:c5"]
       power:
         type: ipmi
         address: 192.0.5.127
@@ -57,6 +66,9 @@ lab:
         mac: ["24:8a:07:3f:96:4e"]
       - ifname: intf101
         spaces: [floating]
+        mac: ["24:8a:07:3f:96:4f"]
+      - ifname: intf101.104
+        spaces: [public]
         mac: ["24:8a:07:3f:96:4f"]
       power:
         type: ipmi
@@ -73,6 +85,9 @@ lab:
       - ifname: intf101
         spaces: [floating]
         mac: ["24:8a:07:3f:95:b7"]
+      - ifname: intf101.104
+        spaces: [public]
+        mac: ["24:8a:07:3f:95:b7"]
       power:
         type: ipmi
         address: 192.0.5.129
@@ -83,10 +98,10 @@ lab:
     dns: 8.8.8.8
     osdomainname:
 opnfv:
-    release: d
+    release: f
     distro: xenial
     type: nonha
-    openstack: Newton
+    openstack: pike
     sdncontroller:
     - type: nosdn
     storage:
@@ -100,10 +115,13 @@ opnfv:
       gateway: 192.0.5.5
       vlan:
     - type: floating
-      bridge: brPublic
       cidr: 172.21.159.0/24
       gateway: 172.21.159.1
       vlan:
+    - type: public
+      cidr: 172.22.159.0/24
+      gateway:
+      vlan: 104
     - type: external
       bridge: brExt
       cidr:

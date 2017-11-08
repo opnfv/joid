@@ -39,18 +39,19 @@ EXTERNAL_NETWORK_ID=$(openstack network show ext-net | grep " id" | awk '{print 
 
 #Create private network for neutron for tenant VMs
 openstack network show private > /dev/null 2>&1 || openstack network create private
-openstack subnet show private_subnet > /dev/null 2>&1 || neutron subnet-create private $NEUTRON_FIXED_NET_CIDR -- --name private_subnet --dns_nameservers list=true 8.8.8.8
+openstack subnet show private_subnet > /dev/null 2>&1 || openstack subnet create --network private --subnet-range $NEUTRON_FIXED_NET_CIDR --dns-nameserver 8.8.8.8 private_subnet
 SUBNET_ID=$(openstack subnet show private_subnet | grep " id" | awk '{print $4}')
 
 #Create router for external network and private network
 openstack router show provider-router > /dev/null 2>&1 || openstack router create --project-domain=$OS_PROJECT_DOMAIN_NAME --project $OS_PROJECT_NAME provider-router
 ROUTER_ID=$(openstack router show provider-router | grep " id" | awk '{print $4}')
 
-neutron router-gateway-clear provider-router || true
-neutron router-gateway-set $ROUTER_ID $EXTERNAL_NETWORK_ID
-## make it always ok to have it indempodent.
-neutron router-interface-add $ROUTER_ID $SUBNET_ID || true
+openstack router set --external-gateway $EXTERNAL_NETWORK_ID --enable $ROUTER_ID || true
 
+ ## make it always ok to have it indempodent.
+openstack router add subnet $ROUTER_ID $SUBNET_ID || true
+
+#neutron router-gateway-clear provider-router || true
 
 echo "Configuring security groups for access to ICMP, SSH and RDP by default"
 
@@ -80,7 +81,6 @@ openstack flavor show m1.xlarge > /dev/null 2>&1 || openstack flavor create --ra
 echo "modifying default quotas for admin user"
 
 #Modify quotas for the tenant to allow large deployments
-PROJECT_ID=`openstack quota show -f value -c project`
 openstack quota set --instances 400 --cores 800 --ram 404800 --secgroups 4000 --floating-ips -1 --secgroup-rules -1 $PROJECT_ID
 
 ### need to find how to change quota for the project not the tenant

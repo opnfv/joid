@@ -70,8 +70,20 @@ T_IMAGE_ID=`openstack image list -f value | grep -i trusty | cut -f 1 -d " "`
 
 #We can now use Juju to generate the metadata:
 
-juju metadata generate-image -d ~/simplestreams -i $X_IMAGE_ID -s xenial -r $OS_REGION_NAME -u $OS_AUTH_URL
-juju metadata generate-image -d ~/simplestreams -i $T_IMAGE_ID -s trusty -r $OS_REGION_NAME -u $OS_AUTH_URL
+#Upload images to glance
+## image name is used by script to generate metadata .. don't screw the series
+NODE_ARCTYPE=`arch`
+
+if  [ "ppc64le" == "$NODE_ARCTYPE" ]; then
+    NODE_ARCHES="ppc64el"
+elif [ "aarch64" == "$NODE_ARCTYPE" ]; then
+    NODE_ARCHES="arm"
+else
+    NODE_ARCHES="amd64"
+fi
+
+juju metadata generate-image -d ~/simplestreams -i $X_IMAGE_ID -s xenial -r $OS_REGION_NAME -u $OS_AUTH_URL -a $NODE_ARCHES
+juju metadata generate-image -d ~/simplestreams -i $T_IMAGE_ID -s trusty -r $OS_REGION_NAME -u $OS_AUTH_URL -a $NODE_ARCHES
 
 #To verify that the correct metadata files have been generated, you may run:
 #You should see .json files containing the details we just added on the images.

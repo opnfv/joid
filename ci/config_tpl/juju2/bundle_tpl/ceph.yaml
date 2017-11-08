@@ -33,11 +33,7 @@
     ceph-osd:
       charm: "./{{ ubuntu.release }}/ceph-osd"
 {% if os.hyperconverged %}
-{% if opnfv.units >= 3 %}
-      num_units: {{ unit_ceph_qty() }}
-{% else %}
       num_units: {{ opnfv.units }}
-{% endif %}
 {% else %}
       num_units: 3
 {% endif %}
@@ -57,15 +53,9 @@
 {% endif %}
       to:
 {% if os.hyperconverged %}
-{% if opnfv.units >= 3 %}
-{% for unit_id in range(0, 3) %}
-        - "nodes/{{ unit_id }}"
-{% endfor %}
-{% else %}
- {% for unit_id in range(0, opnfv.units) %}
+{% for unit_id in range(0, opnfv.units) %}
          - "nodes/{{ unit_id }}"
- {% endfor %}
-{% endif %}
+{% endfor %}
 {% else %}
 {% if os.ha.mode == 'ha' %}
 {% for unit_id in range(0, 3) %}
