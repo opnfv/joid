@@ -322,6 +322,16 @@ jujuver=`juju --version`
 
 # Configuring deployment
 if ([ $opnfvmodel == "openstack" ]); then
+    if ([ $opnfvsdn == "ocl" ]); then
+       echo_info "Patching OpenContrail controller container"
+       juju ssh contrail-controller/0 sudo docker cp contrail-controller:/etc/contrail/vnc_api_lib.ini /tmp
+       juju ssh contrail-controller/0 cp /tmp/vnc_api_lib.ini /tmp/vnc_api_lib.ini2
+       juju ssh contrail-controller/0 'echo "AUTHN_DOMAIN = admin_domain" >> /tmp/vnc_api_lib.ini2'
+       juju ssh contrail-controller/0 sudo docker cp  /tmp/vnc_api_lib.ini2 contrail-controller:/etc/contrail/vnc_api_lib.ini
+       juju ssh contrail-controller/0 sudo docker exec -it contrail-controller service contrail-api restart
+
+       juju ssh contrail-controller/0 sudo docker cp  /tmp/vnc_api_lib.ini2 contrail-analytics:/etc/contrail/vnc_api_lib.ini
+    fi
     echo_info "Configuring OpenStack deployment"
 
     ./openstack.sh "$opnfvsdn" "$opnfvlab" "$opnfvdistro" "$openstack" || true
