@@ -1,0 +1,166 @@
+lab:
+  location: intel
+  racks:
+  - rack: pod18
+    nodes:
+    - name: rack-18-m1
+      architecture: x86_64
+      roles: [network,control]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["A4:BF:01:14:40:17"]
+      - ifname: intf1
+        spaces: [data]
+        mac: ["3c:fd:fe:a4:9f:a0"]
+      - ifname: intf3
+        spaces: [floating]
+        mac: ["A4:BF:01:14:40:16"]
+      - ifname: intf2.1183
+        spaces: [public]
+        mac: ["3c:fd:fe:a4:9f:a1"]
+      - ifname: intf2
+        spaces: [storage]
+        mac: ["3c:fd:fe:a4:9f:a1"]
+      power:
+        type: ipmi
+        address: 10.10.180.11
+        user: root
+        pass: root
+    - name: rack-18-m2
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["A4:BF:01:16:31:1f"]
+      - ifname: intf1
+        spaces: [data]
+        mac: ["3c:fd:fe:a4:a0:30"]
+      - ifname: intf3
+        spaces: [floating]
+        mac: ["A4:BF:01:16:31:1e"]
+      - ifname: intf2.1183
+        spaces: [public]
+        mac: ["3c:fd:fe:a4:a0:31"]
+      - ifname: intf2
+        spaces: [storage]
+        mac: ["3c:fd:fe:a4:a0:31"]
+      power:
+        type: ipmi
+        address: 10.10.180.12
+        user: root
+        pass: root
+    - name: rack-18-m3
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["A4:BF:01:16:30:F7"]
+      - ifname: intf1
+        spaces: [data]
+        mac: ["3c:fd:fe:a4:9e:48"]
+      - ifname: intf3
+        spaces: [floating]
+        mac: ["A4:BF:01:16:30:F6"]
+      - ifname: intf2.1183
+        spaces: [public]
+        mac: ["3c:fd:fe:a4:9e:49"]
+      - ifname: intf2
+        spaces: [storage]
+        mac: ["3c:fd:fe:a4:9e:49"]
+      power:
+        type: ipmi
+        address: 10.10.180.13
+        user: root
+        pass: root
+    - name: rack-18-m4
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["A4:BF:01:14:72:0E"]
+      - ifname: intf1
+        spaces: [data]
+        mac: ["3c:fd:fe:a4:9d:e8"]
+      - ifname: intf3
+        spaces: [floating]
+        mac: ["A4:BF:01:14:72:0D"]
+      - ifname: intf2.1183
+        spaces: [public]
+        mac: ["3c:fd:fe:a4:9d:e9"]
+      - ifname: intf2
+        spaces: [storage]
+        mac: ["3c:fd:fe:a4:9d:e9"]
+      power:
+        type: ipmi
+        address: 10.10.180.14
+        user: root
+        pass: root
+    - name: rack-18-m5
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: intf0
+        spaces: [admin]
+        mac: ["A4:BF:01:14:71:69"]
+      - ifname: intf1
+        spaces: [data]
+        mac: ["3c:fd:fe:a4:a1:08"]
+      - ifname: intf3
+        spaces: [floating]
+        mac: ["A4:BF:01:14:71:68"]
+      - ifname: intf2.1183
+        spaces: [public]
+        mac: ["3c:fd:fe:a4:a1:09"]
+      - ifname: intf2
+        spaces: [storage]
+        mac: ["3c:fd:fe:a4:a1:09"]
+      power:
+        type: ipmi
+        address: 10.10.180.15
+        user: root
+        pass: root
+    floating-ip-range: 10.10.180.40,10.10.180.250,10.10.180.1,10.10.180.0/24
+    ext-port: "intf3"
+    dns: 8.8.8.8
+    osdomainname:
+opnfv:
+    release: f
+    distro: xenial
+    type: noha
+    openstack: pike
+    sdncontroller:
+    - type: nosdn
+    storage:
+    - type: ceph
+      disk: /dev/sdb
+    feature: odl_l2
+    spaces:
+    - type: admin
+      bridge: brAdm
+      cidr: 10.10.181.0/24
+      gateway: 10.10.181.1
+      vlan:
+    - type: data
+      #bridge: brData
+      cidr: 10.10.182.0/24
+      gateway:
+      vlan:
+    - type: storage
+      #bridge: brStor
+      cidr: 10.10.183.0/24
+      gateway:
+      vlan:
+    - type: floating
+      bridge: brExt
+      cidr: 10.10.180.0/24
+      gateway:
+      vlan:
+    - type: public
+      #bridge: brPublic
+      cidr: 10.10.185.0/24
+      gateway:
+      vlan: 1183
