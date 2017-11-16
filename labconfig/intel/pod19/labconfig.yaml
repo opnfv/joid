@@ -9,19 +9,19 @@ lab:
       nics:
       - ifname: intf0
         spaces: [admin]
-        mac: ["00:1E:67:FC:FC:B0"]
+        mac: ["a4:bf:01:4b:55:f5"]
       - ifname: intf1
         spaces: [data]
-        mac: ["00:1E:67:F8:6A:78"]
+        mac: ["3c:fd:fe:aa:b8:f4"]
       - ifname: intf3
         spaces: [floating]
-        mac: ["00:1E:67:FC:FC:AF"]
+        mac: ["a4:bf:01:4b:55:f4"]
       - ifname: intf2.4000
         spaces: [public]
-        mac: ["00:1E:67:F8:6A:79"]
+        mac: ["3c:fd:fe:aa:b8:f5"]
       - ifname: intf2
         spaces: [storage]
-        mac: ["00:1E:67:F8:6A:79"]
+        mac: ["3c:fd:fe:aa:b8:f5"]
       power:
         type: ipmi
         address: 10.10.190.11
@@ -33,19 +33,19 @@ lab:
       nics:
       - ifname: intf0
         spaces: [admin]
-        mac: ["00:1E:67:FE:F4:1A"]
+        mac: ["a4:bf:01:4b:4f:9d"]
       - ifname: intf1
         spaces: [data]
-        mac: ["00:1E:67:F8:6A:40"]
+        mac: ["3c:fd:fe:aa:b7:fc"]
       - ifname: intf3
         spaces: [floating]
-        mac: ["00:1E:67:FE:F4:19"]
+        mac: ["a4:bf:01:4b:4f:9c"]
       - ifname: intf2.4000
         spaces: [public]
-        mac: ["00:1E:67:F8:6A:41"]
+        mac: ["3c:fd:fe:aa:b7:fd"]
       - ifname: intf2
         spaces: [storage]
-        mac: ["00:1E:67:F8:6A:41"]
+        mac: ["3c:fd:fe:aa:b7:fd"]
       power:
         type: ipmi
         address: 10.10.190.12
@@ -57,19 +57,19 @@ lab:
       nics:
       - ifname: intf0
         spaces: [admin]
-        mac: ["00:1E:67:F1:5B:91"]
+        mac: ["a4:bf:01:4b:4f:5e"]
       - ifname: intf1
         spaces: [data]
-        mac: ["00:1E:67:F8:69:80"]
+        mac: ["3c:fd:fe:aa:bd:d4"]
       - ifname: intf3
         spaces: [floating]
-        mac: ["00:1E:67:F1:5B:90"]
+        mac: ["a4:bf:01:4b:4f:5d"]
       - ifname: intf2.4000
         spaces: [public]
-        mac: ["00:1E:67:F8:69:81"]
+        mac: ["3c:fd:fe:aa:bd:d5"]
       - ifname: intf2
         spaces: [storage]
-        mac: ["00:1E:67:F8:69:81"]
+        mac: ["3c:fd:fe:aa:bd:d5"]
       power:
         type: ipmi
         address: 10.10.190.13
@@ -81,19 +81,19 @@ lab:
       nics:
       - ifname: intf0
         spaces: [admin]
-        mac: ["00:1E:67:FE:F0:78"]
+        mac: ["a4:bf:01:4b:4d:2e"]
       - ifname: intf1
         spaces: [data]
-        mac: ["00:1E:67:F8:6A:58"]
+        mac: ["3c:fd:fe:aa:b9:c8"]
       - ifname: intf3
         spaces: [floating]
-        mac: ["00:1E:67:FE:F0:77"]
+        mac: ["a4:bf:01:4b:4d:2d"]
       - ifname: intf2.4000
         spaces: [public]
-        mac: ["00:1E:67:F8:6A:59"]
+        mac: ["3c:fd:fe:aa:b9:c9"]
       - ifname: intf2
         spaces: [storage]
-        mac: ["00:1E:67:F8:6A:59"]
+        mac: ["3c:fd:fe:aa:b9:c9"]
       power:
         type: ipmi
         address: 10.10.190.14
@@ -105,19 +105,19 @@ lab:
       nics:
       - ifname: intf0
         spaces: [admin]
-        mac: ["00:1E:67:FC:FF:17"]
+        mac: ["a4:bf:01:4b:56:11"]
       - ifname: intf1
         spaces: [data]
-        mac: ["00:1E:67:F8:6A:60"]
+        mac: ["3c:fd:fe:aa:ba:38"]
       - ifname: intf3
         spaces: [floating]
-        mac: ["00:1E:67:FC:FF:16"]
+        mac: ["a4:bf:01:4b:56:10"]
       - ifname: intf2.4000
         spaces: [public]
-        mac: ["00:1E:67:F8:6A:61"]
+        mac: ["3c:fd:fe:aa:ba:39"]
       - ifname: intf2
         spaces: [storage]
-        mac: ["00:1E:67:F8:6A:61"]
+        mac: ["3c:fd:fe:aa:ba:39"]
       power:
         type: ipmi
         address: 10.10.190.15
@@ -144,16 +144,16 @@ opnfv:
       cidr: 10.10.191.0/24
       gateway: 10.10.191.1
       vlan:
-    - type: data
-      bridge: brData
-      cidr: 10.10.192.0/24
-      gateway:
-      vlan:
-    - type: storage
-      bridge: brStor
-      cidr: 10.10.193.0/24
-      gateway:
-      vlan:
+#    - type: data
+#      bridge: brData
+#      cidr: 10.10.192.0/24
+##      gateway:
+#      vlan:
+#    - type: storage
+#      bridge: brStor
+#      cidr: 10.10.193.0/24
+#      gateway:
+#      vlan:
     - type: floating
       bridge: brExt
       cidr: 10.10.190.0/24
@@ -164,8 +164,8 @@ opnfv:
 #      cidr: 10.10.194.0/24
 #      gateway:
 #      vlan: 214
-    - type: public
-      bridge: brPublic
-      cidr: 10.10.195.0/24
-      gateway:
-      vlan: 4000
+#    - type: public
+#      bridge: brPublic
+#      cidr: 10.10.195.0/24
+#      gateway:
+#      vlan: 4000

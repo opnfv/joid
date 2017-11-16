@@ -547,9 +547,10 @@ sleep 30
 
 setupspacenetwork
 
-#just make sure rack controller has been synced and import only
-# just whether images have been imported or not.
-#sudo ./maas-reconfigure-region.sh $MAAS_IP
+sudo sed -i 's/localhost/'$MAAS_IP'/g' /etc/maas/rackd.conf
+sudo service maas-rackd restart
+sudo service maas-regiond restart
+
 sleep 120
 
 # Let's add the nodes now. Currently works only for virtual deployment.
