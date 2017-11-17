@@ -251,6 +251,10 @@ configuremaas(){
         maas $PROFILE tags create name=$tag || true
     done
 
+    #below tag would be used to enable huge pages for DPDK and SRIOV enablement in Ubuntu kernel via MAAS
+    maas $PROFILE tags create name='opnfv-dpdk' comment='OPNFV DPDK enablement' \
+         kernel_opts='hugepagesz=2M hugepages=1024 hugepagesz=1G hugepages=20 default_hugepagesz=1G intel_iommu=on'
+
     #create the required spaces.
     maas $PROFILE space update 0 name=default || true
     for space in admin-api internal-api public-api \
@@ -368,6 +372,27 @@ setupspacenetwork(){
                 # Set DHCP
                 PRIMARY_RACK_CONTROLLER=$(maas $PROFILE rack-controllers read | jq -r '.[0].system_id')
                 maas $PROFILE vlan update $NET_FABRIC_ID $NET_FABRIC_VID dhcp_on=True primary_rack=$PRIMARY_RACK_CONTROLLER || true
+            fi
+        elif ([ $type == "public" ] || [ $type == "osapi" ]); then
+            # If we have a network, we create reserve IPS for public IP range
+            if ([ $NET_FABRIC_ID ]); then
+                # Set ranges
+                SUBNET_PREFIX=${SPACE_CIDR::-5}
+                IP_RES_RANGE_LOW="$SUBNET_PREFIX.1"
+                IP_RES_RANGE_HIGH="$SUBNET_PREFIX.39"
+                maas $PROFILE ipranges create type=reserved \
+                     start_ip=$IP_RES_RANGE_LOW end_ip=$IP_RES_RANGE_HIGH \
+                     comment='This is a reserved range' || true
+            fi
+        else
+            if ([ $NET_FABRIC_ID ]); then
+                # Set ranges
+                SUBNET_PREFIX=${SPACE_CIDR::-5}
+                IP_RES_RANGE_LOW="$SUBNET_PREFIX.1"
+                IP_RES_RANGE_HIGH="$SUBNET_PREFIX.5"
+                maas $PROFILE ipranges create type=reserved \
+                     start_ip=$IP_RES_RANGE_LOW end_ip=$IP_RES_RANGE_HIGH \
+                     comment='This is a reserved range' || true
             fi
         fi
     done
