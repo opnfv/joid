@@ -320,6 +320,17 @@ python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, i
 
 # Configuring deployment
 if ([ $opnfvmodel == "openstack" ]); then
+   if ([ $opnfvsdn == "ocl" ]); then
+       echo_info "Patching OpenContrail controller container"
+       juju ssh contrail-controller/0 sudo docker cp contrail-controller:/etc/contrail/vnc_api_lib.ini /tmp
+       juju ssh contrail-controller/0 cp /tmp/vnc_api_lib.ini /tmp/vnc_api_lib.ini2
+       juju ssh contrail-controller/0 'echo "AUTHN_DOMAIN = admin_domain" >> /tmp/vnc_api_lib.ini2'
+       juju ssh contrail-controller/0 sudo docker cp  /tmp/vnc_api_lib.ini2 contrail-controller:/etc/contrail/vnc_api_lib.ini
+       juju ssh contrail-controller/0 sudo docker exec -it contrail-controller service contrail-api restart
+
+       juju ssh contrail-controller/0 sudo docker cp  /tmp/vnc_api_lib.ini2 contrail-analytics:/etc/contrail/vnc_api_lib.ini
+    fi
+
     echo_info "Configuring OpenStack deployment"
 
     ./openstack.sh "$opnfvsdn" "$opnfvlab" "$opnfvdistro" "$openstack" || true
@@ -327,6 +338,12 @@ if ([ $opnfvmodel == "openstack" ]); then
     # creating heat domain after pushing the public API into /etc/hosts
     status=`juju run-action heat/0 domain-setup`
     echo $status
+    if ([ $opnftype == "ha" ]); then
+        status=`juju run-action heat/1 domain-setup`
+        echo $status
+        status=`juju run-action heat/2 domain-setup`
+        echo $status
+    fi
 
     sudo ../juju/get-cloud-images || true
     ../juju/joid-configure-openstack || true

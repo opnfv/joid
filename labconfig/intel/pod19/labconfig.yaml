@@ -16,9 +16,9 @@ lab:
       - ifname: intf3
         spaces: [floating]
         mac: ["a4:bf:01:4b:55:f4"]
-      - ifname: intf2.4000
-        spaces: [public]
-        mac: ["3c:fd:fe:aa:b8:f5"]
+#      - ifname: intf2.1193
+#        spaces: [public]
+#        mac: ["3c:fd:fe:aa:b8:f5"]
       - ifname: intf2
         spaces: [storage]
         mac: ["3c:fd:fe:aa:b8:f5"]
@@ -40,9 +40,9 @@ lab:
       - ifname: intf3
         spaces: [floating]
         mac: ["a4:bf:01:4b:4f:9c"]
-      - ifname: intf2.4000
-        spaces: [public]
-        mac: ["3c:fd:fe:aa:b7:fd"]
+#      - ifname: intf2.1193
+#        spaces: [public]
+#        mac: ["3c:fd:fe:aa:b7:fd"]
       - ifname: intf2
         spaces: [storage]
         mac: ["3c:fd:fe:aa:b7:fd"]
@@ -64,9 +64,9 @@ lab:
       - ifname: intf3
         spaces: [floating]
         mac: ["a4:bf:01:4b:4f:5d"]
-      - ifname: intf2.4000
-        spaces: [public]
-        mac: ["3c:fd:fe:aa:bd:d5"]
+#      - ifname: intf2.1193
+#        spaces: [public]
+#        mac: ["3c:fd:fe:aa:bd:d5"]
       - ifname: intf2
         spaces: [storage]
         mac: ["3c:fd:fe:aa:bd:d5"]
@@ -88,9 +88,9 @@ lab:
       - ifname: intf3
         spaces: [floating]
         mac: ["a4:bf:01:4b:4d:2d"]
-      - ifname: intf2.4000
-        spaces: [public]
-        mac: ["3c:fd:fe:aa:b9:c9"]
+#      - ifname: intf2.1193
+#        spaces: [public]
+#        mac: ["3c:fd:fe:aa:b9:c9"]
       - ifname: intf2
         spaces: [storage]
         mac: ["3c:fd:fe:aa:b9:c9"]
@@ -112,9 +112,9 @@ lab:
       - ifname: intf3
         spaces: [floating]
         mac: ["a4:bf:01:4b:56:10"]
-      - ifname: intf2.4000
-        spaces: [public]
-        mac: ["3c:fd:fe:aa:ba:39"]
+#      - ifname: intf2.1193
+#        spaces: [public]
+#        mac: ["3c:fd:fe:aa:ba:39"]
       - ifname: intf2
         spaces: [storage]
         mac: ["3c:fd:fe:aa:ba:39"]
@@ -136,36 +136,27 @@ opnfv:
     - type: nosdn
     storage:
     - type: ceph
-      disk: /dev/sdb
+      disk: /srv
     feature: odl_l2
     spaces:
     - type: admin
       bridge: brAdm
       cidr: 10.10.191.0/24
-      gateway: 10.10.191.1
+      gateway: 10.10.191.2
       vlan:
-#    - type: data
-#      bridge: brData
-#      cidr: 10.10.192.0/24
-##      gateway:
-#      vlan:
-#    - type: storage
-#      bridge: brStor
-#      cidr: 10.10.193.0/24
-#      gateway:
-#      vlan:
+    - type: data
+      cidr: 10.10.192.0/24
+      gateway:
+      vlan:
+    - type: storage
+      cidr: 10.10.193.0/24
+      gateway:
+      vlan:
     - type: floating
-      bridge: brExt
       cidr: 10.10.190.0/24
       gateway:
       vlan:
-#    - type: storage
-#      bridge: brMgmt
-#      cidr: 10.10.194.0/24
-#      gateway:
-#      vlan: 214
 #    - type: public
-#      bridge: brPublic
 #      cidr: 10.10.195.0/24
 #      gateway:
-#      vlan: 4000
+#      vlan: 1193

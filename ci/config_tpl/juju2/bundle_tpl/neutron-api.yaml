@@ -37,6 +37,9 @@
 {% elif os.network.controller == 'onos' %}
         flat-network-providers: physnet1
         manage-neutron-plugin-legacy-mode: False
+{% elif os.network.controller == 'ocl' %}
+        flat-network-providers: physnet1
+        manage-neutron-plugin-legacy-mode: False
 {% endif %}
 {% if os.network.dvr %}
         enable-dvr: true

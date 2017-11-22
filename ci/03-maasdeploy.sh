@@ -253,7 +253,7 @@ configuremaas(){
 
     #below tag would be used to enable huge pages for DPDK and SRIOV enablement in Ubuntu kernel via MAAS
     maas $PROFILE tags create name='opnfv-dpdk' comment='OPNFV DPDK enablement' \
-         kernel_opts='hugepagesz=2M hugepages=1024 hugepagesz=1G hugepages=20 default_hugepagesz=1G intel_iommu=on'
+         kernel_opts='hugepagesz=2M hugepages=1024 hugepagesz=1G hugepages=20 default_hugepagesz=1G intel_iommu=on' || true
 
     #create the required spaces.
     maas $PROFILE space update 0 name=default || true
@@ -300,7 +300,7 @@ setupspacenetwork(){
             NET_VLAN_ID=$(maas $PROFILE vlans read $NET_FABRIC_ID | jq -r ".[] |  select(.vid==\"$SPACE_VLAN\")".id)
             NET_VLAN_VID=$(maas $PROFILE vlans read $NET_FABRIC_ID | jq -r ".[] |  select(.vid==\"$SPACE_VLAN\")".vid)
             if ([ $SPACE_GWAY ] && [ "$SPACE_GWAY" != "null" ]); then
-                maas $PROFILE subnet update $SPACE_CIDR gateway_ip=$SPACE_GWAY
+                maas $PROFILE subnet update $SPACE_CIDR gateway_ip=$SPACE_GWAY || true
             fi
             if ([ $NET_VLAN_VID ] && [ $NET_VLAN_VID == "0" ]); then
                 config_done=1
@@ -309,7 +309,7 @@ setupspacenetwork(){
             else
                 NET_VLAN_ID=$(maas $PROFILE vlans create $NET_FABRIC_ID vid=$SPACE_VLAN | jq --raw-output ".id")
                 if ([ $NET_VLAN_ID ] && [ $NET_VLAN_ID != "null" ]); then
-                    maas $PROFILE subnet update $SPACE_CIDR vlan=$NET_VLAN_ID
+                    maas $PROFILE subnet update $SPACE_CIDR vlan=$NET_VLAN_ID || true
                     NET_FABRIC_VID=$SPACE_VLAN
                 fi
             fi
@@ -321,16 +321,16 @@ setupspacenetwork(){
                 if ([ $SPACE_VLAN ] && [ "$SPACE_VLAN" != "null" ]); then
                     NET_VLAN_ID=$(maas $PROFILE vlans create $FABRIC_ID vid=$SPACE_VLAN | jq --raw-output ".id")
                     if ([ $SPACE_GWAY ] && [ "$SPACE_GWAY" != "null" ]); then
-                        maas $PROFILE subnets create fabric=$FABRIC_ID cidr=$SPACE_CIDR vid=$VID_ID gateway_ip=$SPACE_GWAY
+                        maas $PROFILE subnets create fabric=$FABRIC_ID cidr=$SPACE_CIDR vid=$VID_ID gateway_ip=$SPACE_GWAY || true
                     else
-                        maas $PROFILE subnets create fabric=$FABRIC_ID cidr=$SPACE_CIDR vid=$VID_ID
+                        maas $PROFILE subnets create fabric=$FABRIC_ID cidr=$SPACE_CIDR vid=$VID_ID || true
                     fi
                     NET_FABRIC_VID=$VLAN_ID
                 else
                     if ([ $SPACE_GWAY ] && [ "$SPACE_GWAY" != "null" ]); then
-                        maas $PROFILE subnets create fabric=$FABRIC_ID cidr=$SPACE_CIDR vid="0" gateway_ip=$SPACE_GWAY
+                        maas $PROFILE subnets create fabric=$FABRIC_ID cidr=$SPACE_CIDR vid="0" gateway_ip=$SPACE_GWAY || true
                     else
-                        maas $PROFILE subnets create fabric=$FABRIC_ID cidr=$SPACE_CIDR vid="0"
+                        maas $PROFILE subnets create fabric=$FABRIC_ID cidr=$SPACE_CIDR vid="0" || true
                     fi
                 fi
                 NET_FABRIC_NAME=$(maas $PROFILE subnets read | jq -r ".[] |  select(.cidr==\"$SPACE_CIDR\")".vlan.fabric)
@@ -351,7 +351,7 @@ setupspacenetwork(){
         NET_FABRIC_ID=$(maas $PROFILE fabric read $NET_FABRIC_NAME | jq -r ".id")
         if ([ $NET_FABRIC_ID ] && [ $NET_FABRIC_ID != "null" ]); then
             if ([ $JUJU_VLAN_VID ] && [ $JUJU_VLAN_VID != "null" ]); then
-                maas $PROFILE vlan update $NET_FABRIC_ID $JUJU_VLAN_VID space=$JUJU_SPACE_ID
+                maas $PROFILE vlan update $NET_FABRIC_ID $JUJU_VLAN_VID space=$JUJU_SPACE_ID || true
             fi
         fi
         if ([ $type == "admin" ]); then
