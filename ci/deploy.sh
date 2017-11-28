@@ -322,13 +322,15 @@ python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, i
 if ([ $opnfvmodel == "openstack" ]); then
    if ([ $opnfvsdn == "ocl" ]); then
        echo_info "Patching OpenContrail controller container"
-       juju ssh contrail-controller/0 sudo docker cp contrail-controller:/etc/contrail/vnc_api_lib.ini /tmp
-       juju ssh contrail-controller/0 cp /tmp/vnc_api_lib.ini /tmp/vnc_api_lib.ini2
-       juju ssh contrail-controller/0 'echo "AUTHN_DOMAIN = admin_domain" >> /tmp/vnc_api_lib.ini2'
-       juju ssh contrail-controller/0 sudo docker cp  /tmp/vnc_api_lib.ini2 contrail-controller:/etc/contrail/vnc_api_lib.ini
-       juju ssh contrail-controller/0 sudo docker exec -it contrail-controller service contrail-api restart
-
-       juju ssh contrail-controller/0 sudo docker cp  /tmp/vnc_api_lib.ini2 contrail-analytics:/etc/contrail/vnc_api_lib.ini
+         juju run --application contrail-controller sudo docker cp contrail-controller:/etc/contrail/vnc_api_lib.ini /tmp
+         juju run --application contrail-controller cp /tmp/vnc_api_lib.ini /tmp/vnc_api_lib.ini2
+         juju run --application contrail-controller 'echo "AUTHN_DOMAIN = admin_domain" >> /tmp/vnc_api_lib.ini2'
+         juju run --application contrail-controller sudo docker cp  /tmp/vnc_api_lib.ini2 contrail-controller:/etc/contrail/vnc_api_lib.ini
+         juju run --application contrail-controller sudo docker exec  contrail-controller service contrail-api restart
+  
+         juju run --application contrail-controller sudo docker cp  /tmp/vnc_api_lib.ini2 contrail-analytics:/etc/contrail/vnc_api_lib.ini
+         echo_info "Wait for OpenContrail components to stabilize"
+         sleep 600
     fi
 
     echo_info "Configuring OpenStack deployment"
