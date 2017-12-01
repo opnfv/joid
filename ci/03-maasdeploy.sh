@@ -21,7 +21,6 @@ then
     usage;
 fi
 
-opnfvdistro=`cat /etc/lsb-release | grep CODENAME | cut -d "=" -f 2`
 
 virtinstall=0
 labname=$1
@@ -51,34 +50,17 @@ sudo apt-get update -y || true
 sudo apt-get install software-properties-common -y
 sudo apt-add-repository ppa:juju/stable -y
 sudo apt-add-repository ppa:maas/stable -y
-if [ "bionic" == "$opnfvdistro" ]; then
-    echo "no cloud archive needed"
-else
-    sudo apt-add-repository cloud-archive:pike -y
-fi
-
+sudo apt-add-repository cloud-archive:pike -y
 if [ "aarch64" == "$NODE_ARCTYPE" ]; then
-    if [ "bionic" == "$opnfvdistro" ]; then
-        echo "no repository needed"
-    else
-        sudo add-apt-repository ppa:ubuntu-cloud-archive/pike-staging -y
-    fi
+sudo add-apt-repository ppa:ubuntu-cloud-archive/pike-staging -y
 fi
 sudo apt-get update -y || true
 #sudo apt-get dist-upgrade -y
 
-if [ "bionic" == "$opnfvdistro" ]; then
-    sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvirt-bin \
-             maas maas-region-controller juju python-pip python-psutil python-openstackclient \
-             python-congressclient gsutil pastebinit python-jinja2 sshpass \
-             openssh-server vlan ipmitool jq expect snap -y --allow-unauthenticated
-    sudo snap install charm
-else
-    sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvirt-bin \
+sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvirt-bin \
              maas maas-region-controller juju python-pip python-psutil python-openstackclient \
              python-congressclient gsutil charm-tools pastebinit python-jinja2 sshpass \
              openssh-server vlan ipmitool jq expect snap -y --allow-unauthenticated
-fi
 
 if [ "aarch64" == "$NODE_ARCTYPE" ]; then
     sudo apt-get install qemu qemu-efi qemu-system-aarch64 -y --allow-unauthenticated
