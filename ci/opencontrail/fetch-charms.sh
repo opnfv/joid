@@ -35,7 +35,7 @@ git clone -b stable/17.08 https://github.com/openstack/charm-lxd.git $distro/lxd
 git clone https://github.com/openbaton/juju-charm.git $distro/openbaton
 
 charm pull cs:$distro/mongodb $distro/mongodb
-charm pull cs:ntp $distro/ntp
+charm pull cs:$distro/ntp $distro/ntp
 charm pull cs:$distro/aodh $distro/aodh
 charm pull cs:~free.ekanayaka/xenial/haproxy-1 $distro/haproxy
 charm pull cs:~narindergupta/congress-1 $distro/congress

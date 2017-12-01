@@ -39,7 +39,7 @@ git clone https://github.com/openbaton/juju-charm.git $distro/openbaton
 
 charm pull cs:$distro/aodh $distro/aodh
 charm pull cs:$distro/mongodb $distro/mongodb
-charm pull cs:ntp $distro/ntp
+charm pull cs:$distro/ntp $distro/ntp
 
 #pulling scaleio charms.
 charm pull cs:~cloudscaling/scaleio-mdm $distro/scaleio-mdm

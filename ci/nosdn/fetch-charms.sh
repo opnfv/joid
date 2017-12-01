@@ -36,7 +36,7 @@ git clone https://github.com/openbaton/juju-charm.git $distro/openbaton
 
 charm pull cs:$distro/aodh $distro/aodh
 charm pull cs:$distro/mongodb $distro/mongodb
-charm pull cs:ntp $distro/ntp
+charm pull cs:$distro/ntp $distro/ntp
 charm pull cs:$distro/haproxy $distro/haproxy
 charm pull cs:~narindergupta/congress-1 $distro/congress
 
