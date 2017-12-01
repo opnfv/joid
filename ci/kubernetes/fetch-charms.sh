@@ -10,7 +10,7 @@ function build {
 }
 
 # openstack
-bzr branch lp:~narindergupta/opnfv/ntp $distro/ntp
-git clone -b stable/17.08 https://github.com/openstack/charm-ceph-mon.git $distro/ceph-mon
-git clone -b stable/17.08 https://github.com/openstack/charm-ceph-osd.git $distro/ceph-osd
+charm pull cs:ntp $distro/ntp
+git clone -b stable/17.11 https://github.com/openstack/charm-ceph-mon.git $distro/ceph-mon
+git clone -b stable/17.11 https://github.com/openstack/charm-ceph-osd.git $distro/ceph-osd
 
