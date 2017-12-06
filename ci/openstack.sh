@@ -138,6 +138,7 @@ export OS_PROJECT_NAME=$3
 export OS_PASSWORD=$2
 export OS_IDENTITY_API_VERSION=3
 export OS_REGION_NAME=$5
+export OS_INTERFACE=public
 #export OS_INSECURE=true
 #export OS_CASSL=~/joid_config/ca.pem
 EOF
