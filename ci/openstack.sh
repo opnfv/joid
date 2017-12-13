@@ -72,7 +72,7 @@ create_openrc() {
 
     mkdir -m 0700 -p cloud
     keystoneIp=$(keystoneIp)
-    adminPasswd=$(juju config keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['admin-password']['value']" | cut -d " " -f 1)
+    adminPasswd=$(juju config keystone | grep admin-password -A 5 | grep value | awk '{print $2}' 2> /dev/null)
 
     v3api=`juju config keystone  preferred-api-version`
 
