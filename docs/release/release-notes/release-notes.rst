@@ -59,7 +59,7 @@ Release Data
 | **Release designation**              | Euphrates release                    |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Release date**                     | October 24 2017                      |
+| **Release date**                     | December 15 2017                      |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Purpose of the delivery**          | Euphrates release                    |
@@ -88,7 +88,7 @@ Module version change
 ~~~~~~~~~~~~~~~~~~~~~
   - Euphrates release with the JOID deployment toolchain.
   - OpenStack (Ocata release)
-  - Kubernetes 1.7
+  - Kubernetes 1.8
   - Ubuntu 16.04 LTS
 
 Document version change
@@ -132,8 +132,9 @@ Bug corrections
 | **JIRA REFERENCE**                   | **SLOGAN**                           |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| JIRA:                                |                                      |
-|                                      |                                      |
+| JIRA:                                | Fixes the issue on get the keyston IP|
++--------------------------------------+--------------------------------------+
+| JIRA:                                | Fix provided where use Public API    |
 +--------------------------------------+--------------------------------------+
 
 

@@ -510,9 +510,9 @@ The function configOpenrc() creates the OpenStack login credentials, the functio
  create_openrc() {
     keystoneIp=$(keystoneIp)
     if [[ "$jujuver" < "2" ]]; then
-        adminPasswd=$(juju get keystone | grep admin-password -A 5 | grep value | awk '{print $2}' 2> /dev/null)
+        adminPasswd=$(juju get keystone | grep admin-password -A 7 | grep value | awk '{print $2}' 2> /dev/null)
     else
-        adminPasswd=$(juju config keystone | grep admin-password -A 5 | grep value | awk '{print $2}' 2> /dev/null)
+        adminPasswd=$(juju config keystone | grep admin-password -A 7 | grep value | awk '{print $2}' 2> /dev/null)
     fi
 
     configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v2.0 RegionOne > ~/joid_config/admin-openrc
