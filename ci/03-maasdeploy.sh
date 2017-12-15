@@ -56,7 +56,7 @@ echo_info "Installing and upgrading required packages"
 sudo apt-get update -y || true
 sudo apt-get install software-properties-common -y
 
-if [ "$snapinstall" -eq 0 ]; then
+if [ "$snapinstall" -eq "0" ]; then
     sudo apt-add-repository ppa:juju/stable -y
     sudo apt-add-repository ppa:maas/stable -y
 fi
@@ -70,7 +70,7 @@ fi
 sudo apt-get update -y || true
 #sudo apt-get dist-upgrade -y
 
-if [ "$snapinstall" -eq 1 ]; then
+if [ "$snapinstall" -eq "1" ]; then
     sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvirt-bin \
              maas maas-region-controller juju python-pip python-psutil python-openstackclient \
              python-congressclient gsutil pastebinit python-jinja2 sshpass \
@@ -230,29 +230,38 @@ if [ $(pip list --format=columns | grep google-api-python-client | wc -l) == 1 ]
     sudo pip uninstall google-api-python-client
 fi
 
-if [ "$snapinstall" -eq 0 ]; then
-    maasuser=maas
-else
-    maasuser=root
-fi
-
-if [ ! -e ~$maasuser/.ssh/id_rsa.pub ]; then
-    if [ ! -e $HOME/id_rsa_maas.pub ]; then
-        [ -e $HOME/id_rsa_maas ] && rm -f $HOME/id_rsa_maas
-        sudo su - $USER -c "echo |ssh-keygen -t rsa -f $HOME/id_rsa_maas"
+if [ "$snapinstall" -eq "0" ]; then
+    if [ ! -e ~maas/.ssh/id_rsa.pub ]; then
+        if [ ! -e $HOME/id_rsa_maas.pub ]; then
+            [ -e $HOME/id_rsa_maas ] && rm -f $HOME/id_rsa_maas
+            sudo su - $USER -c "echo |ssh-keygen -t rsa -f $HOME/id_rsa_maas"
+        fi
+        sudo -u maas mkdir ~maas/.ssh/ || true
+        sudo cp $HOME/id_rsa_maas ~maas/.ssh/id_rsa
+        sudo cp $HOME/id_rsa_maas.pub ~maas/.ssh/id_rsa.pub
+        sudo chown maas:maas ~maas/.ssh/id_rsa
+        sudo chown maas:maas ~maas/.ssh/id_rsa.pub
+        sudo cat ~maas/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
     fi
-    sudo -u $maasuser mkdir ~$maasuser/.ssh/ || true
-    sudo cp $HOME/id_rsa_maas ~$maasuser/.ssh/id_rsa
-    sudo cp $HOME/id_rsa_maas.pub ~$maasuser/.ssh/id_rsa.pub
-    sudo chown $maasuser:$maasuser ~$maasuser/.ssh/id_rsa
-    sudo chown $maasuser:$maasuser ~$maasuser/.ssh/id_rsa.pub
+else
+    if [ ! -e /root/.ssh/id_rsa.pub ]; then
+        if [ ! -e $HOME/id_rsa_maas.pub ]; then
+            [ -e $HOME/id_rsa_maas ] && rm -f $HOME/id_rsa_maas
+            sudo su - $USER -c "echo |ssh-keygen -t rsa -f $HOME/id_rsa_maas"
+        fi
+        sudo -u root mkdir /root/.ssh/ || true
+        sudo cp $HOME/id_rsa_maas /root/.ssh/id_rsa
+        sudo cp $HOME/id_rsa_maas.pub /root/.ssh/id_rsa.pub
+        sudo chown root:root /root/.ssh/id_rsa
+        sudo chown root:root /root/.ssh/id_rsa.pub
+        sudo cat /root/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+    fi
 fi
 
 # Ensure virsh can connect without ssh auth
-sudo cat ~$maasuser/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 sudo cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 
-if [ "$snapinstall" -eq 1 ]; then
+if [ "$snapinstall" -eq "1" ]; then
     sudo maas init --mode all --maas-url http://$MAAS_IP:5240/MAAS --admin-username $PROFILE \
                    --admin-password $PROFILE --admin-email ubuntu@ubuntu.com || true
     API_KEY=`sudo maas apikey --username=$PROFILE`
@@ -284,6 +293,10 @@ configuremaas(){
     maas $PROFILE tags create name='opnfv-dpdk' comment='OPNFV DPDK enablement' \
          kernel_opts='hugepagesz=2M hugepages=1024 hugepagesz=1G hugepages=20 default_hugepagesz=1G intel_iommu=on' || true
 
+    maas $PROFILE package-repositories create name="Ubuntu  Proposed new" \
+         url="http://archive.ubuntu.com/ubuntu" components="main" \
+         distributions="xenial-proposed" arches=amd64,i386
+
     #create the required spaces.
     maas $PROFILE space update 0 name=default || true
     for space in admin-api internal-api public-api \
@@ -301,7 +314,7 @@ configuremaas(){
         maas $PROFILE boot-source-selection update 1 1 arches="$NODE_ARCHES"
     fi
 
-    if [ "$snapinstall" -eq 0 ]; then
+    if [ "$snapinstall" -eq "0" ]; then
         maas $PROFILE boot-resources import || true
     fi
 
