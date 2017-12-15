@@ -21,10 +21,16 @@ then
     usage;
 fi
 
-opnfvdistro=`cat /etc/lsb-release | grep CODENAME | cut -d "=" -f 2`
-
 virtinstall=0
 labname=$1
+snapinstall=0
+
+opnfvdistro=`cat /etc/lsb-release | grep CODENAME | cut -d "=" -f 2`
+
+if [ "bionic" == "$opnfvdistro" ]; then
+    snapinstall=1
+fi
+
 
 if [ ! -e $HOME/.ssh/id_rsa ]; then
     ssh-keygen -N '' -f $HOME/.ssh/id_rsa
@@ -49,30 +55,29 @@ echo_info "Installing and upgrading required packages"
 #sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 5EDB1B62EC4926EA
 sudo apt-get update -y || true
 sudo apt-get install software-properties-common -y
-sudo apt-add-repository ppa:juju/stable -y
-sudo apt-add-repository ppa:maas/stable -y
-if [ "bionic" == "$opnfvdistro" ]; then
-    echo "no cloud archive needed"
-else
-    sudo apt-add-repository cloud-archive:pike -y
-fi
 
-if [ "aarch64" == "$NODE_ARCTYPE" ]; then
-    if [ "bionic" == "$opnfvdistro" ]; then
-        echo "no repository needed"
-    else
+if [ "$snapinstall" -eq 0 ]; then
+    sudo apt-add-repository ppa:juju/stable -y
+    sudo apt-add-repository ppa:maas/stable -y
+fi
+if [ "bionic" != "$opnfvdistro" ]; then
+        sudo apt-add-repository cloud-archive:pike -y
+    if [ "aarch64" == "$NODE_ARCTYPE" ]; then
         sudo add-apt-repository ppa:ubuntu-cloud-archive/pike-staging -y
     fi
 fi
+
 sudo apt-get update -y || true
 #sudo apt-get dist-upgrade -y
 
-if [ "bionic" == "$opnfvdistro" ]; then
+if [ "$snapinstall" -eq 1 ]; then
     sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvirt-bin \
              maas maas-region-controller juju python-pip python-psutil python-openstackclient \
              python-congressclient gsutil pastebinit python-jinja2 sshpass \
              openssh-server vlan ipmitool jq expect snap -y --allow-unauthenticated
+    sudo service ntp stop
     sudo snap install charm
+    sudo snap install --devmode --stable maas
 else
     sudo apt-get install bridge-utils openssh-server bzr git virtinst qemu-kvm libvirt-bin \
              maas maas-region-controller juju python-pip python-psutil python-openstackclient \
@@ -158,9 +163,7 @@ PRIMARY_RACK_CONTROLLER="$MAAS_IP"
 VLAN_UNTTAGED="untagged"
 
 # In the case of a virtual deployment get deployconfig.yaml
-if [ "$virtinstall" -eq 1 ]; then
-    ./cleanvm.sh || true
-fi
+./cleanvm.sh || true
 
 #create backup directory
 mkdir ~/joid_config/ || true
@@ -227,23 +230,37 @@ if [ $(pip list --format=columns | grep google-api-python-client | wc -l) == 1 ]
     sudo pip uninstall google-api-python-client
 fi
 
+if [ "$snapinstall" -eq 0 ]; then
+    maasuser=maas
+else
+    maasuser=root
+fi
 
-if [ ! -e ~maas/.ssh/id_rsa.pub ]; then
+if [ ! -e ~$maasuser/.ssh/id_rsa.pub ]; then
     if [ ! -e $HOME/id_rsa_maas.pub ]; then
         [ -e $HOME/id_rsa_maas ] && rm -f $HOME/id_rsa_maas
         sudo su - $USER -c "echo |ssh-keygen -t rsa -f $HOME/id_rsa_maas"
     fi
-    sudo -u maas mkdir ~maas/.ssh/ || true
-    sudo cp $HOME/id_rsa_maas ~maas/.ssh/id_rsa
-    sudo cp $HOME/id_rsa_maas.pub ~maas/.ssh/id_rsa.pub
-    sudo chown maas:maas ~maas/.ssh/id_rsa
-    sudo chown maas:maas ~maas/.ssh/id_rsa.pub
+    sudo -u $maasuser mkdir ~$maasuser/.ssh/ || true
+    sudo cp $HOME/id_rsa_maas ~$maasuser/.ssh/id_rsa
+    sudo cp $HOME/id_rsa_maas.pub ~$maasuser/.ssh/id_rsa.pub
+    sudo chown $maasuser:$maasuser ~$maasuser/.ssh/id_rsa
+    sudo chown $maasuser:$maasuser ~$maasuser/.ssh/id_rsa.pub
 fi
 
 # Ensure virsh can connect without ssh auth
-sudo cat ~maas/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+sudo cat ~$maasuser/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 sudo cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 
+if [ "$snapinstall" -eq 1 ]; then
+    sudo maas init --mode all --maas-url http://$MAAS_IP:5240/MAAS --admin-username $PROFILE \
+                   --admin-password $PROFILE --admin-email ubuntu@ubuntu.com || true
+    API_KEY=`sudo maas apikey --username=$PROFILE`
+else
+    sudo maas-rack config --region-url http://$MAAS_IP:5240/MAAS
+    sudo maas createadmin --username=$PROFILE --email=ubuntu@ubuntu.com --password=$PROFILE || true
+    API_KEY=`sudo maas-region apikey --username=$PROFILE`
+fi
 #
 # MAAS config
 # https://insights.ubuntu.com/2016/01/23/maas-setup-deploying-openstack-on-maas-1-9-with-juju/
@@ -251,11 +268,6 @@ sudo cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 #
 configuremaas(){
     #reconfigure maas with correct MAAS address.
-
-    sudo maas-rack config --region-url http://$MAAS_IP:5240/MAAS
-
-    sudo maas createadmin --username=ubuntu --email=ubuntu@ubuntu.com --password=ubuntu || true
-    API_KEY=`sudo maas-region apikey --username=ubuntu`
     maas login $PROFILE $API_SERVERMAAS $API_KEY
     maas $PROFILE maas set-config name='main_archive' value=$MAIN_ARCHIVE || true
     maas $PROFILE maas set-config name=upstream_dns value=$MY_UPSTREAM_DNS || true
@@ -289,7 +301,9 @@ configuremaas(){
         maas $PROFILE boot-source-selection update 1 1 arches="$NODE_ARCHES"
     fi
 
-    maas $PROFILE boot-resources import || true
+    if [ "$snapinstall" -eq 0 ]; then
+        maas $PROFILE boot-resources import || true
+    fi
 
     while [ "$(maas $PROFILE boot-resources is-importing)" == "true" ];
     do
@@ -298,7 +312,6 @@ configuremaas(){
 }
 
 setupspacenetwork(){
-
     #get space, subnet and vlan and create accordingly.
     #for type in admin osapi data storage external floating public; do
     nettypes=`cat labconfig.json | jq '.opnfv.spaces[]'.type | cut -d \" -f 2`
@@ -416,7 +429,6 @@ setupspacenetwork(){
 }
 
 addnodes(){
-    API_KEY=`sudo maas-region apikey --username=ubuntu`
     maas login $PROFILE $API_SERVERMAAS $API_KEY
 
     maas $PROFILE maas set-config name=default_min_hwe_kernel value=hwe-16.04-edge || true
@@ -589,11 +601,12 @@ sleep 30
 
 setupspacenetwork
 
-sudo sed -i 's/localhost/'$MAAS_IP'/g' /etc/maas/rackd.conf
-sudo service maas-rackd restart
-sudo service maas-regiond restart
-
-sleep 120
+if [ "$snapinstall" -eq 0 ]; then
+    sudo sed -i 's/localhost/'$MAAS_IP'/g' /etc/maas/rackd.conf
+    sudo service maas-rackd restart
+    sudo service maas-regiond restart
+    sleep 120
+fi
 
 # Let's add the nodes now. Currently works only for virtual deployment.
 addnodes
@@ -605,7 +618,6 @@ echo_info "Initial deployment of MAAS finished"
 #maas $PROFILE sshkeys new key="`cat ./maas/sshkeys/DominoKey.pub`"
 
 addcredential() {
-    API_KEY=`sudo maas-region apikey --username=ubuntu`
     controllername=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployconfig.yaml`
     cloudname=`awk 'NR==1{print substr($1, 1, length($1)-1)}' deployconfig.yaml`
 
@@ -635,7 +647,6 @@ addcloud() {
 #
 # Enable MAAS nodes interfaces
 #
-API_KEY=`sudo maas-region apikey --username=ubuntu`
 maas login $PROFILE $API_SERVERMAAS $API_KEY
 
 if [ -e ./labconfig.json ]; then
