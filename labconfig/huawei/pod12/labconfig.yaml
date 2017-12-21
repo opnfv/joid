@@ -18,16 +18,16 @@ lab:
         mac: ["88:cf:98:e9:9a:9a"]
       power:
         type: ipmi
-        address: 192.168.120.19
+        address: 172.16.130.179
         user: root
-        pass: Huawei12#$
+        pass: Opnfv@pod12
     - name: rack-12-m2
       architecture: x86_64
       roles: [compute,control,storage]
       nics:
       - ifname: intf0
         spaces: [admin]
-        mac: ["88:cf:98:61:66:0b"]
+        mac: ["88:cf:98:61:67:0b"]
       - ifname: intf1
         spaces: [data]
         mac: ["88:cf:98:e9:9a:c3"]
@@ -36,9 +36,9 @@ lab:
         mac: ["88:cf:98:e9:9a:c4"]
       power:
         type: ipmi
-        address: 192.168.120.20
+        address: 172.16.130.180
         user: root
-        pass: Huawei12#$
+        pass: Opnfv@pod12
     - name: rack-12-m3
       architecture: x86_64
       roles: [compute,control,storage]
@@ -48,15 +48,15 @@ lab:
         mac: ["88:cf:98:61:66:d9"]
       - ifname: intf1
         spaces: [data]
-        mac: ["88:cf:98:e9:9a:9b"]
+        mac: ["88:cf:98:e9:9a:b3"]
       - ifname: intf2
         spaces: [floating]
-        mac: ["88:cf:98:e9:9a:9c"]
+        mac: ["88:cf:98:e9:9a:b4"]
       power:
         type: ipmi
-        address: 192.168.120.21
+        address: 172.16.130.181
         user: root
-        pass: Huawei12#$
+        pass: Opnfv@pod12
     - name: rack-12-m4
       architecture: x86_64
       roles: [compute,storage]
@@ -72,36 +72,36 @@ lab:
         mac: ["88:cf:98:e9:9a:9c"]
       power:
         type: ipmi
-        address: 192.168.120.22
+        address: 172.16.130.182
         user: root
-        pass: Huawei12#$
+        pass: Opnfv@pod12
     - name: rack-12-m5
       architecture: x86_64
       roles: [compute,storage]
       nics:
       - ifname: intf0
         spaces: [admin]
-        mac: ["88:cf:98:83:31:db"]
+        mac: ["88:cf:98:61:66:db"]
       - ifname: intf1
         spaces: [data]
-        mac: ["88:cf:98:e9:9a:a5"]
+        mac: ["88:cf:98:e9:9a:af"]
       - ifname: intf2
         spaces: [floating]
-        mac: ["88:cf:98:e9:9a:a6"]
+        mac: ["88:cf:98:e9:9a:b0"]
       power:
         type: ipmi
-        address: 192.168.120.23
+        address: 172.16.130.183
         user: root
-        pass: Huawei12#$
+        pass: Opnfv@pod12
     floating-ip-range: 10.6.15.7,10.6.15.250,10.6.15.1,10.6.15.0/24
-    ext-port: "enp4s0d1"
+    ext-port: "intf2"
     dns: 8.8.8.8
     public-api-ip:
     osdomainname:
 opnfv:
   release: d
   distro: xenial
-  type: noha
+  type: nonha
   openstack: newton
   sdncontroller:
   - type: nosdn
@@ -127,7 +127,7 @@ opnfv:
     vlan:
   - type: external
     bridge: brExt
-    cidr: 192.168.30.0/24
-    gateway: 192.168.30.250
-    ipaddress: 192.168.30.2
+    cidr: 172.30.12.0/24
+    gateway: 172.30.12.1
+    ipaddress: 172.30.12.2
     vlan:
