@@ -22,7 +22,7 @@
 {% endif %}
 {% if os.network.controller == 'nosdn' %}
         bridge-mappings: physnet1:br-data
-        #data-port: *data-port
+        data-port: *data-port
 {% else %}
         ext-port: {{ opnfv.ext_port }}
 {% endif %}

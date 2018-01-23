@@ -23,7 +23,7 @@ os:
     network:
         controller: odl
         enhanced_ovs: False
-        dvr: False
+        dvr: True
         ipv6: False
         l2_population: False
     beta:
