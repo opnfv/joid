@@ -1,7 +1,11 @@
     nova-compute:
       charm: "./{{ ubuntu.release }}/nova-compute"
 {% if os.hyperconverged %}
-      num_units: {{ opnfv.units - 1 }}
+{% if os.ha.mode == 'ha' %}
+      num_units: {{ opnfv.units - 2 }}
+{% else %}
+       num_units: {{ opnfv.units - 1 }}
+{% endif %}
 {% else %}
 {% if os.ha.mode == 'ha' %}
       num_units: {{ opnfv.units - 3 }}
@@ -39,9 +43,15 @@
 {% endif %}
       to:
 {% if os.hyperconverged %}
+{% if os.ha.mode == 'ha' %}
+{% for unit_id in range(2, opnfv.units) %}
+        - "nodes/{{ unit_id }}"
+{% endfor %}
+{% else %}
 {% for unit_id in range(1, opnfv.units) %}
         - "nodes/{{ unit_id }}"
 {% endfor %}
+{% endif %}
 {% else %}
 {% if os.ha.mode == 'ha' %}
 {% for unit_id in range(0, opnfv.units - 3) %}
