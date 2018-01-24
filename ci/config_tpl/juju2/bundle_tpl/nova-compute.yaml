@@ -4,7 +4,7 @@
 {% if os.ha.mode == 'ha' %}
       num_units: {{ opnfv.units - 2 }}
 {% else %}
-       num_units: {{ opnfv.units - 1 }}
+      num_units: {{ opnfv.units - 1 }}
 {% endif %}
 {% else %}
 {% if os.ha.mode == 'ha' %}
