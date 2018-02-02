@@ -1,0 +1,52 @@
+---
+project: 'Juju OPNFV Infrastructure Deployer (JOID)'
+project_creation_date: '2015.05.26'
+project_category: 'Integration & Testing'
+lifecycle_state: 'Incubation/Mature/Integration/Top Level'
+project_lead: &opnfv_joid_ptl
+    name: 'Narinder Gupta'
+    email: 'narinder.gupta@canonical.com'
+    company: 'canonical.com'
+    id: 'narindergupta'
+    timezone: 'America/Los_Angeles'
+primary_contact: *opnfv_joid_ptl
+issue_tracking:
+    type: 'jira'
+    url: 'https://jira.opnfv.org/projects/JOID'
+    key: 'JOID'
+mailing_list:
+    type: 'mailman2'
+    url: 'opnfv-tech-discuss@lists.opnfv.org'
+    tag: '[joid]'
+realtime_discussion:
+    type: irc
+    server: 'freenode.net'
+    channel: '#opnfv-joid'
+meetings:
+    - type: 'gotomeeting+irc'
+      agenda:  # eg: 'https://wiki.opnfv.org/display/'
+      url:  # eg: 'https://global.gotomeeting.com/join/819733085'
+      server: 'freenode.net'
+      channel: '#opnfv-meeting'
+      repeats: 'weekly'
+      time:  # eg: '16:00 UTC'
+repositories:
+    - 'joid'
+committers:
+    - <<: *opnfv_joid_ptl
+    - name: 'Prakash Ramchandran'
+      email: 'prakash.ramchandran@huawei.com'
+      company: 'huawei.com'
+      id: 'rprakash'
+    - name: 'Artur Tyloch'
+      email: 'artur.tyloch@gmail.com'
+      company: 'gmail.com'
+      id: 'arturtee'
+    - name: 'David Blaisonneau'
+      email: 'david.blaisonneau@orange.com'
+      company: 'orange.com'
+      id: 'david.blaisonneau'
+tsc:
+    # yamllint disable rule:line-length
+    approval: 'http//meetbot.opnfv.org/meetings/opnfv-meeting/2015/opnfv-meeting.2015-05-26-13.58.html'
+    # yamllint enable rule:line-length
