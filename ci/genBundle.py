@@ -200,12 +200,12 @@ if 'radosgwcluster' in extra:
 if 'hugepages' in extra:
     config['os']['beta']['huge_pages'] = True
     config['os']['beta']['cpu_pin'] = True
-if 'mitaka' in extra:
-    config['os']['release'] = 'mitaka'
+if 'ocata' in extra:
+    config['os']['release'] = 'ocata'
 if 'trusty' in extra:
     config['ubuntu']['release'] = 'trusty'
-    if 'liberty' in extra:
-        config['os']['release'] = 'liberty'
+    if 'ocata' in extra:
+        config['os']['release'] = 'mitaka'
 if 'xenial' in extra:
     config['ubuntu']['release'] = 'xenial'
 if 'dishypcon' in extra:
