@@ -9,7 +9,7 @@ configk8(){
 cat <<-EOF
 export KUBECONFIG=~/joid_config/config
 export KUBERNETES_PROVIDER=local
-export KUBE_MASTER_IP=`juju status kubernetes-master --format=yaml | grep public-address | cut -d ":" -f 2 | head -1`
+export KUBE_MASTER_IP=`juju status kubernetes-master --format=yaml | grep public-address | cut -d ":" -f 2 | head -1 | sed "s/^[ \t]*//g"`
 export KUBE_MASTER_URL=http://${KUBE_MASTER_IP}:6443
 EOF
 }
