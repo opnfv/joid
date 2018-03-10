@@ -340,10 +340,16 @@ if ([ $opnfvmodel == "openstack" ]); then
     # creating heat domain after pushing the public API into /etc/hosts
     status=`juju run-action heat/0 domain-setup`
     echo $status
+    status=`juju run-action ceilometer/0 ceilometer-upgrade`
+    echo $status
     if ([ $opnftype == "ha" ]); then
         status=`juju run-action heat/1 domain-setup`
         echo $status
+        status=`juju run-action ceilometer/1 ceilometer-upgrade`
+        echo $status
         status=`juju run-action heat/2 domain-setup`
+        echo $status
+        status=`juju run-action ceilometer/2 ceilometer-upgrade`
         echo $status
     fi
 
