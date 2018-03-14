@@ -11,5 +11,5 @@ function build {
 
 # openstack
 charm pull cs:ntp $distro/ntp
-git clone -b stable/17.11 https://github.com/openstack/charm-ceph-mon.git $distro/ceph-mon
-git clone -b stable/17.11 https://github.com/openstack/charm-ceph-osd.git $distro/ceph-osd
+git clone -b stable/18.02 https://github.com/openstack/charm-ceph-mon.git $distro/ceph-mon
+git clone -b stable/18.02 https://github.com/openstack/charm-ceph-osd.git $distro/ceph-osd
