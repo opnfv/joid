@@ -6,7 +6,7 @@
 Abstract
 ========
 
-This document compiles the release notes for the Euphrates release of
+This document compiles the release notes for the Fraser release of
 OPNFV when using JOID as a deployment tool with the Open Baton NFV MANO framework
  provided by the OPNFV orchestra project.
 
@@ -14,10 +14,10 @@ Introduction
 ============
 
 These notes provides release information for the use of joid as deployment
-tool for the Euphrates release of OPNFV for orchestra
+tool for the Fraser release of OPNFV for orchestra
 scenario.
 
-The goal of the Euphrates release and this JOID based deployment process is
+The goal of the Fraser release and this JOID based deployment process is
 to establish a lab ready platform accelerating further development
 of the OPNFV infrastructure.
 
@@ -32,7 +32,7 @@ Open Baton is the result of an agile design process having as major objective th
 of an extensible and customizable framework capable of orchestrating network services across
 heterogeneous NFV Infrastructures.
 
-Euphrates release with the JOID deployment enables deployment of orchestra
+Fraser release with the JOID deployment enables deployment of orchestra
  on a Pharos compliant lab infrastructure.
 
 The current definition of an OPNFV target system is based on OpenStack Ocata.
@@ -76,15 +76,15 @@ Release Data
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Repo/tag**                         | gerrit.opnfv.org/gerrit/joid.git     |
-|                                      | stable/euphrates                     |
+|                                      | stable/hrates                     |
 +--------------------------------------+--------------------------------------+
-| **Release designation**              | Euphrates release                    |
+| **Release designation**              | Fraser release                       |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Release date**                     | October 24 2017                      |
+| **Release date**                     | March 31 2018                        |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Purpose of the delivery**          | Euphrates release                    |
+| **Purpose of the delivery**          | Fraser release                       |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 
@@ -115,7 +115,7 @@ Scenario Releases
 =================
 
 Name:      os-nosdn-openbaton-ha
-Test Link: https://build.opnfv.org/ci/job/joid-deploy-baremetal-daily-euphrates
+Test Link: https://build.opnfv.org/ci/job/joid-deploy-baremetal-daily-hrates
 Notes:
 
 References
@@ -147,6 +147,6 @@ OpenStack
 
 Orchestra
 ---------
-- `Orchestra Release Notes <http://docs.opnfv.org/en/stable-euphrates/submodules/orchestra/docs/release/release-notes/index.html#orchestra-releasenotes>`_
+- `Orchestra Release Notes <http://docs.opnfv.org/en/stable-hrates/submodules/orchestra/docs/release/release-notes/index.html#orchestra-releasenotes>`_
 - `Open Baton documentation <http://openbaton.github.io/documentation/>`_
 

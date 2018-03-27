@@ -1,7 +1,7 @@
 
 Introduction
 ============
-This document will explain how to install OPNFV Euphrates with JOID including installing JOID, configuring JOID for your environment, and deploying OPNFV with different SDN solutions in HA, or non-HA mode. Prerequisites include
+This document will explain how to install OPNFV Fraser with JOID including installing JOID, configuring JOID for your environment, and deploying OPNFV with different SDN solutions in HA, or non-HA mode. Prerequisites include
 
 - An Ubuntu 16.04 LTS Server Jumphost
 - Minimum 2 Networks per Pharos requirement

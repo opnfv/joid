@@ -6,16 +6,16 @@
 Abstract
 ========
 
-This document compiles the release notes for the Euphrates release of
+This document compiles the release notes for the Fraser release of
 OPNFV when using JOID as a deployment tool.
 
 Introduction
 ============
 
 These notes provides release information for the use of joid as deployment
-tool for the Euphrates release of OPNFV.
+tool for the Fraser release of OPNFV.
 
-The goal of the Euphrates release and this JOID based deployment process is
+The goal of the Fraser release and this JOID based deployment process is
 to establish a lab ready platform accelerating further development
 of the OPNFV infrastructure.
 
@@ -25,11 +25,11 @@ OPNFV using JOID which is based on MAAS and Juju.
 Summary
 =======
 
-The Euphrates release with the JOID deployment toolchain will establish an OPNFV target system on a Pharos compliant lab infrastructure.
+The Fraser release with the JOID deployment toolchain will establish an OPNFV target system on a Pharos compliant lab infrastructure.
 The current definition of an OPNFV target system is and OpenStack Newton combined with OpenDaylight Boron.
 
 The system is deployed with OpenStack High Availability (HA) for most OpenStack services.
-Ceph storage is used as Cinder backend, and is the only supported storage for Euphrates. Ceph is setup as 3 OSDs and 3 Monitors, one radosgw.
+Ceph storage is used as Cinder backend, and is the only supported storage for Fraser. Ceph is setup as 3 OSDs and 3 Monitors, one radosgw.
 
     User has following choices to make to do the deployment.
 
@@ -54,15 +54,15 @@ Release Data
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Repo/tag**                         | gerrit.opnfv.org/gerrit/joid.git     |
-|                                      | stable/euphrates                     |
+|                                      | stable/fraser                     |
 +--------------------------------------+--------------------------------------+
-| **Release designation**              | Euphrates release                    |
+| **Release designation**              | Fraser release                    |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Release date**                     | December 15 2017                      |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Purpose of the delivery**          | Euphrates release                    |
+| **Purpose of the delivery**          | Fraser release                    |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 
@@ -86,14 +86,14 @@ Version change
 
 Module version change
 ~~~~~~~~~~~~~~~~~~~~~
-  - Euphrates release with the JOID deployment toolchain.
+  - Fraser release with the JOID deployment toolchain.
   - OpenStack (Ocata release)
   - Kubernetes 1.8
   - Ubuntu 16.04 LTS
 
 Document version change
 ~~~~~~~~~~~~~~~~~~~~~~~
-- OPNFV Installation instructions for the Euphrates release using JOID deployment
+- OPNFV Installation instructions for the Fraser release using JOID deployment
   toolchain - ver. 1.0.0
 - OPNFV Release Notes with the JOID deployment toolchain - ver. 1.0.0 (this document)
 
@@ -172,41 +172,41 @@ See JIRA: <link>
 Scenario Releases
 =================
 Name:      joid-os-nosdn-nofeature-ha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-nofeature-ha-baremetal-daily-euphrates/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-nofeature-ha-baremetal-daily-fraser/
 Notes:
 
 Name:      joid-os-nosdn-lxd-ha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-lxd-ha-baremetal-daily-euphrates/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-lxd-ha-baremetal-daily-fraser/
 Notes:
 
 Name:      joid-os-nosdn-lxd-noha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-lxd-noha-baremetal-daily-euphrates/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-lxd-noha-baremetal-daily-fraser/
 Notes:
 
 Name:      joid-os-nosdn-nofeature-noha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-nofeature-noha-baremetal-daily-euphrates/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-nofeature-noha-baremetal-daily-fraser/
 Notes:
 
 Name:      joid-k8-nosdn-lb-noha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-k8-nosdn-lb-noha-baremetal-daily-euphrates/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-k8-nosdn-lb-noha-baremetal-daily-fraser/
 Notes:
 
 Name:      joid-k8-ovn-lb-noha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-k8-ovn-lb-noha-baremetal-daily-euphrates/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-k8-ovn-lb-noha-baremetal-daily-fraser/
 Notes:
 
 Name:      joid-os-ocl-nofeature-ha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-ocl-nofeature-ha-baremetal-daily-euphrates/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-ocl-nofeature-ha-baremetal-daily-fraser/
 Notes:
 
 Name:      joid-os-ocl-nofeature-noha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-ocl-nofeature-noha-baremetal-daily-euphrates/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-ocl-nofeature-noha-baremetal-daily-fraser/
 Notes:
 
 References
 ==========
-For more information on the OPNFV Euphrates release, please visit
-- `OPNFV Euphrates release <http://www.opnfv.org/euphrates>`_
+For more information on the OPNFV Fraser release, please visit
+- `OPNFV Fraser release <http://www.opnfv.org/fraser>`_
 
 Juju
 ----

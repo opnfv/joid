@@ -4,7 +4,7 @@ JOID Configuration
 Scenario 1: Nosdn
 -----------------
 
-*./deploy.sh -o ocata -s nosdn -t ha -l custom -f none -d xenial -m openstack*
+*./deploy.sh -o pike -s nosdn -t ha -l custom -f none -d xenial -m openstack*
 
 Scenario 2: Kubernetes core
 ---------------------------

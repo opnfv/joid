@@ -6,17 +6,17 @@
 Abstract
 ========
 
-This document compiles the release notes for the Euphrates release of
+This document compiles the release notes for the Fraser release of
 OPNFV when using JOID as a deployment tool for Kubernets and load balancer.
 
 Introduction
 ============
 
 These notes provides release information for the use of joid as deployment
-tool for the Euphrates release of OPNFV for Kubernets and load balancer
+tool for the Fraser release of OPNFV for Kubernets and load balancer
 scenario.
 
-The goal of the Euphrates release and this JOID based deployment process is
+The goal of the Fraser release and this JOID based deployment process is
 to establish a lab ready platform accelerating further development
 of the OPNFV infrastructure for docker based workloads.
 
@@ -46,7 +46,7 @@ EasyRSA
 Etcd (distributed key value store)
  Minimum Three node cluster for reliability.
 
-Euphrates release with the JOID deployment with Kubernetes with load balancer will establish an
+Fraser release with the JOID deployment with Kubernetes with load balancer will establish an
 OPNFV target system on a Pharos compliant lab infrastructure.
 
 NOTE: Detailed information on how to install in your lab can be find in installation guide
@@ -105,15 +105,15 @@ Release Data
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Repo/tag**                         | gerrit.opnfv.org/gerrit/joid.git     |
-|                                      | stable/euphrates                     |
+|                                      | stable/fraser                     |
 +--------------------------------------+--------------------------------------+
-| **Release designation**              | Euphrates release                    |
+| **Release designation**              | Fraser release                    |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Release date**                     | March 31 2017                        |
+| **Release date**                     | March 31 2018                        |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Purpose of the delivery**          | Euphrates release                    |
+| **Purpose of the delivery**          | Fraser release                    |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 
@@ -146,7 +146,7 @@ Known issues
 Scenario Releases
 =================
 Name:      joid-k8-ovn-lb-noha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-k8-ovn-lb-noha-baremetal-daily-euphrates/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-k8-ovn-lb-noha-baremetal-daily-fraser/
 Notes:
 
 References
