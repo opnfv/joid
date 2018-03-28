@@ -209,16 +209,12 @@ sudo virsh pool-define-as default --type dir --target /var/lib/libvirt/images/ |
 sudo virsh pool-start default || true
 sudo virsh pool-autostart default || true
 
-# In case of virtual install set network
-if [ "$virtinstall" -eq 1 ]; then
-    sudo virsh net-dumpxml default > default-net-org.xml
-    sed -i '/dhcp/d' default-net-org.xml
-    sed -i '/range/d' default-net-org.xml
-    sudo virsh net-destroy default
-    sudo virsh net-define default-net-org.xml
-    sudo virsh net-start default
-    rm -f default-net-org.xml
-fi
+# As we use kvm so setup network on admin network
+ADMIN_BR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="admin")'.bridge | cut -d \" -f 2 `
+sed -i "s@brAdm@$ADMIN_BR@" net.xml
+sudo virsh net-destroy default
+sudo virsh net-define net.xml
+sudo virsh net-start default
 
 #
 # Cleanup, juju init and config backup
@@ -465,9 +461,7 @@ addnodes(){
         VIRSHIP=""  # TODO: parse from $VIRSHURL if needed
     fi
 
-    if [ "$virtinstall" -eq 1 ]; then
-        netw=" --network bridge=virbr0,model=virtio"
-    elif ([ "$VIRSHHOST" != "" ]); then
+    if ([ "$VIRSHHOST" != "" ]); then
         # Get the bridge hosting the remote virsh
         brid=$(ssh $VIRSHHOST "ip a l | grep $VIRSHHOST | perl -pe 's/.* (.*)\$/\$1/g'")
         netw=" --network bridge=$brid,model=virtio"
