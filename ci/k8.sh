@@ -10,7 +10,6 @@ export KUBE_MASTER_URL=http://${KUBE_MASTER_IP}:6443
 
 configk8(){
 cat <<-EOF
-export KUBECONFIG=~/joid_config/config
 export KUBERNETES_PROVIDER=local
 export KUBE_MASTER_IP=${KUBE_MASTER_IP}
 export KUBE_MASTER_URL=${KUBE_MASTER_URL}
