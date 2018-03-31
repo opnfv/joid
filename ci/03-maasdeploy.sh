@@ -212,9 +212,10 @@ sudo virsh pool-autostart default || true
 # As we use kvm so setup network on admin network
 ADMIN_BR=`cat labconfig.json | jq '.opnfv.spaces[] | select(.type=="admin")'.bridge | cut -d \" -f 2 `
 sed -i "s@brAdm@$ADMIN_BR@" net.xml
-sudo virsh net-destroy default
-sudo virsh net-define net.xml
-sudo virsh net-start default
+sudo virsh net-destroy default || true
+sudo virsh net-undefine default || true
+sudo virsh net-define net.xml || true
+sudo virsh net-start default || true
 
 #
 # Cleanup, juju init and config backup
