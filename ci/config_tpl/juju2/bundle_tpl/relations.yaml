@@ -6,6 +6,8 @@
     - [ 'ceilometer:amqp', 'rabbitmq-server:amqp' ]
     - [ 'ceilometer-agent:ceilometer-service', 'ceilometer:ceilometer-service' ]
     - [ 'ceilometer:identity-notifications', 'keystone:identity-notifications' ]
+    - [ 'ceilometer:identity-service', 'keystone:identity-service' ]
+    - [ 'ceilometer:identity-credentials', 'keystone:identity-credentials' ]
     - [ 'ceilometer-agent:nova-ceilometer', 'nova-compute:nova-ceilometer' ]
     - [ 'gnocchi:storage-ceph', 'ceph-mon:client' ]
     - [ 'gnocchi:shared-db', 'mysql:shared-db' ]
@@ -13,7 +15,6 @@
     - [ 'gnocchi:coordinator-memcached', 'memcached:cache' ]
     - [ 'gnocchi:metric-service', 'ceilometer:metric-service' ]
     - [ 'gnocchi:identity-service', 'keystone:identity-service' ]
-    - [ 'ceilometer:identity-credentials', 'keystone:identity-credentials' ]
 {% endif %}
     - [ 'heat:shared-db', 'mysql:shared-db' ]
     - [ 'heat:identity-service', 'keystone:identity-service' ]
