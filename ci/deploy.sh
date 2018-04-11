@@ -21,7 +21,7 @@ virtinstall=0
 maasinstall=0
 
 usage() { echo "Usage: $0
-    [-s|--sdn <nosdn|odl|opencontrail>]
+    [-s|--sdn <nosdn|odl|ocl>]
     [-t|--type <noha|ha|tip>]
     [-o|--openstack <ocata|pike>]
     [-l|--lab <default|custom>]
