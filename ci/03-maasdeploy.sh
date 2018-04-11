@@ -579,7 +579,20 @@ addnodes(){
         done
     fi
 
-    maas $PROFILE pods create type=virsh power_address="$VIRSHURL" power_user=$USER
+     # Iterate to avoid "Conflict error" issue
+     for ii in 1 2 3 4 5 6 7 8 9 10
+     do
+       echo "Try $ii"
+       maas $PROFILE pods create type=virsh power_address="$VIRSHURL" power_user=$USER > /tmp/deploy.out 2>&1 || true
+       cat /tmp/deploy.out
+       if ! fgrep -q 'Conflict' /tmp/deploy.out
+       then
+         break
+       else
+         continue
+       fi
+     done
+
 
     # Make sure nodes are added into MAAS and none of them is in commissioning state
     i=0
