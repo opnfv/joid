@@ -61,9 +61,9 @@ if [ "$snapinstall" -eq "0" ]; then
     sudo apt-add-repository ppa:maas/stable -y
 fi
 if [ "bionic" != "$opnfvdistro" ]; then
-        sudo apt-add-repository cloud-archive:pike -y
+        sudo apt-add-repository cloud-archive:queens -y
     if [ "aarch64" == "$NODE_ARCTYPE" ]; then
-        sudo add-apt-repository ppa:ubuntu-cloud-archive/pike-staging -y
+        sudo add-apt-repository ppa:ubuntu-cloud-archive/queens-staging -y
     fi
 fi
 

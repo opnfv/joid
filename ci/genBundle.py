@@ -202,6 +202,8 @@ if 'hugepages' in extra:
     config['os']['beta']['cpu_pin'] = True
 if 'ocata' in extra:
     config['os']['release'] = 'ocata'
+if 'pike' in extra:
+    config['os']['release'] = 'pike'
 if 'trusty' in extra:
     config['ubuntu']['release'] = 'trusty'
     if 'ocata' in extra:

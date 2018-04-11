@@ -32,7 +32,15 @@
         ceph-osd-replication-count: {{ unit_ceph_qty() }}
 {% endif %}
 {% if os.ha.mode == 'ha' %}
-        vip: {{ opnfv.vip.cinder }}
+        vip: *cinder-vip
+{% endif %}
+{% if os.api.ssl %}
+        ssl_ca: *ssl_ca
+        ssl_cert: *ssl_cert
+        ssl_key: *ssl_key
+        os-public-hostname: *hostname_cinder_public
+        os-internal-hostname: *hostname_cinder_public
+        os-admin-hostname: *hostname_cinder_public
 {% endif %}
       to:
 {% if opnfv.storage_dict.scaleio is defined %}

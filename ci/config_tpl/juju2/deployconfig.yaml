@@ -46,25 +46,32 @@ opnfv:
   units: {{ lab.racks[0].nodes|count }}
   vip:
 {% if opnfv.spaces_dict.public is defined %}
-    dashboard: {{ netpublic_prefix }}21 {{ net_prefix }}21
-    glance: {{ netpublic_prefix }}22 {{ net_prefix }}22
-    keystone: {{ netpublic_prefix }}23 {{ net_prefix }}23
+    aodh: {{ netpublic_prefix }}33 {{ net_prefix }}33
     ceilometer: {{ netpublic_prefix }}24 {{ net_prefix }}24
-    mysql: {{ net_prefix }}25
-    nova: {{ netpublic_prefix }}26 {{ net_prefix }}26
-    neutron: {{ netpublic_prefix }}27 {{ net_prefix }}27
-    heat: {{ netpublic_prefix }}28 {{ net_prefix }}28
     cinder: {{ netpublic_prefix }}29 {{ net_prefix }}29
+    dashboard: {{ netpublic_prefix }}21 {{ net_prefix }}21
+    designate: {{ netpublic_prefix }}32 {{ net_prefix }}32
+    glance: {{ netpublic_prefix }}22 {{ net_prefix }}22
+    gnocchi: {{ netpublic_prefix }}31 {{ net_prefix }}31
+    heat: {{ netpublic_prefix }}28 {{ net_prefix }}28
+    keystone: {{ netpublic_prefix }}23 {{ net_prefix }}23
+    mysql: {{ net_prefix }}25
+    neutron: {{ netpublic_prefix }}27 {{ net_prefix }}27
+    nova: {{ netpublic_prefix }}26 {{ net_prefix }}26
     radosgw: {{ netpublic_prefix }}30 {{ net_prefix }}30
 {% else %}
-    dashboard: {{ net_prefix }}21
-    glance: {{ net_prefix }}22
-    keystone: {{ net_prefix }}23
+    aodh: {{ net_prefix }}33
     ceilometer: {{ net_prefix }}24
-    mysql: {{ net_prefix }}25
-    nova: {{ net_prefix }}26
-    neutron: {{ net_prefix }}27
-    heat: {{ net_prefix }}28
     cinder: {{ net_prefix }}29
+    dashboard: {{ net_prefix }}21
+    designate: {{ net_prefix }}32
+    glance: {{ net_prefix }}22
+    gnocchi: {{ net_prefix }}31
+    heat: {{ net_prefix }}28
+    keystone: {{ net_prefix }}23
+    mysql: {{ net_prefix }}25
+    neutron: {{ net_prefix }}27
+    nova: {{ net_prefix }}26
     radosgw: {{ net_prefix }}30
 {% endif %}
+

@@ -21,7 +21,7 @@
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
 {% if os.ha.mode == 'ha' %}
-        vip: {{ opnfv.vip.neutron }}
+        vip: *neutron-api-vip
 {% endif %}
 {% if os.network.controller == 'nosdn' %}
         flat-network-providers: physnet1
@@ -46,6 +46,14 @@
 {% endif %}
 {% if os.network.l2_population %}
         l2-population: true
+{% endif %}
+{% if os.api.ssl %}
+        ssl_ca: *ssl_ca
+        ssl_cert: *ssl_cert
+        ssl_key: *ssl_key
+        os-public-hostname: *hostname_neutron_public
+        os-internal-hostname: *hostname_neutron_public
+        os-admin-hostname: *hostname_neutron_public
 {% endif %}
       to:
 {% for unit_id in to_select() %}
