@@ -1,0 +1,141 @@
+lab:
+  location: kontron
+  racks:
+  - rack: pod1
+    nodes:
+    - name: rack-1-s3-c1
+      architecture: x86_64
+      roles: [network,control]
+      nics:
+      - ifname: intf1
+        spaces: [admin]
+        mac: ["00:a0:a5:9a:d7:26"]
+      - ifname: intf2
+        spaces: []
+        mac: ["00:a0:a5:9a:d7:24"]
+      - ifname: intf2.30
+        spaces: [floating]
+        mac: ["00:a0:a5:9a:d7:24"]
+      - ifname: intf2.10
+        spaces: [data]
+        mac: ["00:a0:a5:9a:d7:24"]
+      power:
+        type: ipmi
+        address: 192.168.101.13
+        user: admin
+        pass: admin
+    - name: rack-1-s4-c1
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: intf1
+        spaces: [admin]
+        mac: ["00:a0:a5:9a:d7:20"]
+      - ifname: intf2
+        spaces: []
+        mac: ["00:a0:a5:9a:d7:1e"]
+      - ifname: intf2.30
+        spaces: [floating]
+        mac: ["00:a0:a5:9a:d7:1e"]
+      - ifname: intf2.10
+        spaces: [data]
+        mac: ["00:a0:a5:9a:d7:1e"]
+      power:
+        type: ipmi
+        address: 192.168.101.14
+        user: admin
+        pass: admin
+    - name: rack-1-s5-c1
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: intf1
+        spaces: [admin]
+        mac: ["00:a0:a5:9a:f1:50"]
+      - ifname: intf2
+        spaces: []
+        mac: ["00:a0:a5:9a:f1:4e"]
+      - ifname: intf2.30
+        spaces: [floating]
+        mac: ["00:a0:a5:9a:f1:4e"]
+      - ifname: intf2.10
+        spaces: [data]
+        mac: ["00:a0:a5:9a:f1:4e"]
+      power:
+        type: ipmi
+        address: 192.168.101.15
+        user: admin
+        pass: admin
+    - name: rack-1-s6-c1
+      architecture: x86_64
+      roles: [compute,storage]
+      nics:
+      - ifname: intf1
+        spaces: [admin]
+        mac: ["00:a0:a5:9b:00:b0"]
+      - ifname: intf2
+        spaces: []
+        mac: ["00:a0:a5:9b:00:ae"]
+      - ifname: intf2.30
+        spaces: [floating]
+        mac: ["00:a0:a5:9b:00:ae"]
+      - ifname: intf2.10
+        spaces: [data]
+        mac: ["00:a0:a5:9b:00:ae"]
+      power:
+        type: ipmi
+        address: 192.168.101.16
+        user: admin
+        pass: admin
+    - name: rack-1-s7-c1
+      architecture: x86_64
+      roles: [compute,control,storage]
+      nics:
+      - ifname: intf1
+        spaces: [admin]
+        mac: ["00:a0:a5:9b:05:7a"]
+      - ifname: intf2
+        spaces: []
+        mac: ["00:a0:a5:9b:05:78"]
+      - ifname: intf2.30
+        spaces: [floating]
+        mac: ["00:a0:a5:9b:05:78"]
+      - ifname: intf2.10
+        spaces: [data]
+        mac: ["00:a0:a5:9b:05:78"]
+      power:
+        type: ipmi
+        address: 192.168.101.17
+        user: admin
+        pass: admin
+    floating-ip-range: 10.10.3.40,10.10.3.250,10.10.3.1,10.10.3.0/24
+    ext-port: "intf2.30"
+    dns: 8.8.8.8
+    osdomainname:
+opnfv:
+  release: f
+  distro: xenial
+  type: noha
+  openstack: pike
+  sdncontroller:
+  - type: nosdn
+  storage:
+  - type: ceph
+    disk: /dev/sdb
+  feature: odl_l2
+  spaces:
+  - type: admin
+    bridge: brAdmin
+    cidr: 10.10.0.0/24
+    gateway: 10.10.0.1
+    vlan:
+  - type: floating
+    bridge: brExt
+    cidr: 10.10.3.0/24
+    gateway: 10.10.3.1
+    vlan: 30
+  - type: data
+    bridge: brData
+    cidr: 10.10.1.0/24
+    gateway:
+    vlan: 10
