@@ -65,6 +65,11 @@
     - [ 'aodh:amqp', 'rabbitmq-server:amqp' ]
     - [ 'aodh:shared-db', 'mysql:shared-db' ]
     - [ 'aodh:identity-service', 'keystone:identity-service' ]
+    - [ designate, mysql ]
+    - [ designate, designate-bind ]
+    - [ designate, keystone ]
+    - [ designate, rabbitmq-server ]
+    - [ designate, memcached ]
 {% if os.lxd %}
     - [ 'nova-compute:lxd', 'lxd:lxd' ]
 {% endif %}

@@ -18,7 +18,15 @@
 {% endif %}
         worker-multiplier: *worker-multiplier
 {% if os.ha.mode == 'ha' %}
-        vip: {{ opnfv.vip.heat }}
+        vip: *heat-vip
+{% endif %}
+{% if os.api.ssl %}
+        ssl_ca: *ssl_ca
+        ssl_cert: *ssl_cert
+        ssl_key: *ssl_key
+        os-public-hostname: *hostname_heat_public
+        os-internal-hostname: *hostname_heat_public
+        os-admin-hostname: *hostname_heat_public
 {% endif %}
       to:
 {% for unit_id in to_select() %}

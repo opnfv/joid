@@ -73,7 +73,6 @@
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
-{% if os.beta.hacluster_ceph_radosgw %}
     hacluster-ceph-radosgw:
       charm: "./{{ ubuntu.release }}/hacluster"
       options:
@@ -82,4 +81,27 @@
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
+    hacluster-aodh:
+      charm: "./{{ ubuntu.release }}/hacluster"
+      options:
+        corosync_transport: unicast
+        cluster_count: 3
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+    hacluster-gnocchi:
+      charm: "./{{ ubuntu.release }}/hacluster"
+      options:
+        corosync_transport: unicast
+        cluster_count: 3
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
+{% endif %}
+    hacluster-designate:
+      charm: "./{{ ubuntu.release }}/hacluster"
+      options:
+        corosync_transport: unicast
+        cluster_count: 3
+{% if os.network.ipv6 %}
+        prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}

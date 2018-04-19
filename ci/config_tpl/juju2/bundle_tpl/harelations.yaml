@@ -11,4 +11,7 @@
     - [ 'nova-cloud-controller:ha', 'hacluster-nova:ha' ]
     - [ 'openstack-dashboard:ha', 'hacluster-horizon:ha' ]
     - [ 'ceph-radosgw:ha', 'hacluster-ceph-radosgw:ha' ]
+    - [ 'aodh:ha', 'hacluster-aodh:ha' ]
+    - [ 'gnocchi:ha', 'hacluster-gnocchi:ha' ]
+    - [ 'designate:ha', 'hacluster-designate:ha' ]
 {% endif %}

@@ -66,3 +66,40 @@
 {% endif %}
     osd-journal:         &osd-journal
 
+{% if os.ha.mode == 'ha' %}
+    # Various VIPs
+    aodh-vip:            &aodh-vip            {{ opnfv.vip.aodh }}
+    ceilometer-vip:      &ceilometer-vip      {{ opnfv.vip.ceilometer }}
+    cinder-vip:          &cinder-vip          {{ opnfv.vip.cinder }}
+    dashboard-vip:       &dashboard-vip       {{ opnfv.vip.dashboard }}
+    designate-vip:       &designate-vip       {{ opnfv.vip.designate }}
+    glance-vip:          &glance-vip          {{ opnfv.vip.glance }}
+    gnocchi-vip:         &gnocchi-vip         {{ opnfv.vip.gnocchi }}
+    heat-vip:            &heat-vip            {{ opnfv.vip.heat }}
+    keystone-vip:        &keystone-vip        {{ opnfv.vip.keystone }}
+    mysql-vip:           &mysql-vip           {{ opnfv.vip.mysql }}
+    neutron-api-vip:     &neutron-api-vip     {{ opnfv.vip.neutron }}
+    nova-cc-vip:         &nova-cc-vip         {{ opnfv.vip.nova }}
+    rados-gateway-vip:   &rados-gateway-vip   {{ opnfv.vip.radosgw }}
+{% endif %}
+
+{% if os.api.ssl %}
+    ssl_ca:     &ssl_ca     include-base64://ssl/ca.crt
+    ssl_cert:   &ssl_cert   include-base64://ssl/maas.crt
+    ssl_key:    &ssl_key    include-base64://ssl/maas.key
+
+    hostname_aodh_public:        &hostname_aodh_public          aodh.maas
+    hostname_ceilometer_public:  &hostname_ceilometer_public    ceilometer.maas
+    hostname_cinder_public:      &hostname_cinder_public        cinder.maas
+    hostname_dashboard_public:   &hostname_dashboard_public     openstack-dashboard.maas
+    hostname_designate_public:   &hostname_designate_public     designate.maas
+    hostname_glance_public:      &hostname_glance_public        glance.maas
+    hostname_gnocchi_public:     &hostname_gnocchi_public       gnocchi.maas
+    hostname_heat_public:        &hostname_heat_public          heat.maas
+    hostname_keystone_public:    &hostname_keystone_public      keystone.maas
+    hostname_rabbitmq:           &hostname_rabbitmq             rabbitmq.maas
+    hostname_neutron_public:     &hostname_neutron_public       neutron-api.maas
+    hostname_nova_public:        &hostname_nova_public          nova-cloud-controller.maas
+    hostname_radosgw_public:     &hostname_radosgw_public       rados-gateway.maas
+{% endif %}
+

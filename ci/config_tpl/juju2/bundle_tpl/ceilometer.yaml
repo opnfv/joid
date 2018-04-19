@@ -1,23 +1,42 @@
     gnocchi:
       charm: ./{{ ubuntu.release }}/gnocchi
-      num_units: 1
+      num_units: {{ unit_qty() }}
+{% if os.service.bindings %}
+      bindings:
+        "": *oam-space
+        public: *public-space
+        admin: *admin-space
+        internal: *internal-space
+{% endif %}
+      options:
+        openstack-origin: *openstack-origin
+{% if os.ha.mode == 'ha' %}
+        vip: *gnocchi-vip
+{% endif %}
+{% if os.api.ssl %}
+        ssl_ca: *ssl_ca
+        ssl_cert: *ssl_cert
+        ssl_key: *ssl_key
+        os-public-hostname: *hostname_gnocchi_public
+        os-internal-hostname: *hostname_gnocchi_public
+        os-admin-hostname: *hostname_gnocchi_public
+{% endif %}
+      to:
+{% for unit_id in to_select() %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}
+    memcached:
+      charm: ./{{ ubuntu.release }}/memcached
+      num_units: 2
 {% if os.service.bindings %}
       bindings:
         "": *internal-space
 {% endif %}
       options:
-        openstack-origin: *openstack-origin
+        allow-ufw-ip6-softfail: True
       to:
-        - "lxd:nodes/0"
-    memcached:
-      charm: ./{{ ubuntu.release }}/memcached
-      num_units: 1
-{% if os.service.bindings %}
-      bindings:
-        "": *internal-space
-{% endif %}
-      to:
-        - "lxd:nodes/0"
+        - "designate-bind/0"
+        - "designate-bind/1"
     ceilometer:
       charm: "./{{ ubuntu.release }}/ceilometer"
       num_units: {{ unit_qty() }}
@@ -32,7 +51,15 @@
         openstack-origin: *openstack-origin
         region: *openstack-region
 {% if os.ha.mode == 'ha' %}
-        vip: {{ opnfv.vip.ceilometer }}
+        vip: *ceilometer-vip
+{% endif %}
+{% if os.api.ssl %}
+        ssl_ca: *ssl_ca
+        ssl_cert: *ssl_cert
+        ssl_key: *ssl_key
+        os-public-hostname: *hostname_ceilometer_public
+        os-internal-hostname: *hostname_ceilometer_public
+        os-admin-hostname: *hostname_ceilometer_public
 {% endif %}
       to:
 {% for unit_id in to_select() %}

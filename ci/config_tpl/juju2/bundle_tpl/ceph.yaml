@@ -90,7 +90,15 @@
         ceph-osd-replication-count: {{ unit_ceph_qty() }}
 {% endif %}
 {% if os.ha.mode == 'ha' %}
-        vip: {{ opnfv.vip.radosgw }}
+        vip: *rados-gateway-vip
+{% endif %}
+{% if os.api.ssl %}
+        ssl_ca: *ssl_ca
+        ssl_cert: *ssl_cert
+        ssl_key: *ssl_key
+        os-public-hostname: *hostname_radosgw_public
+        os-admin-hostname: *hostname_radosgw_public
+        os-internal-hostname: *hostname_radosgw_public
 {% endif %}
       to:
 {% for unit_id in to_select(unit_qty()) %}

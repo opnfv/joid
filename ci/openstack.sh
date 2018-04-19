@@ -62,7 +62,7 @@ keystoneIp() {
     if [ $(juju status keystone --format=short | grep " keystone"|wc -l) == 1 ];then
         unitAddress keystone 0
     else
-        juju config keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['vip']['value']" | cut -d " " -f 1
+        juju config keystone vip | cut -d " " -f 1
     fi
 }
 
@@ -71,13 +71,26 @@ create_openrc() {
     echo_info "Creating the openrc (OpenStack client environment scripts)"
 
     mkdir -m 0700 -p cloud
-    keystoneIp=$(keystoneIp)
-    adminPasswd=$(juju config keystone | python -c "import yaml; import sys; print yaml.load(sys.stdin)['settings']['admin-password']['value']" | cut -d " " -f 1)
+    usessl=$(juju config keystone ssl_ca)
+    if [[ "$usessl" == "" ]]; then
+        usessl=no
+    else
+        usessl=yes
+    fi
+    keystoneIp=$(juju config keystone os-public-hostname | cut -d " " -f 1)
+    if [[ "$keystoneIp" == "" ]]; then
+        keystoneIp=$(keystoneIp)
+    fi
+    adminPasswd=$(juju config keystone admin-password | cut -d " " -f 1)
 
-    v3api=`juju config keystone  preferred-api-version`
+    v3api=$(juju config keystone  preferred-api-version)
 
     if [[ "$v3api" == "3" ]]; then
-        configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v3 RegionOne publicURL > ~/joid_config/admin-openrc
+        if [ "$usessl" == "yes" ]; then
+            configOpenrc admin $adminPasswd admin https://$keystoneIp:5000/v3 RegionOne publicURL > ~/joid_config/admin-openrc
+        else
+            configOpenrc admin $adminPasswd admin http://$keystoneIp:5000/v3 RegionOne publicURL > ~/joid_config/admin-openrc
+        fi
         chmod 0600 ~/joid_config/admin-openrc
         source ~/joid_config/admin-openrc
         projectid=`openstack project show admin -c id -f value`
@@ -105,6 +118,7 @@ EOF
 }
 
 configOpenrc() {
+if [ "$usessl" == "yes" ]; then
 cat <<-EOF
 #export OS_NO_CACHE='true'
 export OS_AUTH_URL=$4
@@ -117,10 +131,30 @@ export OS_PASSWORD=$2
 export OS_IDENTITY_API_VERSION=3
 export OS_REGION_NAME=$5
 export OS_INTERFACE=public
-#export OS_INSECURE=true
-#export OS_CASSL=~/joid_config/ca.pem
+export OS_CACERT=~/joid_config/keystone_juju_ca_cert.crt
 EOF
+else
+cat <<-EOF
+#export OS_NO_CACHE='true'
+export OS_AUTH_URL=$4
+export OS_USER_DOMAIN_NAME=admin_domain
+export OS_PROJECT_DOMAIN_NAME=admin_domain
+export OS_USERNAME=$1
+export OS_TENANT_NAME=$3
+export OS_PROJECT_NAME=$3
+export OS_PASSWORD=$2
+export OS_IDENTITY_API_VERSION=3
+export OS_REGION_NAME=$5
+export OS_INTERFACE=public
+#export OS_CACERT=~/joid_config/bradm.etsi-ubuntu-jh.maas.pem
+EOF
+fi
 }
+
+
+if [ "$usessl" == "yes" ]; then
+    juju scp keystone/0:/usr/local/share/ca-certificates/keystone_juju_ca_cert.crt ~/joid_config/
+fi
 
 # Create an load openrc
 create_openrc

@@ -25,7 +25,15 @@
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
 {% if os.ha.mode == 'ha' %}
-        vip: {{ opnfv.vip.nova }}
+        vip: *nova-cc-vip
+{% endif %}
+{% if os.api.ssl %}
+        ssl_ca: *ssl_ca
+        ssl_cert: *ssl_cert
+        ssl_key: *ssl_key
+        os-public-hostname: *hostname_nova_public
+        os-internal-hostname: *hostname_nova_public
+        os-admin-hostname: *hostname_nova_public
 {% endif %}
 {% if opnfv.domain is defined %}
         #console-proxy-ip: {{ opnfv.domain }}

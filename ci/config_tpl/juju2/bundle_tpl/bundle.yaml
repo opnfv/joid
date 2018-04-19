@@ -57,6 +57,7 @@
 {% include 'rabbitmq.yaml' %}
 {% include 'neutron-api.yaml' %}
 {% include 'heat.yaml' %}
+{% include 'designate.yaml' %}
 {% if os.network.controller != 'ocl' %}
 {% include 'neutron-gateway.yaml' %}
 {% include 'ceilometer.yaml' %}

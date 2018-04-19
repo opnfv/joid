@@ -23,6 +23,7 @@
 {% if os.network.controller == 'nosdn' %}
         bridge-mappings: physnet1:br-data
         data-port: *data-port
+        #enable-local-dhcp-and-metadata: true
 {% else %}
         ext-port: {{ opnfv.ext_port }}
 {% endif %}

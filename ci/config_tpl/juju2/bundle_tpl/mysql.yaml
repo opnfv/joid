@@ -23,7 +23,7 @@
         prefer-ipv6: {{ os.network.ipv6 }}
 {% endif %}
 {% if os.ha.mode == 'ha' %}
-        vip: {{ opnfv.vip.mysql }}
+        vip: *mysql-vip
 {% endif %}
         min-cluster-size: {{ unit_qty() }}
       to:

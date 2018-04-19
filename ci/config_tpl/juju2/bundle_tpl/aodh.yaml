@@ -1,6 +1,6 @@
     aodh:
       charm: "./{{ ubuntu.release }}/aodh"
-      num_units: 1
+      num_units: {{ unit_qty() }}
 {% if os.service.bindings %}
       bindings:
         "": *oam-space
@@ -11,6 +11,19 @@
 {% endif %}
       options:
         openstack-origin: *openstack-origin
+{% if os.ha.mode == 'ha' %}
+        vip: *aodh-vip
+{% endif %}
+{% if os.api.ssl %}
+        ssl_ca: *ssl_ca
+        ssl_cert: *ssl_cert
+        ssl_key: *ssl_key
+        os-public-hostname: *hostname_aodh_public
+        os-internal-hostname: *hostname_aodh_public
+        os-admin-hostname: *hostname_aodh_public
+{% endif %}
       to:
-        - "lxd:nodes/0"
+{% for unit_id in to_select() %}
+        - "lxd:nodes/{{ unit_id }}"
+{% endfor %}
 {# Empty block to avoid bad block trim #}

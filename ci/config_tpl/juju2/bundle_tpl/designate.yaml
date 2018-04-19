@@ -1,5 +1,5 @@
-    keystone:
-      charm: "./{{ ubuntu.release }}/keystone"
+    designate:
+      charm: "./{{ ubuntu.release }}/designate"
       num_units: {{ unit_qty() }}
 {% if os.service.bindings %}
       bindings:
@@ -15,15 +15,10 @@
         openstack-origin-git: "{{ os.git_repo.branch }}"
 {% endif %}
         region: *openstack-region
-        admin-role: {{ os.admin.role }}
-        keystone-admin-role: {{ os.admin.role }}
-        preferred-api-version: 3
 {% if os.api.ssl %}
         ssl_ca: *ssl_ca
         ssl_cert: *ssl_cert
         ssl_key: *ssl_key
-        #use-https: 'yes'
-        #https-service-endpoints: 'True'
         os-public-hostname: *hostname_keystone_public
         os-internal-hostname: *hostname_keystone_public
         os-admin-hostname: *hostname_keystone_public
@@ -34,12 +29,19 @@
 {% if os.api.worker_multiplier %}
         worker-multiplier: *worker-multiplier
 {% endif %}
-        admin-password: {{ opnfv.admin_password | default(os.admin.password) }}
-        admin-token: {{ os.admin.name }}
 {% if os.ha.mode == 'ha' %}
-        vip: *keystone-vip
+        vip: *designate-vip
 {% endif %}
       to:
 {% for unit_id in to_select() %}
         - "lxd:nodes/{{ unit_id }}"
 {% endfor %}
+    designate-bind:
+      charm: "./{{ ubuntu.release }}/designate-bind"
+      num_units: 2
+      bindings:
+        "": *internal-space
+      to:
+        - lxd:nodes/0
+        - lxd:nodes/1
+
