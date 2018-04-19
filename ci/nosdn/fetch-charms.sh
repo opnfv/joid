@@ -34,8 +34,8 @@ git clone -b stable/18.02 https://github.com/openstack/charm-heat.git $distro/he
 git clone -b stable/18.02 https://github.com/openstack/charm-lxd.git $distro/lxd
 git clone https://github.com/openbaton/juju-charm.git $distro/openbaton
 
-+charm pull cs:designate $distro/designate
-+charm pull cs:designate-bind $distro/designate-bind
+charm pull cs:designate $distro/designate
+charm pull cs:designate-bind $distro/designate-bind
 charm pull cs:memcached $distro/memcached
 charm pull cs:gnocchi $distro/gnocchi
 charm pull cs:$distro/aodh $distro/aodh

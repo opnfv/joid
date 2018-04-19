@@ -41,6 +41,7 @@
       num_units: 2
       bindings:
         "": *internal-space
+      series: {{ ubuntu.release }}
       to:
         - "lxd:nodes/0"
         - "lxd:nodes/1"

@@ -36,8 +36,8 @@
       options:
         allow-ufw-ip6-softfail: True
       to:
-        - "designate-bind/0"
-        - "designate-bind/1"
+        - "lxd:nodes/0"
+        - "lxd:nodes/1"
     ceilometer:
       charm: "./{{ ubuntu.release }}/ceilometer"
       num_units: {{ unit_qty() }}
