@@ -42,6 +42,6 @@
       bindings:
         "": *internal-space
       to:
-        - lxd:nodes/0
-        - lxd:nodes/1
+        - "lxd:nodes/0"
+        - "lxd:nodes/1"
 

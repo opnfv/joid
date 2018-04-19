@@ -32,6 +32,7 @@
       bindings:
         "": *internal-space
 {% endif %}
+      series: {{ ubuntu.release }}
       options:
         allow-ufw-ip6-softfail: True
       to:
