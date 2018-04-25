@@ -320,18 +320,6 @@ python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, i
 
 # Configuring deployment
 if ([ $opnfvmodel == "openstack" ]); then
-   if ([ $opnfvsdn == "ocl" ]); then
-       echo_info "Patching OpenContrail controller container"
-         juju run --application contrail-controller sudo docker cp contrail-controller:/etc/contrail/vnc_api_lib.ini /tmp
-         juju run --application contrail-controller cp /tmp/vnc_api_lib.ini /tmp/vnc_api_lib.ini2
-         juju run --application contrail-controller 'echo "AUTHN_DOMAIN = admin_domain" >> /tmp/vnc_api_lib.ini2'
-         juju run --application contrail-controller sudo docker cp  /tmp/vnc_api_lib.ini2 contrail-controller:/etc/contrail/vnc_api_lib.ini
-         juju run --application contrail-controller sudo docker exec  contrail-controller service contrail-api restart
-  
-         juju run --application contrail-controller sudo docker cp  /tmp/vnc_api_lib.ini2 contrail-analytics:/etc/contrail/vnc_api_lib.ini
-         echo_info "Wait for OpenContrail components to stabilize"
-         sleep 600
-    fi
 
     echo_info "Configuring OpenStack deployment"
 
@@ -340,16 +328,22 @@ if ([ $opnfvmodel == "openstack" ]); then
     # creating heat domain after pushing the public API into /etc/hosts
     status=`juju run-action heat/0 domain-setup`
     echo $status
-    status=`juju run-action ceilometer/0 ceilometer-upgrade`
+    if  ([ $opnfvsdn != "ocl" ]) then
+      status=`juju run-action ceilometer/0 ceilometer-upgrade`
+    fi
     echo $status
     if ([ $opnftype == "ha" ]); then
         status=`juju run-action heat/1 domain-setup`
         echo $status
-        status=`juju run-action ceilometer/1 ceilometer-upgrade`
+        if  ([ $opnfvsdn != "ocl" ]) then
+          status=`juju run-action ceilometer/1 ceilometer-upgrade`
+        fi
         echo $status
         status=`juju run-action heat/2 domain-setup`
         echo $status
-        status=`juju run-action ceilometer/2 ceilometer-upgrade`
+        if  ([ $opnfvsdn != "ocl" ]) then
+          status=`juju run-action ceilometer/2 ceilometer-upgrade`
+        fi
         echo $status
     fi
 
