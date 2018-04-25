@@ -6,7 +6,7 @@ Configure OpenStack
 
 openstack.sh under joid/ci used to configure the openstack after deployment
 
-./openstack.sh <nosdn> custom xenial newton
+./openstack.sh <nosdn> custom xenial pike
 
 Below commands are used to setup domain in heat.
 juju run-action heat/0 domain-setup

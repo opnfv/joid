@@ -1,4 +1,4 @@
-.. This work is licensed under a Creative Commons Attribution 4.0 International License.
+/. This work is licensed under a Creative Commons Attribution 4.0 International License.
 .. http://creativecommons.org/licenses/by/4.0
 .. (c) <optionally add copywriters name>
 
@@ -26,17 +26,17 @@ Summary
 =======
 
 The Fraser release with the JOID deployment toolchain will establish an OPNFV target system on a Pharos compliant lab infrastructure.
-The current definition of an OPNFV target system is and OpenStack Newton combined with OpenDaylight Boron.
+The current definition of an OPNFV target system is and OpenStack Pike combined with OpenDaylight Boron.
 
 The system is deployed with OpenStack High Availability (HA) for most OpenStack services.
 Ceph storage is used as Cinder backend, and is the only supported storage for Fraser. Ceph is setup as 3 OSDs and 3 Monitors, one radosgw.
 
     User has following choices to make to do the deployment.
 
-    - Openstack      -- Newton
+    - Openstack      -- Pike
     - Type           -- HA, nonHA, tip (stable git branch of respective openstack)
-    - SDN controller -- OpenDaylight, nosdn(Openvswitch), Onos, OpenContrail
-    - Feature        -- IPV6, DVR(distributed virtual routing), SFC(service function chaining odl only), BGPVPN(odl only), LB(Load Balancer for Kubernetes)
+    - SDN controller -- nosdn(Openvswitch), Onos, OpenContrail, Canal(k8), OVN (K8)
+    - Feature        -- IPV6, DVR(distributed virtual routing), ceph(Kubernetes storage), LB(Load Balancer for Kubernetes)
     - Distro         -- Xenial
     - Model          -- Openstack, Kubernetes
 
@@ -54,15 +54,15 @@ Release Data
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Repo/tag**                         | gerrit.opnfv.org/gerrit/joid.git     |
-|                                      | stable/fraser                     |
+|                                      | opnfv-6.0.0                          |
 +--------------------------------------+--------------------------------------+
-| **Release designation**              | Fraser release                    |
+| **Release designation**              | Fraser release                       |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Release date**                     | December 15 2017                      |
+| **Release date**                     | April 27 2018                        |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Purpose of the delivery**          | Fraser release                    |
+| **Purpose of the delivery**          | Fraser release                       |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 
@@ -87,7 +87,7 @@ Version change
 Module version change
 ~~~~~~~~~~~~~~~~~~~~~
   - Fraser release with the JOID deployment toolchain.
-  - OpenStack (Ocata release)
+  - OpenStack (Pike release)
   - Kubernetes 1.8
   - Ubuntu 16.04 LTS
 
@@ -116,7 +116,7 @@ Feature additions
 +--------------------------------------+--------------------------------------+
 | JIRA:	JOID-106                       | Kubernetes on Baremetal              |
 +--------------------------------------+--------------------------------------+
-| JIRA:	JOID-102                       | Enable OpenStack Ocata               |
+| JIRA:	                               | Enable OpenStack Pike               |
 +--------------------------------------+--------------------------------------+
 |                                      | Enable OpenContrail                  |
 +--------------------------------------+--------------------------------------+
@@ -203,6 +203,14 @@ Name:      joid-os-ocl-nofeature-noha
 Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-ocl-nofeature-noha-baremetal-daily-fraser/
 Notes:
 
+Name:      joid-k8-canal-lb-noha
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-k8-canal-lb-noha-baremetal-daily-fraser/
+Notes:
+
+Name:      joid-k8-nosdn-lb_ceph-noha
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-k8-nosdn-lb_ceph-noha-baremetal-daily-fraser/
+Notes:
+
 References
 ==========
 For more information on the OPNFV Fraser release, please visit
@@ -221,12 +229,12 @@ MAAS
 JOID
 ----
 - `OPNFV JOID wiki <https://wiki.opnfv.org/joid>`_
-- `OPNFV Release Notes <http://docs.opnfv.org/en/stable-danube/submodules/joid/docs/release/release-notes/release-notes.html>`_
+- `OPNFV Release Notes <http://docs.opnfv.org/en/stable-fraser/submodules/joid/docs/release/release-notes/release-notes.html>`_
 - `OPNFV JOID Install Guide <http://docs.opnfv.org/en/latest/submodules/joid/docs/release/installation/index.html>`_
 
 OpenStack
 ---------
-- `OpenStack Newton Release artifacts <http://www.openstack.org/software/ocata>`_
+- `OpenStack Pike Release artifacts <http://www.openstack.org/software/pike>`_
 - `OpenStack documentation <http://docs.openstack.org>`_
 
 OpenDaylight

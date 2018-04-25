@@ -7,14 +7,13 @@ Abstract
 ========
 
 This document compiles the release notes for the Fraser release of
-OPNFV when using JOID as a deployment tool for Kubernets and load balancer.
+OPNFV when using JOID as a deployment tool for Kubernetes with cancal CNI.
 
 Introduction
 ============
 
 These notes provides release information for the use of joid as deployment
-tool for the Fraser release of OPNFV for Kubernets and load balancer
-scenario.
+tool for the Fraser release of OPNFV for Kubernetes scenario.
 
 The goal of the Fraser release and this JOID based deployment process is
 to establish a lab ready platform accelerating further development
@@ -34,8 +33,7 @@ knowledge. It is comprised of the following components and features:
 
 Kubernetes (automated deployment, operations, and scaling)
   TLS used for communication between nodes for security.
-  A CNI plugin (e.g., Flannel, Ovn)
-  A load balancer for HA kubernetes-master (Experimental)
+  A CNI plugin (e.g., Canal)
   Optional Ingress Controller (on worker)
   Optional Dashboard addon (on master) including Heapster for cluster monitoring
 
@@ -46,19 +44,19 @@ EasyRSA
 Etcd (distributed key value store)
  Minimum Three node cluster for reliability.
 
-Fraser release with the JOID deployment with Kubernetes with load balancer will establish an
+Fraser release with the JOID deployment with Kubernetes will establish an
 OPNFV target system on a Pharos compliant lab infrastructure.
 
 NOTE: Detailed information on how to install in your lab can be find in installation guide
-command to deploy load balancer feature is:
+command to deploy lxd feature is:
 
-#Kubernetes deployment with Load Balancer
-./deploy.sh -m kubernetes -f lb -l custom -s nosdn
+#Kubernetes deployment
+./deploy.sh -m kubernetes -f lb -l custom -s canal
 
 Using Kubernetes after Deployment
 =================================
 
-Once you have finished installinf the JOID with Kubernetes with load balancer you can use the
+Once you have finished installinf the JOID with Kubernetes you can use the
 following command to test the deployment.
 
 To deploy 5 replicas of the microbot web application inside the Kubernetes
@@ -107,13 +105,13 @@ Release Data
 | **Repo/tag**                         | gerrit.opnfv.org/gerrit/joid.git     |
 |                                      | opnfv-6.0.0                          |
 +--------------------------------------+--------------------------------------+
-| **Release designation**              | Fraser release                    |
+| **Release designation**              | Fraser release                       |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Release date**                     | April 27 2018                        |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Purpose of the delivery**          | Fraser release                    |
+| **Purpose of the delivery**          | Fraser release                       |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 
@@ -136,8 +134,8 @@ Known issues
 | **JIRA REFERENCE**                   | **SLOGAN**                           |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| JIRA:                                | No support for functest for          |
-|                                      | Kubernetes scenarios  (OPNFV)        |
+| JIRA:                                | No support for yardstick and functest|
+|                                      | for Kubernetes scenarios  (OPNFV)    |
 +--------------------------------------+--------------------------------------+
 | JIRA:                                |                                      |
 +--------------------------------------+--------------------------------------+
@@ -145,8 +143,8 @@ Known issues
 
 Scenario Releases
 =================
-Name:      joid-k8-ovn-lb-noha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-k8-ovn-lb-noha-baremetal-daily-fraser/
+Name:      joid-k8-canal-lb-noha
+Test Link: https://build.opnfv.org/ci/user/narindergupta/my-views/view/joid/job/joid-k8-canal-lb-noha-baremetal-daily-fraser/
 Notes:
 
 References

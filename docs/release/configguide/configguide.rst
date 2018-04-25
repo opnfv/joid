@@ -24,4 +24,14 @@ Scenario 4: Kubernetes with OVN
 Scenario 5: Openstack with Opencontrail
 ---------------------------------------
 
-*./deploy.sh -o ocata -s ocl -t ha -l custom -f none -d xenial -m openstack*
+*./deploy.sh -o pike -s ocl -t ha -l custom -f none -d xenial -m openstack*
+
+Scenario 6: Kubernetes Load Balancer with Canal CNI
+---------------------------------------------------
+
+*./deploy.sh -s canal -l custom -f lb -m kubernetes*
+
+Scenario 7: Kubernetes Load Balancer with Ceph
+----------------------------------------------
+
+*./deploy.sh -l custom -f lb,ceph -m kubernetes*

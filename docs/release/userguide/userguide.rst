@@ -172,7 +172,7 @@ opnfv:
   release: d
   distro: xenial
   type: noha
-  openstack: newton
+  openstack: pike
   sdncontroller:
   - type: nosdn
   storage:
@@ -227,11 +227,11 @@ HA or non-HA mode. For OpenStack, it supports Juno and Liberty. For SDN, it supp
 vSwitch, OpenContrail, OpenDaylight and ONOS (Open Network Operating System). In addition
 to HA or non-HA mode, it also supports deploying the latest from the development tree (tip).
 
-The deploy.sh script in the joid/ci directoy will do all the work for you. For example, the following deploys OpenStack Newton with OpenvSwitch in a HA mode.
+The deploy.sh script in the joid/ci directoy will do all the work for you. For example, the following deploys OpenStack Pike with OpenvSwitch in a HA mode.
 
 ::
 
-  ~/joid/ci$  ./deploy.sh -o newton -s nosdn -t ha -l custom -f none -m openstack
+  ~/joid/ci$  ./deploy.sh -o pike -s nosdn -t ha -l custom -f none -m openstack
 
 The deploy.sh script in the joid/ci directoy will do all the work for you. For example, the following deploys Kubernetes with Load balancer on the pod.
 
@@ -251,8 +251,8 @@ Take a look at the deploy.sh script. You will find we support the following for 
     ha: HA mode of OpenStack.
     tip: The tip of the development.
   [-o]
-    mitak: OpenStack Mitaka version.
-    newton: OpenStack Newton version.
+    ocata: OpenStack Ocata version.
+    pike: OpenStack Pike version.
   [-l]
     default: For virtual deployment where installation will be done on KVM created using ./03-maasdeploy.sh
     custom: Install on bare metal OPNFV defined by labconfig.yaml
@@ -417,7 +417,7 @@ The following are the common issues we have collected from the community:
 
 ::
 
-       ./deploy.sh -o newton -s nosdn -t ha -l custom -f none
+       ./deploy.sh -o pike -s nosdn -t ha -l custom -f none
 
 - If you have setup maas not with 03-maasdeploy.sh then the ./clean.sh command could hang,
   the juju status command may hang because the correct MAAS API keys are not mentioned in

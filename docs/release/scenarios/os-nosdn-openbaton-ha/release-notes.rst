@@ -35,13 +35,13 @@ heterogeneous NFV Infrastructures.
 Fraser release with the JOID deployment enables deployment of orchestra
  on a Pharos compliant lab infrastructure.
 
-The current definition of an OPNFV target system is based on OpenStack Ocata.
+The current definition of an OPNFV target system is based on OpenStack Pike.
 
     The system is deployed with OpenStack High Availability (HA) for most OpenStack services.
 
     User has following choices to make to do the deployment.
 
-    - Openstack      -- Ocata
+    - Openstack      -- Pike
     - Type           -- HA, nonHA, tip (stable git branch of respective openstack)
     - Feature        -- Open Baton (NFV MANO framework)
 
@@ -49,10 +49,10 @@ NOTE: Detailed information on how to install in your lab can be find in installa
 command to deploy orchestra feature is:
 
 #Orchestra deployment with no HA Openstack
-./deploy.sh -o ocata -m openstack -f openbaton -s nosdn -t nonha
+./deploy.sh -o pike -m openstack -f openbaton -s nosdn -t nonha
 
 #Orchestra deployment with no HA Openstack
-./deploy.sh -o ocata -m openstack -f openbaton -s nosdn -t ha
+./deploy.sh -o pike -m openstack -f openbaton -s nosdn -t ha
 
 
 Using Openstack
@@ -81,7 +81,7 @@ Release Data
 | **Release designation**              | Fraser release                       |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Release date**                     | March 31 2018                        |
+| **Release date**                     | April 27 2018                        |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Purpose of the delivery**          | Fraser release                       |
@@ -142,7 +142,7 @@ JOID
 
 OpenStack
 ---------
-- `OpenStack Newton Release artifacts <http://www.openstack.org/software/newton>`_
+- `OpenStack  Release artifacts <http://www.openstack.org/software/pike>`_
 - `OpenStack documentation <http://docs.openstack.org>`_
 
 Orchestra

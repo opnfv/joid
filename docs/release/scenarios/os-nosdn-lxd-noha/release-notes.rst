@@ -6,17 +6,17 @@
 Abstract
 ========
 
-This document compiles the release notes for the Danube release of
+This document compiles the release notes for the Fraser release of
 OPNFV when using JOID as a deployment tool with LXD container hypervisor.
 
 Introduction
 ============
 
 These notes provides release information for the use of joid as deployment
-tool for the Danube release of OPNFV with LXD hypervisor for containers
+tool for the Fraser release of OPNFV with LXD hypervisor for containers
 scenario.
 
-The goal of the Danube release and this JOID based deployment process is
+The goal of the Fraser release and this JOID based deployment process is
 to establish a lab ready platform accelerating further development
 of the OPNFV infrastructure.
 
@@ -32,16 +32,16 @@ the container will look and feel like a regular VM – but will act like a
 container. LXD uses the same container technology found in the Linux kernel
 (cgroups, namespaces, LSM, etc).
 
-Danube release with the JOID deployment with LXD hypervisor will establish an
+Fraser release with the JOID deployment with LXD hypervisor will establish an
 OPNFV target system on a Pharos compliant lab infrastructure.
-The current definition of an OPNFV target system is and OpenStack Newton combined
+The current definition of an OPNFV target system is and OpenStack Pike combined
 with LXD Hypervisor.
 
     The system is deployed with OpenStack High Availability (HA) for most OpenStack services.
 
     User has following choices to make to do the deployment.
 
-    - Openstack      -- Newton
+    - Openstack      -- Pike
     - Type           -- HA, nonHA, tip (stable git branch of respective openstack)
     - Feature        -- LXD (container hypervisor)
 
@@ -49,10 +49,10 @@ NOTE: Detailed information on how to install in your lab can be find in installa
 command to deploy lxd feature is:
 
 #LXD deployment with HA Openstack
-./deploy.sh -o newton -f lxd -t ha -l custom -s nosdn
+./deploy.sh -o pike -f lxd -t ha -l custom -s nosdn
 
 #LXD deployment with no HA Openstack
-./deploy.sh -o newton -f lxd -t noha -l custom -s nosdn
+./deploy.sh -o pike -f lxd -t noha -l custom -s nosdn
 
 Using LXD with Openstack
 ========================
@@ -79,15 +79,15 @@ Release Data
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Repo/tag**                         | gerrit.opnfv.org/gerrit/joid.git     |
-|                                      | stable/danube                        |
+|                                      | opnfv-6.0.0                          |
 +--------------------------------------+--------------------------------------+
-| **Release designation**              | Danube release                       |
+| **Release designation**              | Fraser release                       |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Release date**                     | April 01 2017                        |
+| **Release date**                     | April 30 2019                        |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Purpose of the delivery**          | Danube release                       |
+| **Purpose of the delivery**          | Fraser release                       |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 
@@ -120,11 +120,11 @@ Known issues
 Scenario Releases
 =================
 Name:      joid-os-nosdn-lxd-ha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-lxd-ha-baremetal-daily-danube/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-lxd-ha-baremetal-daily-fraser/
 Notes:
 
 Name:      joid-os-nosdn-lxd-noha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-lxd-noha-baremetal-daily-danube/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-os-nosdn-lxd-noha-baremetal-daily-fraser/
 Notes:
 
 References
@@ -152,6 +152,6 @@ JOID
 
 OpenStack
 ---------
-- `OpenStack Newton Release artifacts <http://www.openstack.org/software/newton>`_
+- `OpenStack Pike Release artifacts <http://www.openstack.org/software/pike>`_
 - `OpenStack documentation <http://docs.openstack.org>`_
 

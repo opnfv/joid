@@ -5,7 +5,7 @@ JOID in brief
 -------------
 JOID as *Juju OPNFV Infrastructure Deployer* allows you to deploy different
 combinations of OpenStack release and SDN solution in HA or non-HA mode. For
-OpenStack, JOID currently supports Newton and Ocata. For SDN, it supports
+OpenStack, JOID currently supports Ocata and Pike. For SDN, it supports
 Openvswitch, OpenContrail, OpenDayLight, and ONOS. In addition to HA or non-HA
 mode, it also supports deploying from the latest development tree.
 
