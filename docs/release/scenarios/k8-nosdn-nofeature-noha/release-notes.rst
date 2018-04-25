@@ -6,16 +6,16 @@
 Abstract
 ========
 
-This document compiles the release notes for the Danube release of
+This document compiles the release notes for the Fraser release of
 OPNFV when using JOID as a deployment tool for Kubernetes.
 
 Introduction
 ============
 
 These notes provides release information for the use of joid as deployment
-tool for the Danube release of OPNFV for Kubernetes scenario.
+tool for the Fraser release of OPNFV for Kubernetes scenario.
 
-The goal of the Danube release and this JOID based deployment process is
+The goal of the Fraser release and this JOID based deployment process is
 to establish a lab ready platform accelerating further development
 of the OPNFV infrastructure for docker based workloads.
 
@@ -44,7 +44,7 @@ EasyRSA
 Etcd (distributed key value store)
  Minimum Three node cluster for reliability.
 
-Danube release with the JOID deployment with Kubernetes will establish an
+Fraser release with the JOID deployment with Kubernetes will establish an
 OPNFV target system on a Pharos compliant lab infrastructure.
 
 NOTE: Detailed information on how to install in your lab can be find in installation guide
@@ -103,15 +103,15 @@ Release Data
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | **Repo/tag**                         | gerrit.opnfv.org/gerrit/joid.git     |
-|                                      | stable/danube                        |
+|                                      | opnfv-6.0.0                          |
 +--------------------------------------+--------------------------------------+
-| **Release designation**              | Danube release                       |
+| **Release designation**              | Fraser release                       |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Release date**                     | March 31 2017                        |
+| **Release date**                     | April 27 2018                        |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
-| **Purpose of the delivery**          | Danube release                       |
+| **Purpose of the delivery**          | Fraser release                       |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 
@@ -144,7 +144,7 @@ Known issues
 Scenario Releases
 =================
 Name:      joid-k8-nosdn-nofeature-noha
-Test Link: https://build.opnfv.org/ci/view/joid/job/joid-k8-nosdn-nofeature-noha-baremetal-daily-danube/
+Test Link: https://build.opnfv.org/ci/view/joid/job/joid-k8-nosdn-nofeature-noha-baremetal-daily-fraser/
 Notes:
 
 References

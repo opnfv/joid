@@ -117,7 +117,7 @@ home directory.
 
     ::
 
-        git clone -b stable/danube https://gerrit.opnfv.org/gerrit/p/joid.git
+        git clone -b stable/fraser https://gerrit.opnfv.org/gerrit/p/joid.git
 
 Create a directory in ``joid/labconfig/<company_name>/<pod_number>/`` and
 create or copy a ``labconfig.yaml`` configuration file to that directory.
@@ -221,7 +221,7 @@ Example ``labconfig.yaml`` configuration file:
         release: d
         distro: xenial
         type: noha
-        openstack: ocata
+        openstack: pike
         sdncontroller:
         - type: nosdn
         storage:
@@ -323,7 +323,7 @@ This section will guide you through the Juju an OPNFV deployment. This is the
 second of two JOID deployment steps.
 
 JOID allows you to deploy different combinations of OpenStack and SDN solutions
-in HA or no-HA mode. For OpenStack, it supports Newton and Ocata. For SDN, it
+in HA or no-HA mode. For OpenStack, it supports Pike and Ocata. For SDN, it
 supports Open vSwitch, OpenContrail, OpenDaylight and ONOS (Open Network
 Operating System). In addition to HA or no-HA mode, it also supports deploying
 the latest from the development tree (tip).
@@ -334,10 +334,10 @@ script. For example:
 ::
 
     # in joid/ci directory
-    ./deploy.sh -d xenial -m openstack -o ocata -s nosdn -f none -t noha -l custom
+    ./deploy.sh -d xenial -m openstack -o pike -s nosdn -f none -t noha -l custom
 
 The above command starts an OPNFV deployment with Ubuntu Xenial (16.04) distro,
-OpenStack model, Ocata version of OpenStack, Open vSwitch (and no other SDN),
+OpenStack model, Pike version of OpenStack, Open vSwitch (and no other SDN),
 no special features, no-HA OpenStack mode and with custom labconfig. I.e. this
 corresponds to the ``os-nosdn-nofeature-noha`` OPNFV deployment scenario.
 
@@ -373,20 +373,21 @@ corresponds to the ``os-nosdn-nofeature-noha`` OPNFV deployment scenario.
     **Version of Openstack deployed**
     ::
 
-        [-o <newton|mitaka>]
+        [-o <pike|ocata>]
 
-    -   ``newton``: Newton version of OpenStack.
+    -   ``pike``: Pike version of OpenStack.
     -   ``ocata``:  Ocata version of OpenStack.
 
     **SDN controller**
     ::
 
-        [-s <nosdn|odl|opencontrail|onos>]
+        [-s <nosdn|odl|opencontrail|onos|canal>]
 
     -   ``nosdn``:        Open vSwitch only and no other SDN.
     -   ``odl``:          OpenDayLight Boron version.
     -   ``opencontrail``: OpenContrail SDN.
     -   ``onos``:         ONOS framework as SDN.
+    -   ``cana;``:        canal CNI plugin for kubernetes.
 
     **Feature to deploy** (comma separated list)
     ::
@@ -400,6 +401,7 @@ corresponds to the ``os-nosdn-nofeature-noha`` OPNFV deployment scenario.
     -   ``dpdk``: Will enable DPDK feature.
     -   ``sfc``:  Will enable sfc feature only supported with ONOS deployment.
     -   ``lb``:   Load balancing in case of Kubernetes will be enabled.
+    -   ``ceph``: Ceph storage  Kubernetes will be enabled.
 
     **Mode of Openstack deployed**
     ::
@@ -553,7 +555,7 @@ The following are the common issues we have collected from the community:
 
     ::
 
-        ./deploy.sh -o newton -s nosdn -t ha -l custom -f none
+        ./deploy.sh -o pike -s nosdn -t ha -l custom -f none
 
 -   If you have not setup MAAS with ``03-maasdeploy.sh`` then the
     ``./clean.sh`` command could hang, the ``juju status`` command may hang

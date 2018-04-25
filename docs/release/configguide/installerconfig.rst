@@ -189,7 +189,7 @@ opnfv:
     release: d
     distro: xenial
     type: noha
-    openstack: newton
+    openstack: pike
     sdncontroller:
     - type: nosdn
     storage:
@@ -244,10 +244,10 @@ When it's done, you should be able to view MAAS webpage (http://<MAAS IP>/MAAS) 
 OPNFV Install
 -------------
 
-| ``   ./deploy.sh -o newton -s nosdn -t noha -l custom -f none -d xenial -m openstack``
+| ``   ./deploy.sh -o pike -s nosdn -t noha -l custom -f none -d xenial -m openstack``
 | ``   ``
 
-./deploy.sh -o newton -s nosdn -t noha -l custom -f none -d xenial -m openstack
+./deploy.sh -o pike -s nosdn -t noha -l custom -f none -d xenial -m openstack
 
 NOTE: Possible options are as follows:
 
@@ -263,9 +263,9 @@ Mode of Openstack deployed.
   ha: HA mode of openstack.
 
 Wihch version of Openstack deployed.
-  [-o|--openstack <ocata|newton>]
+  [-o|--openstack <pike|ocata>]
+  pike: Pike version of openstack.
   Ocata: Ocata version of openstack.
-  Newton: Newton version of openstack.
 
 Where to deploy
   [-l|--lab <custom | default>] etc...

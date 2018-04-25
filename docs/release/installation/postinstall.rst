@@ -67,7 +67,7 @@ OpenStack after deployment.
 
 ::
 
-    ./openstack.sh <nosdn> custom xenial newton
+    ./openstack.sh <nosdn> custom xenial pike
 
 Below commands are used to setup domain in heat.
 
