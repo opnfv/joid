@@ -279,6 +279,7 @@ configuremaas(){
     maas $PROFILE maas set-config name=upstream_dns value=$MY_UPSTREAM_DNS || true
     maas $PROFILE maas set-config name='maas_name' value=$MAAS_NAME || true
     maas $PROFILE maas set-config name='ntp_server' value='ntp.ubuntu.com' || true
+    maas $PROFILE domain update 0 name=$MAAS_NAME  || true
     maas $PROFILE sshkeys create "key=$SSH_KEY" || true
 
     for tag in bootstrap compute control storage
@@ -290,9 +291,9 @@ configuremaas(){
     maas $PROFILE tags create name='opnfv-dpdk' comment='OPNFV DPDK enablement' \
          kernel_opts='hugepagesz=2M hugepages=1024 hugepagesz=1G hugepages=20 default_hugepagesz=1G intel_iommu=on' || true
 
-    maas $PROFILE package-repositories create name="Ubuntu  Proposed new" \
-         url="http://archive.ubuntu.com/ubuntu" components="main" \
-         distributions="xenial-proposed" arches=amd64,i386
+    #maas $PROFILE package-repositories create name="Ubuntu  Proposed new" \
+    #     url="http://archive.ubuntu.com/ubuntu" components="main" \
+    #     distributions="xenial-proposed" arches=amd64,i386
 
     #create the required spaces.
     maas $PROFILE space update 0 name=default || true
@@ -307,8 +308,16 @@ configuremaas(){
     maas $PROFILE boot-source update $SOURCE_ID \
          url=$URL keyring_filename=$KEYRING_FILE || true
 
+    maas $PROFILE boot-source-selections create 1 \
+         os="ubuntu" release="xenial" arches="amd64" \
+         labels="*" || true
+    maas $PROFILE boot-source-selections create 1 \
+         os="ubuntu" release="bionic" arches="amd64" \
+         labels="*" || true
+
     if [ $NODE_ARCTYPE != "x86_64" ] ; then
-        maas $PROFILE boot-source-selection update 1 1 arches="$NODE_ARCHES"
+        maas $PROFILE boot-source-selection update 1 1 arches="$NODE_ARCHES" || true
+        maas $PROFILE boot-source-selection update 1 2 arches="$NODE_ARCHES" || true
     fi
 
     if [ "$snapinstall" -eq "0" ]; then

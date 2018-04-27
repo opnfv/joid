@@ -264,6 +264,7 @@ deploy() {
     ./01-bootstrap.sh
 
     juju model-config default-series=$opnfvdistro enable-os-refresh-update=false enable-os-upgrade=false
+    juju set-model-constraints tags=
 
     # case default deploy the opnfv platform:
     ./02-deploybundle.sh $opnfvtype $openstack $opnfvlab $opnfvsdn $opnfvfeature $opnfvdistro $opnfvmodel
