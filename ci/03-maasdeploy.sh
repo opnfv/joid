@@ -215,6 +215,7 @@ sed -i "s@brAdm@$ADMIN_BR@" net.xml
 sudo virsh net-destroy default || true
 sudo virsh net-undefine default || true
 sudo virsh net-define net.xml || true
+sudo virsh net-autostart default || true
 sudo virsh net-start default || true
 
 #
