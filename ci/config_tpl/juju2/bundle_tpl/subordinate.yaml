@@ -2,12 +2,14 @@
 {% if os.network.controller != 'ocl' %}
     ceilometer-agent:
       charm: ./{{ ubuntu.release }}/ceilometer-agent
+      series: {{ ubuntu.release }}
       options:
         openstack-origin: *openstack-origin
 {% endif %}
 {% if opnfv.storage_dict.ceph is defined %}
     cinder-ceph:
       charm: ./{{ ubuntu.release }}/cinder-ceph
+      series: {{ ubuntu.release }}
       options:
 {% if opnfv.storage_dict.ceph is defined %}
         ceph-osd-replication-count: {{ unit_ceph_qty() }}
@@ -18,11 +20,13 @@
 {% elif os.network.controller == 'odl' %}
     neutron-api-odl:
       charm: ./{{ ubuntu.release }}/neutron-api-odl
+      series: {{ ubuntu.release }}
       options:
         overlay-network-type: 'vxlan'
         security-groups: True
     openvswitch-odl:
       charm: ./{{ ubuntu.release }}/openvswitch-odl
+      series: {{ ubuntu.release }}
       options:
 {% if opnfv.ext_port is defined  %}
         provider_mappings: "physnet1:{{ opnfv.ext_port }}"
@@ -35,11 +39,13 @@
 {% elif os.network.controller == 'onos' %}
     neutron-api-onos:
       charm: ./{{ ubuntu.release }}/neutron-api-onos
+      series: {{ ubuntu.release }}
       options:
         overlay-network-type: 'vxlan'
         security-groups: True
     openvswitch-onos:
       charm: ./{{ ubuntu.release }}/openvswitch-onos
+      series: {{ ubuntu.release }}
       options:
 {% if opnfv.spaces_dict.data is defined %}
         os-data-network: {{ opnfv.spaces_dict.data.cidr }}
@@ -51,6 +57,7 @@
 {% if os.lxd %}
     lxd:
       charm: ./{{ ubuntu.release }}/lxd
+      series: {{ ubuntu.release }}
       options:
 {% if 'srv' not in opnfv.storage_dict.ceph.disk %}
         block-devices: {{ opnfv.storage_dict.ceph.disk }}
@@ -61,6 +68,7 @@
 {% if opnfv.storage_dict.scaleio is defined %}
     scaleio-openstack:
       charm: ./{{ ubuntu.release }}/scaleio-openstack
+      series: {{ ubuntu.release }}
       options:
         protection-domains: 'pd1'
 {% endif %}

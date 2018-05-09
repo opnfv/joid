@@ -16,6 +16,7 @@
       bindings:
         "": *oam-space
         internal: *internal-space
+      series: {{ ubuntu.release }}
       options:
         openstack-origin: *openstack-origin
 {% if os.git_repo.origin_git %}

@@ -1,6 +1,7 @@
 
     hacluster-keystone:
       charm: "./{{ ubuntu.release }}/hacluster"
+      series: {{ ubuntu.release }}
       options:
         corosync_transport: unicast
         cluster_count: 3
@@ -9,6 +10,7 @@
 {% endif %}
     hacluster-cinder:
       charm: "./{{ ubuntu.release }}/hacluster"
+      series: {{ ubuntu.release }}
       options:
         corosync_transport: unicast
         cluster_count: 3
@@ -17,6 +19,7 @@
 {% endif %}
     hacluster-heat:
       charm: "./{{ ubuntu.release }}/hacluster"
+      series: {{ ubuntu.release }}
       options:
         corosync_transport: unicast
         cluster_count: 3
@@ -25,6 +28,7 @@
 {% endif %}
     hacluster-horizon:
       charm: "./{{ ubuntu.release }}/hacluster"
+      series: {{ ubuntu.release }}
       options:
         corosync_transport: unicast
         cluster_count: 3
@@ -33,6 +37,7 @@
 {% endif %}
     hacluster-nova:
       charm: "./{{ ubuntu.release }}/hacluster"
+      series: {{ ubuntu.release }}
       options:
         corosync_transport: unicast
         cluster_count: 3
@@ -41,6 +46,7 @@
 {% endif %}
     hacluster-neutron:
       charm: "./{{ ubuntu.release }}/hacluster"
+      series: {{ ubuntu.release }}
       options:
         corosync_transport: unicast
         cluster_count: 3
@@ -49,6 +55,7 @@
 {% endif %}
     hacluster-glance:
       charm: "./{{ ubuntu.release }}/hacluster"
+      series: {{ ubuntu.release }}
       options:
         corosync_transport: unicast
         cluster_count: 3
@@ -58,6 +65,7 @@
 {% if os.network.controller != 'ocl' %}
     hacluster-ceilometer:
       charm: "./{{ ubuntu.release }}/hacluster"
+      series: {{ ubuntu.release }}
       options:
         corosync_transport: unicast
         cluster_count: 3
@@ -67,6 +75,7 @@
 {% endif %}
     hacluster-mysql:
       charm: "./{{ ubuntu.release }}/hacluster"
+      series: {{ ubuntu.release }}
       options:
         corosync_transport: unicast
         cluster_count: 3
@@ -75,6 +84,7 @@
 {% endif %}
     hacluster-ceph-radosgw:
       charm: "./{{ ubuntu.release }}/hacluster"
+      series: {{ ubuntu.release }}
       options:
         corosync_transport: unicast
         cluster_count: 3
@@ -83,6 +93,7 @@
 {% endif %}
     hacluster-aodh:
       charm: "./{{ ubuntu.release }}/hacluster"
+      series: {{ ubuntu.release }}
       options:
         corosync_transport: unicast
         cluster_count: 3
@@ -91,6 +102,7 @@
 {% endif %}
     hacluster-gnocchi:
       charm: "./{{ ubuntu.release }}/hacluster"
+      series: {{ ubuntu.release }}
       options:
         corosync_transport: unicast
         cluster_count: 3
@@ -99,6 +111,7 @@
 {% endif %}
     hacluster-designate:
       charm: "./{{ ubuntu.release }}/hacluster"
+      series: {{ ubuntu.release }}
       options:
         corosync_transport: unicast
         cluster_count: 3

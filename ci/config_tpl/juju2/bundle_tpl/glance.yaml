@@ -10,6 +10,7 @@
         internal: *internal-space
         shared-db: *internal-space
 {% endif %}
+      series: {{ ubuntu.release }}
       options:
         openstack-origin: *openstack-origin
         worker-multiplier: *worker-multiplier

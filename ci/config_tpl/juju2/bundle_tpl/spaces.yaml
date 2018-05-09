@@ -1,4 +1,4 @@
-{% if os.release == 'mitaka' %}
+{% if ubuntu.release == 'bionic' %}
     openstack-origin:    &openstack-origin    distro
 {% else %}
     openstack-origin:    &openstack-origin    cloud:{{ ubuntu.release }}-{{ os.release }}

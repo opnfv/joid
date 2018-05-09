@@ -7,6 +7,7 @@
         cluster: *internal-space
         shared-db: *internal-space
 {% endif %}
+      series: {{ ubuntu.release }}
       options:
         innodb-buffer-pool-size: 256M
         max-connections: 4000

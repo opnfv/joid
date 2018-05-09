@@ -7,6 +7,7 @@
         controller-api: *internal-space
         ovsdb-manager: *internal-space
 {% endif %}
+      series: {{ ubuntu.release }}
       options:
         install-url: "https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/distribution-karaf/0.6.0-Carbon/distribution-karaf-0.6.0-Carbon.tar.gz"
 {% if os.network.sfc %}

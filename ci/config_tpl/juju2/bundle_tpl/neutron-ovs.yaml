@@ -3,6 +3,7 @@
 {% if os.service.bindings %}
       bindings:
         data: *overlay-space
+      series: {{ ubuntu.release }}
       options:
 {% else %}
       options:

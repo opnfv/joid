@@ -9,6 +9,7 @@
         shared-db: *internal-space
         public: *public-space
 {% endif %}
+      series: {{ ubuntu.release }}
       options:
         region: *openstack-region
 {% if ubuntu.release == 'trusty' %}

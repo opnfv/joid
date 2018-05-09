@@ -6,6 +6,7 @@
         "": *oam-space
         internal: *internal-space
 {% endif %}
+      series: {{ ubuntu.release }}
       to:
         - "lxd:nodes/0"
 {# Empty block to avoid bad block trim #}

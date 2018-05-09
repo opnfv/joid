@@ -8,6 +8,7 @@
         admin: *admin-space
         internal: *internal-space
 {% endif %}
+      series: {{ ubuntu.release }}
       options:
         openstack-origin: *openstack-origin
 {% if os.ha.mode == 'ha' %}
@@ -48,6 +49,7 @@
         admin: *admin-space
         internal: *internal-space
 {% endif %}
+      series: {{ ubuntu.release }}
       options:
         openstack-origin: *openstack-origin
         region: *openstack-region

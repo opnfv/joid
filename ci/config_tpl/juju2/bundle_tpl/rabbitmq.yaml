@@ -7,6 +7,7 @@
         amqp: *internal-space
         cluster: *internal-space
 {% endif %}
+      series: {{ ubuntu.release }}
       options:
         source: *openstack-origin
 {% if opnfv.storage_dict.ceph is defined %}

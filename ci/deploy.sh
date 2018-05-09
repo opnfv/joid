@@ -90,7 +90,7 @@ for argument in $options
 
             -d|--distro )
                 if ([ "arguments[index]" != "" ]); then
-                    opnfdistro=${arguments[index]}
+                    opnfvdistro=${arguments[index]}
                 fi;
                 ;;
 
@@ -261,7 +261,7 @@ deploy() {
     fi
 
     #bootstrap the node
-    ./01-bootstrap.sh
+    ./01-bootstrap.sh $opnfvdistro
 
     juju model-config default-series=$opnfvdistro enable-os-refresh-update=false enable-os-upgrade=false
     juju set-model-constraints tags=

@@ -9,6 +9,7 @@
         internal: *internal-space
         shared-db: *internal-space
 {% endif %}
+      series: {{ ubuntu.release }}
       options:
         openstack-origin: *openstack-origin
 {% if os.git_repo.origin_git %}

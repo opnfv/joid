@@ -1,6 +1,7 @@
 
     contrail-openstack:
       charm: ./{{ ubuntu.release }}/contrail-openstack
+      series: {{ ubuntu.release }}
       options:
         install-keys: |
           - |
@@ -40,6 +41,7 @@
 
     contrail-agent:
       charm: ./{{ ubuntu.release }}/contrail-agent
+      series: {{ ubuntu.release }}
       options:
         install-keys: |
           - |

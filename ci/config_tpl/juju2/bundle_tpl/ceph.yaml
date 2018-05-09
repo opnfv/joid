@@ -8,6 +8,7 @@
         public: *ceph-public-space
         cluster: *ceph-cluster-space
 {% endif %}
+      series: {{ ubuntu.release }}
       options:
         expected-osd-count: {{ unit_ceph_qty() }}
         source: *openstack-origin
@@ -43,10 +44,11 @@
         public: *ceph-public-space
         cluster: *ceph-cluster-space
 {% endif %}
+      series: {{ ubuntu.release }}
       options:
         osd-devices: *osd-devices
         osd-journal: *osd-journal
-        osd-reformat: 'yes'
+        osd-reformat: 'True'
         source: *openstack-origin
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}
@@ -79,6 +81,7 @@
         internal: *internal-space
         mon: *ceph-public-space
 {% endif %}
+      series: {{ ubuntu.release }}
       options:
         region: *openstack-region
         operator-roles: "Member,admin,SwiftOperator"

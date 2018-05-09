@@ -10,6 +10,7 @@
 {% else %}
     nodes:
       charm: "cs:{{ ubuntu.release }}/ubuntu"
+      series: {{ ubuntu.release }}
 {% if os.ha.mode == 'ha' %}
       num_units: 3
 {% else %}
@@ -18,6 +19,7 @@
 
     nodes-compute:
       charm: "cs:{{ ubuntu.release }}/ubuntu"
+      series: {{ ubuntu.release }}
 {% if os.ha.mode == 'ha' %}
       num_units: {{ opnfv.units - 3 }}
 {% else %}
@@ -26,6 +28,7 @@
 {% endif %}
     ntp:
       charm: "./{{ ubuntu.release }}/ntp"
+      series: {{ ubuntu.release }}
 {% if os.network.controller == 'ocl' %}
       options:
         source: "0.ubuntu.pool.ntp.org 1.ubuntu.pool.ntp.org 2.ubuntu.pool.ntp.org 3.ubuntu.pool.ntp.org"

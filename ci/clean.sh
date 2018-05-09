@@ -18,6 +18,7 @@ juju destroy-controller $controllername --destroy-all-models -y || true
 rm -rf precise
 rm -rf trusty
 rm -rf xenial
+rm -rf bionic
 rm -rf ~/joid_config/admin-openrc
 sleep 10
 sudo sysctl -w vm.drop_caches=3
