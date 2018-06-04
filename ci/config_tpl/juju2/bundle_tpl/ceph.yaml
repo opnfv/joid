@@ -48,7 +48,7 @@
       options:
         osd-devices: *osd-devices
         osd-journal: *osd-journal
-        osd-reformat: 'True'
+        #osd-reformat: 'True'
         source: *openstack-origin
 {% if os.network.ipv6 %}
         prefer-ipv6: {{ os.network.ipv6 }}

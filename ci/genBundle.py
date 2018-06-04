@@ -200,16 +200,14 @@ if 'radosgwcluster' in extra:
 if 'hugepages' in extra:
     config['os']['beta']['huge_pages'] = True
     config['os']['beta']['cpu_pin'] = True
-if 'ocata' in extra:
-    config['os']['release'] = 'ocata'
 if 'pike' in extra:
     config['os']['release'] = 'pike'
-if 'trusty' in extra:
-    config['ubuntu']['release'] = 'trusty'
-    if 'ocata' in extra:
-        config['os']['release'] = 'mitaka'
 if 'xenial' in extra:
     config['ubuntu']['release'] = 'xenial'
+if 'bionic' in extra:
+    config['ubuntu']['release'] = 'bionic'
+    if 'pike' in extra:
+        config['os']['release'] = 'queens'
 if 'dishypcon' in extra:
     config['os']['hyperconverged'] = False
 if 'openbaton' in features:
